@@ -6,6 +6,7 @@ use Symfony\Component\Routing\Router;
 
 class ContentRouter extends Router
 {
+
     protected $document_manager;
     protected $controller_resolver;
 
@@ -33,22 +34,19 @@ class ContentRouter extends Router
     {
         $node = $this->document_manager->find(null, $url);
 
-        if (!$node || !\method_exists($node, 'getReference'))
-        {
+        if (!$node || !\method_exists($node, 'getReference')) {
             return false;
         }
 
         $document = $node->getReference();
         $controller = $this->controller_resolver->getController($document);
 
-        if (!$controller)
-        {
+        if (!$controller) {
             return false;
         }
 
-        return array('_controller'  => $controller,
-                     'document'     => $document);
-
+        return array('_controller' => $controller,
+            'document' => $document);
     }
-    
+
 }
