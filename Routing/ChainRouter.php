@@ -3,6 +3,7 @@
 namespace Symfony\Cmf\Bundle\ChainRoutingBundle\Routing;
 
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Routing\Router;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
@@ -109,8 +110,8 @@ class ChainRouter implements RouterInterface
      */
     public function setContext(RouterContext $context)
     {
-        foreach ($this->routers as $routes) {
-            foreach ($routes as $router) {
+        foreach ($this->all() as $router) {
+            if ($router instanceof Router) {
                 $router->setContext($context);
             }
         }
