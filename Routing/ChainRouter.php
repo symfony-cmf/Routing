@@ -3,8 +3,8 @@
 namespace Symfony\Cmf\Bundle\ChainRoutingBundle\Routing;
 
 use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\Routing\Router;
 use Symfony\Component\Routing\RequestContext;
+use Symfony\Component\Routing\RequestContextAwareInterface;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
@@ -51,7 +51,7 @@ class ChainRouter implements RouterInterface
         $routers = array();
 
         foreach ($this->routers as $all) {
-            $routers = array_merge($routers, $all);
+            $routers = array_merge($routers, array($all));
         }
 
         return $routers;
@@ -92,7 +92,7 @@ class ChainRouter implements RouterInterface
      * @throws RouteNotFoundException
      * @return string
      */
-    public function generate($name, array $parameters = array(), $absolute = false)
+    public function generate($name, $parameters = array(), $absolute = false)
     {
         foreach ($this->all() as $router) {
             try {
@@ -108,10 +108,10 @@ class ChainRouter implements RouterInterface
      *
      * @param RouterContext $context
      */
-    public function setContext(RouterContext $context)
+    public function setContext(RequestContext $context)
     {
         foreach ($this->all() as $router) {
-            if ($router instanceof Router) {
+            if ($router instanceof RequestContextAwareInterface) {
                 $router->setContext($context);
             }
         }

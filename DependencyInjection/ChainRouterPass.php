@@ -51,7 +51,7 @@ class ChainRouterPass implements CompilerPassInterface
         $router = $container->getDefinition('router.chain');
 
         if ($container->hasDefinition('router.real')) {
-            $router->addMethodCall('add', array(new Reference('router.real'), 100));
+            $router->addMethodCall('add', array(new Reference('router.real'), 50));
         }
 
         foreach ($container->findTaggedServiceIds('router') as $id => $attributes) {
