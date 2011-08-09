@@ -3,19 +3,20 @@
 namespace Symfony\Cmf\Bundle\ChainRoutingBundle\Routing;
 
 use Symfony\Component\Routing\Router;
+use Doctrine\Common\Persistence\ObjectManager;
 
 class ContentRouter extends Router
 {
 
-    protected $document_manager;
+    protected $om;
     protected $controller_resolver;
 
-    public function setDocumentManager(\Doctrine\ODM\PHPCR\DocumentManager $dm)
+    public function setObjectManager(ObjectManager $om)
     {
-        $this->document_manager = $dm;
+        $this->om = $om;
     }
 
-    public function setControllerResolver(\Symfony\Cmf\Bundle\ChainRoutingBundle\Controller\DocumentControllerResolver $cr)
+    public function setControllerResolver(\Symfony\Cmf\Bundle\ChainRoutingBundle\Controller\ControllerResolver $cr)
     {
         $this->controller_resolver = $cr;
     }
@@ -25,28 +26,28 @@ class ContentRouter extends Router
      *
      * array(
      *   "_controller" => "NameSpace\Controller::action", 
-     *   "document" => $document)
+     *   "reference" => $document,
+     * )
      *
      * @param string $url
      * @return array
      */
     public function match($url)
     {
-        $node = $this->document_manager->find(null, $url);
+        $document = $this->om->find(null, $url);
 
-        if (!$node || !\method_exists($node, 'getReference')) {
+        if (!$document  instanceof RouteObjectInterface) {
             return false;
         }
 
-        $document = $node->getReference();
-        $controller = $this->controller_resolver->getController($document);
-
-        if (!$controller) {
+        $defaults = $this->controller_resolver->getController($document);
+        if (empty($defaults['_controller'])) {
             return false;
         }
 
-        return array('_controller' => $controller,
-            'document' => $document);
+        $defaults['reference'] = $document->getReference();
+
+        return $defaults;
     }
 
 }

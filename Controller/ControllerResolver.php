@@ -2,12 +2,10 @@
 
 namespace Symfony\Cmf\Bundle\ChainRoutingBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\ControllerNameParser;
-use Symfony\Bundle\FrameworkBundle\Controller\ControllerResolver;
+use Symfony\Cmf\Bundle\ChainRoutingBundle\Routing\RouteObjectInterface;
 
-class DocumentControllerResolver
+class ControllerResolver
 {
-
     /**
      * array containing the mapping between phpcr_alias and controller
      * i.e array('static_pages' => 'symfony_cmf_content.controller:indexAction')
@@ -22,12 +20,12 @@ class DocumentControllerResolver
     /**
      * Retrieves the right controller for the given $document.
      */
-    public function getController($document)
+    public function getController(RouteObjectInterface $document)
     {
-        $controller = $document->getController();
-
-        if (array_key_exists($controller, $this->controllers_by_alias)) {
-            return $this->controllers_by_alias[$controller];
+        $defaults = $document->getRouteDefaults();
+        if (isset($this->controllers_by_alias[$defaults['type']])) {
+            $defaults['_controller'] = $this->controllers_by_alias[$defaults['type']];
+            return $defaults;
         }
     }
 
