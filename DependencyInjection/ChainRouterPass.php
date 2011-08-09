@@ -27,32 +27,36 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 
-class TaggedSubrouterPass implements CompilerPassInterface
+/**
+ * A CompilerPass which takes the standard router and replaces it.
+ *
+ *
+ * @author Henrik Bjornskov <henrik@bjrnskov.dk>
+ * @author Magnus Nordlander <magnus@e-butik.se>
+ */
+class ChainRouterPass implements CompilerPassInterface
 {
     /**
      * Adds any tagged subrouters to the chain router, as well as router.real if it exists.
      * Router.real is added at priority 100.
      *
-     * @see Symfony\Component\DependencyInjection\Compiler.CompilerPassInterface::process()
-     * @author Magnus Nordlander <magnus@e-butik.se>
-     *
-     * @param Symfony\Component\DependencyInjection\ContainerBuilder The container builder
+     * @param ContainerBuilder $container
      */
     public function process(ContainerBuilder $container)
     {
-        if (!$container->hasDefinition('chain_router')) {
+        if (!$container->hasDefinition('router.chain')) {
             return;
         }
 
-        $taggedServiceHolder = $container->getDefinition('chain_router');
+        $router = $container->getDefinition('router.chain');
 
         if ($container->hasDefinition('router.real')) {
-            $taggedServiceHolder->addMethodCall('addSubRouter', array(new Reference('router.real'), 100));
+            $router->addMethodCall('add', array(new Reference('router.real'), 100));
         }
 
-        foreach ($container->findTaggedServiceIds('chain_router.subrouters') as $id => $attributes) {
-            $priority = $attributes[0]['priority'];
-            $taggedServiceHolder->addMethodCall('addSubRouter', array(new Reference($id), $priority));
+        foreach ($container->findTaggedServiceIds('router') as $id => $attributes) {
+            $priority = isset($attributes[0]['priority']) ? (integer) $attributes[0]['priority'] : 0;
+            $router->addMethodCall('add', array(new Reference($id), $priority));
         }
     }
 }
