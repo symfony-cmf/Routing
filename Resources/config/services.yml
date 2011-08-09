@@ -1,0 +1,7 @@
+parameters:
+    chain_routing.class: Symfony\Bundle\ChainRoutingBundle\Routing
+
+services:
+    chain_routing:
+        class: %chain_routing.example.class%
+        subroutes: []
