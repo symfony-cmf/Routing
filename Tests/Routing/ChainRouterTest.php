@@ -6,46 +6,55 @@ use Symfony\Cmf\Bundle\ChainRoutingBundle\Routing\ChainRouter;
 
 class ChainRouterTest extends \PHPUnit_Framework_TestCase
 {
+    public function setUp()
+    {
+        $this->router = new ChainRouter();
+        $this->context = $this->getMock('Symfony\Component\Routing\RequestContext');
+    }
+
     public function testPriority()
     {
-        $router = new ChainRouter();
-        $this->assertEquals(array(), $router->all());
+        $this->assertEquals(array(), $this->router->all());
 
-        $low = $this->getMock('Symfony\Component\Routing\RouterInterface');
-        $high = $this->getMock('Symfony\Component\Routing\RouterInterface');
+        list($low, $high) = $this->createRouterMocks();
 
-        $router->add($low, 10);
-        $router->add($high, 100);
+        $this->router->add($low, 10);
+        $this->router->add($high, 100);
 
         $this->assertEquals(array(
             $high,
             $low,
-        ), $router->all());
+        ), $this->router->all());
     }
 
     public function testContext()
     {
-        $router = new ChainRouter();
-        $context = $this->getMock('Symfony\Component\Routing\RequestContext');
+        list($low, $high) = $this->createRouterMocks();
 
-        $low = $this->getMock('Symfony\Component\Routing\RouterInterface');
         $low
             ->expects($this->once())
             ->method('setContext')
-            ->with($context)
+            ->with($this->context)
         ;
 
-        $high = $this->getMock('Symfony\Component\Routing\RouterInterface');
         $high
             ->expects($this->once())
             ->method('setContext')
-            ->with($context)
+            ->with($this->context)
         ;
 
 
-        $router->add($low, 10);
-        $router->add($high, 100);
+        $this->router->add($low, 10);
+        $this->router->add($high, 100);
 
-        $router->setContext($context);
+        $this->router->setContext($this->context);
+    }
+
+    protected function createRouterMocks()
+    {
+        return array(
+            $this->getMock('Symfony\Component\Routing\RouterInterface'),
+            $this->getMock('Symfony\Component\Routing\RouterInterface'),
+        );
     }
 }
