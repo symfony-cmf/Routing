@@ -3,17 +3,16 @@
 namespace Symfony\Cmf\Bundle\ChainRoutingBundle\Tests\Controller;
 
 use Symfony\Cmf\Bundle\ChainRoutingBundle\Test\CmfUnitTestCase;
-use Symfony\Cmf\Bundle\ChainRoutingBundle\Controller\DocumentControllerResolver;
+use Symfony\Cmf\Bundle\ChainRoutingBundle\Controller\ControllerResolver;
 
-class DocumentControllerResolverTest extends CmfUnitTestCase
+class ControllerResolverTest extends CmfUnitTestCase
 {
-
     public function setUp()
     {
         $this->document = $this->buildMock('Document', array('getController'));
         $mapping = array('static_pages' => 'symfony_cmf_content.controller:indexAction');
 
-        $this->resolver = new DocumentControllerResolver($mapping);
+        $this->resolver = new ControllerResolver($mapping);
     }
 
     public function testControllerFoundInMapping()
@@ -33,5 +32,4 @@ class DocumentControllerResolverTest extends CmfUnitTestCase
 
         $this->assertEquals(null, $this->resolver->getController($this->document));
     }
-
 }

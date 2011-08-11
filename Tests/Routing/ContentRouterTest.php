@@ -7,17 +7,16 @@ use Symfony\Cmf\Bundle\ChainRoutingBundle\Routing\ContentRouter;
 
 class ContentRouterTest extends CmfUnitTestCase
 {
-
     public function setUp()
     {
         $this->node = $this->buildMock('Navigation', array('getReference'));
         $this->document = $this->buildMock('Document');
         $this->loader_interface = $this->buildMock("\Symfony\Component\Config\Loader\LoaderInterface");
-        $this->document_manager = $this->buildMock("\Doctrine\ODM\PHPCR\DocumentManager", array('find'));
-        $this->controller_resolver = $this->buildMock('\Symfony\Cmf\Bundle\ChainRoutingBundle\Controller\DocumentControllerResolver', array('getController'));
+        $this->object_manager = $this->buildMock("\Doctrine\Common\Persistence\ObjectManager", array('find'));
+        $this->controller_resolver = $this->buildMock('\Symfony\Cmf\Bundle\ChainRoutingBundle\Controller\ControllerResolver', array('getController'));
 
         $this->router = new ContentRouter($this->loader_interface, array());
-        $this->router->setDocumentManager($this->document_manager);
+        $this->router->setObjectManager($this->object_manager);
         $this->router->setControllerResolver($this->controller_resolver);
     }
 
@@ -29,7 +28,7 @@ class ContentRouterTest extends CmfUnitTestCase
                 ->method('getReference')
                 ->will($this->returnValue($this->document));
 
-        $this->document_manager->expects($this->once())
+        $this->object_manager->expects($this->once())
                 ->method('find')
                 ->with(null, $url_alias)
                 ->will($this->returnValue($this->node));
@@ -49,7 +48,7 @@ class ContentRouterTest extends CmfUnitTestCase
                 ->method('getReference')
                 ->will($this->returnValue(null));
 
-        $this->document_manager->expects($this->once())
+        $this->object_manager->expects($this->once())
                 ->method('find')
                 ->with(null, $url_alias)
                 ->will($this->returnValue($this->node));
@@ -61,12 +60,11 @@ class ContentRouterTest extends CmfUnitTestCase
     {
         $url_alias = "/company/more_no_match";
 
-        $this->document_manager->expects($this->once())
+        $this->object_manager->expects($this->once())
                 ->method('find')
                 ->with(null, $url_alias)
                 ->will($this->returnValue(null));
 
         $this->assertFalse($this->router->match($url_alias));
     }
-
 }
