@@ -11,11 +11,11 @@ class ContentRouterTest extends CmfUnitTestCase
     {
         $this->node = $this->buildMock('Symfony\Cmf\Bundle\ChainRoutingBundle\Routing\RouteObjectInterface');
         $this->document = $this->buildMock('Symfony\Cmf\Bundle\ChainRoutingBundle\Routing\RouteObjectInterface');
-        $this->loader_interface = $this->buildMock("\Symfony\Component\Config\Loader\LoaderInterface");
-        $this->object_manager = $this->buildMock("\Doctrine\Common\Persistence\ObjectManager");
-        $this->controller_resolver = $this->buildMock('\Symfony\Cmf\Bundle\ChainRoutingBundle\Controller\ControllerResolver', array('getController'));
+        $this->loader_interface = $this->buildMock("Symfony\Component\Config\Loader\LoaderInterface");
+        $this->object_manager = $this->buildMock("Doctrine\Common\Persistence\ObjectManager");
+        $this->controller_resolver = $this->buildMock('Symfony\Cmf\Bundle\ChainRoutingBundle\Controller\ControllerResolver', array('getController'));
 
-        $this->router = new ContentRouter($this->loader_interface, array());
+        $this->router = new ContentRouter($this->object_manager, $this->controller_resolver);
         $this->router->setObjectManager($this->object_manager);
         $this->router->setControllerResolver($this->controller_resolver);
     }

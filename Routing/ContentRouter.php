@@ -3,14 +3,26 @@
 namespace Symfony\Cmf\Bundle\ChainRoutingBundle\Routing;
 
 use Symfony\Component\Routing\Router;
+use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Routing\RequestContext;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Cmf\Bundle\ChainRoutingBundle\Controller\ControllerResolver;
 
-class ContentRouter extends Router
+class ContentRouter implements RouterInterface
 {
-
     protected $om;
     protected $resolver;
+    protected $context;
+
+    public function setContext(RequestContext $context)
+    {
+        $this->context = $context;
+    }
+
+    public function generate($name, $parameters = array(), $absolute = false)
+    {
+        /* TODO */
+    }
 
     public function setObjectManager(ObjectManager $om)
     {
