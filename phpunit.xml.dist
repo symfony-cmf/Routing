@@ -2,29 +2,18 @@
 
 <!-- http://www.phpunit.de/manual/current/en/appendixes.configuration.html -->
 <phpunit
-    backupGlobals="false"
-    backupStaticAttributes="false"
     colors="true"
-    convertErrorsToExceptions="true"
-    convertNoticesToExceptions="true"
-    convertWarningsToExceptions="true"
-    processIsolation="false"
-    stopOnFailure="false"
-    syntaxCheck="false"
-    bootstrap="../../../../../../../app/bootstrap.php.cache"
->
+    bootstrap="Tests/bootstrap.php">
+
+    <php>
+        <server name="SYMFONY" value="../../../../symfony2/src" />
+    </php>    
 
     <testsuites>
-        <testsuite name="Project Test Suite">
-            <directory>./tests</directory>
+        <testsuite name="ChainRoutingBundle Test Suite">
+            <directory>./Tests</directory>
         </testsuite>
     </testsuites>
-
-    <!--
-    <php>
-        <server name="KERNEL_DIR" value="/path/to/your/app/" />
-    </php>
-    -->
 
     <!-- filter>
         <whitelist>
