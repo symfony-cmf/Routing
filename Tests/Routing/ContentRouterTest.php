@@ -11,13 +11,13 @@ class ContentRouterTest extends CmfUnitTestCase
     {
         $this->node = $this->buildMock('Symfony\Cmf\Bundle\ChainRoutingBundle\Routing\RouteObjectInterface');
         $this->document = $this->buildMock('Symfony\Cmf\Bundle\ChainRoutingBundle\Routing\RouteObjectInterface');
-        $this->loader_interface = $this->buildMock("Symfony\Component\Config\Loader\LoaderInterface");
-        $this->object_manager = $this->buildMock("Doctrine\Common\Persistence\ObjectManager");
-        $this->controller_resolver = $this->buildMock('Symfony\Cmf\Bundle\ChainRoutingBundle\Controller\ControllerResolver', array('getController'));
+        $this->loader = $this->buildMock("Symfony\Component\Config\Loader\LoaderInterface");
+        $this->om = $this->buildMock("Doctrine\Common\Persistence\ObjectManager");
+        $this->resolver = $this->buildMock('Symfony\Cmf\Bundle\ChainRoutingBundle\Controller\ControllerResolver', array('getController'));
 
-        $this->router = new ContentRouter($this->object_manager, $this->controller_resolver);
-        $this->router->setObjectManager($this->object_manager);
-        $this->router->setControllerResolver($this->controller_resolver);
+        $this->router = new ContentRouter($this->om, $this->resolver);
+        $this->router->setObjectManager($this->om);
+        $this->router->setControllerResolver($this->resolver);
     }
 
     public function testMatch()
@@ -28,7 +28,7 @@ class ContentRouterTest extends CmfUnitTestCase
                 ->method('getReference')
                 ->will($this->returnValue($this->document));
 
-        $this->object_manager->expects($this->once())
+        $this->om->expects($this->once())
                 ->method('find')
                 ->with(null, $url_alias)
                 ->will($this->returnValue($this->node));
@@ -37,7 +37,7 @@ class ContentRouterTest extends CmfUnitTestCase
                                                 'type' => 'found',
                                                 'reference' => $this->document);
 
-        $this->controller_resolver->expects($this->once())
+        $this->resolver->expects($this->once())
                 ->method('getController')
                 ->with($this->node)
                 ->will($this->returnValue($expected));
@@ -55,12 +55,12 @@ class ContentRouterTest extends CmfUnitTestCase
                 ->method('getReference')
                 ->will($this->returnValue(null));
 
-        $this->controller_resolver->expects($this->once())
+        $this->resolver->expects($this->once())
                 ->method('getController')
                 ->with($this->document)
                 ->will($this->returnValue(array('_controller' => 'NameSpace\Controller::action', 'type' => 'found')));
 
-        $this->object_manager->expects($this->once())
+        $this->om->expects($this->once())
                 ->method('find')
                 ->with(null, $url_alias)
                 ->will($this->returnValue($this->node));
@@ -76,7 +76,7 @@ class ContentRouterTest extends CmfUnitTestCase
     {
         $url_alias = "/company/more_no_match";
 
-        $this->object_manager->expects($this->once())
+        $this->om->expects($this->once())
                 ->method('find')
                 ->with(null, $url_alias)
                 ->will($this->returnValue(null));
