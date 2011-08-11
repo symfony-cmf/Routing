@@ -4,21 +4,22 @@ namespace Symfony\Cmf\Bundle\ChainRoutingBundle\Routing;
 
 use Symfony\Component\Routing\Router;
 use Doctrine\Common\Persistence\ObjectManager;
+use Symfony\Cmf\Bundle\ChainRoutingBundle\Controller\ControllerResolver;
 
 class ContentRouter extends Router
 {
 
     protected $om;
-    protected $controller_resolver;
+    protected $resolver;
 
     public function setObjectManager(ObjectManager $om)
     {
         $this->om = $om;
     }
 
-    public function setControllerResolver(\Symfony\Cmf\Bundle\ChainRoutingBundle\Controller\ControllerResolver $cr)
+    public function setControllerResolver(ControllerResolver $resolver)
     {
-        $this->controller_resolver = $cr;
+        $this->resolver = $resolver;
     }
 
     /**
@@ -40,7 +41,7 @@ class ContentRouter extends Router
             return false;
         }
 
-        $defaults = $this->controller_resolver->getController($document);
+        $defaults = $this->resolver->getController($document);
         if (empty($defaults['_controller'])) {
             return false;
         }
