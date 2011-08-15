@@ -51,7 +51,7 @@ class ChainRouter implements RouterInterface
         $routers = array();
 
         foreach ($this->routers as $all) {
-            $routers = array_merge($routers, array($all));
+            $routers = array_merge($routers, $all);
         }
 
         return $routers;
