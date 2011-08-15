@@ -33,11 +33,11 @@ class ChainRouter implements RouterInterface
      */
     public function add(RouterInterface $router, $priority = 0)
     {
-        if (empty($this->routers)) {
-            $this->routers = array();
+        if (empty($this->routers[$priority])) {
+            $this->routers[$priority] = array();
         }
 
-        $this->routers[$priority] = $router;
+        $this->routers[$priority][] = $router;
     }
 
     /**
