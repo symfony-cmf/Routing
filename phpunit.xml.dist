@@ -3,11 +3,12 @@
 <!-- http://www.phpunit.de/manual/current/en/appendixes.configuration.html -->
 <phpunit
     colors="true"
-    bootstrap="Tests/bootstrap.php">
+    bootstrap="../../../../../../app/bootstrap.php.cache">
 
     <php>
-        <server name="SYMFONY" value="../../../../symfony2/src" />
-    </php>    
+        <server name="SYMFONY" value="../../../symfony/src" />
+        <server name="KERNEL_DIR" value="../../../../../../app" />
+    </php>
 
     <testsuites>
         <testsuite name="ChainRoutingBundle Test Suite">
