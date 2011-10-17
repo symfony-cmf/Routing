@@ -1,6 +1,6 @@
 <?php
 
-namespace Symfony\Bundle\ChainRoutingBundle\DependencyInjection;
+namespace Symfony\Cmf\Bundle\ChainRoutingBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
