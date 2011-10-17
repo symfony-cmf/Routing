@@ -9,7 +9,7 @@
     </parameters>
 
     <services>
-        <service id="router.chain" class="%router.chain.class%" parent="router.real" />
+        <service id="router.chain" class="%router.chain.class%" parent="router.default" />
         <service id="router" alias="router.chain" />
     </services>
 </container>
