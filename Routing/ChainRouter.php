@@ -8,6 +8,7 @@ use Symfony\Component\Routing\RequestContextAwareInterface;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
+use Symfony\Bundle\FrameworkBundle\CacheWarmer\WarmableInterface;
 
 
 /**
@@ -18,8 +19,30 @@ use Symfony\Component\Routing\Exception\MethodNotAllowedException;
  * @author Henrik Bjornskov <henrik@bjrnskov.dk>
  * @author Magnus Nordlander <magnus@e-butik.se>
  */
-class ChainRouter implements RouterInterface
+class ChainRouter implements RouterInterface, WarmableInterface
 {
+    private $context;
+
+    /**
+     * Constructor.
+     *
+     * @param ContainerInterface $container A ContainerInterface instance
+     * @param mixed              $resource  The main resource to load
+     * @param RequestContext     $context   The context
+     */
+    public function __construct($container, $resource, RequestContext $context)
+    {
+        $this->container = $container;
+        $this->resource = $resource;
+        if ($context === null) throw new \Exception();
+        $this->context = $context;
+    }
+
+    public function getContext()
+    {
+        return $this->context;
+    }
+
     /**
      * @var array
      */
@@ -79,7 +102,7 @@ class ChainRouter implements RouterInterface
             }
         }
 
-        throw $methodNotFound ?: new ResourceNotFoundException();
+        throw $methodNotFound ?: new ResourceNotFoundException("None of the routers in the chain matched '$url'");
     }
 
     /**
@@ -110,10 +133,34 @@ class ChainRouter implements RouterInterface
      */
     public function setContext(RequestContext $context)
     {
+        $this->context = $context;
+
         foreach ($this->all() as $router) {
             if ($router instanceof RequestContextAwareInterface) {
                 $router->setContext($context);
             }
         }
+    }
+
+    /**
+     * check for each contained router if it can warmup
+     */
+    public function warmUp($cacheDir)
+    {
+        foreach ($this->all() as $router) {
+            if ($router instanceof WarmableInterface) {
+                $router->warmUp($cacheDir);
+            }
+        }
+    }
+
+    public function getRouteCollection()
+    {
+        // TODO: is this the right thing? can we optimize?
+        $collection = new \Symfony\Component\Routing\RouteCollection();
+        foreach ($this->all() as $router) {
+            $collection->addCollection($router->getRouteCollection());
+        }
+        return $collection;
     }
 }

@@ -50,8 +50,9 @@ class ChainRouterPass implements CompilerPassInterface
 
         $router = $container->getDefinition('router.chain');
 
-        if ($container->hasDefinition('router.real')) {
-            $router->addMethodCall('add', array(new Reference('router.real'), 50));
+        if ($container->hasDefinition('router.default')) {
+             // TODO: make it configurable if we want to add the router.default and allow to specify priority
+            $router->addMethodCall('add', array(new Reference('router.default'), 100));
         }
 
         foreach ($container->findTaggedServiceIds('router') as $id => $attributes) {

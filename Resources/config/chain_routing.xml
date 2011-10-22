@@ -9,7 +9,15 @@
     </parameters>
 
     <services>
-        <service id="router.chain" class="%router.chain.class%" parent="router.default" />
+        <service id="router.chain" class="%router.chain.class%">
+            <argument type="service" id="service_container" />
+            <argument>%router.resource%</argument>
+            <argument type="service" id="router.request_context" on-invalid="ignore" />
+        </service>
+
+        <!-- TODO: we should not put this here but document to put this into the main configuration.
+             Then people could use this router without necessarily making it the main router
+        -->
         <service id="router" alias="router.chain" />
     </services>
 </container>
