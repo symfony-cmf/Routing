@@ -8,6 +8,9 @@ use Symfony\Component\Routing\RequestContext;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Cmf\Bundle\ChainRoutingBundle\Controller\ControllerResolver;
 
+/**
+ * A router that reads entries from a Object-Document Mapper store.
+ */
 class ContentRouter implements RouterInterface
 {
     protected $om;
@@ -38,24 +41,28 @@ class ContentRouter implements RouterInterface
      * Returns an array of parameter like this
      *
      * array(
-     *   "_controller" => "NameSpace\Controller::action", 
+     *   "_controller" => "NameSpace\Controller::action",
      *   "reference" => $document,
      * )
      *
-     * @param string $url
-     * @return array
+     * @throws ResourceNotFoundException If the requested url does not exist in the ODM
+     * @throws MethodNotAllowedException If the resource was found but the request method is not allowed
+     *
+     * @param string $url the full requested url. TODO: what about language in url and things?
+     *
+     * @return array as described above
      */
     public function match($url)
     {
         $document = $this->om->find(null, $url);
 
-        if (!$document  instanceof RouteObjectInterface) {
-            return false;
+        if (!$document instanceof RouteObjectInterface) {
+            throw new \Symfony\Component\Routing\Exception\ResourceNotFoundException("No entry or not a route at '$url'");
         }
 
         $defaults = $this->resolver->getController($document);
         if (empty($defaults['_controller'])) {
-            return false;
+            throw new \Symfony\Component\Routing\Exception\ResourceNotFoundException("The resolver was not able to determine a controller for '$url'");;
         }
 
         $defaults['reference'] = $document->getReference();

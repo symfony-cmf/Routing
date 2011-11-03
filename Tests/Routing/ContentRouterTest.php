@@ -72,6 +72,9 @@ class ContentRouterTest extends CmfUnitTestCase
         $this->assertEquals($expected, $this->router->match($url_alias));
     }
 
+    /**
+     * @expectedException Symfony\Component\Routing\Exception\ResourceNotFoundException
+     */
     public function testNoNodeMatch()
     {
         $url_alias = "/company/more_no_match";
