@@ -21,11 +21,21 @@ class ContentRouter implements RouterInterface
     {
         $this->context = $context;
     }
+    public function getContext()
+    {
+        return $this->context;
+    }
 
     public function generate($name, $parameters = array(), $absolute = false)
     {
         /* TODO */
     }
+    public function getRouteCollection()
+    {
+        /* TODO */
+        return new \Symfony\Component\Routing\RouteCollection();
+    }
+
 
     public function setObjectManager(ObjectManager $om)
     {
