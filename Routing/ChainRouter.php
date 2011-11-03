@@ -8,7 +8,7 @@ use Symfony\Component\Routing\RequestContextAwareInterface;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
-use Symfony\Bundle\FrameworkBundle\CacheWarmer\WarmableInterface;
+use Symfony\Component\HttpKernel\CacheWarmer\WarmableInterface;
 
 
 /**
@@ -22,21 +22,6 @@ use Symfony\Bundle\FrameworkBundle\CacheWarmer\WarmableInterface;
 class ChainRouter implements RouterInterface, WarmableInterface
 {
     private $context;
-
-    /**
-     * Constructor.
-     *
-     * @param ContainerInterface $container A ContainerInterface instance
-     * @param mixed              $resource  The main resource to load
-     * @param RequestContext     $context   The context
-     */
-    public function __construct($container, $resource, RequestContext $context)
-    {
-        $this->container = $container;
-        $this->resource = $resource;
-        if ($context === null) throw new \Exception();
-        $this->context = $context;
-    }
 
     public function getContext()
     {
