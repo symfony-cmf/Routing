@@ -10,12 +10,21 @@ use Symfony\Cmf\Bundle\ChainRoutingBundle\Controller\ControllerResolver;
 
 /**
  * A router that reads entries from a Object-Document Mapper store.
+ *
+ * @author Philippo de Santis
+ * @author David Buchmann
  */
 class ContentRouter implements RouterInterface
 {
     protected $om;
     protected $resolver;
     protected $context;
+
+    public function __construct(ObjectManager $om, ControllerResolver $resolver)
+    {
+        $this->setObjectManager($om);
+        $this->setControllerResolver($resolver);
+    }
 
     public function setContext(RequestContext $context)
     {
@@ -26,9 +35,13 @@ class ContentRouter implements RouterInterface
         return $this->context;
     }
 
+    /**
+     * @throws \Symfony\Component\Routing\Exception\RouteNotFoundException If there is no such route in the database
+     */
     public function generate($name, $parameters = array(), $absolute = false)
     {
         /* TODO */
+        throw new \Symfony\Component\Routing\Exception\RouteNotFoundException;
     }
     public function getRouteCollection()
     {
@@ -44,6 +57,7 @@ class ContentRouter implements RouterInterface
 
     public function setControllerResolver(ControllerResolver $resolver)
     {
+        // TODO: allow more than 1 resolver
         $this->resolver = $resolver;
     }
 
@@ -64,6 +78,7 @@ class ContentRouter implements RouterInterface
      */
     public function match($url)
     {
+        // TODO: optionally inject the document/entity class name so this can work with ORM too
         $document = $this->om->find(null, $url);
 
         if (!$document instanceof RouteObjectInterface) {

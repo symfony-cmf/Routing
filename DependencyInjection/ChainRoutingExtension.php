@@ -33,6 +33,8 @@ class ChainRoutingExtension extends Extension
         $container->setParameter('symfony_cmf_controllers_by_alias', $controllers_by_alias);
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('chain_routing.xml');
+        // TODO: make optional
+        $loader->load('cmf_routing.xml');
     }
 
     /**
