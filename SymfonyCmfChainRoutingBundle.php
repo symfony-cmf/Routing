@@ -9,7 +9,7 @@ use Symfony\Cmf\Bundle\ChainRoutingBundle\DependencyInjection\Compiler\ChainRout
 /**
  * Bundle class
  */
-class ChainRoutingBundle extends Bundle
+class SymfonyCmfChainRoutingBundle extends Bundle
 {
     /**
      * @param ContainerBuilder $container
