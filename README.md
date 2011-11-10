@@ -16,19 +16,19 @@ For example, the cmf router is loaded with
     <service id="symfony_cmf_router.content_router" class="%symfony_cmf_router.content_router_class%">
         <tag name="router" priority="200" />
 
-("Symfony documentation for DependencyInjection tags.")[http://symfony.com/doc/2.0/reference/dic_tags.html]
+[Symfony documentation for DependencyInjection tags.](http://symfony.com/doc/2.0/reference/dic_tags.html)
 
 ## TODO
 
 * More configuration for the chain router
-** Should the chain router replace the default symfony router?
-** Put the default_router of symfony into the chain? At what priority?
-** Allow a map of router service names to priorities as alternative to the tags
+  * Should the chain router replace the default symfony router?
+  * Put the default_router of symfony into the chain? At what priority?
+  * Allow a map of router service names to priorities as alternative to the tags
 * CMF content router
-** Implement generate and getRouteCollection
-** Name is badly chosen, it is a database router, not a content router
-** Configuration for the entity/document class name so it can work with ORM too
-** More options for the Controller Resolver?
+  * Implement generate and getRouteCollection
+  * Name is badly chosen, it is a database router, not a content router
+  * Configuration for the entity/document class name so it can work with ORM too
+  * More options for the Controller Resolver?
 * More documentation
 
 ## Authors
