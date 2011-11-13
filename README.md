@@ -66,31 +66,46 @@ of a database. If you want to use this with the phpcr-odm, all you need to do
 is specify configuration for the controller resolvers. If you want to change
 something, have a look into Routing/DoctrineRouter.php
 
-The router looks for the url in the database and asks the returned entity for
-the related content. From that content, the router is determined. (FIXME: what
-about controller with no content?)
-The router needs a ControllerResolver that can tell from the content which router
+The router looks for the url in the database and determines the controller with
+the help of this database object. It then specifies this controller for the
+request and if the object returns a reference content object, this is passed as
+argument to the controller.
+The router uses ControllerResolver that can tell from the content which router
 to call. The router will then be called with the content entity as argument.
 
 If you do not use phpcr-odm, you might need to specify the class for the route
 entity (in phpcr-odm, the class is automatically detected).
 
-To configure the resolvers, you can specify the following
+To configure the resolvers, you can specify mappings. Presence of each of the
+mappings makes the DI container inject the respective resolver into the
+DoctrineRouter.
+
+The possible mappings are:
+* Alias: requires the route document to return a 'type' value in getRouteDefaults()
+* Class: requires the route document to have a reference content, the class
+    name is the class of that content document.
+* TODO: redirect controller
+* TODO: explicit template and content
+* TODO: template_by_class
+* TODO: generic controller with output directed by annotations?
+
+If the route returns a field '_controller' in getRouteDefaults, this router is used.
 
     symfony_cmf_chain_routing:
         doctrine:
             controllers_by_alias:
-                static_pages: sandbox_main.controller:indexAction
                 editablestatic: sandbox_main.controller:indexAction
+            controllers_by_class:
+                Symfony\Cmf\Bundle\ContentBundle\Document\StaticContent: symfony_cmf_content.controller::indexAction
+
             # optional, to be used when routing with a doctrine object manager
             # that needs a class name for find. phpcr-odm can guess the name.
-            # route_entity_class:
+            # route_entity_class: Fully\Qualified\Classname
 
 ## TODO
 
 * CMF content router
   * Implement generate and getRouteCollection
-  * Allow more than one Controller Resolver and add Interface
 
 ## Authors
 

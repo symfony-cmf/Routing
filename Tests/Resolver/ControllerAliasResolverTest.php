@@ -3,9 +3,9 @@
 namespace Symfony\Cmf\Bundle\ChainRoutingBundle\Tests\Controller;
 
 use Symfony\Cmf\Bundle\ChainRoutingBundle\Test\CmfUnitTestCase;
-use Symfony\Cmf\Bundle\ChainRoutingBundle\Controller\ControllerResolver;
+use Symfony\Cmf\Bundle\ChainRoutingBundle\Resolver\ControllerAliasResolver;
 
-class ControllerResolverTest extends CmfUnitTestCase
+class ControllerAliasResolverTest extends CmfUnitTestCase
 {
     public function setUp()
     {
@@ -14,7 +14,7 @@ class ControllerResolverTest extends CmfUnitTestCase
 
         $mapping = array('static_pages' => 'symfony_cmf_content.controller:indexAction');
 
-        $this->resolver = new ControllerResolver($mapping);
+        $this->resolver = new ControllerAliasResolver($mapping);
     }
 
     public function testControllerFoundInMapping()
@@ -23,10 +23,7 @@ class ControllerResolverTest extends CmfUnitTestCase
                 ->method('getRouteDefaults')
                 ->will($this->returnValue(array('type' => 'static_pages', '_controller' => '::default.html.twig')));
 
-        $expected = array('_controller' => 'symfony_cmf_content.controller:indexAction',
-                         'type' => 'static_pages');
-
-        $this->assertEquals($expected, $this->resolver->getController($this->document));
+        $this->assertEquals('symfony_cmf_content.controller:indexAction', $this->resolver->getController($this->document));
     }
 
     public function testControllerNotFoundInMapping()
@@ -35,7 +32,7 @@ class ControllerResolverTest extends CmfUnitTestCase
                 ->method('getRouteDefaults')
                 ->will($this->returnValue(array('type' => 'unknown_route', '_controller' => '::default.html.twig')));
 
-        
+
         $this->assertEquals(null, $this->resolver->getController($this->document));
     }
 }

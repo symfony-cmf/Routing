@@ -39,17 +39,23 @@ class SymfonyCmfChainRoutingExtension extends Extension
 
         $config = $processor->processConfiguration($configuration, $configs);
 
-        $container->setParameter($this->getAlias().'.controllers_by_alias', $config['doctrine']['controllers_by_alias']);
+        /* set up the DoctrineRouter - not used unless it is mentioned in the routers_by_id map */
         $container->setParameter($this->getAlias().'.route_entity_class', $config['doctrine']['route_entity_class']);
+        $container->setParameter($this->getAlias().'.controllers_by_alias', $config['doctrine']['controllers_by_alias']);
+        $container->setParameter($this->getAlias().'.controllers_by_class', $config['doctrine']['controllers_by_class']);
+        $loader->load('cmf_routing.xml');
+        $doctrine = $container->getDefinition('symfony_cmf_chain_routing.doctrine_router');
+        if (! empty($config['doctrine']['controllers_by_alias'])) {
+            $doctrine->addMethodCall('addControllerResolver', array(new Reference($this->getAlias().'.resolver_controllers_by_alias')));
+        }
 
+        /* set up the chain router */
         $loader->load('chain_routing.xml');
+        // only replace the default router by overwriting the 'router' alias if config tells us to
         if ($config['chain']['replace_symfony_router']) {
             $container->setAlias('router', 'symfony_cmf_chain_routing.router');
         }
-
-        // not used unless in the routers_by_id map
-        $loader->load('cmf_routing.xml');
-
+        // add the routers defined in the configuration mapping
         $router = $container->getDefinition('symfony_cmf_chain_routing.router');
         foreach($config['chain']['routers_by_id'] as $id => $priority) {
             $router->addMethodCall('add', array(new Reference($id), $priority));

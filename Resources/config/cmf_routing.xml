@@ -6,19 +6,22 @@
     <parameters>
         <parameter key="symfony_cmf_chain_routing.doctrine_router_class">Symfony\Cmf\Bundle\ChainRoutingBundle\Routing\DoctrineRouter</parameter>
         <parameter key="symfony_cmf_chain_routing.object_manager_id">doctrine.phpcr_odm.default_document_manager</parameter>
-        <parameter key="symfony_cmf_chain_routing.controller_resolver_class">Symfony\Cmf\Bundle\ChainRoutingBundle\Controller\ControllerResolver</parameter>
+        <parameter key="symfony_cmf_chain_routing.resolver_controllers_by_alias_class">Symfony\Cmf\Bundle\ChainRoutingBundle\Resolver\ControllerAliasResolver</parameter>
+        <parameter key="symfony_cmf_chain_routing.resolver_controllers_by_class_class">Symfony\Cmf\Bundle\ChainRoutingBundle\Resolver\ControllerClassResolver</parameter>
     </parameters>
 
     <services>
 
-        <service id="symfony_cmf_chain_routing.controller_resolver" class="%symfony_cmf_chain_routing.controller_resolver_class%">
+        <service id="symfony_cmf_chain_routing.resolver_controllers_by_alias" class="%symfony_cmf_chain_routing.resolver_controllers_by_alias_class%">
             <argument>%symfony_cmf_chain_routing.controllers_by_alias%</argument>
+        </service>
+        <service id="symfony_cmf_chain_routing.resolver_controllers_by_class" class="%symfony_cmf_chain_routing.resolver_controllers_by_class_class%">
+            <argument>%symfony_cmf_chain_routing.controllers_by_class%</argument>
         </service>
 
         <service id="symfony_cmf_chain_routing.doctrine_router" class="%symfony_cmf_chain_routing.doctrine_router_class%">
             <argument type="service" id="doctrine_phpcr.odm.default_document_manager" />
             <!--FIXME: how to use a parameter to specify a service %symfony_cmf_chain_routing.object_manager_id%-->
-            <argument type="service" id="symfony_cmf_chain_routing.controller_resolver"/>
             <argument>%symfony_cmf_chain_routing.route_entity_class%</argument>
             <argument>%symfony_cmf_core.routing_basepath%</argument>
         </service>

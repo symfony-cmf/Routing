@@ -7,8 +7,7 @@ use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Doctrine\Common\Persistence\ObjectManager;
-// TODO: Interface this!
-use Symfony\Cmf\Bundle\ChainRoutingBundle\Controller\ControllerResolver;
+use Symfony\Cmf\Bundle\ChainRoutingBundle\Resolver\ControllerResolverInterface;
 
 /**
  * A router that reads entries from a Object-Document Mapper store.
@@ -27,15 +26,13 @@ use Symfony\Cmf\Bundle\ChainRoutingBundle\Controller\ControllerResolver;
 class DoctrineRouter implements RouterInterface
 {
     protected $om;
-    protected $resolver;
+    protected $resolvers;
     protected $routeClass;
     protected $idPrefix;
     protected $context;
 
     /**
      * @param ObjectManager $om The doctrine entity resp. document manager
-     * @param ControllerResolver $resolver The helper to resolve controller
-     *      responsible for the content found at the matched url
      * @param string $routeClass Class name to pass to $om->find for
      *      repositories that require the class of the Entity/Document to find.
      *      Automatically detected on phpcr-odm.
@@ -44,12 +41,23 @@ class DoctrineRouter implements RouterInterface
      *      containing the route nodes. This must start with / and may not end
      *      with / as the url passed in will start with /.
      */
-    public function __construct(ObjectManager $om, ControllerResolver $resolver, $routeClass = null, $idPrefix = '')
+    public function __construct(ObjectManager $om, $routeClass = null, $idPrefix = '')
     {
         $this->setObjectManager($om);
-        $this->setControllerResolver($resolver);
         $this->routeClass = $routeClass;
         $this->idPrefix = $idPrefix;
+    }
+
+    /**
+     * Add as many resolvers as you want, they are asked for the controller in
+     * the order they are added here.
+     *
+     * @param ControllerResolverInterface $resolver a helper to resolve the
+     *      controller responsible for the matched url
+     */
+    public function addControllerResolver(ControllerResolverInterface $resolver)
+    {
+        $this->resolvers[] = $resolver;
     }
 
     // inherit doc
@@ -88,24 +96,23 @@ class DoctrineRouter implements RouterInterface
         $this->om = $om;
     }
 
-    public function setControllerResolver(ControllerResolver $resolver)
-    {
-        // TODO: allow more than 1 resolver
-        $this->resolver = $resolver;
-    }
-
     /**
      * Returns an array of parameter like this
      *
      * array(
-     *   "_controller" => "NameSpace\Controller::action",
+     *   "_controller" => "NameSpace\Controller::indexAction",
      *   "reference" => $document,
      * )
+     *
+     * The controller can be either the fully qualified class name or the
+     * service name of a controller that is registered as a service. In both
+     * cases, the action to call on that controller is appended, separated with
+     * two colons.
      *
      * @throws ResourceNotFoundException If the requested url does not exist in the ODM
      * @throws MethodNotAllowedException If the resource was found but the request method is not allowed
      *
-     * @param string $url the full requested url. TODO: what about language in url and things?
+     * @param string $url the full requested url. TODO: is locale eaten away or kept too?
      *
      * @return array as described above
      */
@@ -117,12 +124,21 @@ class DoctrineRouter implements RouterInterface
             throw new \Symfony\Component\Routing\Exception\ResourceNotFoundException("No entry or not a route at '$url'");
         }
 
-        $defaults = $this->resolver->getController($document);
+        $defaults = $document->getRouteDefaults();
+
         if (empty($defaults['_controller'])) {
-            throw new \Symfony\Component\Routing\Exception\ResourceNotFoundException("The resolver was not able to determine a controller for '$url'");;
+            foreach($this->resolvers as $resolver) {
+                $controller = $resolver->getController($document);
+                if ($controller !== false) break;
+            }
+            if (false === $controller) {
+                throw new \Symfony\Component\Routing\Exception\ResourceNotFoundException("The resolver was not able to determine a controller for '$url'");;
+            }
+            $defaults['_controller'] = $controller;
         }
 
         $defaults['reference'] = $document->getReference();
+        $defaults['_route'] = 'whatever'; //FIXME: what is this? without, we get an undefined index in RouterListener::onKernelRequest
 
         return $defaults;
     }

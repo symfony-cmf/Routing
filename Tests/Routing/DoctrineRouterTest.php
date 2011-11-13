@@ -13,11 +13,11 @@ class DoctrineRouterTest extends CmfUnitTestCase
         $this->document = $this->buildMock('Symfony\Cmf\Bundle\ChainRoutingBundle\Routing\RouteObjectInterface');
         $this->loader = $this->buildMock("Symfony\Component\Config\Loader\LoaderInterface");
         $this->om = $this->buildMock("Doctrine\Common\Persistence\ObjectManager");
-        $this->resolver = $this->buildMock('Symfony\Cmf\Bundle\ChainRoutingBundle\Controller\ControllerResolver', array('getController'));
+        $this->resolver = $this->buildMock('Symfony\Cmf\Bundle\ChainRoutingBundle\Resolver\ControllerResolverInterface', array('getController'));
 
-        $this->router = new DoctrineRouter($this->om, $this->resolver);
+        $this->router = new DoctrineRouter($this->om);
         $this->router->setObjectManager($this->om);
-        $this->router->setControllerResolver($this->resolver);
+        $this->router->addControllerResolver($this->resolver);
     }
 
     public function testMatch()
@@ -34,13 +34,12 @@ class DoctrineRouterTest extends CmfUnitTestCase
                 ->will($this->returnValue($this->node));
 
         $expected = array('_controller' => 'NameSpace\Controller::action',
-                                                'type' => 'found',
-                                                'reference' => $this->document);
+                          'reference' => $this->document);
 
         $this->resolver->expects($this->once())
                 ->method('getController')
                 ->with($this->node)
-                ->will($this->returnValue($expected));
+                ->will($this->returnValue('NameSpace\Controller::action'));
 
         $results = $this->router->match($url_alias);
 
@@ -54,11 +53,14 @@ class DoctrineRouterTest extends CmfUnitTestCase
         $this->node->expects($this->once())
                 ->method('getReference')
                 ->will($this->returnValue(null));
+        $this->node->expects($this->once())
+                ->method('getRouteDefaults')
+                ->will($this->returnValue(array('type' => 'found')));
 
         $this->resolver->expects($this->once())
                 ->method('getController')
                 ->with($this->document)
-                ->will($this->returnValue(array('_controller' => 'NameSpace\Controller::action', 'type' => 'found')));
+                ->will($this->returnValue('NameSpace\Controller::action'));
 
         $this->om->expects($this->once())
                 ->method('find')
