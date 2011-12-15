@@ -45,7 +45,7 @@ class Configuration implements ConfigurationInterface
                             ->useAttributeAsKey('alias')
                             ->prototype('scalar')
                         ->end()->end()
-                        ->scalarNode('route_entity_class')->defaultNull()->end()
+                        ->scalarNode('route_entity_class')->end()
                     ->end()
                 ->end()
         ->end();

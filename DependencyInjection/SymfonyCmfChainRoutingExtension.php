@@ -40,12 +40,15 @@ class SymfonyCmfChainRoutingExtension extends Extension
         $config = $processor->processConfiguration($configuration, $configs);
 
         /* set up the DoctrineRouter - not used unless it is mentioned in the routers_by_id map */
-        $container->setParameter($this->getAlias().'.route_entity_class', $config['doctrine']['route_entity_class']);
         $container->setParameter($this->getAlias().'.controllers_by_alias', $config['doctrine']['controllers_by_alias']);
         $container->setParameter($this->getAlias().'.controllers_by_class', $config['doctrine']['controllers_by_class']);
         $loader->load('cmf_routing.xml');
-        $doctrine = $container->getDefinition('symfony_cmf_chain_routing.doctrine_router');
-        if (! empty($config['doctrine']['controllers_by_alias'])) {
+        if (isset($config['doctrine']['route_entity_class'])) {
+            $container->setParameter($this->getAlias().'.route_entity_class', $config['doctrine']['route_entity_class']);
+        }
+        if (isset($config['doctrine']['controllers_by_alias'])) {
+            // no use to have the resolver if no alias are defined
+            $doctrine = $container->getDefinition($this->getAlias().'.doctrine_router');
             $doctrine->addMethodCall('addControllerResolver', array(new Reference($this->getAlias().'.resolver_controllers_by_alias')));
         }
 
