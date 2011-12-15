@@ -16,9 +16,20 @@ interface RouteObjectInterface
      * If there is no specific content for this url (i.e. its an "application"
      * page), may return null.
      *
+     * To interoperate with the standard Symfony\Cmf\Bundle\ContentBundle\Document\StaticContent
+     * the instance MUST store the property in the field <code>routeContent</code>
+     * to have referrer resolution work.
+     *
      * @return object the document or entity this route entry points to
      */
-    function getReference();
+    function getRouteContent();
+
+    /**
+     * Get the path for this route. The path may be prepended with a prefix -
+     * in the case of phpcr the ID (full repository path) will work if you
+     * correctly configure the DoctrineRouter with that prefix.
+     */
+    function getPath();
 
     /**
      * To work with the ControllerAliasResolver, this must at least contain

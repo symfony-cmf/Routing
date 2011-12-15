@@ -35,7 +35,7 @@ class Route implements RouteObjectInterface
      *
      * @PHPCRODM\ReferenceOne
      */
-    private $reference;
+    private $routeContent;
 
     /**
      * Controller alias for rendering the target content, to be used with the
@@ -67,9 +67,9 @@ class Route implements RouteObjectInterface
     /**
      * Set the document this url points to
      */
-    public function setReference($document)
+    public function setRouteContent($document)
     {
-        $this->reference = $document;
+        $this->routeContent = $document;
     }
     /**
      * Get the content document this route entry stands for. If non-null,
@@ -81,9 +81,9 @@ class Route implements RouteObjectInterface
      *
      * @return object the document or entity this route entry points to
      */
-    public function getReference()
+    public function getRouteContent()
     {
-        return $this->reference;
+        return $this->routeContent;
     }
 
     /**

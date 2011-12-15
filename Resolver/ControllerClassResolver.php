@@ -30,7 +30,7 @@ class ControllerClassResolver implements ControllerResolverInterface
      */
     public function getController(RouteObjectInterface $document)
     {
-        $content = $document->getReference();
+        $content = $document->getRouteContent();
         if (null == $content) {
             return false;
         }

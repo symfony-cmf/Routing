@@ -74,14 +74,34 @@ class DoctrineRouter implements RouterInterface
     /**
      * {@inheritDoc}
      *
+     * @param string $name ignored
+     * @param array $parameters must contain the field 'content' with the
+     *      document instance to get the route for
+     *
      * @throws RouteNotFoundException If there is no such route in the database
      */
     public function generate($name, $parameters = array(), $absolute = false)
     {
-        /* TODO */
-        // we have to use the $this->idPrefix here too i guess
-        throw new \Symfony\Component\Routing\Exception\RouteNotFoundException;
+        if (! isset($parameters['content'])) {
+            throw new RouteNotFoundException;
+        }
+
+        $routes = $parameters['content']->getRoutes();
+        if (empty($routes)) {
+            throw new RouteNotFoundException('Document has no route: '.$parameters['content']->path);
+        }
+        $route = $routes->first();
+        if (! $route instanceof RouteObjectInterface) {
+            throw new RouteNotFoundException('Route of this document is not instance of Document\\Route but: '.get_class($route));
+        }
+
+        $url = substr($route->getPath(), strlen($this->idPrefix));
+        if (empty($url)) {
+            $url = '/';
+        }
+        return $this->context->getBaseUrl() . $url;
     }
+
     public function getRouteCollection()
     {
         /* TODO */
@@ -118,17 +138,17 @@ class DoctrineRouter implements RouterInterface
      */
     public function match($url)
     {
-        $document = $this->om->find($this->routeClass, $this->idPrefix . $url);
+        $route = $this->findRouteForUrl($url);
 
-        if (!$document instanceof RouteObjectInterface) {
+        if (!$route instanceof RouteObjectInterface) {
             throw new \Symfony\Component\Routing\Exception\ResourceNotFoundException("No entry or not a route at '$url'");
         }
 
-        $defaults = $document->getRouteDefaults();
+        $defaults = $route->getRouteDefaults();
 
         if (empty($defaults['_controller'])) {
             foreach($this->resolvers as $resolver) {
-                $controller = $resolver->getController($document);
+                $controller = $resolver->getController($route);
                 if ($controller !== false) break;
             }
             if (false === $controller) {
@@ -137,10 +157,26 @@ class DoctrineRouter implements RouterInterface
             $defaults['_controller'] = $controller;
         }
 
-        $defaults['reference'] = $document->getReference();
+        $defaults['page'] = $route->getRouteContent();
+        $defaults['path'] = $url; // TODO: get rid of this
         $defaults['_route'] = 'whatever'; //FIXME: what is this? without, we get an undefined index in RouterListener::onKernelRequest
 
         return $defaults;
+    }
+
+    /**
+     * Find the route object for this url. For phpcr-odm this is simply
+     * the repository path.
+     *
+     * Overwrite this method for other ODM or ORM repositories.
+     *
+     * @param $url The url to find
+     *
+     * @return the RouteObjectInterface object for this url or null if none is found
+     */
+    protected function findRouteForUrl($url)
+    {
+        return $this->om->find($this->routeClass, $this->idPrefix . $url);
     }
 
 }
