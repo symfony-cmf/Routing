@@ -13,7 +13,7 @@ interface RouteAwareInterface
      *
      * Note: For PHPCR, as explained in RouteObjectInterface the route must use
      * the routeContent field to store the reference to the content so you can
-     * get the routes with @Referrers(filter="routeContent")
+     * get the routes with Referrers(filter="routeContent")
      *
      * @return array of RouteObjectInterface instances that point to this content
      */

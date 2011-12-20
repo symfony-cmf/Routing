@@ -176,7 +176,14 @@ class DoctrineRouter implements RouterInterface
      */
     protected function findRouteForUrl($url)
     {
-        return $this->om->find($this->routeClass, $this->idPrefix . $url);
+        try {
+            return $this->om->find($this->routeClass, $this->idPrefix . $url);
+        } catch(\PHPCR\RepositoryException $e) {
+            // TODO: how to determine whether this is a relevant exception or not?
+            // for example, getting /my//test (note the double /) leads to an irrelevant exception
+            // but if the phpcr backend is down for example, we probably want to know it.
+            return null;
+        }
     }
 
 }
