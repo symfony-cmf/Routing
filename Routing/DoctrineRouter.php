@@ -25,6 +25,11 @@ use Symfony\Cmf\Bundle\ChainRoutingBundle\Resolver\ControllerResolverInterface;
  */
 class DoctrineRouter implements RouterInterface
 {
+    /**
+     * key for the request attribute that contains the content document if this
+     * route has one associated
+     */
+    const CONTENT_KEY = 'page';
     protected $om;
     protected $resolvers;
     protected $routeClass;
@@ -157,7 +162,7 @@ class DoctrineRouter implements RouterInterface
             $defaults['_controller'] = $controller;
         }
 
-        $defaults['page'] = $route->getRouteContent();
+        $defaults[self::CONTENT_KEY] = $route->getRouteContent();
         $defaults['path'] = $url; // TODO: get rid of this
         $defaults['_route'] = 'whatever'; //FIXME: what is this? without, we get an undefined index in RouterListener::onKernelRequest
 

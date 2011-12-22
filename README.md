@@ -2,10 +2,12 @@
 
 This bundle contains a replacement for the default Symfony Router. As the name
 implies, the chain router registers a list of routers that it tries by
-priority to match and generate routes.
+priority to match and generate routes. One of the routers in that chain can of
+course be the default router so you can still use the standard way for some of
+your routes.
 
 Additionally, this bundle delivers useful router implementations. Currently,
-there is the DoctrineRouter that routes based on doctrine database entities
+there is the *DoctrineRouter* that routes based on doctrine database entities
 or documents.
 
 ## Installation
@@ -61,20 +63,26 @@ See also [Symfony documentation for DependencyInjection tags.](http://symfony.co
 
 ## Doctrine Router
 
-This implementation of a router generates url and matches requests with content
+This implementation of a router generates urls and matches requests with content
 of a database. If you want to use this with the phpcr-odm, all you need to do
 is specify configuration for the controller resolvers. If you want to change
 something, have a look into Routing/DoctrineRouter.php
 
-The router looks for the url in the database and determines the controller with
-the help of this database object. It then specifies this controller for the
-request and if the object returns a reference content object, this is passed as
-argument to the controller.
-The router uses ControllerResolver that can tell from the content which router
-to call. The router will then be called with the content entity as argument.
+### Match Process
 
-If you do not use phpcr-odm, you might need to specify the class for the route
-entity (in phpcr-odm, the class is automatically detected).
+* Try to find a RouteObjectInterface document with the id equal to a
+    configurable prefix and the requested url.
+* If route document does not provide the _controller, loop through the
+    ControllerResolverInterface list to find the controller
+* If the route document provides a content, set it as request attribute with
+    the name ``page``. (Use the constant DoctrineRouter::CONTENT_KEY in your
+    code.)
+
+Your controllers should expect the parameter $page in their ``Action`` methods.
+See Symfony\Cmf\Bundle\ContentBundle\Controller\ContentController for an
+example.
+
+### Configuration
 
 To configure the resolvers, you can specify mappings. Presence of each of the
 mappings makes the DI container inject the respective resolver into the
@@ -102,10 +110,21 @@ If the route returns a field '_controller' in getRouteDefaults, this router is u
             # that needs a class name for find. phpcr-odm can guess the name.
             # route_entity_class: Fully\Qualified\Classname
 
-## TODO
+### Customize
 
-* CMF content router
-  * Implement generate and getRouteCollection
+You can add more ControllerResolverInterface implementations if you have a case
+not handled by the provided ones.
+
+If you use an odm / orm different to phpcr-odm, you probably need to specify
+the class for the route entity (in phpcr-odm, the class is automatically
+detected).
+You might need to extend DoctrineRouter and overwrite findRouteForUrl to find
+route objects by URLs in your database.
+
+### TODO
+
+* CMF content router: Implement getRouteCollection
+* More mappers (see above)
 
 ## Authors
 

@@ -6,7 +6,7 @@
     <parameters>
         <parameter key="symfony_cmf_chain_routing.doctrine_router_class">Symfony\Cmf\Bundle\ChainRoutingBundle\Routing\DoctrineRouter</parameter>
         <parameter key="symfony_cmf_chain_routing.route_entity_class">Symfony\Cmf\Bundle\ChainRoutingBundle\Document\Route</parameter>
-        <parameter key="symfony_cmf_chain_routing.object_manager_id">doctrine.phpcr_odm.default_document_manager</parameter>
+        <parameter key="symfony_cmf_chain_routing.object_manager_id">doctrine_phpcr.odm.default_document_manager</parameter>
         <parameter key="symfony_cmf_chain_routing.resolver_controllers_by_alias_class">Symfony\Cmf\Bundle\ChainRoutingBundle\Resolver\ControllerAliasResolver</parameter>
         <parameter key="symfony_cmf_chain_routing.resolver_controllers_by_class_class">Symfony\Cmf\Bundle\ChainRoutingBundle\Resolver\ControllerClassResolver</parameter>
     </parameters>
