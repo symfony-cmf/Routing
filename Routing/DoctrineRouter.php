@@ -29,7 +29,12 @@ class DoctrineRouter implements RouterInterface
      * key for the request attribute that contains the content document if this
      * route has one associated
      */
-    const CONTENT_KEY = 'page';
+    const CONTENT_KEY = 'contentDocument';
+    /**
+     * key for the request attribute that contains the template this document
+     * wants to use
+     */
+    const CONTENT_TEMPLATE = 'contentTemplate';
     protected $om;
     protected $resolvers;
     protected $routeClass;
@@ -152,8 +157,9 @@ class DoctrineRouter implements RouterInterface
         $defaults = $route->getRouteDefaults();
 
         if (empty($defaults['_controller'])) {
+            // if content does not provide explicit controller, try to find it with one of the resolvers
             foreach($this->resolvers as $resolver) {
-                $controller = $resolver->getController($route);
+                $controller = $resolver->getController($route, $defaults);
                 if ($controller !== false) break;
             }
             if (false === $controller) {

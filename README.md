@@ -61,6 +61,7 @@ For example, the cmf router is loaded with
 
 See also [Symfony documentation for DependencyInjection tags.](http://symfony.com/doc/2.0/reference/dic_tags.html)
 
+
 ## Doctrine Router
 
 This implementation of a router generates urls and matches requests with content
@@ -72,13 +73,16 @@ something, have a look into Routing/DoctrineRouter.php
 
 * Try to find a RouteObjectInterface document with the id equal to a
     configurable prefix and the requested url.
-* If route document does not provide the _controller, loop through the
-    ControllerResolverInterface list to find the controller
+* If found, get the parameters with getRouteDefaults
+* If the parameters do not contain the field _controller, loop through the
+    ControllerResolverInterface list to find the controller. If none of the
+    resolver finds a controller, throw a ResourceNotFoundException
 * If the route document provides a content, set it as request attribute with
-    the name ``page``. (Use the constant DoctrineRouter::CONTENT_KEY in your
-    code.)
+    the name ``contentDocument``. (Use the constant DoctrineRouter::CONTENT_KEY
+    in your code.)
 
-Your controllers should expect the parameter $page in their ``Action`` methods.
+Your controllers should expect the parameter $contentDocument in their
+``Action`` methods.
 See Symfony\Cmf\Bundle\ContentBundle\Controller\ContentController for an
 example.
 
@@ -88,14 +92,24 @@ To configure the resolvers, you can specify mappings. Presence of each of the
 mappings makes the DI container inject the respective resolver into the
 DoctrineRouter.
 
-The possible mappings are:
-* Alias: requires the route document to return a 'type' value in getRouteDefaults()
-* Class: requires the route document to have a reference content, the class
-    name is the class of that content document.
-* TODO: redirect controller
-* TODO: explicit template and content
-* TODO: template_by_class
-* TODO: generic controller with output directed by annotations?
+The possible mappings are (in order of precedence):
+* (Explicit controller): If there is a _controller set in getRouteDefaults(),
+    it is used and no resolver is asked.
+* Explicit Template: requires the route document to return a 'template'
+    parameter in getRouteDefaults. The configured generic controller is
+    returned by the resolver.
+* Controller by alias: requires the route document to return a 'type' value in
+    getRouteDefaults()
+* Controller by class: requires the route document to return an object for
+    getRouteContent(). The content document is checked for being instanceof the
+    class names in the map and if matched that controller is returned.
+    Instanceof is used instead of direct lookup to work with proxy classes.
+* Template by class: requires the route document to return an object for
+    getRouteContent(). This will set the 'template' value in the $defaults
+    array for the configured generic controller.
+
+* **TODO**: redirect controller to send a redirection (i.e. short urls)
+* **TODO**: generic controller with output directed by annotations instead of explicit template?
 
 If the route returns a field '_controller' in getRouteDefaults, this router is used.
 
@@ -105,9 +119,13 @@ If the route returns a field '_controller' in getRouteDefaults, this router is u
                 editablestatic: sandbox_main.controller:indexAction
             controllers_by_class:
                 Symfony\Cmf\Bundle\ContentBundle\Document\StaticContent: symfony_cmf_content.controller::indexAction
+            generic_controller: symfony_cmf_content.controller::indexAction
+            templates_by_class:
+                Symfony\Cmf\Bundle\ContentBundle\Document\StaticContent: SymfonyCmfContentBundle:StaticContent:index.html.twig
+
 
             # optional, to be used when routing with a doctrine object manager
-            # that needs a class name for find. phpcr-odm can guess the name.
+            # that needs a class name for find. (phpcr-odm can guess that.)
             # route_entity_class: Fully\Qualified\Classname
 
 ### Customize
@@ -125,6 +143,7 @@ route objects by URLs in your database.
 
 * CMF content router: Implement getRouteCollection
 * More mappers (see above)
+* Route parameters. What about the _locale?
 
 ## Authors
 

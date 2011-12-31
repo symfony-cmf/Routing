@@ -15,11 +15,13 @@ interface ControllerResolverInterface
      * Retrieves the right controller for the given route $document.
      *
      * @param RouteObjectInterface $document the document or entity for the route
+     * @param array $defaults the getRouteDefaults array which may be altered by
+     *      the resolver
      *
      * @return string the controller to use with this route object including
      *      the action, i.e. symfony_cmf_content.controller:indexAction
      *      or false if the resolver can not determine the router
      */
-    public function getController(RouteObjectInterface $document);
+    function getController(RouteObjectInterface $document, array &$defaults);
 
 }

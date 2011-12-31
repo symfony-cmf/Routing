@@ -42,14 +42,21 @@ class SymfonyCmfChainRoutingExtension extends Extension
         /* set up the DoctrineRouter - not used unless it is mentioned in the routers_by_id map */
         $container->setParameter($this->getAlias().'.controllers_by_alias', $config['doctrine']['controllers_by_alias']);
         $container->setParameter($this->getAlias().'.controllers_by_class', $config['doctrine']['controllers_by_class']);
+        $container->setParameter($this->getAlias().'.generic_controller', $config['doctrine']['generic_controller']);
         $loader->load('cmf_routing.xml');
         if (isset($config['doctrine']['route_entity_class'])) {
             $container->setParameter($this->getAlias().'.route_entity_class', $config['doctrine']['route_entity_class']);
         }
+        $doctrine = $container->getDefinition($this->getAlias().'.doctrine_router');
+        // if any mappings are defined, set the respective resolvers
+        if (isset($config['doctrine']['generic_controller'])) {
+            $doctrine->addMethodCall('addControllerResolver', array(new Reference($this->getAlias().'.resolver_explicit_template')));
+        }
         if (isset($config['doctrine']['controllers_by_alias'])) {
-            // no use to have the resolver if no alias are defined
-            $doctrine = $container->getDefinition($this->getAlias().'.doctrine_router');
             $doctrine->addMethodCall('addControllerResolver', array(new Reference($this->getAlias().'.resolver_controllers_by_alias')));
+        }
+        if (isset($config['doctrine']['controllers_by_alias'])) {
+            $doctrine->addMethodCall('addControllerResolver', array(new Reference($this->getAlias().'.resolver_controllers_by_class')));
         }
 
         /* set up the chain router */

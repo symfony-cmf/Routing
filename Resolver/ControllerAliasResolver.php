@@ -25,11 +25,13 @@ class ControllerAliasResolver implements ControllerResolverInterface
     }
 
     /**
-     * Checks if the defaults specify a 'type' and if the injected map contains a controller
+     * If the defaults specify a 'type' and if the injected map contains a
+     * controller, returns that controller.
+     *
+     * {@inheritDoc}
      */
-    public function getController(RouteObjectInterface $document)
+    public function getController(RouteObjectInterface $document, array &$defaults)
     {
-        $defaults = $document->getRouteDefaults();
         if (! isset($defaults['type'])) {
             return false;
         }

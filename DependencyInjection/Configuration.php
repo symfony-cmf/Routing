@@ -45,6 +45,7 @@ class Configuration implements ConfigurationInterface
                             ->useAttributeAsKey('alias')
                             ->prototype('scalar')
                         ->end()->end()
+                        ->scalarNode('generic_controller')->defaultValue('symfony_cmf_content.controller::indexAction')->end()
                         ->scalarNode('route_entity_class')->end()
                     ->end()
                 ->end()
