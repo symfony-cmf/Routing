@@ -7,21 +7,26 @@
         <parameter key="symfony_cmf_chain_routing.doctrine_router_class">Symfony\Cmf\Bundle\ChainRoutingBundle\Routing\DoctrineRouter</parameter>
         <parameter key="symfony_cmf_chain_routing.route_entity_class">Symfony\Cmf\Bundle\ChainRoutingBundle\Document\Route</parameter>
         <parameter key="symfony_cmf_chain_routing.object_manager_id">doctrine_phpcr.odm.default_document_manager</parameter>
+        <parameter key="symfony_cmf_chain_routing.resolver_explicit_template_class">Symfony\Cmf\Bundle\ChainRoutingBundle\Resolver\ExplicitTemplateResolver</parameter>
         <parameter key="symfony_cmf_chain_routing.resolver_controllers_by_alias_class">Symfony\Cmf\Bundle\ChainRoutingBundle\Resolver\ControllerAliasResolver</parameter>
         <parameter key="symfony_cmf_chain_routing.resolver_controllers_by_class_class">Symfony\Cmf\Bundle\ChainRoutingBundle\Resolver\ControllerClassResolver</parameter>
-        <parameter key="symfony_cmf_chain_routing.resolver_explicit_template_class">Symfony\Cmf\Bundle\ChainRoutingBundle\Resolver\ExplicitTemplateResolver</parameter>
+        <parameter key="symfony_cmf_chain_routing.resolver_templates_by_class_class">Symfony\Cmf\Bundle\ChainRoutingBundle\Resolver\TemplateClassResolver</parameter>
     </parameters>
 
     <services>
 
+        <service id="symfony_cmf_chain_routing.resolver_explicit_template" class="%symfony_cmf_chain_routing.resolver_explicit_template_class%">
+            <argument>%symfony_cmf_chain_routing.generic_controller%</argument>
+        </service>
         <service id="symfony_cmf_chain_routing.resolver_controllers_by_alias" class="%symfony_cmf_chain_routing.resolver_controllers_by_alias_class%">
             <argument>%symfony_cmf_chain_routing.controllers_by_alias%</argument>
         </service>
         <service id="symfony_cmf_chain_routing.resolver_controllers_by_class" class="%symfony_cmf_chain_routing.resolver_controllers_by_class_class%">
             <argument>%symfony_cmf_chain_routing.controllers_by_class%</argument>
         </service>
-        <service id="symfony_cmf_chain_routing.resolver_explicit_template" class="%symfony_cmf_chain_routing.resolver_explicit_template_class%">
+        <service id="symfony_cmf_chain_routing.resolver_templates_by_class" class="%symfony_cmf_chain_routing.resolver_templates_by_class_class%">
             <argument>%symfony_cmf_chain_routing.generic_controller%</argument>
+            <argument>%symfony_cmf_chain_routing.templates_by_class%</argument>
         </service>
 
         <service id="symfony_cmf_chain_routing.doctrine_router" class="%symfony_cmf_chain_routing.doctrine_router_class%">

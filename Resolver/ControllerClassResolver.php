@@ -5,8 +5,10 @@ namespace Symfony\Cmf\Bundle\ChainRoutingBundle\Resolver;
 use Symfony\Cmf\Bundle\ChainRoutingBundle\Routing\RouteObjectInterface;
 
 /**
- * Decide the controller by a map from class name to controller name injected
- * into the resolver.
+ * Decide the controller by a map from class to controller name injected into
+ * the resolver. The comparison is done with instanceof to support proxy
+ * classes and such.
+ *
  * Only works with route objects that return a referenced content.
  *
  * @author David Buchmann

@@ -102,7 +102,8 @@ class DoctrineRouter implements RouterInterface
         }
         $route = $routes->first();
         if (! $route instanceof RouteObjectInterface) {
-            throw new RouteNotFoundException('Route of this document is not instance of Document\\Route but: '.get_class($route));
+            $hint = is_object($route) ? get_class($route) : gettype($route);
+            throw new RouteNotFoundException('Route of this document is not instance of RouteObjectInterface but: '.$hint);
         }
 
         $url = substr($route->getPath(), strlen($this->idPrefix));

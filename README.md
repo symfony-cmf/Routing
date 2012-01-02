@@ -105,8 +105,9 @@ The possible mappings are (in order of precedence):
     class names in the map and if matched that controller is returned.
     Instanceof is used instead of direct lookup to work with proxy classes.
 * Template by class: requires the route document to return an object for
-    getRouteContent(). This will set the 'template' value in the $defaults
-    array for the configured generic controller.
+    getRouteContent(). The content document is checked for being instanceof the
+    class names in the map and if matched that template will be set as
+    'template' in the $defaults and return the configured generic controller.
 
 * **TODO**: redirect controller to send a redirection (i.e. short urls)
 * **TODO**: generic controller with output directed by annotations instead of explicit template?
@@ -115,11 +116,11 @@ If the route returns a field '_controller' in getRouteDefaults, this router is u
 
     symfony_cmf_chain_routing:
         doctrine:
+            generic_controller: symfony_cmf_content.controller:indexAction
             controllers_by_alias:
                 editablestatic: sandbox_main.controller:indexAction
             controllers_by_class:
                 Symfony\Cmf\Bundle\ContentBundle\Document\StaticContent: symfony_cmf_content.controller::indexAction
-            generic_controller: symfony_cmf_content.controller::indexAction
             templates_by_class:
                 Symfony\Cmf\Bundle\ContentBundle\Document\StaticContent: SymfonyCmfContentBundle:StaticContent:index.html.twig
 
@@ -127,6 +128,9 @@ If the route returns a field '_controller' in getRouteDefaults, this router is u
             # optional, to be used when routing with a doctrine object manager
             # that needs a class name for find. (phpcr-odm can guess that.)
             # route_entity_class: Fully\Qualified\Classname
+
+To see some examples, please look at the [cmf-sandbox](https://github.com/symfony-cmf/cmf-sandbox)
+and specifically the routing fixtures loading.
 
 ### Customize
 
@@ -142,7 +146,6 @@ route objects by URLs in your database.
 ### TODO
 
 * CMF content router: Implement getRouteCollection
-* More mappers (see above)
 * Route parameters. What about the _locale?
 
 ## Authors
