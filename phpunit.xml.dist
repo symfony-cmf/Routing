@@ -20,6 +20,8 @@
         <whitelist addUncoveredFilesFromWhitelist="true">
             <directory>.</directory>
             <exclude>
+                <directory>DependencyInjection/</directory>
+                <directory>Document/</directory>
                 <directory>Resources/</directory>
                 <directory>Test/</directory>
                 <directory>Tests/</directory>

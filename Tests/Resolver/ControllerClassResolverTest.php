@@ -10,7 +10,7 @@ class ControllerClassResolverTest extends CmfUnitTestCase
     public function setUp()
     {
         $this->document = $this->buildMock('Symfony\Cmf\Bundle\ChainRoutingBundle\Routing\RouteObjectInterface',
-                                            array('getReference', 'getRouteDefaults'));
+                                            array('getRouteContent', 'getRouteDefaults', 'getPath'));
 
         $mapping = array('Symfony\Cmf\Bundle\ChainRoutingBundle\Tests\Controller\TargetDocument'
                             => 'symfony_cmf_content.controller:indexAction');
@@ -21,19 +21,34 @@ class ControllerClassResolverTest extends CmfUnitTestCase
     public function testControllerFoundInMapping()
     {
         $this->document->expects($this->once())
-                ->method('getReference')
+                ->method('getRouteContent')
                 ->will($this->returnValue(new TargetDocument));
 
-        $this->assertEquals('symfony_cmf_content.controller:indexAction', $this->resolver->getController($this->document));
+        $defaults = array();
+        $this->assertEquals('symfony_cmf_content.controller:indexAction', $this->resolver->getController($this->document, $defaults));
+        $this->assertEquals(array(), $defaults);
     }
 
     public function testControllerNotFoundInMapping()
     {
         $this->document->expects($this->once())
-                ->method('getReference')
+                ->method('getRouteContent')
                 ->will($this->returnValue(new UnknownDocument));
 
-        $this->assertEquals(null, $this->resolver->getController($this->document));
+        $defaults = array();
+        $this->assertEquals(null, $this->resolver->getController($this->document, $defaults));
+        $this->assertEquals(array(), $defaults);
+    }
+
+    public function testControllerNoContent()
+    {
+        $this->document->expects($this->once())
+            ->method('getRouteContent')
+            ->will($this->returnValue(null));
+
+        $defaults = array();
+        $this->assertEquals(null, $this->resolver->getController($this->document, $defaults));
+        $this->assertEquals(array(), $defaults);
     }
 }
 
