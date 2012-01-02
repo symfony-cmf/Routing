@@ -8,7 +8,9 @@ your routes.
 
 Additionally, this bundle delivers useful router implementations. Currently,
 there is the *DoctrineRouter* that routes based on doctrine database entities
-or documents.
+or documents. These services are only made available when explicitly enabled in
+the application configuration.
+
 
 ## Installation
 
@@ -69,6 +71,14 @@ of a database. If you want to use this with the phpcr-odm, all you need to do
 is specify configuration for the controller resolvers. If you want to change
 something, have a look into Routing/DoctrineRouter.php
 
+The minimum configuration required to load the doctrine router is to have enabled: true
+in your config.yml (if you do nothing about that, the doctrine router service will not
+be loaded at all and you can use the chain router with your own routers):
+
+    symfony_cmf_chain_routing:
+        doctrine:
+            enabled: true
+
 ### Match Process
 
 * Try to find a RouteObjectInterface document with the id equal to a
@@ -116,6 +126,7 @@ If the route returns a field '_controller' in getRouteDefaults, this router is u
 
     symfony_cmf_chain_routing:
         doctrine:
+            enabled: true
             generic_controller: symfony_cmf_content.controller:indexAction
             controllers_by_alias:
                 editablestatic: sandbox_main.controller:indexAction

@@ -39,31 +39,8 @@ class SymfonyCmfChainRoutingExtension extends Extension
 
         $config = $processor->processConfiguration($configuration, $configs);
 
-        /* set up the DoctrineRouter - not used unless it is mentioned in the routers_by_id map */
-        $container->setParameter($this->getAlias().'.generic_controller', $config['doctrine']['generic_controller']);
-        $container->setParameter($this->getAlias().'.controllers_by_alias', $config['doctrine']['controllers_by_alias']);
-        $container->setParameter($this->getAlias().'.controllers_by_class', $config['doctrine']['controllers_by_class']);
-        $container->setParameter($this->getAlias().'.templates_by_class', $config['doctrine']['templates_by_class']);
-        $loader->load('cmf_routing.xml');
-        if (isset($config['doctrine']['route_entity_class'])) {
-            $container->setParameter($this->getAlias().'.route_entity_class', $config['doctrine']['route_entity_class']);
-        }
-        $doctrine = $container->getDefinition($this->getAlias().'.doctrine_router');
-        // if any mappings are defined, set the respective resolvers
-        if (! empty($config['doctrine']['generic_controller'])) {
-            $doctrine->addMethodCall('addControllerResolver', array(new Reference($this->getAlias().'.resolver_explicit_template')));
-        }
-        if (! empty($config['doctrine']['controllers_by_alias'])) {
-            $doctrine->addMethodCall('addControllerResolver', array(new Reference($this->getAlias().'.resolver_controllers_by_alias')));
-        }
-        if (! empty($config['doctrine']['controllers_by_class'])) {
-            $doctrine->addMethodCall('addControllerResolver', array(new Reference($this->getAlias().'.resolver_controllers_by_class')));
-        }
-
-        if (! empty($config['doctrine']['generic_controller'])
-            && ! empty($config['doctrine']['templates_by_class'])
-        ) {
-            $doctrine->addMethodCall('addControllerResolver', array(new Reference($this->getAlias().'.resolver_templates_by_class')));
+        if ($config['doctrine']['enabled']) {
+            $this->setupDoctrineRouter($config, $container, $loader);
         }
 
         /* set up the chain router */
@@ -76,6 +53,42 @@ class SymfonyCmfChainRoutingExtension extends Extension
         $router = $container->getDefinition('symfony_cmf_chain_routing.router');
         foreach($config['chain']['routers_by_id'] as $id => $priority) {
             $router->addMethodCall('add', array(new Reference($id), $priority));
+        }
+    }
+
+    /**
+     * Set up the DoctrineRouter - only to be called if enabled is set to true
+     *
+     * @param $config the compiled configuration
+     * @param $container the container builder
+     * @param $loader the configuration loader
+     */
+    private function setupDoctrineRouter($config, $container, $loader)
+    {
+        $container->setParameter($this->getAlias() . '.generic_controller', $config['doctrine']['generic_controller']);
+        $container->setParameter($this->getAlias() . '.controllers_by_alias', $config['doctrine']['controllers_by_alias']);
+        $container->setParameter($this->getAlias() . '.controllers_by_class', $config['doctrine']['controllers_by_class']);
+        $container->setParameter($this->getAlias() . '.templates_by_class', $config['doctrine']['templates_by_class']);
+        $loader->load('cmf_routing.xml');
+        if (isset($config['doctrine']['route_entity_class'])) {
+            $container->setParameter($this->getAlias() . '.route_entity_class', $config['doctrine']['route_entity_class']);
+        }
+        $doctrine = $container->getDefinition($this->getAlias() . '.doctrine_router');
+        // if any mappings are defined, set the respective resolvers
+        if (!empty($config['doctrine']['generic_controller'])) {
+            $doctrine->addMethodCall('addControllerResolver', array(new Reference($this->getAlias() . '.resolver_explicit_template')));
+        }
+        if (!empty($config['doctrine']['controllers_by_alias'])) {
+            $doctrine->addMethodCall('addControllerResolver', array(new Reference($this->getAlias() . '.resolver_controllers_by_alias')));
+        }
+        if (!empty($config['doctrine']['controllers_by_class'])) {
+            $doctrine->addMethodCall('addControllerResolver', array(new Reference($this->getAlias() . '.resolver_controllers_by_class')));
+        }
+
+        if (!empty($config['doctrine']['generic_controller'])
+            && !empty($config['doctrine']['templates_by_class'])
+        ) {
+            $doctrine->addMethodCall('addControllerResolver', array(new Reference($this->getAlias() . '.resolver_templates_by_class')));
         }
     }
 
