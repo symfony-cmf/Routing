@@ -75,7 +75,7 @@ class ChainRouter implements RouterInterface, WarmableInterface
      */
     public function match($url)
     {
-        $methodNotFound = null;
+        $methodNotAllowed = null;
 
         foreach ($this->all() as $router) {
             try {
@@ -83,11 +83,11 @@ class ChainRouter implements RouterInterface, WarmableInterface
             } catch (ResourceNotFoundException $e) {
                 // Needs special care
             } catch (MethodNotAllowedException $e) {
-                $methodNotFound = $e;
+                $methodNotAllowed = $e;
             }
         }
 
-        throw $methodNotFound ?: new ResourceNotFoundException("None of the routers in the chain matched '$url'");
+        throw $methodNotAllowed ?: new ResourceNotFoundException("None of the routers in the chain matched '$url'");
     }
 
     /**

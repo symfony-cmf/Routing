@@ -16,15 +16,16 @@
         </testsuite>
     </testsuites>
 
-    <!-- filter>
-        <whitelist>
-            <directory>../src</directory>
+    <filter>
+        <whitelist addUncoveredFilesFromWhitelist="true">
+            <directory>.</directory>
             <exclude>
-                <directory>../src/*/*Bundle/Resources</directory>
-                <directory>../src/*/Bundle/*Bundle/Resources</directory>
+                <directory>Resources/</directory>
+                <directory>Test/</directory>
+                <directory>Tests/</directory>
             </exclude>
             <directory>../vendor/symfony-cmf/src</directory>
         </whitelist>
-    </filter -->
+    </filter>
 
 </phpunit>

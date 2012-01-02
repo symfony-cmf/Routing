@@ -86,7 +86,8 @@ class DoctrineRouter implements RouterInterface
      *
      * @param string $name ignored
      * @param array $parameters must contain the field 'content' with the
-     *      document instance to get the route for
+     *      document instance to get the route for (implementing the
+     *      RouteAwareInterface)
      *
      * @throws RouteNotFoundException If there is no such route in the database
      */
@@ -95,12 +96,17 @@ class DoctrineRouter implements RouterInterface
         if (! isset($parameters['content'])) {
             throw new RouteNotFoundException;
         }
+        if (! $parameters['content'] instanceof RouteAwareInterface) {
+            throw new RouteNotFoundException('The content does not implement RouteAwareInterface: '.get_class($parameters['content']));
+        }
 
         $routes = $parameters['content']->getRoutes();
         if (empty($routes)) {
-            throw new RouteNotFoundException('Document has no route: '.$parameters['content']->path);
+            $hint = property_exists($parameters['content'], 'path') ? $parameters['content']->path : get_class($parameters['content']);
+            throw new RouteNotFoundException('Document has no route: '.$hint);
         }
-        $route = $routes->first();
+
+        $route = reset($routes);
         if (! $route instanceof RouteObjectInterface) {
             $hint = is_object($route) ? get_class($route) : gettype($route);
             throw new RouteNotFoundException('Route of this document is not instance of RouteObjectInterface but: '.$hint);
@@ -110,7 +116,23 @@ class DoctrineRouter implements RouterInterface
         if (empty($url)) {
             $url = '/';
         }
-        return $this->context->getBaseUrl() . $url;
+        $url = $this->context->getBaseUrl() . $url;
+
+        // TODO: this is copy-pasted from symfony UrlGenerator
+        // we should try to somehow reuse the code there rather than copy-paste
+        if ($absolute) {
+            $scheme = $this->context->getScheme();
+            $port = '';
+            if ('http' === $scheme && 80 != $this->context->getHttpPort()) {
+                $port = ':'.$this->context->getHttpPort();
+            } elseif ('https' === $scheme && 443 != $this->context->getHttpsPort()) {
+                $port = ':'.$this->context->getHttpsPort();
+            }
+
+            $url = $scheme.'://'.$this->context->getHost().$port.$url;
+        }
+
+        return $url;
     }
 
     public function getRouteCollection()
