@@ -18,17 +18,17 @@ class ExplicitTemplateResolver implements ControllerResolverInterface
      *
      * @var string
      */
-    private $generic_controller;
+    private $genericController;
 
     /**
      * Instantiate the template resolver
      *
-     * @param string $generic_controller the controller name or service name
+     * @param string $genericController the controller name or service name
      *      that will accept a content and a template
      */
-    public function __construct($generic_controller)
+    public function __construct($genericController)
     {
-        $this->generic_controller = $generic_controller;
+        $this->genericController = $genericController;
     }
 
     /**
@@ -43,7 +43,7 @@ class ExplicitTemplateResolver implements ControllerResolverInterface
             return false;
         }
 
-        return $this->generic_controller;
+        return $this->genericController;
     }
 
 }

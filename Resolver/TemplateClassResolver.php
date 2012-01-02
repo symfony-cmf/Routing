@@ -20,34 +20,34 @@ class TemplateClassResolver implements ControllerResolverInterface
      *
      * @var string
      */
-    private $generic_controller;
+    private $genericController;
 
     /**
      * Map of full class names to template names
      *
      * @var array of strings
      */
-    private $templates_by_class;
+    private $templatesByClass;
 
     /**
      * Instantiate the template resolver
      *
-     * @param string $generic_controller the controller name or service name
+     * @param string $genericController the controller name or service name
      *      that will accept a content and a template
-     * @param array $templates_by_class a map between class and template
+     * @param array $templatesByClass a map between class and template
      *      i.e array('Symfony/Cmf/Bundle/ContentBundle/Document/StaticContent' =>
      *                'SandboxMainBundle:EditableStaticContent:nosidebar.html.twig')
      */
-    public function __construct($generic_controller, array $templates_by_class = array())
+    public function __construct($genericController, array $templatesByClass = array())
     {
-        $this->generic_controller = $generic_controller;
-        $this->templates_by_class = $templates_by_class;
+        $this->genericController = $genericController;
+        $this->templatesByClass = $templatesByClass;
     }
 
     /**
      * Checks if the $document has a content and if so tries to find a match in
-     * the templates_by_class map. If a template is found, it is added to the
-     * $defaults and the generic_controller is returned.
+     * the templatesByClass map. If a template is found, it is added to the
+     * $defaults and the genericController is returned.
      *
      * {@inheritDoc}
      */
@@ -62,7 +62,7 @@ class TemplateClassResolver implements ControllerResolverInterface
         // we need to loop over the array in case the content class extends the
         // specified class
         // i.e. phpcr-odm generates proxy class for the content.
-        foreach($this->templates_by_class as $class => $t) {
+        foreach($this->templatesByClass as $class => $t) {
             if ($content instanceof $class) {
                 $template = $t;
                 break;
@@ -74,7 +74,7 @@ class TemplateClassResolver implements ControllerResolverInterface
         }
 
         $defaults['template'] = $template;
-        return $this->generic_controller;
+        return $this->genericController;
     }
 
 }

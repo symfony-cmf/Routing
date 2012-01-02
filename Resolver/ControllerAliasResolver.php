@@ -17,11 +17,11 @@ class ControllerAliasResolver implements ControllerResolverInterface
      * array containing the mapping between phpcr_alias and controller
      * i.e array('static_pages' => 'symfony_cmf_content.controller:indexAction')
      */
-    private $controllers_by_alias;
+    private $controllersByAlias;
 
-    public function __construct(array $controllers_by_alias = array())
+    public function __construct(array $controllersByAlias = array())
     {
-        $this->controllers_by_alias = $controllers_by_alias;
+        $this->controllersByAlias = $controllersByAlias;
     }
 
     /**
@@ -35,11 +35,11 @@ class ControllerAliasResolver implements ControllerResolverInterface
         if (! isset($defaults['type'])) {
             return false;
         }
-        if (! isset($this->controllers_by_alias[$defaults['type']])) {
+        if (! isset($this->controllersByAlias[$defaults['type']])) {
             return false;
         }
 
-        return $this->controllers_by_alias[$defaults['type']];
+        return $this->controllersByAlias[$defaults['type']];
     }
 
 }

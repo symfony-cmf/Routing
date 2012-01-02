@@ -15,16 +15,16 @@ use Symfony\Cmf\Bundle\ChainRoutingBundle\Routing\RouteObjectInterface;
  */
 class ControllerClassResolver implements ControllerResolverInterface
 {
-    private $controllers_by_class;
+    private $controllersByClass;
 
     /**
-     * @param array $controllers_by_class a map between class and controller
+     * @param array $controllersByClass a map between class and controller
      *      i.e array('Symfony/Cmf/Bundle/ContentBundle/Document/StaticContent' =>
      *                'symfony_cmf_content.controller:indexAction')
      */
-    public function __construct(array $controllers_by_class = array())
+    public function __construct(array $controllersByClass)
     {
-        $this->controllers_by_class = $controllers_by_class;
+        $this->controllersByClass = $controllersByClass;
     }
 
     /**
@@ -44,7 +44,7 @@ class ControllerClassResolver implements ControllerResolverInterface
         // we need to loop over the array in case the content class extends the
         // specified class
         // i.e. phpcr-odm generates proxy class for the content.
-        foreach($this->controllers_by_class as $class => $controller) {
+        foreach($this->controllersByClass as $class => $controller) {
             if ($content instanceof $class) {
                 return $controller;
             }

@@ -60,8 +60,8 @@ class SymfonyCmfChainRoutingExtension extends Extension
             $doctrine->addMethodCall('addControllerResolver', array(new Reference($this->getAlias().'.resolver_controllers_by_class')));
         }
 
-        if (! empty($config['doctrine']['generic_controller']) &&
-            ! empty($config['doctrine']['templates_by_class'])
+        if (! empty($config['doctrine']['generic_controller'])
+            && ! empty($config['doctrine']['templates_by_class'])
         ) {
             $doctrine->addMethodCall('addControllerResolver', array(new Reference($this->getAlias().'.resolver_templates_by_class')));
         }
