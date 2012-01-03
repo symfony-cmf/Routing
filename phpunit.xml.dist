@@ -3,12 +3,8 @@
 <!-- http://www.phpunit.de/manual/current/en/appendixes.configuration.html -->
 <phpunit
     colors="true"
-    bootstrap="../../../../../../app/bootstrap.php.cache">
-
-    <php>
-        <server name="SYMFONY" value="../../../symfony/src" />
-        <server name="KERNEL_DIR" value="../../../../../../app" />
-    </php>
+    bootstrap="Tests/bootstrap.php"
+>
 
     <testsuites>
         <testsuite name="ChainRoutingBundle Test Suite">
@@ -20,13 +16,13 @@
         <whitelist addUncoveredFilesFromWhitelist="true">
             <directory>.</directory>
             <exclude>
+                <file>SymfonyCmfChainRoutingBundle.php</file>
                 <directory>DependencyInjection/</directory>
                 <directory>Document/</directory>
                 <directory>Resources/</directory>
                 <directory>Test/</directory>
                 <directory>Tests/</directory>
             </exclude>
-            <directory>../vendor/symfony-cmf/src</directory>
         </whitelist>
     </filter>
 

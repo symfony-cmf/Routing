@@ -1,0 +1,23 @@
+<?php
+
+$vendorDir = __DIR__.'/../vendor';
+require_once $vendorDir.'/symfony/src/Symfony/Component/ClassLoader/UniversalClassLoader.php';
+
+use Symfony\Component\ClassLoader\UniversalClassLoader;
+
+$loader = new UniversalClassLoader();
+$loader->registerNamespaces(array(
+    'PHPCR'     => $vendorDir.'/phpcr/src',
+    'Symfony'   => $vendorDir.'/symfony/src',
+));
+$loader->register();
+
+spl_autoload_register(function($class) {
+    $class = ltrim($class, '\\');
+    if (0 === strpos($class, 'Symfony\\Cmf\\Bundle\\ChainRoutingBundle\\')) {
+        $file = __DIR__.'/../'.str_replace('\\', '/', substr($class, strlen('Symfony\\Cmf\\Bundle\\ChainRoutingBundle\\'))).'.php';
+        if (file_exists($file)) {
+            require $file;
+        }
+    }
+});
