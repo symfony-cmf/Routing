@@ -10,14 +10,24 @@ class DoctrineRouterTest extends CmfUnitTestCase
     public function setUp()
     {
         $this->contentDocument = $this->buildMock('Symfony\\Cmf\\Bundle\\ChainRoutingBundle\\Routing\\RouteAwareInterface');
-        $this->routeDocument = $this->buildMock('Symfony\\Cmf\\Bundle\\ChainRoutingBundle\\Routing\\RouteObjectInterface');
+        $this->routeDocument = $this->buildMock('Symfony\\Cmf\\Bundle\\ChainRoutingBundle\\Routing\\RouteObjectInterface', array('getRouteDefaults', 'getRouteContent', 'getPath'));
         $this->loader = $this->buildMock("Symfony\\Component\\Config\\Loader\\LoaderInterface");
-        $this->om = $this->buildMock("Doctrine\\Common\\Persistence\\ObjectManager");
+        $this->om = $this->buildMock("Doctrine\\Common\\Persistence\\ObjectManager", array('find'));
         $this->resolver = $this->buildMock('Symfony\\Cmf\\Bundle\\ChainRoutingBundle\\Resolver\\ControllerResolverInterface', array('getController'));
 
         $this->router = new DoctrineRouter($this->om, null, '/idprefix');
         $this->router->setObjectManager($this->om);
         $this->router->addControllerResolver($this->resolver);
+    }
+
+    /**
+     * rather trivial, but we want 100% coverage
+     */
+    public function testContext()
+    {
+        $context = $this->buildMock('Symfony\\Component\\Routing\\RequestContext');
+        $this->router->setContext($context);
+        $this->assertSame($context, $this->router->getContext());
     }
 
     public function testGenerate()
@@ -165,6 +175,13 @@ class DoctrineRouterTest extends CmfUnitTestCase
             ->will($this->returnValue(array($this)));
 
         $this->router->generate('ignore', array('content'=>$this->contentDocument));
+    }
+
+    public function testRouteCollection()
+    {
+        $collection = $this->router->getRouteCollection();
+        $this->assertInstanceOf('Symfony\\Component\\Routing\\RouteCollection', $collection);
+        // TODO: once this is implemented, check content of collection
     }
 
     public function testMatch()
