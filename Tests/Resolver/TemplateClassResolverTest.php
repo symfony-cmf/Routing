@@ -3,44 +3,44 @@
 namespace Symfony\Cmf\Bundle\ChainRoutingBundle\Tests\Controller;
 
 use Symfony\Cmf\Bundle\ChainRoutingBundle\Test\CmfUnitTestCase;
-use Symfony\Cmf\Bundle\ChainRoutingBundle\Resolver\ControllerClassResolver;
+use Symfony\Cmf\Bundle\ChainRoutingBundle\Resolver\TemplateClassResolver;
 
-class ControllerClassResolverTest extends CmfUnitTestCase
+class TemplateClassResolverTest extends CmfUnitTestCase
 {
     public function setUp()
     {
         $this->document = $this->buildMock('Symfony\\Cmf\\Bundle\\ChainRoutingBundle\\Routing\\RouteObjectInterface',
                                             array('getRouteContent', 'getRouteDefaults', 'getPath'));
 
-        $mapping = array('Symfony\\Cmf\\Bundle\\ChainRoutingBundle\\Tests\\Controller\\TargetDocument'
-                            => 'symfony_cmf_content.controller:indexAction');
+        $mapping = array('Symfony\\Cmf\\Bundle\\ChainRoutingBundle\\Tests\\Controller\\TemplateTargetDocument'
+        => 'SomeBundle:Topic:template.html.twig');
 
-        $this->resolver = new ControllerClassResolver($mapping);
+        $this->resolver = new TemplateClassResolver('symfony_cmf_content.controller:indexAction', $mapping);
     }
 
-    public function testControllerFoundInMapping()
+    public function testTemplateFoundInMapping()
     {
         $this->document->expects($this->once())
-                ->method('getRouteContent')
-                ->will($this->returnValue(new TargetDocument));
+            ->method('getRouteContent')
+            ->will($this->returnValue(new TemplateTargetDocument));
 
         $defaults = array();
         $this->assertEquals('symfony_cmf_content.controller:indexAction', $this->resolver->getController($this->document, $defaults));
-        $this->assertEquals(array(), $defaults);
+        $this->assertEquals(array('template' => 'SomeBundle:Topic:template.html.twig'), $defaults);
     }
 
-    public function testControllerNotFoundInMapping()
+    public function testTemplateNotFoundInMapping()
     {
         $this->document->expects($this->once())
-                ->method('getRouteContent')
-                ->will($this->returnValue(new UnknownDocument));
+            ->method('getRouteContent')
+            ->will($this->returnValue(new TemplateUnknownDocument()));
 
         $defaults = array();
         $this->assertEquals(null, $this->resolver->getController($this->document, $defaults));
         $this->assertEquals(array(), $defaults);
     }
 
-    public function testControllerNoContent()
+    public function testNoContent()
     {
         $this->document->expects($this->once())
             ->method('getRouteContent')
@@ -52,10 +52,10 @@ class ControllerClassResolverTest extends CmfUnitTestCase
     }
 }
 
-class TargetDocument
+class TemplateTargetDocument
 {
 }
 
-class UnknownDocument
+class TemplateUnknownDocument
 {
 }
