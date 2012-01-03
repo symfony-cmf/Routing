@@ -1,4 +1,5 @@
-# Symfony Chain Routing Bundle
+# Symfony Chain Routing Bundle [![Build Status](https://secure.travis-ci.org/symfony-cmf/ChainRoutingBundle.png)](http://travis-ci.org/symfony-cmf/ChainRoutingBundle)
+
 
 This bundle contains a replacement for the default Symfony Router. As the name
 implies, the chain router registers a list of routers that it tries by
@@ -93,7 +94,7 @@ be loaded at all and you can use the chain router with your own routers):
 
 Your controllers should expect the parameter $contentDocument in their
 ``Action`` methods.
-See Symfony\Cmf\Bundle\ContentBundle\Controller\ContentController for an
+See ``Symfony\Cmf\Bundle\ContentBundle\Controller\ContentController`` for an
 example.
 
 ### Configuration
@@ -103,6 +104,7 @@ mappings makes the DI container inject the respective resolver into the
 DoctrineRouter.
 
 The possible mappings are (in order of precedence):
+
 * (Explicit controller): If there is a _controller set in getRouteDefaults(),
     it is used and no resolver is asked.
 * Explicit Template: requires the route document to return a 'template'
