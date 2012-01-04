@@ -10,6 +10,7 @@
 
     <services>
         <service id="symfony_cmf_chain_routing.router" class="%symfony_cmf_chain_routing.chain_router_class%">
+            <argument type="service" id="logger" />
             <call method="setContext">
                 <argument type="service" id="router.request_context" />
             </call>

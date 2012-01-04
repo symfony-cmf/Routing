@@ -9,7 +9,7 @@ use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\HttpKernel\CacheWarmer\WarmableInterface;
-
+use Symfony\Component\HttpKernel\Log\LoggerInterface;
 
 /**
  * ChainRouter
@@ -22,6 +22,12 @@ use Symfony\Component\HttpKernel\CacheWarmer\WarmableInterface;
 class ChainRouter implements RouterInterface, WarmableInterface
 {
     private $context;
+    private $logger;
+
+    public function __construct(LoggerInterface $logger = null)
+    {
+        $this->logger = $logger;
+    }
 
     public function getContext()
     {
@@ -81,8 +87,14 @@ class ChainRouter implements RouterInterface, WarmableInterface
             try {
                 return $router->match($url);
             } catch (ResourceNotFoundException $e) {
+                if ($this->logger) {
+                    $this->logger->addError($e);
+                }
                 // Needs special care
             } catch (MethodNotAllowedException $e) {
+                if ($this->logger) {
+                    $this->logger->addError($e);
+                }
                 $methodNotAllowed = $e;
             }
         }
@@ -105,7 +117,11 @@ class ChainRouter implements RouterInterface, WarmableInterface
         foreach ($this->all() as $router) {
             try {
                 return $router->generate($name, $parameters, $absolute);
-            } catch (RouteNotFoundException $e) { }
+            } catch (RouteNotFoundException $e) {
+                if ($this->logger) {
+                    $this->logger->addError($e);
+                }
+            }
         }
 
         throw new RouteNotFoundException(sprintf('Route "%s" does not exist.', $name));
