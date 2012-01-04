@@ -5,12 +5,18 @@
 
     <parameters>
         <parameter key="symfony_cmf_chain_routing.doctrine_router_class">Symfony\Cmf\Bundle\ChainRoutingBundle\Routing\DoctrineRouter</parameter>
-        <parameter key="symfony_cmf_chain_routing.route_entity_class">Symfony\Cmf\Bundle\ChainRoutingBundle\Document\Route</parameter>
+        <parameter key="symfony_cmf_chain_routing.route_entity_class">null</parameter>
+        <!--
+         if you do not have phpcr-odm, you might need to set this class. for phpcr-odm the class is automatically detected,
+         allowing to mix classes
+         parameter key="symfony_cmf_chain_routing.route_entity_class">Symfony\Cmf\Bundle\ChainRoutingBundle\Document\Route</parameter
+        -->
         <parameter key="symfony_cmf_chain_routing.object_manager_id">doctrine_phpcr.odm.default_document_manager</parameter>
         <parameter key="symfony_cmf_chain_routing.resolver_explicit_template_class">Symfony\Cmf\Bundle\ChainRoutingBundle\Resolver\ExplicitTemplateResolver</parameter>
         <parameter key="symfony_cmf_chain_routing.resolver_controllers_by_alias_class">Symfony\Cmf\Bundle\ChainRoutingBundle\Resolver\ControllerAliasResolver</parameter>
         <parameter key="symfony_cmf_chain_routing.resolver_controllers_by_class_class">Symfony\Cmf\Bundle\ChainRoutingBundle\Resolver\ControllerClassResolver</parameter>
         <parameter key="symfony_cmf_chain_routing.resolver_templates_by_class_class">Symfony\Cmf\Bundle\ChainRoutingBundle\Resolver\TemplateClassResolver</parameter>
+        <parameter key="symfony_cmf_chain_routing.redirect_controller_class">Symfony\Cmf\Bundle\ChainRoutingBundle\Controller\RedirectController</parameter>
     </parameters>
 
     <services>
@@ -35,6 +41,10 @@
             <argument>%symfony_cmf_chain_routing.route_entity_class%</argument>
             <argument>%symfony_cmf_core.routing_basepath%</argument>
             <call method="setContext"><argument type="service" id="router.request_context"/></call>
+        </service>
+
+        <service id="symfony_cmf_chain_routing.redirect_controller" class="%symfony_cmf_chain_routing.redirect_controller_class%">
+            <argument type="service" id="router" />
         </service>
     </services>
 </container>

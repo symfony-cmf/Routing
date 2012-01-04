@@ -93,20 +93,12 @@ class DoctrineRouter implements RouterInterface
      */
     public function generate($name, $parameters = array(), $absolute = false)
     {
-        if (! isset($parameters['content'])) {
-            throw new RouteNotFoundException;
-        }
-        if (! $parameters['content'] instanceof RouteAwareInterface) {
-            throw new RouteNotFoundException('The content does not implement RouteAwareInterface: '.get_class($parameters['content']));
-        }
-
-        $routes = $parameters['content']->getRoutes();
-        if (empty($routes)) {
-            $hint = property_exists($parameters['content'], 'path') ? $parameters['content']->path : get_class($parameters['content']);
-            throw new RouteNotFoundException('Document has no route: '.$hint);
+        if (isset($parameters['route'])) {
+            $route = $parameters['route'];
+        } else {
+            $route = $this->getRouteFromContent($parameters);
         }
 
-        $route = reset($routes);
         if (! $route instanceof RouteObjectInterface) {
             $hint = is_object($route) ? get_class($route) : gettype($route);
             throw new RouteNotFoundException('Route of this document is not instance of RouteObjectInterface but: '.$hint);
@@ -218,6 +210,31 @@ class DoctrineRouter implements RouterInterface
             // but if the phpcr backend is down for example, we probably want to know it.
             return null;
         }
+    }
+
+    /**
+     * Called in generate when there is no route given in the parameters
+     *
+     * @param $parameters which should contain a content field containing a RouteAwareInterface object
+     * @return the route instance
+     * @throws RouteNotFoundException
+     */
+    protected function getRouteFromContent($parameters)
+    {
+        if (!isset($parameters['content'])) {
+            throw new RouteNotFoundException;
+        }
+        if (!$parameters['content'] instanceof RouteAwareInterface) {
+            throw new RouteNotFoundException('The content does not implement RouteAwareInterface: ' . get_class($parameters['content']));
+        }
+
+        $routes = $parameters['content']->getRoutes();
+        if (empty($routes)) {
+            $hint = property_exists($parameters['content'], 'path') ? $parameters['content']->path : get_class($parameters['content']);
+            throw new RouteNotFoundException('Document has no route: ' . $hint);
+        }
+
+        return reset($routes);
     }
 
 }

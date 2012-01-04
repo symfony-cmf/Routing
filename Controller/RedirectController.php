@@ -6,6 +6,8 @@ use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
+use Symfony\Cmf\Bundle\ChainRoutingBundle\Routing\RedirectRouteInterface;
+
 /**
  * Default router that handles redirection route objects
  */
@@ -26,18 +28,23 @@ class RedirectController
     /**
      * Action to redirect based on a RedirectRouteInterface route
      *
-     * @param RedirectRouteInterface $routeDocument
+     * @param RedirectRouteInterface $contentDocument
      *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse the response
      */
-    public function redirectAction($routeDocument)
+    public function redirectAction(RedirectRouteInterface $contentDocument)
     {
-        if (!$routeDocument) {
+        if (!$contentDocument) {
             throw new NotFoundHttpException('No route given');
         }
 
-        $url = $this->router->generate($routeDocument->getRouteName(), $routeDocument->getParameters(), true);
+        $url = $contentDocument->getUri();
 
+        if (empty($url)) {
+            $url = $this->router->generate($contentDocument->getRouteName(), $contentDocument->getParameters(), true);
+        }
+
+        return new \Symfony\Component\HttpFoundation\Response($url);
         return new RedirectResponse($url);
     }
 }

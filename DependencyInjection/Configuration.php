@@ -46,6 +46,14 @@ class Configuration implements ConfigurationInterface
                         ->arrayNode('controllers_by_class')
                             ->useAttributeAsKey('alias')
                             ->prototype('scalar')
+                            /* why does this not work?
+                            ->prototype('array')
+                                ->children()
+                                    ->scalarNode('Symfony\Cmf\Bundle\ChainRoutingBundle\Document\RedirectRoute')
+                                        ->defaultValue('symfony_cmf_chain_routing.redirect_controller:redirectAction')
+                                    ->end()
+                                ->end()
+                             */
                         ->end()->end()
                         ->arrayNode('templates_by_class')
                             ->useAttributeAsKey('alias')
