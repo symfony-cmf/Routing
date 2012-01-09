@@ -165,7 +165,7 @@ class DoctrineRouter implements RouterInterface
     {
         $route = $this->findRouteForUrl($url);
 
-        if (!$route instanceof RouteObjectInterface) {
+        if (! $route instanceof RouteObjectInterface) {
             throw new \Symfony\Component\Routing\Exception\ResourceNotFoundException("No entry or not a route at '$url'");
         }
 
@@ -221,11 +221,12 @@ class DoctrineRouter implements RouterInterface
      */
     protected function getRouteFromContent($parameters)
     {
-        if (!isset($parameters['content'])) {
+        if (! isset($parameters['content'])) {
             throw new RouteNotFoundException;
         }
-        if (!$parameters['content'] instanceof RouteAwareInterface) {
-            throw new RouteNotFoundException('The content does not implement RouteAwareInterface: ' . get_class($parameters['content']));
+        if (! $parameters['content'] instanceof RouteAwareInterface) {
+            $hint = is_object($parameters['content']) ? get_class($parameters['content']) : gettype($parameters['content']);
+            throw new RouteNotFoundException('The content does not implement RouteAwareInterface: ' . $hint);
         }
 
         $routes = $parameters['content']->getRoutes();
