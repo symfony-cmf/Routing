@@ -89,12 +89,12 @@ class ChainRouter implements RouterInterface, WarmableInterface
                 return $router->match($url);
             } catch (ResourceNotFoundException $e) {
                 if ($this->logger) {
-                    $this->logger->addError($e);
+                    $this->logger->addInfo($e->getMessage());
                 }
                 // Needs special care
             } catch (MethodNotAllowedException $e) {
                 if ($this->logger) {
-                    $this->logger->addError($e);
+                    $this->logger->addInfo($e->getMessage());
                 }
                 $methodNotAllowed = $e;
             }
@@ -120,7 +120,7 @@ class ChainRouter implements RouterInterface, WarmableInterface
                 return $router->generate($name, $parameters, $absolute);
             } catch (RouteNotFoundException $e) {
                 if ($this->logger) {
-                    $this->logger->addError($e);
+                    $this->logger->addInfo($e->getMessage());
                 }
             }
         }
