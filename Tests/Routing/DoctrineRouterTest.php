@@ -202,7 +202,7 @@ class DoctrineRouterTest extends CmfUnitTestCase
 
         $expected = array(
             '_controller' => 'NameSpace\\Controller::action',
-            '_route' => 'whatever', //there must be a name to avoid problems with symfony
+            '_route' => 'chain_router_doctrine_route_company_more',
             'contentDocument' => $this->contentDocument,
             'path' => $url_alias,
         );
@@ -240,7 +240,7 @@ class DoctrineRouterTest extends CmfUnitTestCase
 
         $expected = array(
             '_controller' => 'NameSpace\\Controller::action',
-            '_route' => 'whatever', //there must be a name to avoid problems with symfony
+            '_route' => 'chain_router_doctrine_route_company_more_no_reference',
             'contentDocument' => null,
             'path' => $url_alias,
             'type' => 'found',
