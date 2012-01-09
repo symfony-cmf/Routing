@@ -6,8 +6,12 @@ use Symfony\Component\Routing\Router;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
-use Doctrine\Common\Persistence\ObjectManager;
+use Symfony\Component\Routing\Exception\ResourceNotFoundException;
+use Symfony\Component\Routing\RouteCollection;
+
 use Symfony\Cmf\Bundle\ChainRoutingBundle\Resolver\ControllerResolverInterface;
+
+use Doctrine\Common\Persistence\ObjectManager;
 
 /**
  * A router that reads entries from a Object-Document Mapper store.
@@ -30,11 +34,13 @@ class DoctrineRouter implements RouterInterface
      * route has one associated
      */
     const CONTENT_KEY = 'contentDocument';
+
     /**
      * key for the request attribute that contains the template this document
      * wants to use
      */
     const CONTENT_TEMPLATE = 'contentTemplate';
+
     protected $om;
     protected $resolvers;
     protected $routeClass;
@@ -70,12 +76,17 @@ class DoctrineRouter implements RouterInterface
         $this->resolvers[] = $resolver;
     }
 
-    // inherit doc
+    /**
+     * {@inheritDoc}
+     */
     public function setContext(RequestContext $context)
     {
         $this->context = $context;
     }
-    // inherit doc
+
+    /**
+     * {@inheritDoc}
+     */
     public function getContext()
     {
         return $this->context;
@@ -130,11 +141,13 @@ class DoctrineRouter implements RouterInterface
     public function getRouteCollection()
     {
         /* TODO */
-        return new \Symfony\Component\Routing\RouteCollection();
+        return new RouteCollection();
     }
 
     /**
      * Set the doctrine entity or document manager that will know the urls
+     *
+     * @param ObjectManager $om
      */
     public function setObjectManager(ObjectManager $om)
     {
@@ -154,19 +167,19 @@ class DoctrineRouter implements RouterInterface
      * cases, the action to call on that controller is appended, separated with
      * two colons.
      *
-     * @throws ResourceNotFoundException If the requested url does not exist in the ODM
-     * @throws MethodNotAllowedException If the resource was found but the request method is not allowed
-     *
      * @param string $url the full requested url. TODO: is locale eaten away or kept too?
      *
      * @return array as described above
+     *
+     * @throws ResourceNotFoundException If the requested url does not exist in the ODM
+     * @throws MethodNotAllowedException If the resource was found but the request method is not allowed
      */
     public function match($url)
     {
         $route = $this->findRouteForUrl($url);
 
         if (! $route instanceof RouteObjectInterface) {
-            throw new \Symfony\Component\Routing\Exception\ResourceNotFoundException("No entry or not a route at '$url'");
+            throw new ResourceNotFoundException("No entry or not a route at '$url'");
         }
 
         $defaults = $route->getRouteDefaults();
@@ -178,14 +191,14 @@ class DoctrineRouter implements RouterInterface
                 if ($controller !== false) break;
             }
             if (false === $controller) {
-                throw new \Symfony\Component\Routing\Exception\ResourceNotFoundException("The resolver was not able to determine a controller for '$url'");;
+                throw new ResourceNotFoundException("The resolver was not able to determine a controller for '$url'");;
             }
             $defaults['_controller'] = $controller;
         }
 
         $defaults[self::CONTENT_KEY] = $route->getRouteContent();
         $defaults['path'] = $url; // TODO: get rid of this
-        $defaults['_route'] = 'whatever'; //FIXME: what is this? without, we get an undefined index in RouterListener::onKernelRequest
+        $defaults['_route'] = 'chain_router_doctrine_route'.str_replace('/', '_', $url);
 
         return $defaults;
     }
@@ -196,7 +209,7 @@ class DoctrineRouter implements RouterInterface
      *
      * Overwrite this method for other ODM or ORM repositories.
      *
-     * @param $url The url to find
+     * @param string $url The url to find
      *
      * @return the RouteObjectInterface object for this url or null if none is found
      */
@@ -215,8 +228,10 @@ class DoctrineRouter implements RouterInterface
     /**
      * Called in generate when there is no route given in the parameters
      *
-     * @param $parameters which should contain a content field containing a RouteAwareInterface object
+     * @param array $parameters which should contain a content field containing a RouteAwareInterface object
+     *
      * @return the route instance
+     *
      * @throws RouteNotFoundException
      */
     protected function getRouteFromContent($parameters)
@@ -224,6 +239,7 @@ class DoctrineRouter implements RouterInterface
         if (! isset($parameters['content'])) {
             throw new RouteNotFoundException;
         }
+
         if (! $parameters['content'] instanceof RouteAwareInterface) {
             $hint = is_object($parameters['content']) ? get_class($parameters['content']) : gettype($parameters['content']);
             throw new RouteNotFoundException('The content does not implement RouteAwareInterface: ' . $hint);
@@ -237,5 +253,4 @@ class DoctrineRouter implements RouterInterface
 
         return reset($routes);
     }
-
 }

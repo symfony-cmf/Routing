@@ -8,6 +8,7 @@ use Symfony\Component\Routing\RequestContextAwareInterface;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
+use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\HttpKernel\CacheWarmer\WarmableInterface;
 use Symfony\Component\HttpKernel\Log\LoggerInterface;
 
@@ -76,7 +77,7 @@ class ChainRouter implements RouterInterface, WarmableInterface
      *
      * @param string $url
      * @throws ResourceNotFoundException $e
-     * @throws MethodNotAlloedException $e
+     * @throws MethodNotAllowedException $e
      * @return array
      */
     public function match($url)
@@ -107,7 +108,7 @@ class ChainRouter implements RouterInterface, WarmableInterface
      * It will always return the first route generated.
      *
      * @param string $name
-     * @param array $paramaters
+     * @param array $parameters
      * @param Boolean $absolute
      * @throws RouteNotFoundException
      * @return string
@@ -158,7 +159,7 @@ class ChainRouter implements RouterInterface, WarmableInterface
     public function getRouteCollection()
     {
         // TODO: is this the right thing? can we optimize?
-        $collection = new \Symfony\Component\Routing\RouteCollection();
+        $collection = new RouteCollection();
         foreach ($this->all() as $router) {
             $collection->addCollection($router->getRouteCollection());
         }

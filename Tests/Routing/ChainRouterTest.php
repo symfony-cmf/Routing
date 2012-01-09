@@ -2,8 +2,9 @@
 
 namespace Symfony\Cmf\Bundle\ChainRoutingBundle\Tests\Routing;
 
-use Symfony\Cmf\Bundle\ChainRoutingBundle\Routing\ChainRouter;
+use Symfony\Component\Routing\RouteCollection;
 
+use Symfony\Cmf\Bundle\ChainRoutingBundle\Routing\ChainRouter;
 use Symfony\Cmf\Bundle\ChainRoutingBundle\Test\CmfUnitTestCase;
 
 class ChainRouterTest extends CmfUnitTestCase
@@ -252,9 +253,9 @@ class ChainRouterTest extends CmfUnitTestCase
     public function testRouteCollection()
     {
         list($low, $high) = $this->createRouterMocks();
-        $lowcol = new \Symfony\Component\Routing\RouteCollection();
+        $lowcol = new RouteCollection();
         $lowcol->add('low', $this->buildMock('Symfony\\Component\\Routing\\Route'));
-        $highcol = new \Symfony\Component\Routing\RouteCollection();
+        $highcol = new RouteCollection();
         $highcol->add('high', $this->buildMock('Symfony\\Component\\Routing\\Route'));
 
         $low
