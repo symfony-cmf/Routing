@@ -21,7 +21,7 @@ use Symfony\Cmf\Bundle\ChainRoutingBundle\Routing\RedirectRouteInterface;
  *
  * @author David Buchmann <david@liip.ch>
  *
- * @PHPCRODM\Document(alias="redirect_route")
+ * @PHPCRODM\Document
  */
 class RedirectRoute implements RedirectRouteInterface
 {

@@ -10,7 +10,7 @@ use Symfony\Cmf\Bundle\ChainRoutingBundle\Routing\RouteObjectInterface;
  *
  * @author david.buchmann@liip.ch
  *
- * @PHPCRODM\Document(alias="route", referenceable=true)
+ * @PHPCRODM\Document(referenceable=true)
  */
 class Route implements RouteObjectInterface
 {
