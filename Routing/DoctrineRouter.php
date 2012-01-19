@@ -226,13 +226,22 @@ class DoctrineRouter implements RouterInterface
     }
 
     /**
-     * Called in generate when there is no route given in the parameters
+     * Get the route based on the content field in parameters
+     *
+     * Called in generate when there is no route given in the parameters.
+     *
+     * If there are more than one routes for the content, the first one is
+     * returned.
+     * However, if there is a _locale given in the parameters, loops through
+     * the routes to find one with a matching locale. If none is found, falls
+     * back to just return the first one.
      *
      * @param array $parameters which should contain a content field containing a RouteAwareInterface object
      *
      * @return the route instance
      *
-     * @throws RouteNotFoundException
+     * @throws RouteNotFoundException if there is no content field in the
+     *      parameters or its not possible to build a route from that object
      */
     protected function getRouteFromContent($parameters)
     {
@@ -249,6 +258,16 @@ class DoctrineRouter implements RouterInterface
         if (empty($routes)) {
             $hint = property_exists($parameters['content'], 'path') ? $parameters['content']->path : get_class($parameters['content']);
             throw new RouteNotFoundException('Document has no route: ' . $hint);
+        }
+
+        if (isset($parameters['_locale'])) {
+            foreach($routes as $route) {
+                $defaults = $route->getRouteDefaults();
+                if (isset($defaults['_locale']) && $parameters['_locale'] == $defaults['_locale']) {
+                    return $route;
+                }
+            }
+            // if non matched, continue and randomly return the first one
         }
 
         return reset($routes);

@@ -121,10 +121,7 @@ The possible mappings are (in order of precedence):
     class names in the map and if matched that template will be set as
     'template' in the $defaults and return the configured generic controller.
 
-* **TODO**: redirect controller to send a redirection (i.e. short urls)
 * **TODO**: generic controller with output directed by annotations instead of explicit template?
-
-If the route returns a field '_controller' in getRouteDefaults, this router is used.
 
     symfony_cmf_chain_routing:
         doctrine:
@@ -145,6 +142,44 @@ If the route returns a field '_controller' in getRouteDefaults, this router is u
 To see some examples, please look at the [cmf-sandbox](https://github.com/symfony-cmf/cmf-sandbox)
 and specifically the routing fixtures loading.
 
+
+### RouteObjectInterface
+
+All routes need to implement this interface. This bundle also provides a
+default implementation for phpcr-odm where the interface is very
+straightforward to implement.
+
+### Redirections
+
+You can build redirections with the RedirectRoute document. It can redirect
+either to an absolute URI, or to a named symfony route or to another
+RouteObjectInterface object.
+The RedirectRoute can be handled by the RedirectController
+TODO: see Configuration.php of this bundle. I could not figure out how to set
+this mapping as a default mapping. Meanwhile, in order to do redirections, you
+need to add an entry to your mapping in config.yml:
+
+    controllers_by_class:
+        Symfony\Cmf\Bundle\ChainRoutingBundle\Document\RedirectRoute:  symfony_cmf_chain_routing.redirect_controller:redirectAction
+
+If you need to do something special, you can use your own controller, or also
+replace the document with your own, as long as it implements RedirectRouteInterface.
+
+### Routes and locales
+
+The default Route document optionally accepts a locale. If it is set, it is
+returned in the getRouteDefaults as field ``_locale``. With this, you can
+create one route for each of the desired locales that all reference the same
+multilingual content.
+The DoctrineRouter respects _locale when generating routes from content.
+When resolving the route, the _locale gets into the request and is picked up
+by the symfony locale system.
+
+Routes should never be translatable documents, as one route document represents
+one single url, and serving several translations under the same url is not a
+good idea.
+
+
 ### Customize
 
 You can add more ControllerResolverInterface implementations if you have a case
@@ -159,7 +194,6 @@ route objects by URLs in your database.
 ### TODO
 
 * CMF content router: Implement getRouteCollection
-* Route parameters. What about the _locale?
 
 ## Authors
 

@@ -60,6 +60,14 @@ class Route implements RouteObjectInterface
     protected $template;
 
     /**
+     * Locale to use when this route is requested.
+     * Only set in getRouteDefaults if non-empty
+     *
+     * @PHPCRODM\String()
+     */
+    protected $locale;
+
+    /**
      * Set the parent document and name of this route entry. Only allowed when
      * creating a new item!
      *
@@ -163,6 +171,24 @@ class Route implements RouteObjectInterface
     }
 
     /**
+     * Set the locale requests for this route should use
+     *
+     * @param $locale the locale of this route
+     */
+    public function setLocale($locale)
+    {
+        $this->locale = $locale;
+    }
+
+    /**
+     * @return string the locale
+     */
+    public function getLocale()
+    {
+        return $this->locale;
+    }
+
+    /**
      * To work with the ControllerAliasResolver, this must at least contain
      * the field 'type' with a value from the controllers_by_alias mapping
      *
@@ -183,6 +209,10 @@ class Route implements RouteObjectInterface
         $template = $this->getTemplate();
         if (! empty($template)) {
             $defaults['template'] = $template;
+        }
+        $locale = $this->getLocale();;
+        if (! empty($locale)) {
+            $defaults['_locale'] = $locale;
         }
         return $defaults;
     }

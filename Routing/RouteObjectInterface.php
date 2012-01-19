@@ -32,8 +32,14 @@ interface RouteObjectInterface
     function getPath();
 
     /**
-     * To work with the ControllerAliasResolver, this must at least contain
+     * Get the configured route parameters.
+     *
+     * If this array contains _controller, that is used without checking any
+     * resolver.
+     * To work with the ControllerAliasResolver, this must contain
      * the field 'type' with a value from the controllers_by_alias mapping
+     *
+     * For multilingual sites, use _locale to set the request language.
      *
      * @return array Information for the ControllerResolver
      */
