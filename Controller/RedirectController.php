@@ -3,11 +3,9 @@
 namespace Symfony\Cmf\Bundle\ChainRoutingBundle\Controller;
 
 use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-use Symfony\Cmf\Bundle\ChainRoutingBundle\Routing\DoctrineRouter;
 use Symfony\Cmf\Bundle\ChainRoutingBundle\Routing\RedirectRouteInterface;
 
 /**

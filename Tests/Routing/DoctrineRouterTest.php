@@ -336,7 +336,8 @@ class RouteMock implements \Symfony\Cmf\Bundle\ChainRoutingBundle\Routing\RouteO
 }
 class RequestMock extends \Symfony\Component\HttpFoundation\Request
 {
-    public function __construct($attributes) {
+    public function __construct($attributes)
+    {
         $this->attributes = $attributes;
     }
 }
