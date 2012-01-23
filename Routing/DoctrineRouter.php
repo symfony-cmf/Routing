@@ -130,9 +130,9 @@ class DoctrineRouter implements RouterInterface
      * {@inheritDoc}
      *
      * @param string $name ignored
-     * @param array $parameters must contain the field 'content' with the
-     *      document instance to get the route for (implementing the
-     *      RouteAwareInterface)
+     * @param array $parameters must either contain the field 'route' with a
+     *      RouteObjectInterface or the field 'content' with the document
+     *      instance to get the route for (implementing RouteAwareInterface)
      *
      * @throws RouteNotFoundException If there is no such route in the database
      */
@@ -201,7 +201,7 @@ class DoctrineRouter implements RouterInterface
      * cases, the action to call on that controller is appended, separated with
      * two colons.
      *
-     * @param string $url the full requested url. TODO: is locale eaten away or kept too?
+     * @param string $url the full requested url.
      *
      * @return array as described above
      *
@@ -270,11 +270,11 @@ class DoctrineRouter implements RouterInterface
      *
      * Called in generate when there is no route given in the parameters.
      *
-     * If there are more than one routes for the content, the first one is
-     * returned.
-     * However, if there is a _locale given in the parameters, loops through
-     * the routes to find one with a matching locale. If none is found, falls
-     * back to just return the first one.
+     * If there is more than one route for the content, tries to find the
+     * first one that matches the _locale (provided in $parameters or otherwise
+     * defaulting to the request locale).
+     *
+     * If none is found, falls back to just return the first route.
      *
      * @param array $parameters which should contain a content field containing a RouteAwareInterface object
      *
@@ -300,15 +300,15 @@ class DoctrineRouter implements RouterInterface
             throw new RouteNotFoundException('Document has no route: ' . $hint);
         }
 
-        if (isset($parameters['_locale'])) {
-            foreach($routes as $route) {
-                $defaults = $route->getRouteDefaults();
-                if (isset($defaults['_locale']) && $parameters['_locale'] == $defaults['_locale']) {
-                    return $route;
-                }
+        $locale = isset($parameters['_locale']) ? $parameters['_locale'] : $this->container->get('request')->getLocale();
+
+        foreach($routes as $route) {
+            $defaults = $route->getRouteDefaults();
+            if (isset($defaults['_locale']) && $locale == $defaults['_locale']) {
+                return $route;
             }
-            // if non matched, continue and randomly return the first one
         }
+        // if none matched, continue and randomly return the first one
 
         return reset($routes);
     }
