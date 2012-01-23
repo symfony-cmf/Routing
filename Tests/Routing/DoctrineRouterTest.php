@@ -14,8 +14,9 @@ class DoctrineRouterTest extends CmfUnitTestCase
         $this->loader = $this->buildMock("Symfony\\Component\\Config\\Loader\\LoaderInterface");
         $this->om = $this->buildMock("Doctrine\\Common\\Persistence\\ObjectManager", array('find'));
         $this->resolver = $this->buildMock('Symfony\\Cmf\\Bundle\\ChainRoutingBundle\\Resolver\\ControllerResolverInterface', array('getController'));
+        $this->container = $this->buildMock('Symfony\\Component\\DependencyInjection\\ContainerInterface');
 
-        $this->router = new DoctrineRouter($this->om, null, '/idprefix');
+        $this->router = new DoctrineRouter($this->om, $this->container, null, '/idprefix');
         $this->router->setObjectManager($this->om);
         $this->router->addControllerResolver($this->resolver);
     }
@@ -200,19 +201,29 @@ class DoctrineRouterTest extends CmfUnitTestCase
                 ->with(null, "/idprefix$url_alias")
                 ->will($this->returnValue($this->routeDocument));
 
-        $expected = array(
-            '_controller' => 'NameSpace\\Controller::action',
-            '_route' => 'chain_router_doctrine_route_company_more',
-            'contentDocument' => $this->contentDocument,
-            'path' => $url_alias,
-        );
-
         $this->resolver->expects($this->once())
                 ->method('getController')
                 ->with($this->routeDocument)
                 ->will($this->returnValue('NameSpace\\Controller::action'));
 
+        $attributes = $this->buildMock('Symfony\\Component\\HttpFoundation\\ParameterBag');
+        $attributes->expects($this->once())
+            ->method('set')
+            ->with('contentDocument', $this->contentDocument);
+        $request = new RequestMock($attributes);
+        $this->container->expects($this->once())
+            ->method('get')
+            ->with('request')
+            ->will($this->returnValue($request)
+        );
+
         $results = $this->router->match($url_alias);
+
+        $expected = array(
+            '_controller' => 'NameSpace\\Controller::action',
+            '_route' => 'chain_router_doctrine_route_company_more',
+            'path' => $url_alias,
+        );
 
         $this->assertEquals($expected, $results);
     }
@@ -241,7 +252,6 @@ class DoctrineRouterTest extends CmfUnitTestCase
         $expected = array(
             '_controller' => 'NameSpace\\Controller::action',
             '_route' => 'chain_router_doctrine_route_company_more_no_reference',
-            'contentDocument' => null,
             'path' => $url_alias,
             'type' => 'found',
         );
@@ -322,5 +332,11 @@ class RouteMock implements \Symfony\Cmf\Bundle\ChainRoutingBundle\Routing\RouteO
     public function getRouteDefaults()
     {
         return array();
+    }
+}
+class RequestMock extends \Symfony\Component\HttpFoundation\Request
+{
+    public function __construct($attributes) {
+        $this->attributes = $attributes;
     }
 }

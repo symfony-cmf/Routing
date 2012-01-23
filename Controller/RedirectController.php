@@ -3,9 +3,11 @@
 namespace Symfony\Cmf\Bundle\ChainRoutingBundle\Controller;
 
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
+use Symfony\Cmf\Bundle\ChainRoutingBundle\Routing\DoctrineRouter;
 use Symfony\Cmf\Bundle\ChainRoutingBundle\Routing\RedirectRouteInterface;
 
 /**
@@ -34,7 +36,7 @@ class RedirectController
      */
     public function redirectAction(RedirectRouteInterface $contentDocument)
     {
-        if (!$contentDocument) {
+        if (! $contentDocument) {
             throw new NotFoundHttpException('No route given');
         }
 
@@ -44,7 +46,6 @@ class RedirectController
             $url = $this->router->generate($contentDocument->getRouteName(), $contentDocument->getParameters(), true);
         }
 
-        return new \Symfony\Component\HttpFoundation\Response($url);
         return new RedirectResponse($url);
     }
 }

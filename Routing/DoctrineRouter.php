@@ -2,6 +2,7 @@
 
 namespace Symfony\Cmf\Bundle\ChainRoutingBundle\Routing;
 
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Routing\Router;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Routing\RequestContext;
@@ -14,7 +15,10 @@ use Symfony\Cmf\Bundle\ChainRoutingBundle\Resolver\ControllerResolverInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 /**
- * A router that reads entries from a Object-Document Mapper store.
+ * A router that reads route entries from an Object-Document Mapper store.
+ *
+ * If the route provides a content, that content is placed in the request
+ * object with the CONTENT_KEY for the controller to use.
  *
  * For Doctrine PHPCR-ODM, inject the $idPrefix to point to the node under
  * which you stored the route documents.
@@ -41,14 +45,43 @@ class DoctrineRouter implements RouterInterface
      */
     const CONTENT_TEMPLATE = 'contentTemplate';
 
+    /**
+     * @var ObjectManager
+     */
     protected $om;
+    /**
+     * @var ContainerInterface
+     */
+    protected $container;
+    /**
+     * @var array of ContentResolverInterface
+     */
     protected $resolvers;
+    /**
+     * The class of the route document/entity to use with the object manager
+     * @var null|string
+     */
     protected $routeClass;
+    /**
+     * The prefix to add to the url to create the key of the document that
+     * represents the route. Used in phpcr-odm to have a root node for all
+     * routes.
+     *
+     * @var string
+     */
     protected $idPrefix;
+    /**
+     * Context to get the base url from.
+     *
+     * @var RequestContext
+     */
     protected $context;
 
     /**
      * @param ObjectManager $om The doctrine entity resp. document manager
+     * @param ContainerInterface $container the dependency injection container
+     *      to get the request object to place the content in it, if the
+     *      matched route provides a content document.
      * @param string $routeClass Class name to pass to $om->find for
      *      repositories that require the class of the Entity/Document to find.
      *      Automatically detected on phpcr-odm.
@@ -57,9 +90,10 @@ class DoctrineRouter implements RouterInterface
      *      containing the route nodes. This must start with / and may not end
      *      with / as the url passed in will start with /.
      */
-    public function __construct(ObjectManager $om, $routeClass = null, $idPrefix = '')
+    public function __construct(ObjectManager $om, ContainerInterface $container, $routeClass = null, $idPrefix = '')
     {
         $this->setObjectManager($om);
+        $this->container = $container;
         $this->routeClass = $routeClass;
         $this->idPrefix = $idPrefix;
     }
@@ -196,7 +230,13 @@ class DoctrineRouter implements RouterInterface
             $defaults['_controller'] = $controller;
         }
 
-        $defaults[self::CONTENT_KEY] = $route->getRouteContent();
+        if ($content = $route->getRouteContent()) {
+            if (! $request = $this->container->get('request')) {
+                throw new \Exception('Request object not available from container');
+            }
+
+            $request->attributes->set(self::CONTENT_KEY, $content);
+        }
         $defaults['path'] = $url; // TODO: get rid of this
         $defaults['_route'] = 'chain_router_doctrine_route'.str_replace('/', '_', $url);
 

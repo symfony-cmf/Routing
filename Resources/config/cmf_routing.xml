@@ -38,6 +38,7 @@
         <service id="symfony_cmf_chain_routing.doctrine_router" class="%symfony_cmf_chain_routing.doctrine_router_class%">
             <argument type="service" id="doctrine_phpcr.odm.default_document_manager" />
             <!--FIXME: how to use a parameter to specify a service %symfony_cmf_chain_routing.object_manager_id% instead of passing the default om? -->
+            <argument type="service" id="service_container" />
             <argument>%symfony_cmf_chain_routing.route_entity_class%</argument>
             <argument>%symfony_cmf_core.routing_basepath%</argument>
             <call method="setContext"><argument type="service" id="router.request_context"/></call>
