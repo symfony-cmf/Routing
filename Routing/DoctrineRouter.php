@@ -300,9 +300,17 @@ class DoctrineRouter implements RouterInterface
             throw new RouteNotFoundException('Document has no route: ' . $hint);
         }
 
-        $locale = isset($parameters['_locale']) ? $parameters['_locale'] : $this->container->get('request')->getLocale();
+        if (isset($parameters['_locale'])) {
+            $locale =  $parameters['_locale'];
+        } else {
+            if (! $request = $this->container->get('request')) {
+                throw new \Exception('Request object not available from container');
+            }
+            $locale = $request->getLocale();
+        }
 
         foreach($routes as $route) {
+            if (! $route instanceof RouteObjectInterface) continue;
             $defaults = $route->getRouteDefaults();
             if (isset($defaults['_locale']) && $locale == $defaults['_locale']) {
                 return $route;

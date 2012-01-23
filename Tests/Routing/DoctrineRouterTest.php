@@ -7,6 +7,8 @@ use Symfony\Cmf\Bundle\ChainRoutingBundle\Routing\DoctrineRouter;
 
 class DoctrineRouterTest extends CmfUnitTestCase
 {
+    protected $request;
+
     public function setUp()
     {
         $this->contentDocument = $this->buildMock('Symfony\\Cmf\\Bundle\\ChainRoutingBundle\\Routing\\RouteAwareInterface');
@@ -19,6 +21,9 @@ class DoctrineRouterTest extends CmfUnitTestCase
         $this->router = new DoctrineRouter($this->om, $this->container, null, '/idprefix');
         $this->router->setObjectManager($this->om);
         $this->router->addControllerResolver($this->resolver);
+
+        $this->attributes = $this->buildMock('Symfony\\Component\\HttpFoundation\\ParameterBag');
+        $this->request = new RequestMock($this->attributes);
     }
 
     /**
@@ -33,6 +38,12 @@ class DoctrineRouterTest extends CmfUnitTestCase
 
     public function testGenerate()
     {
+        $this->container->expects($this->once())
+            ->method('get')
+            ->with('request')
+            ->will($this->returnValue($this->request)
+        );
+
         $this->contentDocument->expects($this->once())
             ->method('getRoutes')
             ->will($this->returnValue(array(new RouteMock())));
@@ -49,6 +60,18 @@ class DoctrineRouterTest extends CmfUnitTestCase
 
     public function testGenerateHome()
     {
+        $this->container->expects($this->once())
+            ->method('get')
+            ->with('request')
+            ->will($this->returnValue($this->request)
+        );
+
+        $this->container->expects($this->any())
+            ->method('get')
+            ->with('request')
+            ->will($this->returnValue($this->request)
+        );
+
         $this->contentDocument->expects($this->once())
             ->method('getRoutes')
             ->will($this->returnValue(array(new RouteMock('/idprefix'))));
@@ -65,6 +88,12 @@ class DoctrineRouterTest extends CmfUnitTestCase
 
     public function testGenerateAbsolute()
     {
+        $this->container->expects($this->once())
+            ->method('get')
+            ->with('request')
+            ->will($this->returnValue($this->request)
+        );
+
         $content = $this->buildMock('Symfony\\Cmf\\Bundle\\ChainRoutingBundle\\Routing\\RouteAwareInterface');
         $content->expects($this->once())
             ->method('getRoutes')
@@ -91,6 +120,12 @@ class DoctrineRouterTest extends CmfUnitTestCase
 
     public function testGenerateAbsoluteNonstandardHttp()
     {
+        $this->container->expects($this->once())
+            ->method('get')
+            ->with('request')
+            ->will($this->returnValue($this->request)
+        );
+
         $content = $this->buildMock('Symfony\\Cmf\\Bundle\\ChainRoutingBundle\\Routing\\RouteAwareInterface');
         $content->expects($this->once())
             ->method('getRoutes')
@@ -117,6 +152,12 @@ class DoctrineRouterTest extends CmfUnitTestCase
 
     public function testGenerateAbsoluteNonstandardHttps()
     {
+        $this->container->expects($this->once())
+            ->method('get')
+            ->with('request')
+            ->will($this->returnValue($this->request)
+        );
+
         $content = $this->buildMock('Symfony\\Cmf\\Bundle\\ChainRoutingBundle\\Routing\\RouteAwareInterface');
         $content->expects($this->once())
             ->method('getRoutes')
@@ -171,6 +212,12 @@ class DoctrineRouterTest extends CmfUnitTestCase
      */
     public function testGenerateInvalidRoute()
     {
+        $this->container->expects($this->once())
+            ->method('get')
+            ->with('request')
+            ->will($this->returnValue($this->request)
+        );
+
         $this->contentDocument->expects($this->once())
             ->method('getRoutes')
             ->will($this->returnValue(array($this)));
@@ -188,6 +235,12 @@ class DoctrineRouterTest extends CmfUnitTestCase
     public function testMatch()
     {
         $url_alias = "/company/more";
+        
+        $this->container->expects($this->once())
+            ->method('get')
+            ->with('request')
+            ->will($this->returnValue($this->request)
+        );
 
         $this->routeDocument->expects($this->once())
             ->method('getRouteDefaults')
@@ -206,16 +259,9 @@ class DoctrineRouterTest extends CmfUnitTestCase
                 ->with($this->routeDocument)
                 ->will($this->returnValue('NameSpace\\Controller::action'));
 
-        $attributes = $this->buildMock('Symfony\\Component\\HttpFoundation\\ParameterBag');
-        $attributes->expects($this->once())
+        $this->attributes->expects($this->once())
             ->method('set')
             ->with('contentDocument', $this->contentDocument);
-        $request = new RequestMock($attributes);
-        $this->container->expects($this->once())
-            ->method('get')
-            ->with('request')
-            ->will($this->returnValue($request)
-        );
 
         $results = $this->router->match($url_alias);
 
