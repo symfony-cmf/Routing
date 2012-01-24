@@ -164,7 +164,7 @@ class RedirectRoute implements RedirectRouteInterface
 
         if ($this->parameterKeys !== null) {
             $i = 0;
-            foreach($this->parameterKeys as $key) {
+            foreach ($this->parameterKeys as $key) {
                 $parameters[$key] = $this->parameter[$i];
             }
         }

@@ -62,7 +62,7 @@ class TemplateClassResolver implements ControllerResolverInterface
         // we need to loop over the array in case the content class extends the
         // specified class
         // i.e. phpcr-odm generates proxy class for the content.
-        foreach($this->templatesByClass as $class => $t) {
+        foreach ($this->templatesByClass as $class => $t) {
             if ($content instanceof $class) {
                 $template = $t;
                 break;
