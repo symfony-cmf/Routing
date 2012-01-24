@@ -12,6 +12,7 @@ use Symfony\Component\Routing\RouteCollection;
 
 use Symfony\Cmf\Bundle\ChainRoutingBundle\Resolver\ControllerResolverInterface;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 
 /**
@@ -78,7 +79,10 @@ class DoctrineRouter implements RouterInterface
     protected $context;
 
     /**
-     * @param ObjectManager $om The doctrine entity resp. document manager
+     * @param ManagerRegistry $registry the registry of entity resp. document
+     *      managers to get the om from
+     * @param string $managerName the name of the object manager to get from
+     *      the registry, null will get you the default manager
      * @param ContainerInterface $container the dependency injection container
      *      to get the request object to place the content in it, if the
      *      matched route provides a content document.
@@ -90,9 +94,9 @@ class DoctrineRouter implements RouterInterface
      *      containing the route nodes. This must start with / and may not end
      *      with / as the url passed in will start with /.
      */
-    public function __construct(ObjectManager $om, ContainerInterface $container, $routeClass = null, $idPrefix = '')
+    public function __construct(ContainerInterface $container, ManagerRegistry $registry, $managerName = null, $routeClass = null, $idPrefix = '')
     {
-        $this->setObjectManager($om);
+        $this->setObjectManager($registry->getManager($managerName));
         $this->container = $container;
         $this->routeClass = $routeClass;
         $this->idPrefix = $idPrefix;
