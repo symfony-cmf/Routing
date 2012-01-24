@@ -15,10 +15,16 @@ class DoctrineRouterTest extends CmfUnitTestCase
         $this->routeDocument = $this->buildMock('Symfony\\Cmf\\Bundle\\ChainRoutingBundle\\Routing\\RouteObjectInterface', array('getRouteDefaults', 'getRouteContent', 'getPath'));
         $this->loader = $this->buildMock("Symfony\\Component\\Config\\Loader\\LoaderInterface");
         $this->om = $this->buildMock("Doctrine\\Common\\Persistence\\ObjectManager", array('find'));
+        $this->registry = $this->buildMock("Doctrine\\Common\\Persistence\\ManagerRegistry", array('getManager'));
+        $this->registry->expects($this->once())
+            ->method('getManager')
+            ->with('manager')
+            ->will($this->returnValue($this->om))
+        ;
         $this->resolver = $this->buildMock('Symfony\\Cmf\\Bundle\\ChainRoutingBundle\\Resolver\\ControllerResolverInterface', array('getController'));
         $this->container = $this->buildMock('Symfony\\Component\\DependencyInjection\\ContainerInterface');
 
-        $this->router = new DoctrineRouter($this->om, $this->container, null, '/idprefix');
+        $this->router = new DoctrineRouter($this->container, $this->registry, 'manager', null, '/idprefix');
         $this->router->setObjectManager($this->om);
         $this->router->addControllerResolver($this->resolver);
 
@@ -235,7 +241,7 @@ class DoctrineRouterTest extends CmfUnitTestCase
     public function testMatch()
     {
         $url_alias = "/company/more";
-        
+
         $this->container->expects($this->once())
             ->method('get')
             ->with('request')
