@@ -8,33 +8,38 @@ use Symfony\Cmf\Bundle\ChainRoutingBundle\Routing\DoctrineRouter;
 class DoctrineRouterTest extends CmfUnitTestCase
 {
     protected $request;
+    protected $contentDocument;
+    protected $routeDocument;
+    protected $loader;
+    protected $registry;
+    protected $om;
+    protected $resolver;
+    protected $router;
+    protected $attributes;
+    protected $container;
 
     public function setUp()
     {
         $this->contentDocument = $this->buildMock('Symfony\\Cmf\\Bundle\\ChainRoutingBundle\\Routing\\RouteAwareInterface');
         $this->routeDocument = $this->buildMock('Symfony\\Cmf\\Bundle\\ChainRoutingBundle\\Routing\\RouteObjectInterface', array('getRouteDefaults', 'getRouteContent', 'getPath'));
         $this->loader = $this->buildMock("Symfony\\Component\\Config\\Loader\\LoaderInterface");
+        $this->registry = $this->buildMock('Doctrine\\Common\\Persistence\\ManagerRegistry', array('getManager'));
         $this->om = $this->buildMock("Doctrine\\Common\\Persistence\\ObjectManager", array('find'));
 
+        $this->registry->expects($this->any())
+            ->method('getManager')
+            ->with(null)
+            ->will($this->returnValue($this->om));
+
         $this->resolver = $this->buildMock('Symfony\\Cmf\\Bundle\\ChainRoutingBundle\\Resolver\\ControllerResolverInterface', array('getController'));
-        $this->container = $this->buildMock('Symfony\\Component\\DependencyInjection\\ContainerInterface');
-
-        $this->container->expects($this->any())
-            ->method('get')
-            ->with($this->logicalOr(
-                $this->equalTo('doctrine.manager'),
-                $this->equalTo('request')
-            ))
-            ->will($this->returnCallback(array($this, 'containerCallback')))
-        ;
-
-
-        $this->router = new DoctrineRouter($this->container, 'doctrine.manager', null, '/idprefix');
-        $this->router->setObjectManager($this->om);
-        $this->router->addControllerResolver($this->resolver);
 
         $this->attributes = $this->buildMock('Symfony\\Component\\HttpFoundation\\ParameterBag');
         $this->request = new RequestMock($this->attributes);
+        $this->container = $this->buildMock('Symfony\\Component\\DependencyInjection\\ContainerInterface');
+
+        $this->router = new DoctrineRouter($this->container, $this->registry, null, null, '/idprefix');
+        $this->router->setObjectManager($this->om);
+        $this->router->addControllerResolver($this->resolver);
     }
 
     /**
@@ -368,18 +373,6 @@ class DoctrineRouterTest extends CmfUnitTestCase
             ->will($this->throwException(new \PHPCR\RepositoryException()));
 
         $this->router->match($url_alias);
-    }
-
-    public function containerCallback($service)
-    {
-        switch($service) {
-            case 'request':
-                return $this->request;
-            case 'doctrine.manager':
-                return $this->om;
-            default:
-                $this->fail("Unexpected service requested: $service");
-        }
     }
 }
 
