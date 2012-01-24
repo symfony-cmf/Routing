@@ -29,6 +29,8 @@ use Doctrine\Common\Persistence\ObjectManager;
  * this class and the url. Make sure to provide a repository implementation
  * that can find the document/entity by url.
  *
+ * TODO: turn this into an abstract class with a concrete implementation for PHPCR ODM
+ *
  * @author Philippo de Santis
  * @author David Buchmann
  */
@@ -79,13 +81,13 @@ class DoctrineRouter implements RouterInterface
     protected $context;
 
     /**
+     * @param ContainerInterface $container the dependency injection container
+     *      to get the request object to place the content in it, if the
+     *      matched route provides a content document.
      * @param ManagerRegistry $registry the registry of entity resp. document
      *      managers to get the om from
      * @param string $managerName the full object manager service name to get
      *      from the container
-     * @param ContainerInterface $container the dependency injection container
-     *      to get the request object to place the content in it, if the
-     *      matched route provides a content document.
      * @param string $routeClass Class name to pass to $om->find for
      *      repositories that require the class of the Entity/Document to find.
      *      Automatically detected on phpcr-odm.
@@ -94,9 +96,9 @@ class DoctrineRouter implements RouterInterface
      *      containing the route nodes. This must start with / and may not end
      *      with / as the url passed in will start with /.
      */
-    public function __construct(ContainerInterface $container, $managerName = null, $routeClass = null, $idPrefix = '')
+    public function __construct(ContainerInterface $container, ManagerRegistry $registry, $managerName = null, $routeClass = null, $idPrefix = '')
     {
-        $this->setObjectManager($container->get($managerName));
+        $this->setObjectManager($registry->getManager($managerName));
         $this->container = $container;
         $this->routeClass = $routeClass;
         $this->idPrefix = $idPrefix;
@@ -224,7 +226,7 @@ class DoctrineRouter implements RouterInterface
 
         if (empty($defaults['_controller'])) {
             // if content does not provide explicit controller, try to find it with one of the resolvers
-            foreach($this->resolvers as $resolver) {
+            foreach ($this->resolvers as $resolver) {
                 $controller = $resolver->getController($route, $defaults);
                 if ($controller !== false) break;
             }
@@ -313,7 +315,7 @@ class DoctrineRouter implements RouterInterface
             $locale = $request->getLocale();
         }
 
-        foreach($routes as $route) {
+        foreach ($routes as $route) {
             if (! $route instanceof RouteObjectInterface) continue;
             $defaults = $route->getRouteDefaults();
             if (isset($defaults['_locale']) && $locale == $defaults['_locale']) {
