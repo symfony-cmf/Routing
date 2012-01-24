@@ -15,16 +15,21 @@ class DoctrineRouterTest extends CmfUnitTestCase
         $this->routeDocument = $this->buildMock('Symfony\\Cmf\\Bundle\\ChainRoutingBundle\\Routing\\RouteObjectInterface', array('getRouteDefaults', 'getRouteContent', 'getPath'));
         $this->loader = $this->buildMock("Symfony\\Component\\Config\\Loader\\LoaderInterface");
         $this->om = $this->buildMock("Doctrine\\Common\\Persistence\\ObjectManager", array('find'));
-        $this->registry = $this->buildMock("Doctrine\\Common\\Persistence\\ManagerRegistry", array('getManager'));
-        $this->registry->expects($this->once())
-            ->method('getManager')
-            ->with('manager')
-            ->will($this->returnValue($this->om))
-        ;
+
         $this->resolver = $this->buildMock('Symfony\\Cmf\\Bundle\\ChainRoutingBundle\\Resolver\\ControllerResolverInterface', array('getController'));
         $this->container = $this->buildMock('Symfony\\Component\\DependencyInjection\\ContainerInterface');
 
-        $this->router = new DoctrineRouter($this->container, $this->registry, 'manager', null, '/idprefix');
+        $this->container->expects($this->any())
+            ->method('get')
+            ->with($this->logicalOr(
+                $this->equalTo('doctrine.manager'),
+                $this->equalTo('request')
+            ))
+            ->will($this->returnCallback(array($this, 'containerCallback')))
+        ;
+
+
+        $this->router = new DoctrineRouter($this->container, 'doctrine.manager', null, '/idprefix');
         $this->router->setObjectManager($this->om);
         $this->router->addControllerResolver($this->resolver);
 
@@ -363,6 +368,18 @@ class DoctrineRouterTest extends CmfUnitTestCase
             ->will($this->throwException(new \PHPCR\RepositoryException()));
 
         $this->router->match($url_alias);
+    }
+
+    public function containerCallback($service)
+    {
+        switch($service) {
+            case 'request':
+                return $this->request;
+            case 'doctrine.manager':
+                return $this->om;
+            default:
+                $this->fail("Unexpected service requested: $service");
+        }
     }
 }
 

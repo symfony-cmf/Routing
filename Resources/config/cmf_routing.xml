@@ -9,10 +9,7 @@
             if you do not have phpcr-odm, you might need to set the entity class. for phpcr-odm the class is automatically detected, allowing to mix classes
         -->
         <parameter key="symfony_cmf_chain_routing.route_entity_class">null</parameter>
-        <!--
-            set to the name of the object manager if you do not want to use the default object manager
-        -->
-        <parameter key="symfony_cmf_chain_routing.object_manager_id">null</parameter>
+        <parameter key="symfony_cmf_chain_routing.object_manager_id">doctrine_phpcr.odm.default_document_manager</parameter>
         <parameter key="symfony_cmf_chain_routing.resolver_explicit_template_class">Symfony\Cmf\Bundle\ChainRoutingBundle\Resolver\ExplicitTemplateResolver</parameter>
         <parameter key="symfony_cmf_chain_routing.resolver_controllers_by_alias_class">Symfony\Cmf\Bundle\ChainRoutingBundle\Resolver\ControllerAliasResolver</parameter>
         <parameter key="symfony_cmf_chain_routing.resolver_controllers_by_class_class">Symfony\Cmf\Bundle\ChainRoutingBundle\Resolver\ControllerClassResolver</parameter>
@@ -38,7 +35,6 @@
 
         <service id="symfony_cmf_chain_routing.doctrine_router" class="%symfony_cmf_chain_routing.doctrine_router_class%">
             <argument type="service" id="service_container" />
-            <argument type="service" id="doctrine_phpcr" />
             <argument>%symfony_cmf_chain_routing.object_manager_id%</argument>
             <argument>%symfony_cmf_chain_routing.route_entity_class%</argument>
             <argument>%symfony_cmf_core.routing_basepath%</argument>
