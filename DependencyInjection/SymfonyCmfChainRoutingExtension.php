@@ -35,7 +35,7 @@ class SymfonyCmfChainRoutingExtension extends Extension
 
         $config = $processor->processConfiguration($configuration, $configs);
 
-        if ($config['doctrine']['enabled']) {
+        if (!empty($config['doctrine']['enabled'])) {
             $this->setupDoctrineRouter($config['doctrine'], $container, $loader);
         }
 
