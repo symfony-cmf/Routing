@@ -102,6 +102,34 @@ class DoctrineRouterTest extends CmfUnitTestCase
         $this->assertEquals('/base/', $url);
     }
 
+    public function testGenerateEmptyRouteString()
+    {
+        $this->container->expects($this->once())
+            ->method('get')
+            ->with('request')
+            ->will($this->returnValue($this->request)
+        );
+
+        $this->container->expects($this->any())
+            ->method('get')
+            ->with('request')
+            ->will($this->returnValue($this->request)
+        );
+
+        $this->contentDocument->expects($this->once())
+            ->method('getRoutes')
+            ->will($this->returnValue(array(new RouteMock('/idprefix'))));
+
+        $context = $this->buildMock('Symfony\\Component\\Routing\\RequestContext');
+        $context->expects($this->once())
+            ->method('getBaseUrl')
+            ->will($this->returnValue('/base'));
+        $this->router->setContext($context);
+
+        $url = $this->router->generate('ignore', array('content'=>$this->contentDocument, 'route' => ''));
+        $this->assertEquals('/base/', $url);
+    }
+
     public function testGenerateAbsolute()
     {
         $this->container->expects($this->once())

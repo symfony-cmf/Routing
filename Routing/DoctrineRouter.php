@@ -144,7 +144,7 @@ class DoctrineRouter implements RouterInterface
      */
     public function generate($name, $parameters = array(), $absolute = false)
     {
-        if (isset($parameters['route'])) {
+        if (isset($parameters['route']) && $parameters['route'] !== '') {
             $route = $parameters['route'];
         } else {
             $route = $this->getRouteFromContent($parameters);
