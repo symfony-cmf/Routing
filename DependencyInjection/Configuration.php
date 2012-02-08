@@ -62,6 +62,7 @@ class Configuration implements ConfigurationInterface
                             ->prototype('scalar')
                         ->end()->end()
                         ->scalarNode('route_entity_class')->end()
+                        ->scalarNode('routing_repositoryroot')->defaultValue('/cms/routes')->end()
                     ->end()
                 ->end()
         ->end();

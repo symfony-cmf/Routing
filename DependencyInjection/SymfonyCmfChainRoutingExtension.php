@@ -71,6 +71,7 @@ class SymfonyCmfChainRoutingExtension extends Extension
         if (isset($config['route_entity_class'])) {
             $container->setParameter($this->getAlias() . '.route_entity_class', $config['route_entity_class']);
         }
+        $container->setParameter($this->getAlias() . '.routing_repositoryroot', $config['routing_repositoryroot']);
 
         $doctrine = $container->getDefinition($this->getAlias() . '.doctrine_router');
         $doctrine->replaceArgument(1, new Reference($config['registry_id']));

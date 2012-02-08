@@ -121,7 +121,7 @@ The possible mappings are (in order of precedence):
     class names in the map and if matched that template will be set as
     'template' in the $defaults and return the configured generic controller.
 
-* **TODO**: generic controller with output directed by annotations instead of explicit template?
+* **TODO**: generic controller with output directed by document annotations instead of explicit template?
 
     symfony_cmf_chain_routing:
         doctrine:
@@ -134,10 +134,12 @@ The possible mappings are (in order of precedence):
             templates_by_class:
                 Symfony\Cmf\Bundle\ContentBundle\Document\StaticContent: SymfonyCmfContentBundle:StaticContent:index.html.twig
 
-
             # optional, to be used when routing with a doctrine object manager
             # that needs a class name for find. (phpcr-odm can guess that.)
-            # route_entity_class: Fully\Qualified\Classname
+            route_entity_class: Fully\Qualified\Classname
+
+            # the routing root path is usually fine, but you can change it, i.e. in multisite situations
+            routing_repositoryroot: /cms/routes
 
 To see some examples, please look at the [cmf-sandbox](https://github.com/symfony-cmf/cmf-sandbox)
 and specifically the routing fixtures loading.
