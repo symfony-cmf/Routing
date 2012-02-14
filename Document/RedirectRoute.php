@@ -21,26 +21,10 @@ use Symfony\Cmf\Bundle\ChainRoutingBundle\Routing\RedirectRouteInterface;
  *
  * @author David Buchmann <david@liip.ch>
  *
- * @PHPCRODM\Document
+ * @PHPCRODM\Document(repositoryClass="Symfony\Cmf\Bundle\ChainRoutingBundle\Document\RouteRepository")
  */
-class RedirectRoute implements RedirectRouteInterface
+class RedirectRoute extends Route implements RedirectRouteInterface
 {
-    /**
-     * @PHPCRODM\ParentDocument
-     */
-    protected $parent;
-    /**
-     * @PHPCRODM\Nodename
-     */
-    protected $name;
-
-    /**
-     * The full repository path to this route object
-     * TODO: the strategy=parent argument should not be needed, we do have a ParentDocument annotation
-     * @PHPCRODM\Id(strategy="parent")
-     */
-    protected $path;
-
     /**
      * Absolute uri to redirect to
      * @PHPCRODM\Uri
@@ -73,28 +57,7 @@ class RedirectRoute implements RedirectRouteInterface
     protected $parameter;
 
     /**
-     * Set the parent document and name of this route entry. Only allowed when
-     * creating a new item!
-     *
-     * The url will be the url of the parent plus the supplied name.
-     */
-    public function setPosition($parent, $name)
-    {
-      $this->parent = $parent;
-      $this->name = $name;
-    }
-    /**
-     * Get the path of this url entry
-     */
-    public function getPath()
-    {
-      return $this->path;
-    }
-
-    /**
-     * There are no defaults here. We set up a map from class to controller
-     *
-     * @return array empty array
+     * {@inheritDoc}
      */
     public function getRouteDefaults()
     {
@@ -102,10 +65,7 @@ class RedirectRoute implements RedirectRouteInterface
     }
 
     /**
-     * This route returns itself as content, as the RedirectController needs
-     * the route object to build the RedirectResponse
-     *
-     * @return self
+     * {@inheritDoc}
      */
     public function getRouteContent()
     {
@@ -113,21 +73,20 @@ class RedirectRoute implements RedirectRouteInterface
     }
 
     /**
-     * Set the document this url points to
+     * Set the route this redirection route points to
      */
     public function setRouteTarget(RouteObjectInterface $document)
     {
         $this->routeTarget = $document;
     }
     /**
-     * Get the content document this route entry stands for. If non-null,
-     * the ControllerClassResolver uses it to identify a controller and
-     * the content is passed to the controller.
+     * Get the content document this route entry stands for.
      *
-     * If there is no specific content for this url (i.e. its an "application"
-     * page), may return null.
+     * If non-null, it is added as route into the parameters, which will lead
+     * to have the generate call issued by the RedirectController to have
+     * the target route in the parameters.
      *
-     * @return object the document or entity this route entry points to
+     * @return RouteObjectInterface the route this redirection points to
      */
     public function getRouteTarget()
     {
@@ -138,6 +97,9 @@ class RedirectRoute implements RedirectRouteInterface
     {
         $this->routeName = $routeName;
     }
+    /**
+     * {@inheritDoc}
+     */
     public function getRouteName()
     {
         return $this->routeName;
@@ -154,9 +116,7 @@ class RedirectRoute implements RedirectRouteInterface
     }
 
     /**
-     * Merge the given string parameters and the targetRoute document
-     *
-     * @return array Information to build the route
+     * {@inheritDoc}
      */
     public function getParameters()
     {
@@ -181,7 +141,9 @@ class RedirectRoute implements RedirectRouteInterface
     {
         $this->uri = $uri;
     }
-
+    /**
+     * {@inheritDoc}
+     */
     public function getUri()
     {
         return $this->uri;

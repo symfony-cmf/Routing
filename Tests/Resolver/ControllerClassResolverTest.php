@@ -10,7 +10,7 @@ class ControllerClassResolverTest extends CmfUnitTestCase
     public function setUp()
     {
         $this->document = $this->buildMock('Symfony\\Cmf\\Bundle\\ChainRoutingBundle\\Routing\\RouteObjectInterface',
-                                            array('getRouteContent', 'getRouteDefaults', 'getPath'));
+                                            array('getRouteContent', 'getRouteDefaults', 'getUrl'));
 
         $mapping = array('Symfony\\Cmf\\Bundle\\ChainRoutingBundle\\Tests\\Controller\\TargetDocument'
                             => 'symfony_cmf_content.controller:indexAction');

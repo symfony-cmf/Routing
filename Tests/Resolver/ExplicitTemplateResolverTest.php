@@ -10,7 +10,7 @@ class ExplicitTemplateResolverTest extends CmfUnitTestCase
     public function setUp()
     {
         $this->document = $this->buildMock('Symfony\\Cmf\\Bundle\\ChainRoutingBundle\\Routing\\RouteObjectInterface',
-                                            array('getRouteContent', 'getRouteDefaults', 'getPath'));
+                                            array('getRouteContent', 'getRouteDefaults', 'getUrl'));
 
         $this->resolver = new ExplicitTemplateResolver('symfony_cmf_content.controller:indexAction');
     }

@@ -10,7 +10,7 @@ use Symfony\Cmf\Bundle\ChainRoutingBundle\Routing\RouteObjectInterface;
  *
  * @author david.buchmann@liip.ch
  *
- * @PHPCRODM\Document(referenceable=true)
+ * @PHPCRODM\Document(referenceable=true,repositoryClass="Symfony\Cmf\Bundle\ChainRoutingBundle\Document\RouteRepository")
  */
 class Route implements RouteObjectInterface
 {
@@ -68,6 +68,12 @@ class Route implements RouteObjectInterface
     protected $locale;
 
     /**
+     * The part of the phpcr path that is not part of the url
+     * @var string
+     */
+    protected $idPrefix;
+
+    /**
      * Set the parent document and name of this route entry. Only allowed when
      * creating a new item!
      *
@@ -79,11 +85,15 @@ class Route implements RouteObjectInterface
       $this->name = $name;
     }
     /**
-     * Get the path of this url entry
+     * Get the repository path of this url entry
      */
     public function getPath()
     {
       return $this->path;
+    }
+    public function setPrefix($idPrefix)
+    {
+        $this->idPrefix = $idPrefix;
     }
 
     /**
@@ -94,14 +104,19 @@ class Route implements RouteObjectInterface
         $this->routeContent = $document;
     }
     /**
-     * Get the content document this route entry stands for. If non-null,
-     * the ControllerClassResolver uses it to identify a controller and
-     * the content is passed to the controller.
-     *
-     * If there is no specific content for this url (i.e. its an "application"
-     * page), may return null.
-     *
-     * @return object the document or entity this route entry points to
+     * {@inheritDoc}
+     */
+    public function getUrl()
+    {
+        $url = substr($this->getPath(), strlen($this->idPrefix));
+        if (empty($url)) {
+            $url = '/';
+        }
+        return $url;
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function getRouteContent()
     {
@@ -189,10 +204,7 @@ class Route implements RouteObjectInterface
     }
 
     /**
-     * To work with the ControllerAliasResolver, this must at least contain
-     * the field 'type' with a value from the controllers_by_alias mapping
-     *
-     * @return array Information for the ControllerResolver
+     * {@inheritDoc}
      */
     public function getRouteDefaults()
     {

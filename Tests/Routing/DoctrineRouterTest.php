@@ -11,25 +11,19 @@ class DoctrineRouterTest extends CmfUnitTestCase
     protected $contentDocument;
     protected $routeDocument;
     protected $loader;
-    protected $registry;
-    protected $om;
+    protected $repository;
     protected $resolver;
     protected $router;
     protected $attributes;
     protected $container;
 
+
     public function setUp()
     {
         $this->contentDocument = $this->buildMock('Symfony\\Cmf\\Bundle\\ChainRoutingBundle\\Routing\\RouteAwareInterface');
-        $this->routeDocument = $this->buildMock('Symfony\\Cmf\\Bundle\\ChainRoutingBundle\\Routing\\RouteObjectInterface', array('getRouteDefaults', 'getRouteContent', 'getPath'));
+        $this->routeDocument = $this->buildMock('Symfony\\Cmf\\Bundle\\ChainRoutingBundle\\Routing\\RouteObjectInterface', array('getRouteDefaults', 'getRouteContent', 'getUrl'));
         $this->loader = $this->buildMock("Symfony\\Component\\Config\\Loader\\LoaderInterface");
-        $this->registry = $this->buildMock('Doctrine\\Common\\Persistence\\ManagerRegistry', array('getManager'));
-        $this->om = $this->buildMock("Doctrine\\Common\\Persistence\\ObjectManager", array('find'));
-
-        $this->registry->expects($this->any())
-            ->method('getManager')
-            ->with(null)
-            ->will($this->returnValue($this->om));
+        $this->repository = $this->buildMock("Symfony\\Cmf\\Bundle\\ChainRoutingBundle\\Routing\\RouteRepositoryInterface", array('findByUrl'));
 
         $this->resolver = $this->buildMock('Symfony\\Cmf\\Bundle\\ChainRoutingBundle\\Resolver\\ControllerResolverInterface', array('getController'));
 
@@ -37,8 +31,7 @@ class DoctrineRouterTest extends CmfUnitTestCase
         $this->request = new RequestMock($this->attributes);
         $this->container = $this->buildMock('Symfony\\Component\\DependencyInjection\\ContainerInterface');
 
-        $this->router = new DoctrineRouter($this->container, $this->registry, null, null, '/idprefix');
-        $this->router->setObjectManager($this->om);
+        $this->router = new DoctrineRouter($this->container, $this->repository);
         $this->router->addControllerResolver($this->resolver);
     }
 
@@ -90,7 +83,7 @@ class DoctrineRouterTest extends CmfUnitTestCase
 
         $this->contentDocument->expects($this->once())
             ->method('getRoutes')
-            ->will($this->returnValue(array(new RouteMock('/idprefix'))));
+            ->will($this->returnValue(array(new RouteMock('/'))));
 
         $context = $this->buildMock('Symfony\\Component\\Routing\\RequestContext');
         $context->expects($this->once())
@@ -118,7 +111,7 @@ class DoctrineRouterTest extends CmfUnitTestCase
 
         $this->contentDocument->expects($this->once())
             ->method('getRoutes')
-            ->will($this->returnValue(array(new RouteMock('/idprefix'))));
+            ->will($this->returnValue(array(new RouteMock('/'))));
 
         $context = $this->buildMock('Symfony\\Component\\Routing\\RequestContext');
         $context->expects($this->once())
@@ -226,6 +219,34 @@ class DoctrineRouterTest extends CmfUnitTestCase
         $this->assertEquals('https://test.domain:3333/base/test/route', $url);
     }
 
+    public function testGenerateFromRoute()
+    {
+        $context = $this->buildMock('Symfony\\Component\\Routing\\RequestContext');
+        $context->expects($this->once())
+            ->method('getBaseUrl')
+            ->will($this->returnValue('/base'));
+        $this->router->setContext($context);
+
+        $url = $this->router->generate('ignore', array('route'=>new RouteMock()));
+        $this->assertEquals('/base/test/route', $url);
+    }
+
+    public function testGenerateMultilang()
+    {
+        $this->contentDocument->expects($this->once())
+            ->method('getRoutes')
+            ->will($this->returnValue(array(new RouteMock('/en', 'en'), new RouteMock('/de', 'de'))));
+
+        $context = $this->buildMock('Symfony\\Component\\Routing\\RequestContext');
+        $context->expects($this->once())
+            ->method('getBaseUrl')
+            ->will($this->returnValue('/base'));
+        $this->router->setContext($context);
+
+        $url = $this->router->generate('ignore', array('content'=>$this->contentDocument, '_locale' => 'de'));
+        $this->assertEquals('/base/de', $url);
+    }
+
     /**
      * @expectedException Symfony\Component\Routing\Exception\RouteNotFoundException
      */
@@ -269,6 +290,28 @@ class DoctrineRouterTest extends CmfUnitTestCase
         $this->router->generate('ignore', array('content'=>$this->contentDocument));
     }
 
+    public function testGenerateNoRequest()
+    {
+        $url_alias = '/url';
+        $this->container->expects($this->once())
+            ->method('get')
+            ->with('request')
+            ->will($this->returnValue(null)
+        );
+
+        $this->contentDocument->expects($this->once())
+            ->method('getRoutes')
+            ->will($this->returnValue(array(new RouteMock())));
+
+        try {
+            $this->router->generate('something', array('content' => $this->contentDocument));
+            $this->fail('Expected failure when context is null');
+        } catch (\Exception $e) {
+            // expected
+        }
+    }
+
+
     public function testRouteCollection()
     {
         $collection = $this->router->getRouteCollection();
@@ -293,9 +336,9 @@ class DoctrineRouterTest extends CmfUnitTestCase
             ->method('getRouteContent')
             ->will($this->returnValue($this->contentDocument));
 
-        $this->om->expects($this->once())
-                ->method('find')
-                ->with(null, "/idprefix$url_alias")
+        $this->repository->expects($this->once())
+                ->method('findByUrl')
+                ->with($url_alias)
                 ->will($this->returnValue($this->routeDocument));
 
         $this->resolver->expects($this->once())
@@ -334,9 +377,9 @@ class DoctrineRouterTest extends CmfUnitTestCase
                 ->with($this->routeDocument)
                 ->will($this->returnValue('NameSpace\\Controller::action'));
 
-        $this->om->expects($this->once())
-                ->method('find')
-                ->with(null, "/idprefix$url_alias")
+        $this->repository->expects($this->once())
+                ->method('findByUrl')
+                ->with($url_alias)
                 ->will($this->returnValue($this->routeDocument));
 
         $expected = array(
@@ -356,9 +399,9 @@ class DoctrineRouterTest extends CmfUnitTestCase
     {
         $url_alias = "/company/more_no_match";
 
-        $this->om->expects($this->once())
-                ->method('find')
-                ->with(null, "/idprefix$url_alias")
+        $this->repository->expects($this->once())
+                ->method('findByUrl')
+                ->with($url_alias)
                 ->will($this->returnValue(null));
 
         $this->router->match($url_alias);
@@ -380,9 +423,9 @@ class DoctrineRouterTest extends CmfUnitTestCase
             ->with($this->routeDocument)
             ->will($this->returnValue(false));
 
-        $this->om->expects($this->once())
-            ->method('find')
-            ->with(null, "/idprefix$url_alias")
+        $this->repository->expects($this->once())
+            ->method('findByUrl')
+            ->with($url_alias)
             ->will($this->returnValue($this->routeDocument));
 
         $this->router->match($url_alias);
@@ -393,27 +436,59 @@ class DoctrineRouterTest extends CmfUnitTestCase
      */
     public function testExceptionFindingRoute()
     {
-        $url_alias = "/company/more_no_match";
+        $url_alias = '/company/more_no_match';
 
-        $this->om->expects($this->once())
-            ->method('find')
-            ->with(null, "/idprefix$url_alias")
+        $this->repository->expects($this->once())
+            ->method('findByUrl')
+            ->with($url_alias)
             ->will($this->throwException(new \PHPCR\RepositoryException()));
 
         $this->router->match($url_alias);
+    }
+
+    public function testMatchNoRequest()
+    {
+        $url_alias = '/url';
+        $this->container->expects($this->once())
+            ->method('get')
+            ->with('request')
+            ->will($this->returnValue(null)
+        );
+
+        $this->routeDocument->expects($this->once())
+            ->method('getRouteDefaults')
+            ->will($this->returnValue(array()));
+        $this->routeDocument->expects($this->once())
+            ->method('getRouteContent')
+            ->will($this->returnValue($this->contentDocument));
+
+        $this->repository->expects($this->once())
+            ->method('findByUrl')
+            ->with($url_alias)
+            ->will($this->returnValue($this->routeDocument));
+
+
+        try {
+            $this->router->match($url_alias);
+            $this->fail('Expected failure when context is null');
+        } catch (\Exception $e) {
+            // expected
+        }
     }
 }
 
 class RouteMock implements \Symfony\Cmf\Bundle\ChainRoutingBundle\Routing\RouteObjectInterface
 {
-    private $path;
-    public function __construct($path = '/idprefix/test/route')
+    private $url;
+    private $locale;
+    public function __construct($url = '/test/route', $locale = null)
     {
-        $this->path = $path;
+        $this->url = $url;
+        $this->locale = $locale;
     }
-    public function getPath()
+    public function getUrl()
     {
-        return $this->path;
+        return $this->url;
     }
     public function getRouteContent()
     {
@@ -421,7 +496,11 @@ class RouteMock implements \Symfony\Cmf\Bundle\ChainRoutingBundle\Routing\RouteO
     }
     public function getRouteDefaults()
     {
-        return array();
+        $defaults = array();
+        if (! is_null($this->locale)) {
+            $defaults['_locale'] = $this->locale;
+        }
+        return $defaults;
     }
 }
 class RequestMock extends \Symfony\Component\HttpFoundation\Request

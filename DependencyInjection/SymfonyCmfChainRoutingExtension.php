@@ -68,13 +68,10 @@ class SymfonyCmfChainRoutingExtension extends Extension
         $container->setParameter($this->getAlias() . '.templates_by_class', $config['templates_by_class']);
 
         $loader->load('cmf_routing.xml');
-        if (isset($config['route_entity_class'])) {
-            $container->setParameter($this->getAlias() . '.route_entity_class', $config['route_entity_class']);
-        }
         $container->setParameter($this->getAlias() . '.routing_repositoryroot', $config['routing_repositoryroot']);
 
         $doctrine = $container->getDefinition($this->getAlias() . '.doctrine_router');
-        $doctrine->replaceArgument(1, new Reference($config['registry_id']));
+        $doctrine->replaceArgument(1, new Reference($config['route_repository_service']));
 
         // if any mappings are defined, set the respective resolvers
         if (!empty($config['generic_controller'])) {

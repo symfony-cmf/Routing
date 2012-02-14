@@ -49,30 +49,21 @@ class DoctrineRouter implements RouterInterface
     const CONTENT_TEMPLATE = 'contentTemplate';
 
     /**
-     * @var ObjectManager
-     */
-    protected $om;
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-    /**
      * @var array of ContentResolverInterface
      */
     protected $resolvers;
     /**
-     * The class of the route document/entity to use with the object manager
-     * @var null|string
+     * The route repository to get routes from
+     * @var RouteRepositoryInterface
      */
-    protected $routeClass;
+    protected $routeRepository;
+
     /**
-     * The prefix to add to the url to create the key of the document that
-     * represents the route. Used in phpcr-odm to have a root node for all
-     * routes.
-     *
-     * @var string
+     * To get the request from, as its not available immediatly
+     * @var ContainerInterface
      */
-    protected $idPrefix;
+    protected $container;
+
     /**
      * Context to get the base url from.
      *
@@ -84,24 +75,12 @@ class DoctrineRouter implements RouterInterface
      * @param ContainerInterface $container the dependency injection container
      *      to get the request object to place the content in it, if the
      *      matched route provides a content document.
-     * @param ManagerRegistry $registry the registry of entity resp. document
-     *      managers to get the om from
-     * @param string $managerName the full object manager service name to get
-     *      from the container
-     * @param string $routeClass Class name to pass to $om->find for
-     *      repositories that require the class of the Entity/Document to find.
-     *      Automatically detected on phpcr-odm.
-     * @param string $idPrefix A prefix to prepend to the url when looking it
-     *      up in the repository, used with phpcr-odm to specify the node
-     *      containing the route nodes. This must start with / and may not end
-     *      with / as the url passed in will start with /.
+     * @param RouteRepositoryInterface $routeRepository The repository to get routes from
      */
-    public function __construct(ContainerInterface $container, ManagerRegistry $registry, $managerName = null, $routeClass = null, $idPrefix = '')
+    public function __construct(ContainerInterface $container, RouteRepositoryInterface $routeRepository)
     {
-        $this->setObjectManager($registry->getManager($managerName));
         $this->container = $container;
-        $this->routeClass = $routeClass;
-        $this->idPrefix = $idPrefix;
+        $this->routeRepository = $routeRepository;
     }
 
     /**
@@ -144,7 +123,7 @@ class DoctrineRouter implements RouterInterface
      */
     public function generate($name, $parameters = array(), $absolute = false)
     {
-        if (isset($parameters['route']) && $parameters['route'] !== '') {
+        if (isset($parameters['route']) && '' !== $parameters['route']) {
             $route = $parameters['route'];
         } else {
             $route = $this->getRouteFromContent($parameters);
@@ -155,11 +134,7 @@ class DoctrineRouter implements RouterInterface
             throw new RouteNotFoundException('Route of this document is not instance of RouteObjectInterface but: '.$hint);
         }
 
-        $url = substr($route->getPath(), strlen($this->idPrefix));
-        if (empty($url)) {
-            $url = '/';
-        }
-        $url = $this->context->getBaseUrl() . $url;
+        $url = $this->context->getBaseUrl() . $route->getUrl();
 
         // TODO: this is copy-pasted from symfony UrlGenerator
         // we should try to somehow reuse the code there rather than copy-paste
@@ -182,16 +157,6 @@ class DoctrineRouter implements RouterInterface
     {
         /* TODO */
         return new RouteCollection();
-    }
-
-    /**
-     * Set the doctrine entity or document manager that will know the urls
-     *
-     * @param ObjectManager $om
-     */
-    public function setObjectManager(ObjectManager $om)
-    {
-        $this->om = $om;
     }
 
     /**
@@ -250,19 +215,19 @@ class DoctrineRouter implements RouterInterface
     }
 
     /**
-     * Find the route object for this url. For phpcr-odm this is simply
-     * the repository path.
+     * Find the route object for this url.
      *
-     * Overwrite this method for other ODM or ORM repositories.
+     * This method delegates to the repository, but we still keep it
+     * for the exception handling.
      *
      * @param string $url The url to find
      *
-     * @return the RouteObjectInterface object for this url or null if none is found
+     * @return RouteObjectInterface instance for this url or null if none is found
      */
     protected function findRouteForUrl($url)
     {
         try {
-            return $this->om->find($this->routeClass, $this->idPrefix . $url);
+            return $this->routeRepository->findByUrl($url);
         } catch(\PHPCR\RepositoryException $e) {
             // TODO: how to determine whether this is a relevant exception or not?
             // for example, getting /my//test (note the double /) leads to an irrelevant exception

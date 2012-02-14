@@ -25,11 +25,13 @@ interface RouteObjectInterface
     function getRouteContent();
 
     /**
-     * Get the path for this route. The path may be prepended with a prefix -
-     * in the case of phpcr the ID (full repository path) will work if you
-     * correctly configure the DoctrineRouter with that prefix.
+     * Get the absolute url within the symfony application for this route.
+     *
+     * Without domain or the eventual app_dev.php
+     * In short, this is the url you give the RouteRepositoryInterface to
+     * findByUrl
      */
-    function getPath();
+    function getUrl();
 
     /**
      * Get the configured route parameters.

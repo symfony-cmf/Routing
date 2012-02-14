@@ -68,9 +68,17 @@ See also [Symfony documentation for DependencyInjection tags.](http://symfony.co
 ## Doctrine Router
 
 This implementation of a router generates urls and matches requests with content
-of a database. If you want to use this with the phpcr-odm, all you need to do
-is specify configuration for the controller resolvers. If you want to change
-something, have a look into Routing/DoctrineRouter.php
+of a database. To read data, the RouteRepositoryInterface is used. It can be
+easily implemented with doctrine.
+This bundle comes with an implementation for PHCPR-ODM as PHPCR is well suited
+for the tree nature of the data. If you use PHPCR-ODM with the provided route
+document, you can just use the default repository service. Otherwise you need to
+provide your own service (see cmf_routing.xml for inspiration).
+If you want to customize more, have a look into Routing/DoctrineRouter.php
+
+You will want to configure the controller resolvers that decide what controller
+will be used to handle the request, to avoid hardcoding controller names into
+your content.
 
 The minimum configuration required to load the doctrine router is to have enabled: true
 in your config.yml (if you do nothing about that, the doctrine router service will not
@@ -82,8 +90,7 @@ be loaded at all and you can use the chain router with your own routers):
 
 ### Match Process
 
-* Try to find a RouteObjectInterface document with the id equal to a
-    configurable prefix and the requested url.
+* Ask the repository for a RouteObjectInterface document with the requested url
 * If found, get the parameters with getRouteDefaults
 * If the parameters do not contain the field _controller, loop through the
     ControllerResolverInterface list to find the controller. If none of the
@@ -93,7 +100,8 @@ be loaded at all and you can use the chain router with your own routers):
     in your code.)
 
 Your controllers should expect the parameter $contentDocument in their
-``Action`` methods.
+``Action`` methods if they are supposed to work with content referenced by the
+routes.
 See ``Symfony\Cmf\Bundle\ContentBundle\Controller\ContentController`` for an
 example.
 
@@ -121,8 +129,6 @@ The possible mappings are (in order of precedence):
     class names in the map and if matched that template will be set as
     'template' in the $defaults and return the configured generic controller.
 
-* **TODO**: generic controller with output directed by document annotations instead of explicit template?
-
     symfony_cmf_chain_routing:
         doctrine:
             enabled: true
@@ -134,11 +140,13 @@ The possible mappings are (in order of precedence):
             templates_by_class:
                 Symfony\Cmf\Bundle\ContentBundle\Document\StaticContent: SymfonyCmfContentBundle:StaticContent:index.html.twig
 
-            # optional, to be used when routing with a doctrine object manager
-            # that needs a class name for find. (phpcr-odm can guess that.)
-            route_entity_class: Fully\Qualified\Classname
+            # the repository is responsible to load routes
+            # for phpcr-odm, we mainly use this because it can map from url to repository path
+            # an orm repository might need different logic. look at cmf_routing.xml for an example if you
+            # need to define your own service
+            route_repository_service: symfony_cmf_chain_routing.phpcrodm_route_repository
 
-            # the routing root path is usually fine, but you can change it, i.e. in multisite situations
+            # if you use the default service, you can use this to customize the root path for the phpcr-odm RouteRepository
             routing_repositoryroot: /cms/routes
 
 To see some examples, please look at the [cmf-sandbox](https://github.com/symfony-cmf/cmf-sandbox)
@@ -196,6 +204,7 @@ route objects by URLs in your database.
 ### TODO
 
 * CMF content router: Implement getRouteCollection
+
 
 ## Authors
 

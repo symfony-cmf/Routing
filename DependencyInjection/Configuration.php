@@ -61,7 +61,7 @@ class Configuration implements ConfigurationInterface
                             ->useAttributeAsKey('alias')
                             ->prototype('scalar')
                         ->end()->end()
-                        ->scalarNode('route_entity_class')->end()
+                        ->scalarNode('route_repository_service')->defaultValue('symfony_cmf_chain_routing.phpcrodm_route_repository')->end()
                         ->scalarNode('routing_repositoryroot')->defaultValue('/cms/routes')->end()
                     ->end()
                 ->end()
