@@ -431,21 +431,6 @@ class DoctrineRouterTest extends CmfUnitTestCase
         $this->router->match($url_alias);
     }
 
-    /**
-     * @expectedException Symfony\Component\Routing\Exception\ResourceNotFoundException
-     */
-    public function testExceptionFindingRoute()
-    {
-        $url_alias = '/company/more_no_match';
-
-        $this->repository->expects($this->once())
-            ->method('findByUrl')
-            ->with($url_alias)
-            ->will($this->throwException(new \PHPCR\RepositoryException()));
-
-        $this->router->match($url_alias);
-    }
-
     public function testMatchNoRequest()
     {
         $url_alias = '/url';

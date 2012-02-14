@@ -29,8 +29,6 @@ use Doctrine\Common\Persistence\ObjectManager;
  * this class and the url. Make sure to provide a repository implementation
  * that can find the document/entity by url.
  *
- * TODO: turn this into an abstract class with a concrete implementation for PHPCR ODM
- *
  * @author Philippo de Santis
  * @author David Buchmann
  */
@@ -181,7 +179,7 @@ class DoctrineRouter implements RouterInterface
      */
     public function match($url)
     {
-        $route = $this->findRouteForUrl($url);
+        $route = $this->routeRepository->findByUrl($url);
 
         if (! $route instanceof RouteObjectInterface) {
             throw new ResourceNotFoundException("No entry or not a route at '$url'");
@@ -212,28 +210,6 @@ class DoctrineRouter implements RouterInterface
         $defaults['_route'] = 'chain_router_doctrine_route'.str_replace('/', '_', $url);
 
         return $defaults;
-    }
-
-    /**
-     * Find the route object for this url.
-     *
-     * This method delegates to the repository, but we still keep it
-     * for the exception handling.
-     *
-     * @param string $url The url to find
-     *
-     * @return RouteObjectInterface instance for this url or null if none is found
-     */
-    protected function findRouteForUrl($url)
-    {
-        try {
-            return $this->routeRepository->findByUrl($url);
-        } catch(\PHPCR\RepositoryException $e) {
-            // TODO: how to determine whether this is a relevant exception or not?
-            // for example, getting /my//test (note the double /) leads to an irrelevant exception
-            // but if the phpcr backend is down for example, we probably want to know it.
-            return null;
-        }
     }
 
     /**

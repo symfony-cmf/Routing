@@ -27,7 +27,15 @@ class RouteRepository extends DocumentRepository implements RouteRepositoryInter
 
     public function findByUrl($url)
     {
-        return $this->find($this->idPrefix . $url);
+        try {
+            return $this->find($this->idPrefix . $url);
+        } catch (\PHPCR\RepositoryException $e) {
+            // TODO: how to determine whether this is a relevant exception or not?
+            // for example, getting /my//test (note the double /) is just an invalid path
+            // and means another router might handle this.
+            // but if the phpcr backend is down for example, we want to alert the user
+            return null;
+       }
     }
 
     /**

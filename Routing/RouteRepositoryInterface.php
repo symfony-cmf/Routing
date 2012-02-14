@@ -10,11 +10,18 @@ namespace Symfony\Cmf\Bundle\ChainRoutingBundle\Routing;
 interface RouteRepositoryInterface
 {
     /**
-     * Find the route that represents this absolute url
+     * Find the route that represents this absolute url.
+     *
+     * This method may not throw an exception based on implementation specific
+     * restrictions on the url. That case is considered a not found - returning
+     * null. Exceptions are only used to abort the whole request in case
+     * something is seriously broken.
      *
      * @param string $url
      *
-     * @return RouteObjectInterface
+     * @return RouteObjectInterface or null if no route found with that url
+     *
+     * @throws \Exception if the underlying storage has an error
      */
     function findByUrl($url);
 }
