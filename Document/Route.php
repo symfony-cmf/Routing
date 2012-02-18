@@ -35,7 +35,7 @@ class Route implements RouteObjectInterface
      *
      * @PHPCRODM\ReferenceOne
      */
-    private $routeContent;
+    protected $routeContent;
 
     /**
      * Explicit controller to be used instead of one of the resolvers
@@ -71,7 +71,7 @@ class Route implements RouteObjectInterface
      * The part of the phpcr path that is not part of the url
      * @var string
      */
-    protected $idPrefix;
+    protected $idPrefix = '/cms/routes'; // HACK: the repository should set the prefix
 
     /**
      * Set the parent document and name of this route entry. Only allowed when

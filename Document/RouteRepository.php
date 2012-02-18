@@ -3,6 +3,7 @@
 namespace Symfony\Cmf\Bundle\ChainRoutingBundle\Document;
 
 use Doctrine\ODM\PHPCR\DocumentRepository;
+use Doctrine\ODM\PHPCR\Mapping\ClassMetadata;
 use Symfony\Cmf\Bundle\ChainRoutingBundle\Routing\RouteRepositoryInterface;
 
 /**
@@ -19,6 +20,12 @@ class RouteRepository extends DocumentRepository implements RouteRepositoryInter
      */
     protected $idPrefix = '';
 
+    public function __construct($dm, ClassMetadata $class)
+    {
+        parent::__construct($dm, $class);
+        // let dm determine class so this repository works for all types of routes
+        $this->className = null;
+    }
 
     public function setPrefix($prefix)
     {
@@ -46,5 +53,4 @@ class RouteRepository extends DocumentRepository implements RouteRepositoryInter
         $doc->setPrefix($this->idPrefix);
         return $doc;
     }
-
 }
