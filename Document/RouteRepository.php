@@ -32,6 +32,9 @@ class RouteRepository extends DocumentRepository implements RouteRepositoryInter
         $this->idPrefix = $prefix;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function findByUrl($url)
     {
         try {
@@ -43,14 +46,5 @@ class RouteRepository extends DocumentRepository implements RouteRepositoryInter
             // but if the phpcr backend is down for example, we want to alert the user
             return null;
        }
-    }
-
-    /**
-     * Overwritten to set the prefix to allow the document to calculate its url
-     */
-    public function createDocument($node, array &$hints = array()) {
-        $doc = parent::createDocument($node, $hints);
-        $doc->setPrefix($this->idPrefix);
-        return $doc;
     }
 }
