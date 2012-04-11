@@ -1,16 +1,10 @@
 <?php
 
-$vendorDir = __DIR__.'/../vendor';
-require_once $vendorDir.'/symfony/src/Symfony/Component/ClassLoader/UniversalClassLoader.php';
+if (! file_exists($file = __DIR__.'/../vendor/.composer/autoload.php')) {
+    die ("\nYou need to run composer before you can run the routing tests\n");
+}
+require_once $file;
 
-use Symfony\Component\ClassLoader\UniversalClassLoader;
-
-$loader = new UniversalClassLoader();
-$loader->registerNamespaces(array(
-    'PHPCR'     => $vendorDir.'/phpcr/src',
-    'Symfony'   => $vendorDir.'/symfony/src',
-));
-$loader->register();
 
 spl_autoload_register(function($class) {
     $class = ltrim($class, '\\');

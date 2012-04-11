@@ -1,0 +1,28 @@
+{
+    "name": "symfony-cmf/chainrouting-bundle",
+    "type": "symfony-bundle",
+    "description": "Symfony ChainRoutingBundle",
+    "keywords": ["routing", "database"],
+    "homepage": "http://cmf.symfony.com",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Symfony CMF Community",
+            "homepage": "https://github.com/symfony-cmf/ChainRoutingBundle/contributors"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.2",
+        "doctrine/phpcr-odm": "dev-master",
+        "doctrine/phpcr-bundle": "dev-master",
+        "symfony/framework-bundle": "2.1.*",
+        "symfony/monolog-bundle": "dev-master"
+    },
+    "suggest": {
+        "jackalope/jackalope-jackrabbit": "dev-master"
+    },
+    "autoload": {
+        "psr-0": { "Symfony\\Cmf\\Bundle\\ChainRoutingBundle": "" }
+    },
+    "target-dir": "Symfony/Cmf/Bundle/ChainRoutingBundle"
+}
