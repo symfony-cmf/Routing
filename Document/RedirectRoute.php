@@ -32,7 +32,7 @@ class RedirectRoute extends Route implements RedirectRouteInterface
     protected $uri;
 
     /**
-     * The name of the target route (for use with standard symfony routes)
+     * The name of a target route (for use with standard symfony routes)
      * @PHPCRODM\String
      */
     protected $routeName;
@@ -54,15 +54,7 @@ class RedirectRoute extends Route implements RedirectRouteInterface
      *
      * @PHPCRODM\String(multivalue=true)
      */
-    protected $parameter;
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getRouteDefaults()
-    {
-        return array();
-    }
+    protected $parameterValues;
 
     /**
      * {@inheritDoc}
@@ -111,7 +103,7 @@ class RedirectRoute extends Route implements RedirectRouteInterface
      */
     public function setParameters(array $parameter)
     {
-        $this->parameter = $parameter;
+        $this->parameterValues = array_values($parameter);
         $this->parameterKeys = array_keys($parameter);
     }
 
@@ -123,10 +115,10 @@ class RedirectRoute extends Route implements RedirectRouteInterface
         $parameters = array();
 
         if ($this->parameterKeys !== null) {
-            $i = 0;
-            foreach ($this->parameterKeys as $key) {
-                $parameters[$key] = $this->parameter[$i];
-            }
+            array_combine(
+                $this->parameterKeys->getValues(),
+                $this->parameterValues->getValues()
+            );
         }
 
         $route = $this->getRouteTarget();
@@ -147,5 +139,24 @@ class RedirectRoute extends Route implements RedirectRouteInterface
     public function getUri()
     {
         return $this->uri;
+    }
+
+    // seems the callbacks are lost when inheriting
+
+    /**
+     * @PHPCRODM\PostLoad
+     */
+    public function initArrays()
+    {
+        parent::initArrays();
+    }
+
+    /**
+     * @PHPCRODM\PreUpdate
+     * @PHPCRODM\PrePersist
+     */
+    public function prepareArrays()
+    {
+        parent::prepareArrays();
     }
 }

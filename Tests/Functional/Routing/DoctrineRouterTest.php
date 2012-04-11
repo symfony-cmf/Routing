@@ -49,7 +49,7 @@ class DoctrineRouterTest extends BaseTestCase
 
         // do not set a content here, or we need a valid request and so on...
         $route->setPosition($root, 'testroute');
-        $route->setController('testController');
+        $route->setDefault('_controller', 'testController');
         self::$dm->persist($route);
         self::$dm->flush();
     }

@@ -21,7 +21,7 @@ class DoctrineRouterTest extends CmfUnitTestCase
     public function setUp()
     {
         $this->contentDocument = $this->buildMock('Symfony\\Cmf\\Bundle\\ChainRoutingBundle\\Routing\\RouteAwareInterface');
-        $this->routeDocument = $this->buildMock('Symfony\\Cmf\\Bundle\\ChainRoutingBundle\\Routing\\RouteObjectInterface', array('getRouteDefaults', 'getRouteContent', 'getUrl'));
+        $this->routeDocument = $this->buildMock('Symfony\\Cmf\\Bundle\\ChainRoutingBundle\\Routing\\RouteObjectInterface', array('getDefaults', 'getRouteContent', 'getUrl'));
         $this->loader = $this->buildMock("Symfony\\Component\\Config\\Loader\\LoaderInterface");
         $this->repository = $this->buildMock("Symfony\\Cmf\\Bundle\\ChainRoutingBundle\\Routing\\RouteRepositoryInterface", array('findByUrl'));
 
@@ -330,7 +330,7 @@ class DoctrineRouterTest extends CmfUnitTestCase
         );
 
         $this->routeDocument->expects($this->once())
-            ->method('getRouteDefaults')
+            ->method('getDefaults')
             ->will($this->returnValue(array()));
         $this->routeDocument->expects($this->once())
             ->method('getRouteContent')
@@ -366,7 +366,7 @@ class DoctrineRouterTest extends CmfUnitTestCase
         $url_alias = "/company/more_no_reference";
 
         $this->routeDocument->expects($this->once())
-                ->method('getRouteDefaults')
+                ->method('getDefaults')
                 ->will($this->returnValue(array('type' => 'found')));
         $this->routeDocument->expects($this->once())
             ->method('getRouteContent')
@@ -415,7 +415,7 @@ class DoctrineRouterTest extends CmfUnitTestCase
         $url_alias = "/company/more_no_match";
 
         $this->routeDocument->expects($this->once())
-            ->method('getRouteDefaults')
+            ->method('getDefaults')
             ->will($this->returnValue(array()));
 
         $this->resolver->expects($this->once())
@@ -441,7 +441,7 @@ class DoctrineRouterTest extends CmfUnitTestCase
         );
 
         $this->routeDocument->expects($this->once())
-            ->method('getRouteDefaults')
+            ->method('getDefaults')
             ->will($this->returnValue(array()));
         $this->routeDocument->expects($this->once())
             ->method('getRouteContent')
@@ -479,7 +479,7 @@ class RouteMock implements \Symfony\Cmf\Bundle\ChainRoutingBundle\Routing\RouteO
     {
         return null;
     }
-    public function getRouteDefaults()
+    public function getDefaults()
     {
         $defaults = array();
         if (! is_null($this->locale)) {

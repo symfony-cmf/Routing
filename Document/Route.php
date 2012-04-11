@@ -2,6 +2,7 @@
 
 namespace Symfony\Cmf\Bundle\ChainRoutingBundle\Document;
 
+use Symfony\Component\Routing\Route as SymfonyRoute;
 use Doctrine\ODM\PHPCR\Mapping\Annotations as PHPCRODM;
 use Symfony\Cmf\Bundle\ChainRoutingBundle\Routing\RouteObjectInterface;
 
@@ -15,7 +16,7 @@ use Symfony\Cmf\Bundle\ChainRoutingBundle\Routing\RouteObjectInterface;
  *
  * @PHPCRODM\Document(referenceable=true,repositoryClass="Symfony\Cmf\Bundle\ChainRoutingBundle\Document\RouteRepository")
  */
-class Route implements RouteObjectInterface
+class Route extends SymfonyRoute implements RouteObjectInterface
 {
     /**
      * @PHPCRODM\ParentDocument
@@ -41,40 +42,54 @@ class Route implements RouteObjectInterface
     protected $routeContent;
 
     /**
-     * Explicit controller to be used instead of one of the resolvers
-     *
-     * @PHPCRODM\String()
-     */
-    protected $controller;
-
-    /**
-     * Controller alias for rendering the target content, to be used with the
-     * ControllerAliasResolver.
-     *
-     * @PHPCRODM\String()
-     */
-    protected $controller_alias;
-
-    /**
-     * Explicit template to be used with the default controller.
-     *
-     * @PHPCRODM\String()
-     */
-    protected $template;
-
-    /**
-     * Locale to use when this route is requested.
-     * Only set in getRouteDefaults if non-empty
-     *
-     * @PHPCRODM\String()
-     */
-    protected $locale;
-
-    /**
      * The part of the phpcr path that is not part of the url
      * @var string
      */
     protected $idPrefix;
+
+    /**
+     * @PHPCRODM\String
+     */
+    protected $patternOdm;
+
+    /**
+     * @var \Doctrine\ODM\PHPCR\MultivaluePropertyCollection
+     * @PHPCRODM\String(multivalue=true)
+     */
+    protected $defaultsKeys;
+    /**
+     * @var \Doctrine\ODM\PHPCR\MultivaluePropertyCollection
+     * @PHPCRODM\String(multivalue=true)
+     */
+    protected $defaultsValues;
+    /**
+     * @var \Doctrine\ODM\PHPCR\MultivaluePropertyCollection
+     * @PHPCRODM\String(multivalue=true)
+     */
+    protected $requirementsKeys;
+    /**
+     * @var \Doctrine\ODM\PHPCR\MultivaluePropertyCollection
+     * @PHPCRODM\String(multivalue=true)
+     */
+    protected $requirementsValues;
+    /**
+     * @var \Doctrine\ODM\PHPCR\MultivaluePropertyCollection
+     * @PHPCRODM\String(multivalue=true)
+     */
+    protected $optionsKeys;
+    /**
+     * @var \Doctrine\ODM\PHPCR\MultivaluePropertyCollection
+     * @PHPCRODM\String(multivalue=true)
+     */
+    protected $optionsValues;
+
+    /**
+     * Overwrite to be able to create route without pattern
+     */
+    public function __construct()
+    {
+        parent::__construct('');
+    }
 
     /**
      * Set the parent document and name of this route entry. Only allowed when
@@ -84,8 +99,8 @@ class Route implements RouteObjectInterface
      */
     public function setPosition($parent, $name)
     {
-      $this->parent = $parent;
-      $this->name = $name;
+        $this->parent = $parent;
+        $this->name = $name;
     }
     /**
      * Get the repository path of this url entry
@@ -94,9 +109,26 @@ class Route implements RouteObjectInterface
     {
       return $this->path;
     }
+
     public function setPrefix($idPrefix)
     {
         $this->idPrefix = $idPrefix;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getUrl()
+    {
+        // TODO: this is basically the "pattern". we should set the pattern automatically if not explicitly set and remove this method
+        if (strncmp($this->getPath(), $this->idPrefix, strlen($this->idPrefix))) {
+            throw new \LogicException("The id prefix '".$this->idPrefix."' does not match the route document path '".$this->getPath()."'");
+        }
+        $url = substr($this->getPath(), strlen($this->idPrefix));
+        if (empty($url)) {
+            $url = '/';
+        }
+        return $url;
     }
 
     /**
@@ -109,126 +141,68 @@ class Route implements RouteObjectInterface
     /**
      * {@inheritDoc}
      */
-    public function getUrl()
-    {
-        $url = substr($this->getPath(), strlen($this->idPrefix));
-        if (empty($url)) {
-            $url = '/';
-        }
-        return $url;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public function getRouteContent()
     {
         return $this->routeContent;
     }
 
-    /**
-     * Set the explicit controller to be used with this route.
-     * i.e. service_name:indexAction or MyBundle:Default:index
-     *
-     * @param string $controller the controller to be used with this route
-     */
-    public function setController($controller)
-    {
-        $this->controller = $controller;
-    }
+    // workaround for the missing hashmaps in phpcr-odm
 
     /**
-     * Get the explicit controller to be used with this route
-     *
-     * @return string the controller name or service name with action
+     * @PHPCRODM\PostLoad
      */
-    public function getController()
+    public function initArrays()
     {
-        return $this->controller;
-    }
+        $this->setPattern($this->patternOdm);
+        // phpcr-odm makes this a property collection. for some reason
+        // array_combine does not work with ArrayAccess objects
+        // if there are no values in a multivalue property, we don't get an
+        // empty collection assigned but null
 
-    /**
-     * Set an alias name of the controller for this url, to be used with the
-     * ControllerAliasResolver
-     *
-     * @param string $alias the alias name as in the controllers_by_alias mapping
-     */
-    public function setControllerAlias($alias)
-    {
-        $this->controller_alias = $alias;
-    }
-    /**
-     * Get an alias name of the controller for this url.
-     *
-     * @return string $alias the alias name
-     */
-    public function getControllerAlias()
-    {
-        return $this->controller_alias;
-    }
-
-    /**
-     * Set the template to be used with this route.
-     * i.e. SymfonyCmfContentBundle:StaticContent:index.html.twig
-     *
-     * @param string $template the template to be used with this route
-     */
-    public function setTemplate($template)
-    {
-        $this->template = $template;
-    }
-
-    /**
-     * Get the template to be used with this route.
-     *
-     * @return string the template
-     */
-    public function getTemplate()
-    {
-        return $this->template;
-    }
-
-    /**
-     * Set the locale requests for this route should use
-     *
-     * @param $locale the locale of this route
-     */
-    public function setLocale($locale)
-    {
-        $this->locale = $locale;
-    }
-
-    /**
-     * @return string the locale
-     */
-    public function getLocale()
-    {
-        return $this->locale;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getRouteDefaults()
-    {
-        $defaults = array();
-
-        $controller = $this->getController();
-        if (! empty($controller)) {
-            $defaults['_controller'] = $controller;
+        if ($this->defaultsValues && count($this->defaultsValues)) {
+            $this->setDefaults(array_combine(
+                $this->defaultsKeys->getValues(),
+                $this->defaultsValues->getValues())
+            );
+        } else {
+            $this->setDefaults(array());
         }
-        $alias = $this->getControllerAlias();
-        if (! empty($alias)) {
-            $defaults['type'] = $alias;
+        if ($this->requirementsValues && count($this->requirementsValues)) {
+            $this->setRequirements(array_combine(
+                $this->requirementsKeys->getValues(),
+                $this->requirementsValues->getValues())
+            );
+        } else {
+            $this->setRequirements(array());
         }
-        $template = $this->getTemplate();
-        if (! empty($template)) {
-            $defaults['template'] = $template;
+        if ($this->optionsValues && count($this->optionsValues)) {
+            $this->setOptions(array_combine(
+                $this->optionsKeys->getValues(),
+                $this->optionsValues->getValues())
+            );
+        } else {
+            $this->setOptions(array());
         }
-        $locale = $this->getLocale();;
-        if (! empty($locale)) {
-            $defaults['_locale'] = $locale;
-        }
-        return $defaults;
+    }
+
+    /**
+     * @PHPCRODM\PreUpdate
+     * @PHPCRODM\PrePersist
+     */
+    public function prepareArrays()
+    {
+        $this->patternOdm = $this->getPattern();
+
+        $defaults = $this->getDefaults();
+        $this->defaultsKeys = array_keys($defaults);
+        $this->defaultsValues = array_values($defaults);
+
+        $requirements = $this->getRequirements();
+        $this->requirementsKeys = array_keys($requirements);
+        $this->requirementsValues = array_values($requirements);
+
+        $options = $this->getOptions();
+        $this->optionsKeys = array_keys($options);
+        $this->optionsValues = array_values($options);
     }
 }

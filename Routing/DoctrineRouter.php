@@ -134,6 +134,19 @@ class DoctrineRouter implements RouterInterface
 
         $url = $this->context->getBaseUrl() . $route->getUrl();
 
+        // add a query string if needed
+        $variables = array(
+            'route' => null,
+            'content' => null,
+            '_locale' => null
+        ); // FIXME: hack to not get these as query parameters
+
+        // TODO: this is copy-pasted from symfony UrlGenerator
+        $extra = array_diff_key($parameters, $variables);
+        if ($extra && $query = http_build_query($extra)) {
+            $url .= '?'.$query;
+        }
+
         // TODO: this is copy-pasted from symfony UrlGenerator
         // we should try to somehow reuse the code there rather than copy-paste
         if ($absolute) {
@@ -185,8 +198,8 @@ class DoctrineRouter implements RouterInterface
             throw new ResourceNotFoundException("No entry or not a route at '$url'");
         }
 
-        $defaults = $route->getRouteDefaults();
-
+        $defaults = $route->getDefaults();
+//var_dump($route->getRouteContent());
         if (empty($defaults['_controller'])) {
             // if content does not provide explicit controller, try to find it with one of the resolvers
             foreach ($this->resolvers as $resolver) {
@@ -258,7 +271,7 @@ class DoctrineRouter implements RouterInterface
 
         foreach ($routes as $route) {
             if (! $route instanceof RouteObjectInterface) continue;
-            $defaults = $route->getRouteDefaults();
+            $defaults = $route->getDefaults();
             if (isset($defaults['_locale']) && $locale == $defaults['_locale']) {
                 return $route;
             }

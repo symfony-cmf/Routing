@@ -4,10 +4,28 @@ namespace Symfony\Cmf\Bundle\ChainRoutingBundle\Routing;
 
 /**
  * Documents for entries in the routing table need to implement this interface
+ * in addition to extending Symfony\Component\Routing\Route for the symfony router
  * so the DoctrineRouter can handle them.
+ *
+ * Some fields in defaults have a special meaning in the getDefaults(). In addition
+ * to the constants defined in this class, _locale and _controller are also used.
  */
 interface RouteObjectInterface
 {
+    /**
+     * Constant for the field that is given to the ControllerAliasResolver.
+     * The value must be configured in the controllers_by_alias mapping.
+     *
+     * This is ignored if a _controller default value is provided as well
+     */
+    const CONTROLLER_ALIAS = '_controller_alias';
+
+    /**
+     * An explicit template to be used with this route.
+     * i.e. SymfonyCmfContentBundle:StaticContent:index.html.twig
+     */
+    const TEMPLATE_NAME = '_template';
+
     /**
      * Get the content document this route entry stands for. If non-null,
      * the ControllerClassResolver uses it to identify a controller and
@@ -32,18 +50,4 @@ interface RouteObjectInterface
      * findByUrl
      */
     function getUrl();
-
-    /**
-     * Get the configured route parameters.
-     *
-     * If this array contains _controller, that is used without checking any
-     * resolver.
-     * To work with the ControllerAliasResolver, this must contain
-     * the field 'type' with a value from the controllers_by_alias mapping
-     *
-     * For multilingual sites, use _locale to set the request language.
-     *
-     * @return array Information for the ControllerResolver
-     */
-    function getRouteDefaults();
 }
