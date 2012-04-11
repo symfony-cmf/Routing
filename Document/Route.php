@@ -8,6 +8,9 @@ use Symfony\Cmf\Bundle\ChainRoutingBundle\Routing\RouteObjectInterface;
 /**
  * Default document for routing table entries that work with the DoctrineRouter.
  *
+ * This needs the IdPrefix service to run and setPrefix whenever a route is
+ * loaded. Otherwise the getUrl method will be invalid.
+ *
  * @author david.buchmann@liip.ch
  *
  * @PHPCRODM\Document(referenceable=true,repositoryClass="Symfony\Cmf\Bundle\ChainRoutingBundle\Document\RouteRepository")
@@ -71,7 +74,7 @@ class Route implements RouteObjectInterface
      * The part of the phpcr path that is not part of the url
      * @var string
      */
-    protected $idPrefix = '/cms/routes'; // HACK: the repository should set the prefix
+    protected $idPrefix;
 
     /**
      * Set the parent document and name of this route entry. Only allowed when

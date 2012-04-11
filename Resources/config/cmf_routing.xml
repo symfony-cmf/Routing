@@ -7,6 +7,7 @@
         <parameter key="symfony_cmf_chain_routing.doctrine_router_class">Symfony\Cmf\Bundle\ChainRoutingBundle\Routing\DoctrineRouter</parameter>
         <parameter key="symfony_cmf_chain_routing.route_entity_class">Symfony\Cmf\Bundle\ChainRoutingBundle\Document\Route</parameter>
         <parameter key="symfony_cmf_chain_routing.route_repository_class">Symfony\Cmf\Bundle\ChainRoutingBundle\Document\RouteRepository</parameter>
+        <parameter key="symfony_cmf_chain_routing.phpcrodm_route_idprefix_listener_class">Symfony\Cmf\Bundle\ChainRoutingBundle\Listener\IdPrefix</parameter>
         <parameter key="symfony_cmf_chain_routing.resolver_explicit_template_class">Symfony\Cmf\Bundle\ChainRoutingBundle\Resolver\ExplicitTemplateResolver</parameter>
         <parameter key="symfony_cmf_chain_routing.resolver_controllers_by_alias_class">Symfony\Cmf\Bundle\ChainRoutingBundle\Resolver\ControllerAliasResolver</parameter>
         <parameter key="symfony_cmf_chain_routing.resolver_controllers_by_class_class">Symfony\Cmf\Bundle\ChainRoutingBundle\Resolver\ControllerClassResolver</parameter>
@@ -42,6 +43,12 @@
                  class="%symfony_cmf_chain_routing.route_repository_class%">
             <argument>%symfony_cmf_chain_routing.route_entity_class%</argument>
             <call method="setPrefix"><argument>%symfony_cmf_chain_routing.routing_repositoryroot%</argument></call>
+        </service>
+
+        <service id="symfony_cmf_chain_routing.phpcrodm_route_idprefix_listener" class="%symfony_cmf_chain_routing.phpcrodm_route_idprefix_listener_class%">
+            <argument>%symfony_cmf_chain_routing.routing_repositoryroot%</argument>
+            <tag name="doctrine_phpcr.event_listener" event="postLoad" />
+            <tag name="doctrine_phpcr.event_listener" event="prePersist" />
         </service>
 
         <service id="symfony_cmf_chain_routing.redirect_controller" class="%symfony_cmf_chain_routing.redirect_controller_class%">

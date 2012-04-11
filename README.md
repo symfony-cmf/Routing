@@ -146,7 +146,8 @@ The possible mappings are (in order of precedence):
             # need to define your own service
             route_repository_service: symfony_cmf_chain_routing.phpcrodm_route_repository
 
-            # if you use the default service, you can use this to customize the root path for the phpcr-odm RouteRepository
+            # if you use the default doctrine router service, you can use this to customize
+            # the root path for the phpcr-odm RouteRepository
             routing_repositoryroot: /cms/routes
 
 To see some examples, please look at the [cmf-sandbox](https://github.com/symfony-cmf/cmf-sandbox)
