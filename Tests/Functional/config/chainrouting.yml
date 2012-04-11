@@ -1,0 +1,15 @@
+symfony_cmf_chain_routing:
+    chain:
+        routers_by_id:
+            symfony_cmf_chain_routing.doctrine_router: 20
+            router.default: 100
+    doctrine:
+        enabled: true
+        controllers_by_alias:
+            demo_alias: sandbox_main.controller:aliasAction
+        controllers_by_class:
+            Sandbox\MainBundle\Document\DemoClassContent: sandbox_main.controller:classAction
+            Symfony\Cmf\Bundle\ChainRoutingBundle\Document\RedirectRoute:  symfony_cmf_chain_routing.redirect_controller:redirectAction
+        templates_by_class:
+            Sandbox\MainBundle\Document\EditableStaticContent: SandboxMainBundle:EditableStaticContent:index.html.twig
+        routing_repositoryroot: /test/routing
