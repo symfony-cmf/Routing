@@ -9,7 +9,13 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Cmf\Bundle\ChainRoutingBundle\Routing\RedirectRouteInterface;
 
 /**
- * Default router that handles redirection route objects
+ * Default router that handles redirection route objects.
+ *
+ * This is partially a duplication of Symfony\Bundle\FrameworkBundle\Controller\RedirectController
+ * but we do not want a dependency on SymfonyFrameworkBundle just for this.
+ *
+ * The plus side is that with the route interface we do not need to pass the
+ * parameters through magic request attributes.
  */
 class RedirectController
 {
@@ -34,16 +40,12 @@ class RedirectController
      */
     public function redirectAction(RedirectRouteInterface $contentDocument)
     {
-        if (! $contentDocument) {
-            throw new NotFoundHttpException('No route given');
-        }
-
         $url = $contentDocument->getUri();
 
         if (empty($url)) {
             $url = $this->router->generate($contentDocument->getRouteName(), $contentDocument->getParameters(), true);
         }
 
-        return new RedirectResponse($url);
+        return new RedirectResponse($url, $contentDocument->isPermanent() ? 301 : 302);
     }
 }

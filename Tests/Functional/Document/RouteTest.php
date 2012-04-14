@@ -8,30 +8,11 @@ use Symfony\Cmf\Bundle\ChainRoutingBundle\Tests\Functional\BaseTestCase;
 
 class RouteTest extends BaseTestCase
 {
-    /**
-     * @var \Doctrine\ODM\PHPCR\DocumentManager
-     */
-    protected static $dm;
-
     const ROUTE_ROOT = '/test/route';
 
     public static function setupBeforeClass()
     {
-        self::$kernel = self::createKernel();
-        self::$kernel->boot();
-
-        $session = self::$kernel->getContainer()->get('doctrine_phpcr.session');
-        if ($session->nodeExists(self::ROUTE_ROOT)) {
-            $session->getNode(self::ROUTE_ROOT)->remove();
-        }
-        if (! $session->nodeExists('/test')) {
-            $session->getRootNode()->addNode('test', 'nt:unstructured');
-        }
-        $baseroute = $session->getNode('/test')->addNode('route', 'nt:unstructured');
-        $baseroute->addMixin('mix:referenceable');
-        $session->save();
-
-        self::$dm = self::$kernel->getContainer()->get('doctrine_phpcr.odm.document_manager');
+        parent::setupBeforeClass(array(), basename(self::ROUTE_ROOT));
     }
 
     /**
@@ -75,7 +56,7 @@ class RouteTest extends BaseTestCase
         $this->assertEquals('value2', $options['another']);
     }
 
-    public function testPersistEmpty()
+    public function testPersistEmptyOptions()
     {
         $route = new Route;
         $root = self::$dm->find(null, self::ROUTE_ROOT);
