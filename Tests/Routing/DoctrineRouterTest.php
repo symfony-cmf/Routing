@@ -3,6 +3,7 @@
 namespace Symfony\Cmf\Bundle\ChainRoutingBundle\Tests\Routing;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Routing\RouteCollection;
 use Symfony\Cmf\Bundle\ChainRoutingBundle\Routing\RouteRepositoryInterface;
 use Symfony\Cmf\Bundle\ChainRoutingBundle\Document\Route;
 
@@ -50,6 +51,24 @@ class DoctrineRouterTest extends CmfUnitTestCase
         $this->assertSame($this->context, $this->router->getContext());
     }
 
+    public function testRouteCollection()
+    {
+        $collection = $this->router->getRouteCollection();
+        $this->assertInstanceOf('Symfony\\Component\\Routing\\RouteCollection', $collection);
+        // TODO: once this is implemented, check content of collection
+    }
+
+
+    /// generator tests ///
+
+    public function testGetGenerator()
+    {
+        $router = new DoctrineRouter($this->container, $this->repository);
+        $router->setContext($this->context);
+        $generator = $router->getGenerator(new \Symfony\Component\Routing\RouteCollection());
+        $this->assertInstanceOf('Symfony\Component\Routing\Generator\UrlGeneratorInterface', $generator);
+    }
+
     public function testGenerate()
     {
         $this->container->expects($this->once())
@@ -58,44 +77,22 @@ class DoctrineRouterTest extends CmfUnitTestCase
             ->will($this->returnValue($this->request)
         );
 
+        $route = new RouteMock();
         $this->contentDocument->expects($this->once())
             ->method('getRoutes')
-            ->will($this->returnValue(array(new RouteMock())));
+            ->will($this->returnValue(array($route)));
 
-        $this->context->expects($this->once())
-            ->method('getBaseUrl')
-            ->will($this->returnValue('/base'));
-        $this->router->setContext($this->context);
+        $generator = $this->getMockBuilder('Symfony\Component\Routing\Generator\UrlGenerator')->disableOriginalConstructor()->getMock();
+        $generator->expects($this->once())
+            ->method('generate')
+            ->with('x', array(), false)
+            ->will($this->returnValue('/base/test/route'));
 
-        $url = $this->router->generate('ignore', array('content'=>$this->contentDocument));
+        $router = new TestRouter($this->container, $this->repository, null, $generator, $route);
+        $router->setContext($this->context);
+
+        $url = $router->generate('ignore', array('content'=>$this->contentDocument));
         $this->assertEquals('/base/test/route', $url);
-    }
-
-    public function testGenerateHome()
-    {
-        $this->container->expects($this->once())
-            ->method('get')
-            ->with('request')
-            ->will($this->returnValue($this->request)
-        );
-
-        $this->container->expects($this->any())
-            ->method('get')
-            ->with('request')
-            ->will($this->returnValue($this->request)
-        );
-
-        $this->contentDocument->expects($this->once())
-            ->method('getRoutes')
-            ->will($this->returnValue(array(new RouteMock('/'))));
-
-        $this->context->expects($this->once())
-            ->method('getBaseUrl')
-            ->will($this->returnValue('/base'));
-        $this->router->setContext($this->context);
-
-        $url = $this->router->generate('ignore', array('content'=>$this->contentDocument));
-        $this->assertEquals('/base/', $url);
     }
 
     public function testGenerateEmptyRouteString()
@@ -106,23 +103,21 @@ class DoctrineRouterTest extends CmfUnitTestCase
             ->will($this->returnValue($this->request)
         );
 
-        $this->container->expects($this->any())
-            ->method('get')
-            ->with('request')
-            ->will($this->returnValue($this->request)
-        );
-
         $this->contentDocument->expects($this->once())
             ->method('getRoutes')
             ->will($this->returnValue(array(new RouteMock('/'))));
 
-        $this->context->expects($this->once())
-            ->method('getBaseUrl')
-            ->will($this->returnValue('/base'));
-        $this->router->setContext($this->context);
+        $generator = $this->getMockBuilder('Symfony\Component\Routing\Generator\UrlGenerator')->disableOriginalConstructor()->getMock();
+        $generator->expects($this->once())
+            ->method('generate')
+            ->with('x', array(), false)
+            ->will($this->returnValue('/'));
 
-        $url = $this->router->generate('ignore', array('content'=>$this->contentDocument, 'route' => ''));
-        $this->assertEquals('/base/', $url);
+        $router = new TestRouter($this->container, $this->repository, null, $generator);
+        $router->setContext($this->context);
+
+        $url = $router->generate('ignore', array('content'=>$this->contentDocument, 'route' => ''));
+        $this->assertEquals('/', $url);
     }
 
     public function testGenerateAbsolute()
@@ -138,109 +133,54 @@ class DoctrineRouterTest extends CmfUnitTestCase
             ->method('getRoutes')
             ->will($this->returnValue(array(new RouteMock())));
 
-        $this->context->expects($this->once())
-            ->method('getBaseUrl')
-            ->will($this->returnValue('/base'));
-        $this->context->expects($this->once())
-            ->method('getScheme')
-            ->will($this->returnValue('http'));
-        $this->context->expects($this->once())
-            ->method('getHttpPort')
-            ->will($this->returnValue(80));
-        $this->context->expects($this->once())
-            ->method('getHost')
-            ->will($this->returnValue('test.domain'));
-        $this->router->setContext($this->context);
 
-        $url = $this->router->generate('ignore', array('content'=>$content), true);
+        $generator = $this->getMockBuilder('Symfony\Component\Routing\Generator\UrlGenerator')->disableOriginalConstructor()->getMock();
+        $generator->expects($this->once())
+            ->method('generate')
+            ->with('x', array(), true)
+            ->will($this->returnValue('http://test.domain/base/test/route'));
+
+        $router = new TestRouter($this->container, $this->repository, null, $generator);
+        $router->setContext($this->context);
+
+        $url = $router->generate('ignore', array('content'=>$content), true);
         $this->assertEquals('http://test.domain/base/test/route', $url);
-    }
-
-    public function testGenerateAbsoluteNonstandardHttp()
-    {
-        $this->container->expects($this->once())
-            ->method('get')
-            ->with('request')
-            ->will($this->returnValue($this->request)
-        );
-
-        $content = $this->buildMock('Symfony\\Cmf\\Bundle\\ChainRoutingBundle\\Routing\\RouteAwareInterface');
-        $content->expects($this->once())
-            ->method('getRoutes')
-            ->will($this->returnValue(array(new RouteMock())));
-
-        $this->context->expects($this->once())
-            ->method('getBaseUrl')
-            ->will($this->returnValue('/base'));
-        $this->context->expects($this->once())
-            ->method('getScheme')
-            ->will($this->returnValue('http'));
-        $this->context->expects($this->any())
-            ->method('getHttpPort')
-            ->will($this->returnValue(81));
-        $this->context->expects($this->once())
-            ->method('getHost')
-            ->will($this->returnValue('test.domain'));
-        $this->router->setContext($this->context);
-
-        $url = $this->router->generate('ignore', array('content'=>$content), true);
-        $this->assertEquals('http://test.domain:81/base/test/route', $url);
-    }
-
-    public function testGenerateAbsoluteNonstandardHttps()
-    {
-        $this->container->expects($this->once())
-            ->method('get')
-            ->with('request')
-            ->will($this->returnValue($this->request)
-        );
-
-        $content = $this->buildMock('Symfony\\Cmf\\Bundle\\ChainRoutingBundle\\Routing\\RouteAwareInterface');
-        $content->expects($this->once())
-            ->method('getRoutes')
-            ->will($this->returnValue(array(new RouteMock())));
-
-        $this->context->expects($this->once())
-            ->method('getBaseUrl')
-            ->will($this->returnValue('/base'));
-        $this->context->expects($this->once())
-            ->method('getScheme')
-            ->will($this->returnValue('https'));
-        $this->context->expects($this->any())
-            ->method('getHttpsPort')
-            ->will($this->returnValue(3333));
-        $this->context->expects($this->once())
-            ->method('getHost')
-            ->will($this->returnValue('test.domain'));
-        $this->router->setContext($this->context);
-
-        $url = $this->router->generate('ignore', array('content'=>$content), true);
-        $this->assertEquals('https://test.domain:3333/base/test/route', $url);
     }
 
     public function testGenerateFromRoute()
     {
-        $this->context->expects($this->once())
-            ->method('getBaseUrl')
-            ->will($this->returnValue('/base'));
-        $this->router->setContext($this->context);
+        $generator = $this->getMockBuilder('Symfony\Component\Routing\Generator\UrlGenerator')->disableOriginalConstructor()->getMock();
+        $generator->expects($this->once())
+            ->method('generate')
+            ->with('x', array(), false)
+            ->will($this->returnValue('/base/test/route'));
 
-        $url = $this->router->generate('ignore', array('route'=>new RouteMock()));
+        $router = new TestRouter($this->container, $this->repository, null, $generator);
+        $router->setContext($this->context);
+
+
+        $url = $router->generate('ignore', array('route'=>new RouteMock()));
         $this->assertEquals('/base/test/route', $url);
     }
 
     public function testGenerateMultilang()
     {
+        $route_en = new RouteMock('/en', 'en');
+        $route_de = new RouteMock('/de', 'de');
         $this->contentDocument->expects($this->once())
             ->method('getRoutes')
-            ->will($this->returnValue(array(new RouteMock('/en', 'en'), new RouteMock('/de', 'de'))));
+            ->will($this->returnValue(array($route_en, $route_de)));
 
-        $this->context->expects($this->once())
-            ->method('getBaseUrl')
-            ->will($this->returnValue('/base'));
-        $this->router->setContext($this->context);
+        $generator = $this->getMockBuilder('Symfony\Component\Routing\Generator\UrlGenerator')->disableOriginalConstructor()->getMock();
+        $generator->expects($this->once())
+            ->method('generate')
+            ->with('x', array('_locale' => 'de'), false)
+            ->will($this->returnValue('/base/de'));
 
-        $url = $this->router->generate('ignore', array('content'=>$this->contentDocument, '_locale' => 'de'));
+        $router = new TestRouter($this->container, $this->repository, null, $generator, $route_de);
+        $router->setContext($this->context);
+
+        $url = $router->generate('ignore', array('content'=>$this->contentDocument, '_locale' => 'de'));
         $this->assertEquals('/base/de', $url);
     }
 
@@ -289,7 +229,6 @@ class DoctrineRouterTest extends CmfUnitTestCase
 
     public function testGenerateNoRequest()
     {
-        $url_alias = '/url';
         $this->container->expects($this->once())
             ->method('get')
             ->with('request')
@@ -309,18 +248,11 @@ class DoctrineRouterTest extends CmfUnitTestCase
     }
 
 
-    public function testRouteCollection()
-    {
-        $collection = $this->router->getRouteCollection();
-        $this->assertInstanceOf('Symfony\\Component\\Routing\\RouteCollection', $collection);
-        // TODO: once this is implemented, check content of collection
-    }
-
     /// match tests ///
 
     public function testGetMatcher()
     {
-        $router = new TestRouter($this->container, $this->repository);
+        $router = new DoctrineRouter($this->container, $this->repository);
         $router->setContext($this->context);
         $matcher = $router->getMatcher(new \Symfony\Component\Routing\RouteCollection());
         $this->assertInstanceOf('Symfony\Component\Routing\Matcher\UrlMatcherInterface', $matcher);
@@ -549,17 +481,38 @@ class RouteMock extends Route implements \Symfony\Cmf\Bundle\ChainRoutingBundle\
 class TestRouter extends DoctrineRouter
 {
     private $matcher;
-    public function __construct(ContainerInterface $container, RouteRepositoryInterface $routeRepository, $matcher = null)
+    private $generator;
+    private $expectRoute;
+    public function __construct(ContainerInterface $container, RouteRepositoryInterface $routeRepository, $matcher = null, $generator = null, $expectRoute = null)
     {
         parent::__construct($container, $routeRepository);
         $this->matcher = $matcher;
+        $this->generator = $generator;
     }
-    public function getMatcher($url)
+    public function getMatcher($collection)
     {
         if ($this->matcher) {
             return $this->matcher;
         }
-        return parent::getMatcher($url);
+        return parent::getMatcher($collection);
+    }
+    public function getGenerator($collection)
+    {
+        if ($this->generator) {
+            if ($this->expectRoute) {
+                $found = false;
+                foreach ($collection as $route) {
+                    if ($route === $this->expectRoute) {
+                        $found = true;
+                    }
+                }
+                if (! $found) {
+                    throw new \Exception('expected route was not in collection');
+                }
+            }
+            return $this->generator;
+        }
+        return parent::getGenerator($collection);
     }
 }
 

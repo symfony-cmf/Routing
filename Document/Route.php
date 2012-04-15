@@ -123,6 +123,9 @@ class Route extends SymfonyRoute implements RouteObjectInterface
      */
     public function getStaticPrefix()
     {
+        if (0 == strlen($this->idPrefix)) {
+            throw new \LogicException('Can not determine the prefix. Either this is a new, unpersisted document or the listener that calls setPrefix is not set up correctly.');
+        }
         if (strncmp($this->getPath(), $this->idPrefix, strlen($this->idPrefix))) {
             throw new \LogicException("The id prefix '".$this->idPrefix."' does not match the route document path '".$this->getPath()."'");
         }
@@ -169,10 +172,11 @@ class Route extends SymfonyRoute implements RouteObjectInterface
     public function setPattern($pattern)
     {
         $len = strlen($this->getStaticPrefix());
+
         if (strncmp($this->getStaticPrefix(), $pattern, $len)) {
-            throw new \LogicException('You can not set the route document to a pattern that does not match its repository path. First move it to the correct path.');
+            throw new \InvalidArgumentException('You can not set a pattern for the route document that does not match its repository path. First move it to the correct path.');
         }
-        return $this->setVariablePattern($pattern, $len);
+        return $this->setVariablePattern(substr($pattern, $len));
     }
 
     /**
@@ -247,6 +251,11 @@ class Route extends SymfonyRoute implements RouteObjectInterface
         $this->requirementsValues = array_values($requirements);
 
         $options = $this->getOptions();
+        // avoid storing the default value for the compiler, in case this ever changes in code
+        // would be nice if those where class constants of the symfony route instead of hardcoded strings
+        if ('Symfony\\Component\\Routing\\RouteCompiler' == $options['compiler_class']) {
+            unset($options['compiler_class']);
+        }
         $this->optionsKeys = array_keys($options);
         $this->optionsValues = array_values($options);
     }

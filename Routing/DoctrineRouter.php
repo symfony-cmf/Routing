@@ -120,45 +120,35 @@ class DoctrineRouter implements RouterInterface
     {
         if (isset($parameters['route']) && '' !== $parameters['route']) {
             $route = $parameters['route'];
+            unset($parameters['route']);
         } else {
             $route = $this->getRouteFromContent($parameters);
+            unset($parameters['content']);
+            unset($parameters['route']); // could be an empty string
         }
 
         if (! $route instanceof RouteObjectInterface) {
             $hint = is_object($route) ? get_class($route) : gettype($route);
             throw new RouteNotFoundException('Route of this document is not an instance of RouteObjectInterface but: '.$hint);
         }
-return '/'; // TODO: use generator as well. getUrl is removed from route.
-        $url = $this->context->getBaseUrl() . $route->getUrl();
 
-        // add a query string if needed
-        $variables = array(
-            'route' => null,
-            'content' => null,
-            '_locale' => null
-        ); // FIXME: hack to not get these as query parameters
+        $collection = new RouteCollection();
+        $collection->add('x', $route);
 
-        // TODO: this is copy-pasted from symfony UrlGenerator
-        $extra = array_diff_key($parameters, $variables);
-        if ($extra && $query = http_build_query($extra)) {
-            $url .= '?'.$query;
-        }
+        return $this->getGenerator($collection)->generate('x', $parameters, $absolute);
+    }
 
-        // TODO: this is copy-pasted from symfony UrlGenerator
-        // we should try to somehow reuse the code there rather than copy-paste
-        if ($absolute) {
-            $scheme = $this->context->getScheme();
-            $port = '';
-            if ('http' === $scheme && 80 != $this->context->getHttpPort()) {
-                $port = ':'.$this->context->getHttpPort();
-            } elseif ('https' === $scheme && 443 != $this->context->getHttpsPort()) {
-                $port = ':'.$this->context->getHttpsPort();
-            }
-
-            $url = $scheme.'://'.$this->context->getHost().$port.$url;
-        }
-
-        return $url;
+    /**
+     * Get an url matcher for this collection
+     *
+     * @param RouteCollection $collection collection of routes for the current request
+     *
+     * @return UrlMatcherInterface the url matcher instance
+     */
+    public function getGenerator(RouteCollection $collection)
+    {
+        // TODO: option to configure class?
+        return new \Symfony\Component\Routing\Generator\UrlGenerator($collection, $this->context);
     }
 
     public function getRouteCollection()
@@ -230,7 +220,7 @@ return '/'; // TODO: use generator as well. getUrl is removed from route.
      *
      * @return UrlMatcherInterface the url matcher instance
      */
-    protected function getMatcher(RouteCollection $collection)
+    public function getMatcher(RouteCollection $collection)
     {
         // TODO: option to configure class?
         return new \Symfony\Component\Routing\Matcher\UrlMatcher($collection, $this->context);

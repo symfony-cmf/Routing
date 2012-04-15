@@ -23,12 +23,10 @@ class RedirectRouteTest extends BaseTestCase
         $route = new Route;
         $route->setRouteContent($root); // this happens to be a referenceable node
         $route->setPosition($root, 'testroute');
-        $route->setPattern('/testroute');
         self::$dm->persist($route);
 
         $redirect = new RedirectRoute;
         $redirect->setPosition($root, 'redirect');
-        $redirect->setPattern('/redirect');
         $redirect->setRouteTarget($route);
         self::$dm->persist($redirect);
 
@@ -46,4 +44,13 @@ class RedirectRouteTest extends BaseTestCase
         $this->assertSame($route, $params['route']);
     }
 
+    /**
+     * @expectedException LogicException
+     */
+    public function testSetContent()
+    {
+        $content = $this->getMock('Symfony\\Cmf\\Bundle\\ChainRoutingBundle\\Routing\\RouteAwareInterface');
+        $redirect = new RedirectRoute;
+        $redirect->setRouteContent($content);
+    }
 }

@@ -21,6 +21,9 @@ class BaseTestCase extends WebTestCase
     }
 
     /**
+     * careful: the kernel is shut down after the first test, if you need the
+     * kernel, recreate it.
+     *
      * @param array $options passed to self:.createKernel
      * @param string $routebase base name for routes under /test to use
      */

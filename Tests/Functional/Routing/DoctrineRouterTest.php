@@ -51,7 +51,15 @@ class DoctrineRouterTest extends BaseTestCase
     public function testGenerate()
     {
         $route = self::$dm->find(null, self::ROUTE_ROOT.'/testroute');
-        $url = self::$router->generate('', array('route' => $route));
-        $this->assertEquals('/testroute', $url);
+
+        $url = self::$router->generate('', array('route' => $route, 'test' => 'value'));
+        $this->assertEquals('/testroute?test=value', $url);
+    }
+
+    public function testGenerateAbsolute()
+    {
+        $route = self::$dm->find(null, self::ROUTE_ROOT.'/testroute');
+        $url = self::$router->generate('', array('route' => $route, 'test' => 'value'), true);
+        $this->assertEquals('http://localhost/testroute?test=value', $url);
     }
 }

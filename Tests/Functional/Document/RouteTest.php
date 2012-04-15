@@ -15,9 +15,6 @@ class RouteTest extends BaseTestCase
         parent::setupBeforeClass(array(), basename(self::ROUTE_ROOT));
     }
 
-    /**
-     *
-     */
     public function testPersist()
     {
         $route = new Route;
@@ -29,8 +26,10 @@ class RouteTest extends BaseTestCase
         $route->setRequirement('testreq', 'testregex');
         $route->setOptions(array('test' => 'value'));
         $route->setOption('another', 'value2');
+
         self::$dm->persist($route);
         self::$dm->flush();
+        $this->assertEquals('/testroute', $route->getPattern());
 
         self::$dm->clear();
 
@@ -76,5 +75,49 @@ class RouteTest extends BaseTestCase
 
         $options = $route->getOptions();
         $this->assertTrue(1 >= count($options)); // there is a default option for the compiler
+
+        return $route;
+    }
+
+    public function testRootRoute()
+    {
+        $root = self::$dm->find(null, self::ROUTE_ROOT);
+        $this->assertEquals('/', $root->getPattern());
+    }
+
+    public function testSetPattern()
+    {
+        $root = self::$dm->find(null, self::ROUTE_ROOT);
+        $root->setPattern('/{test}');
+        $this->assertEquals('{test}', $root->getVariablePattern());
+    }
+
+    /**
+     * @depends testPersistEmptyOptions
+     *
+     * @expectedException InvalidArgumentException
+     */
+    public function testSetPatternInvalid($route)
+    {
+        $route->setPattern('/impossible');
+    }
+
+    /**
+     * @expectedException LogicException
+     */
+    public function testInvalidIdPrefix()
+    {
+        $root = self::$dm->find(null, self::ROUTE_ROOT);
+        $root->setPrefix('/changed'); // simulate a problem with the prefix setter listener
+        $this->assertEquals('/', $root->getPattern());
+    }
+
+    /**
+     * @expectedException LogicException
+     */
+    public function testPrefixNonpersisted()
+    {
+        $route = new Route;
+        $route->getPattern();
     }
 }

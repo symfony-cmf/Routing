@@ -32,7 +32,6 @@ class RedirectControllerTest extends BaseTestCase
 
         $redirect = new RedirectRoute;
         $redirect->setPosition($root, 'redirectUri');
-        $redirect->setPattern('/redirectUri');
         $redirect->setUri('http://example.com/test-url');
         $redirect->setParameters(array('test'=>7)); // parameters should be ignored in this case
         $redirect->setPermanent(true);
@@ -57,12 +56,10 @@ class RedirectControllerTest extends BaseTestCase
         $route = new Route;
         $route->setRouteContent($root); // this happens to be a referenceable node
         $route->setPosition($root, 'testroute');
-        $route->setPattern('/testroute');
         self::$dm->persist($route);
 
         $redirect = new RedirectRoute;
         $redirect->setPosition($root, 'redirectContent');
-        $redirect->setPattern('/redirectContent');
         $redirect->setRouteTarget($route);
         $redirect->setParameters(array('test' => 'content'));
         self::$dm->persist($redirect);
@@ -85,7 +82,6 @@ class RedirectControllerTest extends BaseTestCase
 
         $redirect = new RedirectRoute;
         $redirect->setPosition($root, 'redirectName');
-        $redirect->setPattern('/redirectName');
         $redirect->setRouteName('symfony_route');
         $redirect->setParameters(array('param'=>7)); // parameters should be ignored in this case
         self::$dm->persist($redirect);
