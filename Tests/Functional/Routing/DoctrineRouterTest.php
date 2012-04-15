@@ -39,7 +39,7 @@ class DoctrineRouterTest extends BaseTestCase
     {
         $expected = array(
             '_controller'   => 'testController',
-            '_route'        => 'chain_router_doctrine_route_testroute',
+            '_route'        => 'chain_router_doctrine_route_test_routing_testroute',
             'path'          => '/testroute',
         );
 

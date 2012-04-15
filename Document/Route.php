@@ -48,9 +48,10 @@ class Route extends SymfonyRoute implements RouteObjectInterface
     protected $idPrefix;
 
     /**
+     * Variable pattern part. The static part of the pattern is the id without the prefix.
      * @PHPCRODM\String
      */
-    protected $patternOdm;
+    protected $variablePattern;
 
     /**
      * @var \Doctrine\ODM\PHPCR\MultivaluePropertyCollection
@@ -88,7 +89,9 @@ class Route extends SymfonyRoute implements RouteObjectInterface
      */
     public function __construct()
     {
-        parent::__construct('');
+        $this->setDefaults(array());
+        $this->setRequirements(array());
+        $this->setOptions(array());
     }
 
     /**
@@ -118,9 +121,8 @@ class Route extends SymfonyRoute implements RouteObjectInterface
     /**
      * {@inheritDoc}
      */
-    public function getUrl()
+    public function getStaticPrefix()
     {
-        // TODO: this is basically the "pattern". we should set the pattern automatically if not explicitly set and remove this method
         if (strncmp($this->getPath(), $this->idPrefix, strlen($this->idPrefix))) {
             throw new \LogicException("The id prefix '".$this->idPrefix."' does not match the route document path '".$this->getPath()."'");
         }
@@ -138,12 +140,58 @@ class Route extends SymfonyRoute implements RouteObjectInterface
     {
         $this->routeContent = $document;
     }
+
     /**
      * {@inheritDoc}
      */
     public function getRouteContent()
     {
         return $this->routeContent;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getPattern()
+    {
+        return $this->getStaticPrefix() . $this->getVariablePattern();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * It is recommended to use setVariablePattern to just set the part after
+     * the fixed part that follows from the repository path. If you use this
+     * method, it will ensure the start of the pattern matches the repository
+     * path (id) of this route document. Make sure to persist the route before
+     * setting the pattern to have the id field initialized.
+     */
+    public function setPattern($pattern)
+    {
+        $len = strlen($this->getStaticPrefix());
+        if (strncmp($this->getStaticPrefix(), $pattern, $len)) {
+            throw new \LogicException('You can not set the route document to a pattern that does not match its repository path. First move it to the correct path.');
+        }
+        return $this->setVariablePattern($pattern, $len);
+    }
+
+    /**
+     * @return string the variable part of the url pattern
+     */
+    public function getVariablePattern()
+    {
+        return $this->variablePattern;
+    }
+
+    /**
+     * @param string $variablePattern the variable part of the url pattern
+     * @return Route
+     */
+    public function setVariablePattern($variablePattern)
+    {
+        $this->variablePattern = $variablePattern;
+        // calling parent mainly to let it set compiled=null. the parent $pattern field is never used
+        return parent::setPattern($this->getStaticPrefix() . $this->variablePattern);
     }
 
     // workaround for the missing hashmaps in phpcr-odm
@@ -153,7 +201,6 @@ class Route extends SymfonyRoute implements RouteObjectInterface
      */
     public function initArrays()
     {
-        $this->setPattern($this->patternOdm);
         // phpcr-odm makes this a property collection. for some reason
         // array_combine does not work with ArrayAccess objects
         // if there are no values in a multivalue property, we don't get an
@@ -191,8 +238,6 @@ class Route extends SymfonyRoute implements RouteObjectInterface
      */
     public function prepareArrays()
     {
-        $this->patternOdm = $this->getPattern();
-
         $defaults = $this->getDefaults();
         $this->defaultsKeys = array_keys($defaults);
         $this->defaultsValues = array_values($defaults);

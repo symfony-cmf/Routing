@@ -2,6 +2,8 @@
 
 namespace Symfony\Cmf\Bundle\ChainRoutingBundle\Tests\Functional;
 
+use Symfony\Cmf\Bundle\ChainRoutingBundle\Document\Route;
+
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class BaseTestCase extends WebTestCase
@@ -41,8 +43,12 @@ class BaseTestCase extends WebTestCase
         if (! $session->nodeExists('/test')) {
             $session->getRootNode()->addNode('test', 'nt:unstructured');
         }
-        $baseroute = $session->getNode('/test')->addNode($routebase, 'nt:unstructured');
-        $baseroute->addMixin('mix:referenceable');
         $session->save();
+
+        $root = self::$dm->find(null, '/test');
+        $route = new Route;
+        $route->setPosition($root, $routebase);
+        self::$dm->persist($route);
+        self::$dm->flush();
     }
 }

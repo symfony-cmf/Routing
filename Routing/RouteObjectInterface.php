@@ -41,13 +41,4 @@ interface RouteObjectInterface
      * @return object the document or entity this route entry points to
      */
     function getRouteContent();
-
-    /**
-     * Get the absolute url within the symfony application for this route.
-     *
-     * Without domain or the eventual app_dev.php
-     * In short, this is the url you give the RouteRepositoryInterface to
-     * findByUrl
-     */
-    function getUrl();
 }

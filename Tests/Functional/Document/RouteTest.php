@@ -8,7 +8,7 @@ use Symfony\Cmf\Bundle\ChainRoutingBundle\Tests\Functional\BaseTestCase;
 
 class RouteTest extends BaseTestCase
 {
-    const ROUTE_ROOT = '/test/route';
+    const ROUTE_ROOT = '/test/routing';
 
     public static function setupBeforeClass()
     {
@@ -25,7 +25,6 @@ class RouteTest extends BaseTestCase
 
         $route->setRouteContent($root); // this happens to be a referenceable node
         $route->setPosition($root, 'testroute');
-        $route->setPattern('/testroute');
         $route->setDefault('x', 'y');
         $route->setRequirement('testreq', 'testregex');
         $route->setOptions(array('test' => 'value'));
