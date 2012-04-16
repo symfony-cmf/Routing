@@ -44,6 +44,15 @@ class DoctrineRouter implements RouterInterface
     const CONTENT_TEMPLATE = 'contentTemplate';
 
     /**
+     * Symfony routes always need a name in the collection. We generate routes
+     * based on the route object, but need to use a name for example in error
+     * reporting.
+     * When generating, we just use this prefix, when matching, we add the full
+     * repository path with "/" replaced by "_" to get unique names.
+     */
+    const ROUTE_NAME_PREFIX = 'chain_router_doctrine_route';
+
+    /**
      * @var array of ContentResolverInterface
      */
     protected $resolvers;
@@ -133,9 +142,9 @@ class DoctrineRouter implements RouterInterface
         }
 
         $collection = new RouteCollection();
-        $collection->add('x', $route);
+        $collection->add(self::ROUTE_NAME_PREFIX, $route);
 
-        return $this->getGenerator($collection)->generate('x', $parameters, $absolute);
+        return $this->getGenerator($collection)->generate(self::ROUTE_NAME_PREFIX, $parameters, $absolute);
     }
 
     /**
@@ -143,7 +152,7 @@ class DoctrineRouter implements RouterInterface
      *
      * @param RouteCollection $collection collection of routes for the current request
      *
-     * @return UrlMatcherInterface the url matcher instance
+     * @return UrlGeneratorInterface the url matcher instance
      */
     public function getGenerator(RouteCollection $collection)
     {
@@ -184,7 +193,7 @@ class DoctrineRouter implements RouterInterface
         $collection = new RouteCollection();
 
         foreach ($routes as $key => $route) {
-            $collection->add('chain_router_doctrine_route'.str_replace('/', '_', $key), $route);
+            $collection->add(self::ROUTE_NAME_PREFIX.str_replace('/', '_', $key), $route);
         }
 
         $defaults = $this->getMatcher($collection)->match($url);

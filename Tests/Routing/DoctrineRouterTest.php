@@ -85,7 +85,7 @@ class DoctrineRouterTest extends CmfUnitTestCase
         $generator = $this->getMockBuilder('Symfony\Component\Routing\Generator\UrlGenerator')->disableOriginalConstructor()->getMock();
         $generator->expects($this->once())
             ->method('generate')
-            ->with('x', array(), false)
+            ->with(DoctrineRouter::ROUTE_NAME_PREFIX, array(), false)
             ->will($this->returnValue('/base/test/route'));
 
         $router = new TestRouter($this->container, $this->repository, null, $generator, $route);
@@ -110,7 +110,7 @@ class DoctrineRouterTest extends CmfUnitTestCase
         $generator = $this->getMockBuilder('Symfony\Component\Routing\Generator\UrlGenerator')->disableOriginalConstructor()->getMock();
         $generator->expects($this->once())
             ->method('generate')
-            ->with('x', array(), false)
+            ->with(DoctrineRouter::ROUTE_NAME_PREFIX, array(), false)
             ->will($this->returnValue('/'));
 
         $router = new TestRouter($this->container, $this->repository, null, $generator);
@@ -137,7 +137,7 @@ class DoctrineRouterTest extends CmfUnitTestCase
         $generator = $this->getMockBuilder('Symfony\Component\Routing\Generator\UrlGenerator')->disableOriginalConstructor()->getMock();
         $generator->expects($this->once())
             ->method('generate')
-            ->with('x', array(), true)
+            ->with(DoctrineRouter::ROUTE_NAME_PREFIX, array(), true)
             ->will($this->returnValue('http://test.domain/base/test/route'));
 
         $router = new TestRouter($this->container, $this->repository, null, $generator);
@@ -152,7 +152,7 @@ class DoctrineRouterTest extends CmfUnitTestCase
         $generator = $this->getMockBuilder('Symfony\Component\Routing\Generator\UrlGenerator')->disableOriginalConstructor()->getMock();
         $generator->expects($this->once())
             ->method('generate')
-            ->with('x', array(), false)
+            ->with(DoctrineRouter::ROUTE_NAME_PREFIX, array(), false)
             ->will($this->returnValue('/base/test/route'));
 
         $router = new TestRouter($this->container, $this->repository, null, $generator);
@@ -174,7 +174,7 @@ class DoctrineRouterTest extends CmfUnitTestCase
         $generator = $this->getMockBuilder('Symfony\Component\Routing\Generator\UrlGenerator')->disableOriginalConstructor()->getMock();
         $generator->expects($this->once())
             ->method('generate')
-            ->with('x', array('_locale' => 'de'), false)
+            ->with(DoctrineRouter::ROUTE_NAME_PREFIX, array('_locale' => 'de'), false)
             ->will($this->returnValue('/base/de'));
 
         $router = new TestRouter($this->container, $this->repository, null, $generator, $route_de);
