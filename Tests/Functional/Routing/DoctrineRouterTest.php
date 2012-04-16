@@ -25,10 +25,10 @@ class DoctrineRouterTest extends BaseTestCase
         parent::setupBeforeClass(array(), basename(self::ROUTE_ROOT));
         self::$router = self::$kernel->getContainer()->get('router');
 
-        $route = new Route;
         $root = self::$dm->find(null, self::ROUTE_ROOT);
 
         // do not set a content here, or we need a valid request and so on...
+        $route = new Route;
         $route->setPosition($root, 'testroute');
         $route->setVariablePattern('/{slug}/{id}');
         $route->setDefault('id', '0');
@@ -79,6 +79,24 @@ class DoctrineRouterTest extends BaseTestCase
     public function testNoMatch()
     {
         self::$router->match('/testroute/child/123a');
+    }
+
+    /**
+     * @expectedException Symfony\Component\Routing\Exception\MethodNotAllowedException
+     */
+    public function testNotAllowed()
+    {
+        $root = self::$dm->find(null, self::ROUTE_ROOT);
+
+        // do not set a content here, or we need a valid request and so on...
+        $route = new Route;
+        $route->setPosition($root, 'notallowed');
+        $route->setRequirement('_method', 'GET');
+        $route->setDefault('_controller', 'testController');
+        self::$dm->persist($route);
+
+        self::$router->getContext()->setMethod('POST');
+        self::$router->match('/notallowed');
     }
 
     public function testGenerate()
