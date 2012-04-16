@@ -72,11 +72,12 @@ RouteRepositoryInterface is used. It can be easily implemented with doctrine.
 The router works with the base UrlMatcher and UrlGenerator classes and only
 adds loading routes from the database and the concept of referenced content.
 
-This bundle comes with an implementation for PHCPR-ODM as PHPCR is well suited
-for the tree nature of the data. If you use PHPCR-ODM with the provided route
-document, you can just use the default repository service. Otherwise you need to
-provide your own service (see cmf_routing.xml for inspiration).
-If you want to customize more, have a look into Routing/DoctrineRouter.php
+The DoctrineRouter service is set up with a repository. See the configuration
+section for how to change the route_repository_service.
+This bundle comes with a route repository implementation for PHCPR-ODM. PHPCR
+is well suited to the tree nature of the data. If you use PHPCR-ODM with a
+route document like the one provided, you can just leave the repository service
+at the default.
 
 You will want to configure the controller resolvers that decide what controller
 will be used to handle the request, to avoid hardcoding controller names into
@@ -90,16 +91,24 @@ be loaded at all and you can use the chain router with your own routers):
         doctrine:
             enabled: true
 
+### PHPCR-ODM repository service
+
+The default repository loads the route at the path in the request and all
+parent paths to allow for some of the path segments being parameters. If you
+need a different way to load routes or for example never use parameters, you
+can write your own repository implementation to optimize (see cmf_routing.xml
+for how to configure the service).
+
 ### Match Process
 
-* Ask the repository for a RouteObjectInterface document with the requested url
-* If found, get the parameters with getRouteDefaults
-* If the parameters do not contain the field _controller, loop through the
+* Ask the repository for Route documents that could match the requested url
+* Build a route collection and let the UrlMatcher find a matching route
+* If the defaults do not contain the field _controller, loop through the
     ControllerResolverInterface list to find the controller. If none of the
     resolver finds a controller, throw a ResourceNotFoundException
-* If the route document provides a content, set it as request attribute with
-    the name ``contentDocument``. (Use the constant DoctrineRouter::CONTENT_KEY
-    in your code.)
+* If the route implements RouteObjectInterace and returns a non-null content,
+    set it as request attribute with the name ``contentDocument``. (Use the
+    constant DoctrineRouter::CONTENT_KEY in your code.)
 
 Your controllers should expect the parameter $contentDocument in their
 ``Action`` methods if they are supposed to work with content referenced by the
