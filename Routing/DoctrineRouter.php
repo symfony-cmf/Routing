@@ -182,6 +182,7 @@ class DoctrineRouter implements RouterInterface
         $routes = $this->routeRepository->findManyByUrl($url);
 
         $collection = new RouteCollection();
+
         foreach ($routes as $key => $route) {
             $collection->add('chain_router_doctrine_route'.str_replace('/', '_', $key), $route);
         }

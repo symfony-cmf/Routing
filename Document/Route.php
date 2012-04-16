@@ -84,6 +84,8 @@ class Route extends SymfonyRoute implements RouteObjectInterface
      */
     protected $optionsValues;
 
+    protected $needRecompile = false;
+
     /**
      * Overwrite to be able to create route without pattern
      */
@@ -194,8 +196,21 @@ class Route extends SymfonyRoute implements RouteObjectInterface
     public function setVariablePattern($variablePattern)
     {
         $this->variablePattern = $variablePattern;
-        // calling parent mainly to let it set compiled=null. the parent $pattern field is never used
-        return parent::setPattern($this->getStaticPrefix() . $this->variablePattern);
+        $this->needRecompile = true;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * Overwritten to make sure the route is recompiled if the pattern was changed
+     */
+    public function compile()
+    {
+        if ($this->needRecompile) {
+            // calling parent::setPattern just to let it set compiled=null. the parent $pattern field is never used
+            parent::setPattern($this->getStaticPrefix() . $this->getVariablePattern());
+        }
+        return parent::compile();
     }
 
     // workaround for the missing hashmaps in phpcr-odm
