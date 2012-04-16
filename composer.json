@@ -18,9 +18,6 @@
         "symfony/framework-bundle": "2.1.*",
         "symfony/monolog-bundle": "dev-master"
     },
-    "suggest": {
-        "jackalope/jackalope-jackrabbit": "dev-master"
-    },
     "autoload": {
         "psr-0": { "Symfony\\Cmf\\Bundle\\ChainRoutingBundle": "" }
     },
