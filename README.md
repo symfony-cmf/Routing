@@ -67,9 +67,11 @@ See also [Symfony documentation for DependencyInjection tags.](http://symfony.co
 
 ## Doctrine Router
 
-This implementation of a router generates urls and matches requests with content
-of a database. To read data, the RouteRepositoryInterface is used. It can be
-easily implemented with doctrine.
+This implementation of a router loads routes from a database. To read data, the
+RouteRepositoryInterface is used. It can be easily implemented with doctrine.
+The router works with the base UrlMatcher and UrlGenerator classes and only
+adds loading routes from the database and the concept of referenced content.
+
 This bundle comes with an implementation for PHCPR-ODM as PHPCR is well suited
 for the tree nature of the data. If you use PHPCR-ODM with the provided route
 document, you can just use the default repository service. Otherwise you need to
@@ -156,15 +158,15 @@ and specifically the routing fixtures loading.
 
 ### RouteObjectInterface
 
-All routes need to implement this interface. This bundle also provides a
-default implementation for phpcr-odm where the interface is very
-straightforward to implement.
+Routes that implement this interface are linked to a content document. This
+bundle provides a default implementation for phpcr-odm.
+All routes still need to extend the base class Symfony\Component\Routing\Route
 
 ### Redirections
 
 You can build redirections with the RedirectRoute document. It can redirect
 either to an absolute URI, or to a named symfony route or to another
-RouteObjectInterface object.
+Route object that can be referenced in the repository.
 The RedirectRoute can be handled by the RedirectController
 TODO: see Configuration.php of this bundle. I could not figure out how to set
 this mapping as a default mapping. Meanwhile, in order to do redirections, you
@@ -178,11 +180,9 @@ replace the document with your own, as long as it implements RedirectRouteInterf
 
 ### Routes and locales
 
-The default Route document optionally accepts a locale. If it is set, it is
-returned in the getRouteDefaults as field ``_locale``. With this, you can
-create one route for each of the desired locales that all reference the same
-multilingual content.
-The DoctrineRouter respects _locale when generating routes from content.
+You can use the _locale default value in a route to create one route per locale
+that all reference the same multilingual content.
+The DoctrineRouter respects the _locale when generating routes from content.
 When resolving the route, the _locale gets into the request and is picked up
 by the symfony locale system.
 
@@ -202,11 +202,6 @@ detected).
 You might need to extend DoctrineRouter and overwrite findRouteForUrl to find
 route objects by URLs in your database.
 
-### TODO
-
-* CMF content router: Implement getRouteCollection
-
-
 ## Authors
 
 * Filippo De Santis (p16)
@@ -214,5 +209,6 @@ route objects by URLs in your database.
 * Claudio Beatrice (omissis)
 * Lukas Kahwe Smith (lsmith77)
 * David Buchmann (dbu)
+* [And others](https://github.com/symfony-cmf/ChainRoutingBundle/contributors)
 
 The original code for the chain router was contributed by Magnus Nordlander.

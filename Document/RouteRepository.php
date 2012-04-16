@@ -5,7 +5,8 @@ namespace Symfony\Cmf\Bundle\ChainRoutingBundle\Document;
 use Doctrine\ODM\PHPCR\DocumentRepository;
 use Doctrine\ODM\PHPCR\Mapping\ClassMetadata;
 
-use Symfony\Cmf\Bundle\ChainRoutingBundle\Routing\RouteObjectInterface;
+use Symfony\Component\Routing\Route as SymfonyRoute;
+
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Cmf\Bundle\ChainRoutingBundle\Routing\RouteRepositoryInterface;
 
@@ -40,9 +41,9 @@ class RouteRepository extends DocumentRepository implements RouteRepositoryInter
      * {@inheritDoc}
      *
      * This will return any document found at the url or up the path to the
-     * prefix. If any of the documents does not implement the
-     * RouteObjectInterface it will be filtered out. In the extreme case this
-     * can also lead to an empty list being returned.
+     * prefix. If any of the documents does not extend the symfony Route
+     * object, it is filtered out. In the extreme case this can also lead to an
+     * empty list being returned.
      */
     public function findManyByUrl($url)
     {
@@ -61,7 +62,7 @@ class RouteRepository extends DocumentRepository implements RouteRepositoryInter
             $routes = $this->findMany($candidates);
             // filter for valid route objects (see comment in constructor)
             foreach ($routes as $key => $route) {
-                if (! $route instanceof RouteObjectInterface) {
+                if (! $route instanceof SymfonyRoute) {
                     unset($routes[$key]);
                 }
             }

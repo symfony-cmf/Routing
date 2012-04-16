@@ -3,7 +3,7 @@
 namespace Symfony\Cmf\Bundle\ChainRoutingBundle\Routing;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Routing\Router;
+use Symfony\Component\Routing\Route as SymfonyRoute;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
@@ -211,7 +211,7 @@ class DoctrineRouter implements RouterInterface
             $defaults['_controller'] = $controller;
         }
 
-        if ($content = $route->getRouteContent()) {
+        if ($route instanceof RouteObjectInterface && $content = $route->getRouteContent()) {
             if (! $request = $this->container->get('request')) {
                 throw new \Exception('Request object not available from container');
             }
@@ -281,7 +281,7 @@ class DoctrineRouter implements RouterInterface
         }
 
         foreach ($routes as $route) {
-            if (! $route instanceof RouteObjectInterface) continue;
+            if (! $route instanceof SymfonyRoute) continue;
             $defaults = $route->getDefaults();
             if (isset($defaults['_locale']) && $locale == $defaults['_locale']) {
                 return $route;
