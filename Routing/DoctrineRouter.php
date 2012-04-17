@@ -281,7 +281,9 @@ class DoctrineRouter implements RouterInterface
         }
 
         foreach ($routes as $route) {
-            if (! $route instanceof SymfonyRoute) continue;
+            if (! $route instanceof SymfonyRoute) {
+                continue;
+            }
             $defaults = $route->getDefaults();
             if (isset($defaults['_locale']) && $locale == $defaults['_locale']) {
                 return $route;

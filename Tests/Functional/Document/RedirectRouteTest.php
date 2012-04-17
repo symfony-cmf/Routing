@@ -28,6 +28,7 @@ class RedirectRouteTest extends BaseTestCase
         $redirect = new RedirectRoute;
         $redirect->setPosition($root, 'redirect');
         $redirect->setRouteTarget($route);
+        $redirect->setDefault('test', 'toast');
         self::$dm->persist($redirect);
 
         self::$dm->flush();
@@ -42,6 +43,8 @@ class RedirectRouteTest extends BaseTestCase
         $params = $redirect->getParameters();
         $this->assertArrayHasKey('route', $params);
         $this->assertSame($route, $params['route']);
+        $defaults = $redirect->getDefaults();
+        $this->assertEquals(array('test' => 'toast'), $defaults);
     }
 
     /**

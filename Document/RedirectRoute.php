@@ -53,6 +53,7 @@ class RedirectRoute extends Route implements RedirectRouteInterface
     {
         throw new \LogicException('Do not set a content for the redirect route. It is its own content.');
     }
+
     /**
      * {@inheritDoc}
      */
@@ -68,6 +69,7 @@ class RedirectRoute extends Route implements RedirectRouteInterface
     {
         $this->routeTarget = $document;
     }
+
     /**
      * Get the target route document this route redirects to.
      *
@@ -88,6 +90,7 @@ class RedirectRoute extends Route implements RedirectRouteInterface
     {
         $this->routeName = $routeName;
     }
+
     /**
      * {@inheritDoc}
      */
@@ -150,30 +153,12 @@ class RedirectRoute extends Route implements RedirectRouteInterface
     {
         $this->uri = $uri;
     }
+
     /**
      * {@inheritDoc}
      */
     public function getUri()
     {
         return $this->uri;
-    }
-
-    // seems the callbacks are lost when inheriting
-
-    /**
-     * @PHPCRODM\PostLoad
-     */
-    public function initArrays()
-    {
-        parent::initArrays();
-    }
-
-    /**
-     * @PHPCRODM\PreUpdate
-     * @PHPCRODM\PrePersist
-     */
-    public function prepareArrays()
-    {
-        parent::prepareArrays();
     }
 }
