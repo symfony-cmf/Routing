@@ -2,6 +2,7 @@
 
 namespace Symfony\Cmf\Bundle\ChainRoutingBundle\Document;
 
+use Symfony\Component\Routing\Route as SymfonyRoute;
 use Doctrine\ODM\PHPCR\Mapping\Annotations as PHPCRODM;
 use Symfony\Cmf\Bundle\ChainRoutingBundle\Routing\RouteObjectInterface;
 
@@ -15,7 +16,7 @@ use Symfony\Cmf\Bundle\ChainRoutingBundle\Routing\RouteObjectInterface;
  *
  * @PHPCRODM\Document(referenceable=true,repositoryClass="Symfony\Cmf\Bundle\ChainRoutingBundle\Document\RouteRepository")
  */
-class Route implements RouteObjectInterface
+class Route extends SymfonyRoute implements RouteObjectInterface
 {
     /**
      * @PHPCRODM\ParentDocument
@@ -41,40 +42,59 @@ class Route implements RouteObjectInterface
     protected $routeContent;
 
     /**
-     * Explicit controller to be used instead of one of the resolvers
-     *
-     * @PHPCRODM\String()
-     */
-    protected $controller;
-
-    /**
-     * Controller alias for rendering the target content, to be used with the
-     * ControllerAliasResolver.
-     *
-     * @PHPCRODM\String()
-     */
-    protected $controller_alias;
-
-    /**
-     * Explicit template to be used with the default controller.
-     *
-     * @PHPCRODM\String()
-     */
-    protected $template;
-
-    /**
-     * Locale to use when this route is requested.
-     * Only set in getRouteDefaults if non-empty
-     *
-     * @PHPCRODM\String()
-     */
-    protected $locale;
-
-    /**
      * The part of the phpcr path that is not part of the url
      * @var string
      */
     protected $idPrefix;
+
+    /**
+     * Variable pattern part. The static part of the pattern is the id without the prefix.
+     * @PHPCRODM\String
+     */
+    protected $variablePattern;
+
+    /**
+     * @var \Doctrine\ODM\PHPCR\MultivaluePropertyCollection
+     * @PHPCRODM\String(multivalue=true)
+     */
+    protected $defaultsKeys;
+    /**
+     * @var \Doctrine\ODM\PHPCR\MultivaluePropertyCollection
+     * @PHPCRODM\String(multivalue=true)
+     */
+    protected $defaultsValues;
+    /**
+     * @var \Doctrine\ODM\PHPCR\MultivaluePropertyCollection
+     * @PHPCRODM\String(multivalue=true)
+     */
+    protected $requirementsKeys;
+    /**
+     * @var \Doctrine\ODM\PHPCR\MultivaluePropertyCollection
+     * @PHPCRODM\String(multivalue=true)
+     */
+    protected $requirementsValues;
+    /**
+     * @var \Doctrine\ODM\PHPCR\MultivaluePropertyCollection
+     * @PHPCRODM\String(multivalue=true)
+     */
+    protected $optionsKeys;
+    /**
+     * @var \Doctrine\ODM\PHPCR\MultivaluePropertyCollection
+     * @PHPCRODM\String(multivalue=true)
+     */
+    protected $optionsValues;
+
+    protected $needRecompile = false;
+
+    /**
+     * Overwrite to be able to create route without pattern
+     */
+    public function __construct()
+    {
+        $this->setDefaults(array());
+        $this->setRequirements(array());
+        $this->setOptions(array());
+    }
 
     /**
      * Set the parent document and name of this route entry. Only allowed when
@@ -84,8 +104,8 @@ class Route implements RouteObjectInterface
      */
     public function setPosition($parent, $name)
     {
-      $this->parent = $parent;
-      $this->name = $name;
+        $this->parent = $parent;
+        $this->name = $name;
     }
     /**
      * Get the repository path of this url entry
@@ -94,9 +114,28 @@ class Route implements RouteObjectInterface
     {
       return $this->path;
     }
+
     public function setPrefix($idPrefix)
     {
         $this->idPrefix = $idPrefix;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getStaticPrefix()
+    {
+        if (0 == strlen($this->idPrefix)) {
+            throw new \LogicException('Can not determine the prefix. Either this is a new, unpersisted document or the listener that calls setPrefix is not set up correctly.');
+        }
+        if (strncmp($this->getPath(), $this->idPrefix, strlen($this->idPrefix))) {
+            throw new \LogicException("The id prefix '".$this->idPrefix."' does not match the route document path '".$this->getPath()."'");
+        }
+        $url = substr($this->getPath(), strlen($this->idPrefix));
+        if (empty($url)) {
+            $url = '/';
+        }
+        return $url;
     }
 
     /**
@@ -105,17 +144,6 @@ class Route implements RouteObjectInterface
     public function setRouteContent($document)
     {
         $this->routeContent = $document;
-    }
-    /**
-     * {@inheritDoc}
-     */
-    public function getUrl()
-    {
-        $url = substr($this->getPath(), strlen($this->idPrefix));
-        if (empty($url)) {
-            $url = '/';
-        }
-        return $url;
     }
 
     /**
@@ -127,108 +155,123 @@ class Route implements RouteObjectInterface
     }
 
     /**
-     * Set the explicit controller to be used with this route.
-     * i.e. service_name:indexAction or MyBundle:Default:index
-     *
-     * @param string $controller the controller to be used with this route
+     * {@inheritDoc}
      */
-    public function setController($controller)
+    public function getPattern()
     {
-        $this->controller = $controller;
-    }
-
-    /**
-     * Get the explicit controller to be used with this route
-     *
-     * @return string the controller name or service name with action
-     */
-    public function getController()
-    {
-        return $this->controller;
-    }
-
-    /**
-     * Set an alias name of the controller for this url, to be used with the
-     * ControllerAliasResolver
-     *
-     * @param string $alias the alias name as in the controllers_by_alias mapping
-     */
-    public function setControllerAlias($alias)
-    {
-        $this->controller_alias = $alias;
-    }
-    /**
-     * Get an alias name of the controller for this url.
-     *
-     * @return string $alias the alias name
-     */
-    public function getControllerAlias()
-    {
-        return $this->controller_alias;
-    }
-
-    /**
-     * Set the template to be used with this route.
-     * i.e. SymfonyCmfContentBundle:StaticContent:index.html.twig
-     *
-     * @param string $template the template to be used with this route
-     */
-    public function setTemplate($template)
-    {
-        $this->template = $template;
-    }
-
-    /**
-     * Get the template to be used with this route.
-     *
-     * @return string the template
-     */
-    public function getTemplate()
-    {
-        return $this->template;
-    }
-
-    /**
-     * Set the locale requests for this route should use
-     *
-     * @param $locale the locale of this route
-     */
-    public function setLocale($locale)
-    {
-        $this->locale = $locale;
-    }
-
-    /**
-     * @return string the locale
-     */
-    public function getLocale()
-    {
-        return $this->locale;
+        return $this->getStaticPrefix() . $this->getVariablePattern();
     }
 
     /**
      * {@inheritDoc}
+     *
+     * It is recommended to use setVariablePattern to just set the part after
+     * the fixed part that follows from the repository path. If you use this
+     * method, it will ensure the start of the pattern matches the repository
+     * path (id) of this route document. Make sure to persist the route before
+     * setting the pattern to have the id field initialized.
      */
-    public function getRouteDefaults()
+    public function setPattern($pattern)
     {
-        $defaults = array();
+        $len = strlen($this->getStaticPrefix());
 
-        $controller = $this->getController();
-        if (! empty($controller)) {
-            $defaults['_controller'] = $controller;
+        if (strncmp($this->getStaticPrefix(), $pattern, $len)) {
+            throw new \InvalidArgumentException('You can not set a pattern for the route document that does not match its repository path. First move it to the correct path.');
         }
-        $alias = $this->getControllerAlias();
-        if (! empty($alias)) {
-            $defaults['type'] = $alias;
+        return $this->setVariablePattern(substr($pattern, $len));
+    }
+
+    /**
+     * @return string the variable part of the url pattern
+     */
+    public function getVariablePattern()
+    {
+        return $this->variablePattern;
+    }
+
+    /**
+     * @param string $variablePattern the variable part of the url pattern
+     * @return Route
+     */
+    public function setVariablePattern($variablePattern)
+    {
+        $this->variablePattern = $variablePattern;
+        $this->needRecompile = true;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * Overwritten to make sure the route is recompiled if the pattern was changed
+     */
+    public function compile()
+    {
+        if ($this->needRecompile) {
+            // calling parent::setPattern just to let it set compiled=null. the parent $pattern field is never used
+            parent::setPattern($this->getStaticPrefix() . $this->getVariablePattern());
         }
-        $template = $this->getTemplate();
-        if (! empty($template)) {
-            $defaults['template'] = $template;
+        return parent::compile();
+    }
+
+    // workaround for the missing hashmaps in phpcr-odm
+
+    /**
+     * @PHPCRODM\PostLoad
+     */
+    public function initArrays()
+    {
+        // phpcr-odm makes this a property collection. for some reason
+        // array_combine does not work with ArrayAccess objects
+        // if there are no values in a multivalue property, we don't get an
+        // empty collection assigned but null
+
+        if ($this->defaultsValues && count($this->defaultsValues)) {
+            $this->setDefaults(array_combine(
+                $this->defaultsKeys->getValues(),
+                $this->defaultsValues->getValues())
+            );
+        } else {
+            $this->setDefaults(array());
         }
-        $locale = $this->getLocale();;
-        if (! empty($locale)) {
-            $defaults['_locale'] = $locale;
+        if ($this->requirementsValues && count($this->requirementsValues)) {
+            $this->setRequirements(array_combine(
+                $this->requirementsKeys->getValues(),
+                $this->requirementsValues->getValues())
+            );
+        } else {
+            $this->setRequirements(array());
         }
-        return $defaults;
+        if ($this->optionsValues && count($this->optionsValues)) {
+            $this->setOptions(array_combine(
+                $this->optionsKeys->getValues(),
+                $this->optionsValues->getValues())
+            );
+        } else {
+            $this->setOptions(array());
+        }
+    }
+
+    /**
+     * @PHPCRODM\PreUpdate
+     * @PHPCRODM\PrePersist
+     */
+    public function prepareArrays()
+    {
+        $defaults = $this->getDefaults();
+        $this->defaultsKeys = array_keys($defaults);
+        $this->defaultsValues = array_values($defaults);
+
+        $requirements = $this->getRequirements();
+        $this->requirementsKeys = array_keys($requirements);
+        $this->requirementsValues = array_values($requirements);
+
+        $options = $this->getOptions();
+        // avoid storing the default value for the compiler, in case this ever changes in code
+        // would be nice if those where class constants of the symfony route instead of hardcoded strings
+        if ('Symfony\\Component\\Routing\\RouteCompiler' == $options['compiler_class']) {
+            unset($options['compiler_class']);
+        }
+        $this->optionsKeys = array_keys($options);
+        $this->optionsValues = array_values($options);
     }
 }

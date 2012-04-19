@@ -3,8 +3,29 @@
 namespace Symfony\Cmf\Bundle\ChainRoutingBundle\Routing;
 
 /**
- * Additional methods needed by teh RedirectController to redirect based on
- * the route
+ * Document for redirection entries with the RedirectController.
+ *
+ * Defines additional methods needed by the RedirectController to redirect
+ * based on the route.
+ *
+ * This document may define (in order of precedence - the others can be empty):
+ *
+ * - uri: an absolute uri
+ * - routeName and routeParameters: to be used with the standard symfony router
+ *   or a route entry in the routeParameters for the DoctrineRouter. Precedency
+ *   between these is determined by the order of the routers in the chain
+ *   router.
+ *
+ * With standard Symfony routing, you can just use uri / routeName and a
+ * hashmap of parameters.
+ *
+ * For the doctrine router, you can return a RouteInterface instance in the
+ * field 'route' of the parameters.
+ *
+ * Note: getRedirectContent must return the redirect route itself for the
+ * integration with DoctrineRouter to work.
+ *
+ * @author David Buchmann <david@liip.ch>
  */
 interface RedirectRouteInterface extends RouteObjectInterface
 {
@@ -18,20 +39,27 @@ interface RedirectRouteInterface extends RouteObjectInterface
     public function getUri();
 
     /**
-     * Get the name of the target route.
+     * Get the name of the target route for working with the symfony standard
+     * router.
      *
      * @return string target route name
      */
     function getRouteName();
 
     /**
-     * Get the parameters for router::generate()
+     * Whether this should be a permanent or temporary redirect
      *
-     * Note that for the DoctrineRouter, you can return the target
-     * route object as field 'route' of the hashmap
+     * @return boolean
+     */
+    function isPermanent();
+
+    /**
+     * Get the parameters for the target route router::generate()
+     *
+     * Note that for the DoctrineRouter, you return the target route
+     * document as field 'route' of the hashmap.
      *
      * @return array Information to build the route
      */
-    public function getParameters();
-
+    function getParameters();
 }

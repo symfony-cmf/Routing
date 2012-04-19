@@ -14,43 +14,34 @@ use Symfony\Cmf\Bundle\ChainRoutingBundle\Tests\Functional\BaseTestCase;
 class DoctrineRouterTest extends BaseTestCase
 {
     /**
-     * @var \Doctrine\ODM\PHPCR\DocumentManager
-     */
-    protected static $dm;
-    /**
      * @var \Symfony\Cmf\Bundle\ChainRoutingBundle\Routing\ChainRouter
      */
     protected static $router;
 
-    // TODO: this hides the fact that the listener is not working
     const ROUTE_ROOT = '/test/routing';
 
     public static function setupBeforeClass()
     {
-        self::$kernel = self::createKernel();
-        self::$kernel->init();
-        self::$kernel->boot();
-
-        self::$dm = self::$kernel->getContainer()->get('doctrine_phpcr.odm.document_manager');
+        parent::setupBeforeClass(array(), basename(self::ROUTE_ROOT));
         self::$router = self::$kernel->getContainer()->get('router');
 
-        $session = self::$kernel->getContainer()->get('doctrine_phpcr.session');
-        if ($session->nodeExists(self::ROUTE_ROOT)) {
-            $session->getNode(self::ROUTE_ROOT)->remove();
-        }
-        if (! $session->nodeExists('/test')) {
-            $session->getRootNode()->addNode('test', 'nt:unstructured');
-        }
-        $session->getNode('/test')->addNode('routing', 'nt:unstructured');
-        $session->save();
-
-        $route = new Route;
         $root = self::$dm->find(null, self::ROUTE_ROOT);
 
         // do not set a content here, or we need a valid request and so on...
+        $route = new Route;
         $route->setPosition($root, 'testroute');
-        $route->setController('testController');
+        $route->setVariablePattern('/{slug}/{id}');
+        $route->setDefault('id', '0');
+        $route->setRequirement('id', '[0-9]+');
+        $route->setDefault('_controller', 'testController');
+        // TODO: what are the options used for? we should test them too if it makes sense
         self::$dm->persist($route);
+
+        $childroute = new Route;
+        $childroute->setPosition($route, 'child');
+        $childroute->setDefault('_controller', 'testController');
+        self::$dm->persist($childroute);
+
         self::$dm->flush();
     }
 
@@ -58,19 +49,86 @@ class DoctrineRouterTest extends BaseTestCase
     {
         $expected = array(
             '_controller'   => 'testController',
-            '_route'        => 'chain_router_doctrine_route_testroute',
-            'path'          => '/testroute',
+            '_route'        => 'chain_router_doctrine_route_test_routing_testroute_child',
+            'path'          => '/testroute/child',
         );
 
-        $matches = self::$router->match('/testroute');
+        $matches = self::$router->match('/testroute/child');
         ksort($matches);
         $this->assertEquals($expected, $matches);
     }
 
+    public function testMatchParameters()
+    {
+        $expected = array(
+            '_controller'   => 'testController',
+            '_route'        => 'chain_router_doctrine_route_test_routing_testroute',
+            'id'            => '123',
+            'path'          => '/testroute/child/123',
+            'slug'          => 'child',
+        );
+
+        $matches = self::$router->match('/testroute/child/123');
+        ksort($matches);
+        $this->assertEquals($expected, $matches);
+    }
+
+    /**
+     * @expectedException Symfony\Component\Routing\Exception\ResourceNotFoundException
+     */
+    public function testNoMatch()
+    {
+        self::$router->match('/testroute/child/123a');
+    }
+
+    /**
+     * @expectedException Symfony\Component\Routing\Exception\MethodNotAllowedException
+     */
+    public function testNotAllowed()
+    {
+        $root = self::$dm->find(null, self::ROUTE_ROOT);
+
+        // do not set a content here, or we need a valid request and so on...
+        $route = new Route;
+        $route->setPosition($root, 'notallowed');
+        $route->setRequirement('_method', 'GET');
+        $route->setDefault('_controller', 'testController');
+        self::$dm->persist($route);
+
+        self::$router->getContext()->setMethod('POST');
+        self::$router->match('/notallowed');
+    }
+
     public function testGenerate()
     {
+        $route = self::$dm->find(null, self::ROUTE_ROOT.'/testroute/child');
+
+        $url = self::$router->generate('', array('route' => $route, 'test' => 'value'));
+        $this->assertEquals('/testroute/child?test=value', $url);
+    }
+
+    public function testGenerateAbsolute()
+    {
+        $route = self::$dm->find(null, self::ROUTE_ROOT.'/testroute/child');
+        $url = self::$router->generate('', array('route' => $route, 'test' => 'value'), true);
+        $this->assertEquals('http://localhost/testroute/child?test=value', $url);
+    }
+
+    public function testGenerateParameters()
+    {
         $route = self::$dm->find(null, self::ROUTE_ROOT.'/testroute');
-        $url = self::$router->generate('', array('route' => $route));
-        $this->assertEquals('/testroute', $url);
+
+        $url = self::$router->generate('', array('route' => $route, 'slug' => 'gen-slug', 'test' => 'value'));
+        $this->assertEquals('/testroute/gen-slug?test=value', $url);
+    }
+
+    /**
+     * @expectedException Symfony\Component\Routing\Exception\InvalidParameterException
+     */
+    public function testGenerateParametersInvalid()
+    {
+        $route = self::$dm->find(null, self::ROUTE_ROOT.'/testroute');
+
+        self::$router->generate('', array('route' => $route, 'slug' => 'gen-slug', 'id' => 'nonumber'));
     }
 }

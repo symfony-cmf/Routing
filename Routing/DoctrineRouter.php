@@ -3,7 +3,7 @@
 namespace Symfony\Cmf\Bundle\ChainRoutingBundle\Routing;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Routing\Router;
+use Symfony\Component\Routing\Route as SymfonyRoute;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
@@ -18,16 +18,13 @@ use Doctrine\Common\Persistence\ObjectManager;
 /**
  * A router that reads route entries from an Object-Document Mapper store.
  *
+ * This is basically using the symfony routing matcher and generator. Different
+ * to the default router, the route collection is loaded from the injected
+ * route repository custom per request to not load a potentially large number
+ * of routes that are known to not match anyways.
+ *
  * If the route provides a content, that content is placed in the request
  * object with the CONTENT_KEY for the controller to use.
- *
- * For Doctrine PHPCR-ODM, inject the $idPrefix to point to the node under
- * which you stored the route documents.
- *
- * For other doctrine types, inject $routeClass so that this router knows in
- * which table to look for routes. It will call find on the object manager with
- * this class and the url. Make sure to provide a repository implementation
- * that can find the document/entity by url.
  *
  * @author Philippo de Santis
  * @author David Buchmann
@@ -45,6 +42,15 @@ class DoctrineRouter implements RouterInterface
      * wants to use
      */
     const CONTENT_TEMPLATE = 'contentTemplate';
+
+    /**
+     * Symfony routes always need a name in the collection. We generate routes
+     * based on the route object, but need to use a name for example in error
+     * reporting.
+     * When generating, we just use this prefix, when matching, we add the full
+     * repository path with "/" replaced by "_" to get unique names.
+     */
+    const ROUTE_NAME_PREFIX = 'chain_router_doctrine_route';
 
     /**
      * @var array of ContentResolverInterface
@@ -123,32 +129,35 @@ class DoctrineRouter implements RouterInterface
     {
         if (isset($parameters['route']) && '' !== $parameters['route']) {
             $route = $parameters['route'];
+            unset($parameters['route']);
         } else {
             $route = $this->getRouteFromContent($parameters);
+            unset($parameters['content']);
+            unset($parameters['route']); // could be an empty string
         }
 
         if (! $route instanceof RouteObjectInterface) {
             $hint = is_object($route) ? get_class($route) : gettype($route);
-            throw new RouteNotFoundException('Route of this document is not instance of RouteObjectInterface but: '.$hint);
+            throw new RouteNotFoundException('Route of this document is not an instance of RouteObjectInterface but: '.$hint);
         }
 
-        $url = $this->context->getBaseUrl() . $route->getUrl();
+        $collection = new RouteCollection();
+        $collection->add(self::ROUTE_NAME_PREFIX, $route);
 
-        // TODO: this is copy-pasted from symfony UrlGenerator
-        // we should try to somehow reuse the code there rather than copy-paste
-        if ($absolute) {
-            $scheme = $this->context->getScheme();
-            $port = '';
-            if ('http' === $scheme && 80 != $this->context->getHttpPort()) {
-                $port = ':'.$this->context->getHttpPort();
-            } elseif ('https' === $scheme && 443 != $this->context->getHttpsPort()) {
-                $port = ':'.$this->context->getHttpsPort();
-            }
+        return $this->getGenerator($collection)->generate(self::ROUTE_NAME_PREFIX, $parameters, $absolute);
+    }
 
-            $url = $scheme.'://'.$this->context->getHost().$port.$url;
-        }
-
-        return $url;
+    /**
+     * Get an url matcher for this collection
+     *
+     * @param RouteCollection $collection collection of routes for the current request
+     *
+     * @return UrlGeneratorInterface the url matcher instance
+     */
+    public function getGenerator(RouteCollection $collection)
+    {
+        // TODO: option to configure class?
+        return new \Symfony\Component\Routing\Generator\UrlGenerator($collection, $this->context);
     }
 
     public function getRouteCollection()
@@ -179,13 +188,16 @@ class DoctrineRouter implements RouterInterface
      */
     public function match($url)
     {
-        $route = $this->routeRepository->findByUrl($url);
+        $routes = $this->routeRepository->findManyByUrl($url);
 
-        if (! $route instanceof RouteObjectInterface) {
-            throw new ResourceNotFoundException("No entry or not a route at '$url'");
+        $collection = new RouteCollection();
+
+        foreach ($routes as $key => $route) {
+            $collection->add(self::ROUTE_NAME_PREFIX.str_replace('/', '_', $key), $route);
         }
 
-        $defaults = $route->getRouteDefaults();
+        $defaults = $this->getMatcher($collection)->match($url);
+        $route = $collection->get($defaults['_route']);
 
         if (empty($defaults['_controller'])) {
             // if content does not provide explicit controller, try to find it with one of the resolvers
@@ -199,7 +211,7 @@ class DoctrineRouter implements RouterInterface
             $defaults['_controller'] = $controller;
         }
 
-        if ($content = $route->getRouteContent()) {
+        if ($route instanceof RouteObjectInterface && $content = $route->getRouteContent()) {
             if (! $request = $this->container->get('request')) {
                 throw new \Exception('Request object not available from container');
             }
@@ -207,9 +219,21 @@ class DoctrineRouter implements RouterInterface
             $request->attributes->set(self::CONTENT_KEY, $content);
         }
         $defaults['path'] = $url; // TODO: get rid of this
-        $defaults['_route'] = 'chain_router_doctrine_route'.str_replace('/', '_', $url);
 
         return $defaults;
+    }
+
+    /**
+     * Get an url matcher for this collection
+     *
+     * @param RouteCollection $collection collection of routes for the current request
+     *
+     * @return UrlMatcherInterface the url matcher instance
+     */
+    public function getMatcher(RouteCollection $collection)
+    {
+        // TODO: option to configure class?
+        return new \Symfony\Component\Routing\Matcher\UrlMatcher($collection, $this->context);
     }
 
     /**
@@ -233,7 +257,7 @@ class DoctrineRouter implements RouterInterface
     protected function getRouteFromContent($parameters)
     {
         if (! isset($parameters['content'])) {
-            throw new RouteNotFoundException;
+            throw new RouteNotFoundException('No parameter "content" and neither "route"');
         }
 
         if (! $parameters['content'] instanceof RouteAwareInterface) {
@@ -257,8 +281,10 @@ class DoctrineRouter implements RouterInterface
         }
 
         foreach ($routes as $route) {
-            if (! $route instanceof RouteObjectInterface) continue;
-            $defaults = $route->getRouteDefaults();
+            if (! $route instanceof SymfonyRoute) {
+                continue;
+            }
+            $defaults = $route->getDefaults();
             if (isset($defaults['_locale']) && $locale == $defaults['_locale']) {
                 return $route;
             }

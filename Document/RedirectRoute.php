@@ -7,19 +7,7 @@ use Symfony\Cmf\Bundle\ChainRoutingBundle\Routing\RouteObjectInterface;
 use Symfony\Cmf\Bundle\ChainRoutingBundle\Routing\RedirectRouteInterface;
 
 /**
- * Document for redirection entries with the RedirectController.
- *
- * This document may have (in order of precedence):
- *
- * - uri: an absolute uri
- * - routeName and routeParameters: to be used with a routers generate method
- *
- * With standard Symfony routing, you can just use routeName and a hashmap of
- * parameters. For the doctrine router, you need to set the routeTarget but can
- * omit the routeName.
- *
- *
- * @author David Buchmann <david@liip.ch>
+ * {@inheritDoc}
  *
  * @PHPCRODM\Document(repositoryClass="Symfony\Cmf\Bundle\ChainRoutingBundle\Document\RouteRepository")
  */
@@ -32,7 +20,7 @@ class RedirectRoute extends Route implements RedirectRouteInterface
     protected $uri;
 
     /**
-     * The name of the target route (for use with standard symfony routes)
+     * The name of a target route (for use with standard symfony routes)
      * @PHPCRODM\String
      */
     protected $routeName;
@@ -41,6 +29,11 @@ class RedirectRoute extends Route implements RedirectRouteInterface
      * @PHPCRODM\ReferenceOne
      */
     protected $routeTarget;
+
+    /**
+     * @PHPCRODM\Boolean
+     */
+    protected $permanent;
 
     /**
      * Simulate a php hashmap in phpcr. This holds the keys
@@ -54,14 +47,11 @@ class RedirectRoute extends Route implements RedirectRouteInterface
      *
      * @PHPCRODM\String(multivalue=true)
      */
-    protected $parameter;
+    protected $parameterValues;
 
-    /**
-     * {@inheritDoc}
-     */
-    public function getRouteDefaults()
+    public function setRouteContent($document)
     {
-        return array();
+        throw new \LogicException('Do not set a content for the redirect route. It is its own content.');
     }
 
     /**
@@ -79,14 +69,17 @@ class RedirectRoute extends Route implements RedirectRouteInterface
     {
         $this->routeTarget = $document;
     }
+
     /**
-     * Get the content document this route entry stands for.
+     * Get the target route document this route redirects to.
      *
      * If non-null, it is added as route into the parameters, which will lead
      * to have the generate call issued by the RedirectController to have
      * the target route in the parameters.
      *
      * @return RouteObjectInterface the route this redirection points to
+     *
+     * @see getParameters
      */
     public function getRouteTarget()
     {
@@ -97,6 +90,7 @@ class RedirectRoute extends Route implements RedirectRouteInterface
     {
         $this->routeName = $routeName;
     }
+
     /**
      * {@inheritDoc}
      */
@@ -106,12 +100,30 @@ class RedirectRoute extends Route implements RedirectRouteInterface
     }
 
     /**
+     * Set whether this redirection should be permanent or not.
+     *
+     * @param boolean $permanent
+     */
+    public function setPermanent($permanent)
+    {
+        $this->permanent = $permanent;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isPermanent()
+    {
+        return $this->permanent;
+    }
+
+    /**
      * @param array $parameter a hashmap of key to value mapping for route
      *      parameters
      */
     public function setParameters(array $parameter)
     {
-        $this->parameter = $parameter;
+        $this->parameterValues = array_values($parameter);
         $this->parameterKeys = array_keys($parameter);
     }
 
@@ -123,10 +135,10 @@ class RedirectRoute extends Route implements RedirectRouteInterface
         $parameters = array();
 
         if ($this->parameterKeys !== null) {
-            $i = 0;
-            foreach ($this->parameterKeys as $key) {
-                $parameters[$key] = $this->parameter[$i];
-            }
+            $parameters = array_combine(
+                $this->parameterKeys->getValues(),
+                $this->parameterValues->getValues()
+            );
         }
 
         $route = $this->getRouteTarget();
@@ -141,6 +153,7 @@ class RedirectRoute extends Route implements RedirectRouteInterface
     {
         $this->uri = $uri;
     }
+
     /**
      * {@inheritDoc}
      */
