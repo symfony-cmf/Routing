@@ -1,6 +1,6 @@
 <?php
 
-namespace Symfony\Cmf\Bundle\ChainRoutingBundle\Routing;
+namespace Symfony\Cmf\Component\Routing;
 
 /**
  * Interface for the route provider the DoctrineRouter is using.

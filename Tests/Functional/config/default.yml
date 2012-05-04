@@ -1,6 +1,0 @@
-imports:
-    - { resource: parameters.yml }
-    - { resource: framework.yml }
-    - { resource: monolog.yml }
-    - { resource: phpcrodm.yml }
-    - { resource: chainrouting.yml }

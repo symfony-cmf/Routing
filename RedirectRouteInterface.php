@@ -1,6 +1,6 @@
 <?php
 
-namespace Symfony\Cmf\Bundle\ChainRoutingBundle\Routing;
+namespace Symfony\Cmf\Component\Routing;
 
 /**
  * Document for redirection entries with the RedirectController.

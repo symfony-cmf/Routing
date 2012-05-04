@@ -1,8 +1,7 @@
 <?php
 
-namespace Symfony\Cmf\Bundle\ChainRoutingBundle\Routing;
+namespace Symfony\Cmf\Component\Routing;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Routing\Route as SymfonyRoute;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Routing\RequestContext;
@@ -10,7 +9,7 @@ use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\RouteCollection;
 
-use Symfony\Cmf\Bundle\ChainRoutingBundle\Resolver\ControllerResolverInterface;
+use Symfony\Cmf\Component\Routing\Resolver\ControllerResolverInterface;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -23,8 +22,8 @@ use Doctrine\Common\Persistence\ObjectManager;
  * route repository custom per request to not load a potentially large number
  * of routes that are known to not match anyways.
  *
- * If the route provides a content, that content is placed in the request
- * object with the CONTENT_KEY for the controller to use.
+ * If the route provides a content, that content is placed in the defaults
+ * returned by the match() method in field '_content'.
  *
  * @author Philippo de Santis
  * @author David Buchmann
@@ -32,25 +31,13 @@ use Doctrine\Common\Persistence\ObjectManager;
 class DoctrineRouter implements RouterInterface
 {
     /**
-     * key for the request attribute that contains the content document if this
-     * route has one associated
-     */
-    const CONTENT_KEY = 'contentDocument';
-
-    /**
-     * key for the request attribute that contains the template this document
-     * wants to use
-     */
-    const CONTENT_TEMPLATE = 'contentTemplate';
-
-    /**
      * Symfony routes always need a name in the collection. We generate routes
      * based on the route object, but need to use a name for example in error
      * reporting.
      * When generating, we just use this prefix, when matching, we add the full
      * repository path with "/" replaced by "_" to get unique names.
      */
-    const ROUTE_NAME_PREFIX = 'chain_router_doctrine_route';
+    const ROUTE_NAME_PREFIX = 'cmf_routing_doctrine_route';
 
     /**
      * @var array of ContentResolverInterface
@@ -63,12 +50,6 @@ class DoctrineRouter implements RouterInterface
     protected $routeRepository;
 
     /**
-     * To get the request from, as its not available immediatly
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
      * Context to get the base url from.
      *
      * @var RequestContext
@@ -76,14 +57,10 @@ class DoctrineRouter implements RouterInterface
     protected $context;
 
     /**
-     * @param ContainerInterface $container the dependency injection container
-     *      to get the request object to place the content in it, if the
-     *      matched route provides a content document.
      * @param RouteRepositoryInterface $routeRepository The repository to get routes from
      */
-    public function __construct(ContainerInterface $container, RouteRepositoryInterface $routeRepository)
+    public function __construct(RouteRepositoryInterface $routeRepository)
     {
-        $this->container = $container;
         $this->routeRepository = $routeRepository;
     }
 
@@ -197,6 +174,7 @@ class DoctrineRouter implements RouterInterface
         }
 
         $defaults = $this->getMatcher($collection)->match($url);
+
         $route = $collection->get($defaults['_route']);
 
         if (empty($defaults['_controller'])) {
@@ -212,11 +190,7 @@ class DoctrineRouter implements RouterInterface
         }
 
         if ($route instanceof RouteObjectInterface && $content = $route->getRouteContent()) {
-            if (! $request = $this->container->get('request')) {
-                throw new \Exception('Request object not available from container');
-            }
-
-            $request->attributes->set(self::CONTENT_KEY, $content);
+            $defaults['_content'] = $content;
         }
         $defaults['path'] = $url; // TODO: get rid of this
 
@@ -271,26 +245,38 @@ class DoctrineRouter implements RouterInterface
             throw new RouteNotFoundException('Document has no route: ' . $hint);
         }
 
-        if (isset($parameters['_locale'])) {
-            $locale =  $parameters['_locale'];
-        } else {
-            if (! $request = $this->container->get('request')) {
-                throw new \Exception('Request object not available from container');
-            }
-            $locale = $request->getLocale();
-        }
+        $locale = $this->getLocale($parameters);
 
-        foreach ($routes as $route) {
-            if (! $route instanceof SymfonyRoute) {
-                continue;
-            }
-            $defaults = $route->getDefaults();
-            if (isset($defaults['_locale']) && $locale == $defaults['_locale']) {
-                return $route;
+        if (isset($locale)) {
+            foreach ($routes as $route) {
+                if (! $route instanceof SymfonyRoute) {
+                    continue;
+                }
+                $defaults = $route->getDefaults();
+                if (isset($defaults['_locale']) && $locale == $defaults['_locale']) {
+                    return $route;
+                }
             }
         }
         // if none matched, continue and randomly return the first one
 
         return reset($routes);
+    }
+
+    /**
+     * Determine the locale to be used with this request
+     *
+     * @param array $parameters the parameters determined by the route
+     *
+     * @return string|null the locale following of the parameters or any other
+     *  information the router has available.
+     */
+    protected function getLocale($parameters)
+    {
+        if (isset($parameters['_locale'])) {
+            return $parameters['_locale'];
+        }
+
+        return null;
     }
 }

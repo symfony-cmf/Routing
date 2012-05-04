@@ -1,6 +1,6 @@
 <?php
 
-namespace Symfony\Cmf\Bundle\ChainRoutingBundle\Test;
+namespace Symfony\Cmf\Component\Routing\Test;
 
 class CmfUnitTestCase extends \PHPUnit_Framework_TestCase
 {

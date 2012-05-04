@@ -1,11 +1,11 @@
 <?php
 
-namespace Symfony\Cmf\Bundle\ChainRoutingBundle\Tests\Routing;
+namespace Symfony\Cmf\Component\Routing\Tests\Routing;
 
 use Symfony\Component\Routing\RouteCollection;
 
-use Symfony\Cmf\Bundle\ChainRoutingBundle\Routing\ChainRouter;
-use Symfony\Cmf\Bundle\ChainRoutingBundle\Test\CmfUnitTestCase;
+use Symfony\Cmf\Component\Routing\ChainRouter;
+use Symfony\Cmf\Component\Routing\Test\CmfUnitTestCase;
 
 class ChainRouterTest extends CmfUnitTestCase
 {
@@ -237,7 +237,7 @@ class ChainRouterTest extends CmfUnitTestCase
             ->expects($this->never())
             ->method('warmUp')
         ;
-        $high = $this->getMock('Symfony\\Cmf\\Bundle\\ChainRoutingBundle\\Tests\\Routing\\WarmableRouterMock');
+        $high = $this->getMock('Symfony\\Cmf\\Component\\Routing\\Tests\\Routing\\WarmableRouterMock');
         $high
             ->expects($this->once())
             ->method('warmUp')

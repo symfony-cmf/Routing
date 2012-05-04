@@ -1,17 +1,19 @@
 <?php
 
-use Symfony\Component\ClassLoader\UniversalClassLoader;
-use Doctrine\Common\Annotations\AnnotationRegistry;
-
-if (file_exists($file = __DIR__.'/autoload.php')) {
-    require_once $file;
-} elseif (file_exists($file = __DIR__.'/autoload.php.dist')) {
-    require_once $file;
+$file = __DIR__.'/../vendor/.composer/autoload.php';
+if (!file_exists($file)) {
+    throw new RuntimeException('Install dependencies to run test suite.');
 }
 
-$loader = new UniversalClassLoader();
-AnnotationRegistry::registerLoader(function($class) use ($loader) {
-    $loader->loadClass($class);
-    return class_exists($class, false);
+require_once $file;
+
+spl_autoload_register(function($class) {
+    if (0 === strpos($class, 'Symfony\\Cmf\\Component\\Routing\\')) {
+        $path = __DIR__.'/../'.implode('/', array_slice(explode('\\', $class), 4)).'.php';
+        if (!stream_resolve_include_path($path)) {
+            return false;
+        }
+        require_once $path;
+        return true;
+    }
 });
-AnnotationRegistry::registerFile(__DIR__.'/../vendor/doctrine/phpcr-odm/lib/Doctrine/ODM/PHPCR/Mapping/Annotations/DoctrineAnnotations.php');

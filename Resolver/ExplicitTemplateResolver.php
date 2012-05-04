@@ -1,8 +1,8 @@
 <?php
 
-namespace Symfony\Cmf\Bundle\ChainRoutingBundle\Resolver;
+namespace Symfony\Cmf\Component\Routing\Resolver;
 
-use Symfony\Cmf\Bundle\ChainRoutingBundle\Routing\RouteObjectInterface;
+use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 
 /**
  * If the route object provides a 'template' field in the defaults, return

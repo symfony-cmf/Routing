@@ -1,8 +1,8 @@
 <?php
 
-namespace Symfony\Cmf\Bundle\ChainRoutingBundle\Resolver;
+namespace Symfony\Cmf\Component\Routing\Resolver;
 
-use Symfony\Cmf\Bundle\ChainRoutingBundle\Routing\RouteObjectInterface;
+use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 
 /**
  * Use the generic content controller with a template indicated by the map of

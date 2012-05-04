@@ -1,6 +1,6 @@
 <?php
 
-namespace Symfony\Cmf\Bundle\ChainRoutingBundle\Routing;
+namespace Symfony\Cmf\Component\Routing;
 
 /**
  * Interface to be implemented by content that wants to be compatible with the

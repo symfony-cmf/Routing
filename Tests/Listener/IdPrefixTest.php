@@ -1,10 +1,10 @@
 <?php
 
-namespace Symfony\Cmf\Bundle\ChainRoutingBundle\Tests\Listener;
+namespace Symfony\Cmf\Component\Routing\Tests\Listener;
 
-use Symfony\Cmf\Bundle\ChainRoutingBundle\Listener\IdPrefix;
+use Symfony\Cmf\Component\Routing\Listener\IdPrefix;
 
-use Symfony\Cmf\Bundle\ChainRoutingBundle\Test\CmfUnitTestCase;
+use Symfony\Cmf\Component\Routing\Test\CmfUnitTestCase;
 
 class IdPrefixTest extends CmfUnitTestCase
 {

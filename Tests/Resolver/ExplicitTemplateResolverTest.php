@@ -1,15 +1,15 @@
 <?php
 
-namespace Symfony\Cmf\Bundle\ChainRoutingBundle\Tests\Controller;
+namespace Symfony\Cmf\Component\Routing\Tests\Controller;
 
-use Symfony\Cmf\Bundle\ChainRoutingBundle\Test\CmfUnitTestCase;
-use Symfony\Cmf\Bundle\ChainRoutingBundle\Resolver\ExplicitTemplateResolver;
+use Symfony\Cmf\Component\Routing\Test\CmfUnitTestCase;
+use Symfony\Cmf\Component\Routing\Resolver\ExplicitTemplateResolver;
 
 class ExplicitTemplateResolverTest extends CmfUnitTestCase
 {
     public function setUp()
     {
-        $this->document = $this->buildMock('Symfony\\Cmf\\Bundle\\ChainRoutingBundle\\Routing\\RouteObjectInterface',
+        $this->document = $this->buildMock('Symfony\\Cmf\\Component\\Routing\\RouteObjectInterface',
                                             array('getRouteContent', 'getRouteDefaults', 'getUrl'));
 
         $this->resolver = new ExplicitTemplateResolver('symfony_cmf_content.controller:indexAction');

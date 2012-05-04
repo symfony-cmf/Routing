@@ -1,18 +1,18 @@
 <?php
 
-namespace Symfony\Cmf\Bundle\ChainRoutingBundle\Tests\Controller;
+namespace Symfony\Cmf\Component\Routing\Tests\Controller;
 
-use Symfony\Cmf\Bundle\ChainRoutingBundle\Test\CmfUnitTestCase;
-use Symfony\Cmf\Bundle\ChainRoutingBundle\Resolver\TemplateClassResolver;
+use Symfony\Cmf\Component\Routing\Test\CmfUnitTestCase;
+use Symfony\Cmf\Component\Routing\Resolver\TemplateClassResolver;
 
 class TemplateClassResolverTest extends CmfUnitTestCase
 {
     public function setUp()
     {
-        $this->document = $this->buildMock('Symfony\\Cmf\\Bundle\\ChainRoutingBundle\\Routing\\RouteObjectInterface',
+        $this->document = $this->buildMock('Symfony\\Cmf\\Component\\Routing\\RouteObjectInterface',
                                             array('getRouteContent', 'getRouteDefaults', 'getUrl'));
 
-        $mapping = array('Symfony\\Cmf\\Bundle\\ChainRoutingBundle\\Tests\\Controller\\TemplateTargetDocument'
+        $mapping = array('Symfony\\Cmf\\Component\\Routing\\Tests\\Controller\\TemplateTargetDocument'
         => 'SomeBundle:Topic:template.html.twig');
 
         $this->resolver = new TemplateClassResolver('symfony_cmf_content.controller:indexAction', $mapping);
