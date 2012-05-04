@@ -378,14 +378,14 @@ class TestRouter extends DoctrineRouter
         $this->matcher = $matcher;
         $this->generator = $generator;
     }
-    public function getMatcher($collection)
+    public function getMatcher(RouteCollection $collection)
     {
         if ($this->matcher) {
             return $this->matcher;
         }
         return parent::getMatcher($collection);
     }
-    public function getGenerator($collection)
+    public function getGenerator(RouteCollection $collection)
     {
         if ($this->generator) {
             if ($this->expectRoute) {
