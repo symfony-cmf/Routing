@@ -4,7 +4,7 @@ namespace Symfony\Cmf\Component\Routing\Tests\Routing;
 
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Cmf\Component\Routing\RouteRepositoryInterface;
-use Symfony\Cmf\Component\Routing\Document\Route;
+use Symfony\Component\Routing\Route;
 
 use Symfony\Cmf\Component\Routing\Test\CmfUnitTestCase;
 use Symfony\Cmf\Component\Routing\DoctrineRouter;
@@ -23,7 +23,7 @@ class DoctrineRouterTest extends CmfUnitTestCase
     public function setUp()
     {
         $this->contentDocument = $this->buildMock('Symfony\\Cmf\\Component\\Routing\\RouteAwareInterface');
-        $this->routeDocument = $this->buildMock('Symfony\\Cmf\\Component\\Routing\\Document\\Route', array('getDefaults', 'getRouteContent', 'getUrl'));
+        $this->routeDocument = $this->buildMock('Symfony\\Cmf\\Component\\Routing\\Tests\\Routing\\RouteMock', array('getDefaults', 'getRouteContent'));
         $this->loader = $this->buildMock("Symfony\\Component\\Config\\Loader\\LoaderInterface");
         $this->repository = $this->buildMock("Symfony\\Cmf\\Component\\Routing\\RouteRepositoryInterface", array('findManyByUrl'));
 
@@ -86,7 +86,7 @@ class DoctrineRouterTest extends CmfUnitTestCase
     {
         $this->contentDocument->expects($this->once())
             ->method('getRoutes')
-            ->will($this->returnValue(array(new RouteMock('/'))));
+            ->will($this->returnValue(array(new RouteMock())));
 
         $generator = $this->getMockBuilder('Symfony\Component\Routing\Generator\UrlGenerator')->disableOriginalConstructor()->getMock();
         $generator->expects($this->once())
@@ -140,8 +140,8 @@ class DoctrineRouterTest extends CmfUnitTestCase
 
     public function testGenerateMultilang()
     {
-        $route_en = new RouteMock('/en', 'en');
-        $route_de = new RouteMock('/de', 'de');
+        $route_en = new RouteMock('en');
+        $route_de = new RouteMock('de');
         $this->contentDocument->expects($this->once())
             ->method('getRoutes')
             ->will($this->returnValue(array($route_en, $route_de)));
@@ -345,16 +345,10 @@ class DoctrineRouterTest extends CmfUnitTestCase
 
 class RouteMock extends Route implements \Symfony\Cmf\Component\Routing\RouteObjectInterface
 {
-    private $url;
     private $locale;
-    public function __construct($url = '/test/route', $locale = null)
+    public function __construct($locale = null)
     {
-        $this->url = $url;
         $this->locale = $locale;
-    }
-    public function getUrl()
-    {
-        return $this->url;
     }
     public function getRouteContent()
     {
@@ -410,4 +404,3 @@ class TestRouter extends DoctrineRouter
         return parent::getGenerator($collection);
     }
 }
-
