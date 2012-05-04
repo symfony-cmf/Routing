@@ -64,7 +64,7 @@ The match method of the DoctrineRouter does the following steps
     ControllerResolverInterface list to find the controller. If none of the
     resolver finds a controller, throw a ResourceNotFoundException
 * If the route implements RouteObjectInterace and returns a non-null content,
-    set it in the returned array with DoctrineRouter::CONTENT_KEY as key
+    set it in the returned array with key ``_content``.
 
 
 ### RouteObjectInterface
