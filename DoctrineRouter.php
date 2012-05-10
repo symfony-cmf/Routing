@@ -8,6 +8,8 @@ use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\RouteCollection;
+use Symfony\Component\Routing\Generator\UrlGenerator;
+use Symfony\Component\Routing\Matcher\UrlMatcher;
 
 use Symfony\Cmf\Component\Routing\Resolver\ControllerResolverInterface;
 
@@ -134,7 +136,7 @@ class DoctrineRouter implements RouterInterface
     public function getGenerator(RouteCollection $collection)
     {
         // TODO: option to configure class?
-        return new \Symfony\Component\Routing\Generator\UrlGenerator($collection, $this->context);
+        return new UrlGenerator($collection, $this->context);
     }
 
     public function getRouteCollection()
@@ -179,13 +181,18 @@ class DoctrineRouter implements RouterInterface
 
         if (empty($defaults['_controller'])) {
             // if content does not provide explicit controller, try to find it with one of the resolvers
+            $controller = false;
             foreach ($this->resolvers as $resolver) {
                 $controller = $resolver->getController($route, $defaults);
-                if ($controller !== false) break;
+                if ($controller !== false) {
+                    break;
+                }
             }
+
             if (false === $controller) {
                 throw new ResourceNotFoundException("The resolver was not able to determine a controller for '$url'");;
             }
+
             $defaults['_controller'] = $controller;
         }
 
@@ -207,7 +214,7 @@ class DoctrineRouter implements RouterInterface
     public function getMatcher(RouteCollection $collection)
     {
         // TODO: option to configure class?
-        return new \Symfony\Component\Routing\Matcher\UrlMatcher($collection, $this->context);
+        return new UrlMatcher($collection, $this->context);
     }
 
     /**
