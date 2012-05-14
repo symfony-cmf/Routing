@@ -172,7 +172,7 @@ class DoctrineRouter implements RouterInterface
         $collection = new RouteCollection();
 
         foreach ($routes as $key => $route) {
-            $collection->add(self::ROUTE_NAME_PREFIX.str_replace('/', '_', $key), $route);
+            $collection->add(self::ROUTE_NAME_PREFIX.preg_replace('/[^a-z0-9A-Z_.]/', '_', $key), $route);
         }
 
         $defaults = $this->getMatcher($collection)->match($url);
