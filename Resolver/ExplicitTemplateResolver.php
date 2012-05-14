@@ -39,7 +39,7 @@ class ExplicitTemplateResolver implements ControllerResolverInterface
      */
     public function getController(RouteObjectInterface $document, array &$defaults)
     {
-        if (! isset($defaults['template'])) {
+        if (! isset($defaults['_template'])) {
             return false;
         }
 
