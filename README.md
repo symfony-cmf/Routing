@@ -101,6 +101,15 @@ not handled by the provided ones.
 For more specific needs, have a look at DoctrineRouter and see if you want to
 extend it. You can also write your own routers to hook into the chain.
 
+### Url generation
+
+You can generate urls for your content in three ways:
+
+* Either pass an implementation of RouteObjectInterface as parameter route
+
+* Or pass a content object as parameter content
+
+* Or supply an implementation of ContentRepositoryInterface and the id of the content as parameter content_id
 
 ## Authors
 
