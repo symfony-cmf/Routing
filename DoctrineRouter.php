@@ -29,6 +29,7 @@ use Doctrine\Common\Persistence\ObjectManager;
  *
  * @author Philippo de Santis
  * @author David Buchmann
+ * @author Uwe Jäger
  */
 class DoctrineRouter implements RouterInterface
 {
@@ -52,6 +53,14 @@ class DoctrineRouter implements RouterInterface
     protected $routeRepository;
 
     /**
+     * The content repository used to resolve content by it's id
+     * This can be used to specify a parameter content_id when generating urls
+     *
+     * @var  ContentRepositoryInterface
+     */
+    protected $contentRepository;
+
+    /**
      * Context to get the base url from.
      *
      * @var RequestContext
@@ -64,6 +73,16 @@ class DoctrineRouter implements RouterInterface
     public function __construct(RouteRepositoryInterface $routeRepository)
     {
         $this->routeRepository = $routeRepository;
+    }
+
+    /**
+     * Set an optional content repository to resolve content ids
+     *
+     * @param ContentRepositoryInterface $contentRepository
+     */
+    public function setContentRepository(ContentRepositoryInterface $contentRepository)
+    {
+        $this->contentRepository = $contentRepository;
     }
 
     /**
@@ -111,7 +130,6 @@ class DoctrineRouter implements RouterInterface
             unset($parameters['route']);
         } else {
             $route = $this->getRouteFromContent($parameters);
-            unset($parameters['content']);
             unset($parameters['route']); // could be an empty string
         }
 
@@ -235,8 +253,13 @@ class DoctrineRouter implements RouterInterface
      * @throws RouteNotFoundException if there is no content field in the
      *      parameters or its not possible to build a route from that object
      */
-    protected function getRouteFromContent($parameters)
+    protected function getRouteFromContent(&$parameters)
     {
+        if (isset($parameters['content_id']) && null !== $this->contentRepository) {
+            $parameters['content'] = $this->contentRepository->findById($parameters['content_id']);
+            unset($parameters['content_id']);
+        }
+
         if (! isset($parameters['content'])) {
             throw new RouteNotFoundException('No parameter "content" and neither "route"');
         }
@@ -251,6 +274,8 @@ class DoctrineRouter implements RouterInterface
             $hint = property_exists($parameters['content'], 'path') ? $parameters['content']->path : get_class($parameters['content']);
             throw new RouteNotFoundException('Document has no route: ' . $hint);
         }
+
+        unset($parameters['content']);
 
         $locale = $this->getLocale($parameters);
 
