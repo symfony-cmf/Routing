@@ -3,6 +3,8 @@
 namespace Symfony\Cmf\Component\Routing\Tests\Controller;
 
 use Symfony\Cmf\Component\Routing\Test\CmfUnitTestCase;
+
+use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 use Symfony\Cmf\Component\Routing\Resolver\ExplicitTemplateResolver;
 
 class ExplicitTemplateResolverTest extends CmfUnitTestCase
@@ -17,9 +19,9 @@ class ExplicitTemplateResolverTest extends CmfUnitTestCase
 
     public function testHasTemplate()
     {
-        $defaults = array('template' => 'Bundle:Topic:template.html.twig');
+        $defaults = array(RouteObjectInterface::TEMPLATE_NAME => 'Bundle:Topic:template.html.twig');
         $this->assertEquals('symfony_cmf_content.controller:indexAction', $this->resolver->getController($this->document, $defaults));
-        $this->assertEquals(array('template' => 'Bundle:Topic:template.html.twig'), $defaults);
+        $this->assertEquals(array(RouteObjectInterface::TEMPLATE_NAME => 'Bundle:Topic:template.html.twig'), $defaults);
     }
 
     public function testHasNoTemplate()
