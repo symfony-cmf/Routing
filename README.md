@@ -105,11 +105,11 @@ extend it. You can also write your own routers to hook into the chain.
 
 You can generate urls for your content in three ways:
 
-* Either pass an implementation of RouteObjectInterface as parameter route
+* Either pass an implementation of RouteObjectInterface as parameter ``route``
 
-* Or pass a content object as parameter content
+* Or pass a content object as parameter `content``
 
-* Or supply an implementation of ContentRepositoryInterface and the id of the content as parameter content_id
+* Or supply an implementation of ContentRepositoryInterface and the id of the content as parameter ``content_id``
 
 ## Authors
 

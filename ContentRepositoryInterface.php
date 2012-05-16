@@ -5,7 +5,7 @@ namespace Symfony\Cmf\Component\Routing;
 /**
  * Interface used by the DoctrineRouter to retrieve content by it's id.
  *
- * Usually this is the DocumentManager.
+ * This can be easily implemented using the DocumentManager.
  *
  * @author Uwe Jäger
  */

@@ -257,8 +257,9 @@ class DoctrineRouter implements RouterInterface
     {
         if (isset($parameters['content_id']) && null !== $this->contentRepository) {
             $parameters['content'] = $this->contentRepository->findById($parameters['content_id']);
-            unset($parameters['content_id']);
         }
+
+        unset($parameters['content_id']);
 
         if (! isset($parameters['content'])) {
             throw new RouteNotFoundException('No parameter "content" and neither "route"');
