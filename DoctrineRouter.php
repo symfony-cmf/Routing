@@ -45,7 +45,7 @@ class DoctrineRouter implements RouterInterface
     /**
      * @var array of ContentResolverInterface
      */
-    protected $resolvers;
+    protected $resolvers = array();
     /**
      * The route repository to get routes from
      * @var RouteRepositoryInterface

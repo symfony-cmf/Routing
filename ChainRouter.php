@@ -89,12 +89,12 @@ class ChainRouter implements RouterInterface, WarmableInterface
                 return $router->match($url);
             } catch (ResourceNotFoundException $e) {
                 if ($this->logger) {
-                    $this->logger->addInfo($e->getMessage());
+                    $this->logger->addInfo('Router '.get_class($router).' was not able to match, message "'.$e->getMessage().'"');
                 }
                 // Needs special care
             } catch (MethodNotAllowedException $e) {
                 if ($this->logger) {
-                    $this->logger->addInfo($e->getMessage());
+                    $this->logger->addInfo('Router '.get_class($router).' throws MethodNotAllowedException with message "'.$e->getMessage().'"');
                 }
                 $methodNotAllowed = $e;
             }
