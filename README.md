@@ -6,10 +6,11 @@ in its name, it does not need the full Symfony2 framework and can be used in
 standalone projects. We also provide a [Symfony2 bundle](https://github.com/symfony-cmf/RoutingExtraBundle).
 
 This component provides a *chain router* that can chain several RouterInterface
-instances one after the other. It uses a list of routers that it tries by
-priority to match and generate routes. One of the routers in that chain can of
-course be the Symfony2 router instance so you can still use the standard way
-for some of your routes.
+instances one after the other. It uses a list of routers, ordered by a priority
+value, the higher the priority number the earlier that router is asked to match
+respectivly generate routes. One of the routers in that chain can of course be
+the Symfony2 router instance so you can still use the standard way for some of
+your routes.
 
 Additionally, this component is meant to provide useful router implementations.
 Currently, there is the *DoctrineRouter* that routes based on doctrine database
