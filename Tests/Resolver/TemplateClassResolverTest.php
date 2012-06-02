@@ -26,7 +26,7 @@ class TemplateClassResolverTest extends CmfUnitTestCase
 
         $defaults = array();
         $this->assertEquals('symfony_cmf_content.controller:indexAction', $this->resolver->getController($this->document, $defaults));
-        $this->assertEquals(array('template' => 'SomeBundle:Topic:template.html.twig'), $defaults);
+        $this->assertEquals(array('_template' => 'SomeBundle:Topic:template.html.twig'), $defaults);
     }
 
     public function testTemplateNotFoundInMapping()
