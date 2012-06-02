@@ -73,7 +73,7 @@ class TemplateClassResolver implements ControllerResolverInterface
             return false;
         }
 
-        $defaults['template'] = $template;
+        $defaults[RouteObjectInterface::TEMPLATE_NAME] = $template;
         return $this->genericController;
     }
 
