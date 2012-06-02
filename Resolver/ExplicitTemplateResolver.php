@@ -5,7 +5,7 @@ namespace Symfony\Cmf\Component\Routing\Resolver;
 use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 
 /**
- * If the route object provides a 'template' field in the defaults, return
+ * If the route object provides a '_template' field in the defaults, return
  * the configured generic controller to handle this content
  *
  * @author David Buchmann
@@ -32,7 +32,7 @@ class ExplicitTemplateResolver implements ControllerResolverInterface
     }
 
     /**
-     * Checks if the defaults specify a 'template' and if so returns the
+     * Checks if the defaults specify a '_template' and if so returns the
      * generic controller
      *
      * {@inheritDoc}
