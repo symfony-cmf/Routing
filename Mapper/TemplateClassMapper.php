@@ -2,6 +2,7 @@
 
 namespace Symfony\Cmf\Component\Routing\Mapper;
 
+use Symfony\Component\Routing\Route;
 use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 
 /**
@@ -51,9 +52,12 @@ class TemplateClassMapper implements ControllerMapperInterface
      *
      * {@inheritDoc}
      */
-    public function getController(RouteObjectInterface $document, array &$defaults)
+    public function getController(Route $route, array &$defaults)
     {
-        $content = $document->getRouteContent();
+        if (! $route instanceof RouteObjectInterface) {
+            return false;
+        }
+        $content = $route->getRouteContent();
         if (null == $content) {
             return false;
         }

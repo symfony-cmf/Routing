@@ -1,6 +1,6 @@
 <?php
 
-namespace Symfony\Cmf\Component\Routing\Tests\Controller;
+namespace Symfony\Cmf\Component\Routing\Tests\Mapper;
 
 use Symfony\Cmf\Component\Routing\Test\CmfUnitTestCase;
 use Symfony\Cmf\Component\Routing\Mapper\ControllerAliasMapper;
@@ -14,7 +14,7 @@ class ControllerAliasMapperTest extends CmfUnitTestCase
 
     public function setUp()
     {
-        $this->document = $this->buildMock('Symfony\\Cmf\\Component\\Routing\\RouteObjectInterface',
+        $this->document = $this->buildMock('Symfony\\Cmf\\Component\\Routing\\Tests\\Mapper\\RouteObject',
                                             array('getRouteContent', 'getRouteDefaults', 'getUrl'));
 
         $mapping = array('static_pages' => 'symfony_cmf_content.controller:indexAction');

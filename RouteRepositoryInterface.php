@@ -3,7 +3,7 @@
 namespace Symfony\Cmf\Component\Routing;
 
 /**
- * Interface for the route provider the DoctrineRouter is using.
+ * Interface for the route provider the DynamicRouter is using.
  *
  * Typically this could be a doctrine orm or odm repository, but you can
  * implement something else if you need to.
@@ -14,7 +14,8 @@ interface RouteRepositoryInterface
      * Find routes that could match this absolute path.
      *
      * This may return a mixed list of class instances, but all routes returned
-     * must extend the core symfony route.
+     * must extend the core symfony route. The classes may also implement
+     * RouteObjectInterface to link to a content document.
      *
      * This method may not throw an exception based on implementation specific
      * restrictions on the url. That case is considered a not found - returning

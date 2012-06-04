@@ -13,8 +13,10 @@ the Symfony2 router instance so you can still use the standard way for some of
 your routes.
 
 Additionally, this component is meant to provide useful router implementations.
-Currently, there is the *DoctrineRouter* that routes based on doctrine database
-entities or documents that extend Symfony2 Route objects.
+Currently, there is the *DynamicRouter* that routes based on a implemented
+repository that provide Symfony2 Route objects. The repository can be
+implemented using a database, for example with doctrine phpcr-odm or doctrine
+orm.
 
 **Note**: To use this component outside of the Symfony2 framework context, have
 a look at the [Symfony2 Routing component](https://github.com/symfony/Routing)
@@ -28,7 +30,7 @@ This component uses [composer](http://getcomposer.org). It needs the
 Symfony2 Routing component and the Symfony2 HttpKernel (for the logger
 interface and cache warmup interface).
 
-For the DoctrineRouter you will need something to implement the
+For the DynamicRouter you will need something to implement the
 RouteRepositoryInterface with. We suggest using Doctrine as this allows to map
 any class into a database.
 
@@ -40,14 +42,14 @@ chained routers. Add your router instances with the ``add`` method, then try
 to resolve routes with all added routers using the ``match`` method and
 Please refer to the phpdoc comments on the public methods for details.
 
-## Doctrine Router
+## Dynamic Router
 
 This implementation of a router loads routes from a RouteRepositoryInterface.
 This interface can be easily implemented with doctrine.
 The router works with the base UrlMatcher and UrlGenerator classes and only
 adds loading routes from the database and the concept of referenced content.
 
-To instantiate a DoctrineRouter, you need an implementation of the
+To instantiate a DynamicRouter, you need an implementation of the
 RouteRepositoryInterface. See the [Symfony2 RoutingExtraBundle](https://github.com/symfony-cmf/RoutingExtraBundle)
 document classes for an example.
 
@@ -57,7 +59,7 @@ content.
 
 ### Match Process
 
-The match method of the DoctrineRouter does the following steps
+The match method of the DynamicRouter does the following steps
 
 * Ask the repository for Route documents that could match the requested url
 * Build a route collection and let the UrlMatcher find a matching route
@@ -85,7 +87,7 @@ to Symfony\Cmf\Component\Routing\RedirectRouteInterface
 
 You can use the _locale default value in a route to create one route per locale
 that all reference the same multilingual content.
-The DoctrineRouter respects the _locale when generating routes from content.
+The DynamicRouter respects the _locale when generating routes from content.
 When resolving the route, the _locale gets into the request and is picked up
 by the symfony locale system.
 
@@ -99,7 +101,7 @@ under the same url is not a good idea.
 You can add more ControllerMapperInterface implementations if you have a case
 not handled by the provided ones.
 
-For more specific needs, have a look at DoctrineRouter and see if you want to
+For more specific needs, have a look at DynamicRouter and see if you want to
 extend it. You can also write your own routers to hook into the chain.
 
 ### Url generation

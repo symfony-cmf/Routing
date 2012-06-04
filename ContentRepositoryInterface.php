@@ -3,9 +3,11 @@
 namespace Symfony\Cmf\Component\Routing;
 
 /**
- * Interface used by the DoctrineRouter to retrieve content by it's id.
+ * Interface used by the DynamicRouter to retrieve content by it's id when
+ * generating routes from content-id.
  *
- * This can be easily implemented using the DocumentManager.
+ * This can be easily implemented using i.e. the Doctrine PHPCR-ODM
+ * DocumentManager.
  *
  * @author Uwe Jäger
  */
@@ -14,9 +16,12 @@ interface ContentRepositoryInterface
     /**
      * Return a content object by it's id or null if there is none.
      *
-     * @abstract
-     * @param $id id of the content object
-     * @return mixed
+     * If the returned content implements RouteAwareInterface, it will be used
+     * to get the route from it to generate an URL.
+     *
+     * @param string $id id of the content object
+     *
+     * @return object A content that matches this id.
      */
     function findById($id);
 }

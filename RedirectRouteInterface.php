@@ -12,18 +12,18 @@ namespace Symfony\Cmf\Component\Routing;
  *
  * - uri: an absolute uri
  * - routeName and routeParameters: to be used with the standard symfony router
- *   or a route entry in the routeParameters for the DoctrineRouter. Precedency
+ *   or a route entry in the routeParameters for the DynamicRouter. Precedency
  *   between these is determined by the order of the routers in the chain
  *   router.
  *
  * With standard Symfony routing, you can just use uri / routeName and a
  * hashmap of parameters.
  *
- * For the doctrine router, you can return a RouteInterface instance in the
+ * For the dynamic router, you can return a RouteInterface instance in the
  * field 'route' of the parameters.
  *
  * Note: getRedirectContent must return the redirect route itself for the
- * integration with DoctrineRouter to work.
+ * integration with DynamicRouter to work.
  *
  * @author David Buchmann <david@liip.ch>
  */
@@ -56,7 +56,7 @@ interface RedirectRouteInterface extends RouteObjectInterface
     /**
      * Get the parameters for the target route router::generate()
      *
-     * Note that for the DoctrineRouter, you return the target route
+     * Note that for the DynamicRouter, you return the target route
      * document as field 'route' of the hashmap.
      *
      * @return array Information to build the route

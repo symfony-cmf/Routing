@@ -2,7 +2,7 @@
 
 namespace Symfony\Cmf\Component\Routing\Mapper;
 
-use Symfony\Cmf\Component\Routing\RouteObjectInterface;
+use Symfony\Component\Routing\Route;
 
 /**
  * Decide the controller by a map from alias to controller name injected into
@@ -30,7 +30,7 @@ class ControllerAliasMapper implements ControllerMapperInterface
      *
      * {@inheritDoc}
      */
-    public function getController(RouteObjectInterface $document, array &$defaults)
+    public function getController(Route $route, array &$defaults)
     {
         if (! isset($defaults['type'])) {
             return false;

@@ -7,9 +7,9 @@ use Symfony\Cmf\Component\Routing\RouteRepositoryInterface;
 use Symfony\Component\Routing\Route;
 
 use Symfony\Cmf\Component\Routing\Test\CmfUnitTestCase;
-use Symfony\Cmf\Component\Routing\DoctrineRouter;
+use Symfony\Cmf\Component\Routing\DynamicRouter;
 
-class DoctrineRouterTest extends CmfUnitTestCase
+class DynamicRouterTest extends CmfUnitTestCase
 {
     protected $contentDocument;
     protected $routeDocument;
@@ -31,7 +31,7 @@ class DoctrineRouterTest extends CmfUnitTestCase
 
         $this->context = $this->buildMock('Symfony\\Component\\Routing\\RequestContext');
 
-        $this->router = new DoctrineRouter($this->repository);
+        $this->router = new DynamicRouter($this->repository);
         $this->router->addControllerMapper($this->mapper);
     }
 
@@ -56,7 +56,7 @@ class DoctrineRouterTest extends CmfUnitTestCase
 
     public function testGetGenerator()
     {
-        $router = new DoctrineRouter($this->repository);
+        $router = new DynamicRouter($this->repository);
         $router->setContext($this->context);
         $generator = $router->getGenerator(new \Symfony\Component\Routing\RouteCollection());
         $this->assertInstanceOf('Symfony\Component\Routing\Generator\UrlGeneratorInterface', $generator);
@@ -72,7 +72,7 @@ class DoctrineRouterTest extends CmfUnitTestCase
         $generator = $this->getMockBuilder('Symfony\Component\Routing\Generator\UrlGenerator')->disableOriginalConstructor()->getMock();
         $generator->expects($this->once())
             ->method('generate')
-            ->with(DoctrineRouter::ROUTE_NAME_PREFIX, array(), false)
+            ->with(DynamicRouter::ROUTE_NAME_PREFIX, array(), false)
             ->will($this->returnValue('/base/test/route'));
 
         $router = new TestRouter($this->repository, null, $generator, $route);
@@ -91,7 +91,7 @@ class DoctrineRouterTest extends CmfUnitTestCase
         $generator = $this->getMockBuilder('Symfony\Component\Routing\Generator\UrlGenerator')->disableOriginalConstructor()->getMock();
         $generator->expects($this->once())
             ->method('generate')
-            ->with(DoctrineRouter::ROUTE_NAME_PREFIX, array(), false)
+            ->with(DynamicRouter::ROUTE_NAME_PREFIX, array(), false)
             ->will($this->returnValue('/'));
 
         $router = new TestRouter($this->repository, null, $generator);
@@ -112,7 +112,7 @@ class DoctrineRouterTest extends CmfUnitTestCase
         $generator = $this->getMockBuilder('Symfony\Component\Routing\Generator\UrlGenerator')->disableOriginalConstructor()->getMock();
         $generator->expects($this->once())
             ->method('generate')
-            ->with(DoctrineRouter::ROUTE_NAME_PREFIX, array(), true)
+            ->with(DynamicRouter::ROUTE_NAME_PREFIX, array(), true)
             ->will($this->returnValue('http://test.domain/base/test/route'));
 
         $router = new TestRouter($this->repository, null, $generator);
@@ -127,7 +127,7 @@ class DoctrineRouterTest extends CmfUnitTestCase
         $generator = $this->getMockBuilder('Symfony\Component\Routing\Generator\UrlGenerator')->disableOriginalConstructor()->getMock();
         $generator->expects($this->once())
             ->method('generate')
-            ->with(DoctrineRouter::ROUTE_NAME_PREFIX, array(), false)
+            ->with(DynamicRouter::ROUTE_NAME_PREFIX, array(), false)
             ->will($this->returnValue('/base/test/route'));
 
         $router = new TestRouter($this->repository, null, $generator);
@@ -149,7 +149,7 @@ class DoctrineRouterTest extends CmfUnitTestCase
         $generator = $this->getMockBuilder('Symfony\Component\Routing\Generator\UrlGenerator')->disableOriginalConstructor()->getMock();
         $generator->expects($this->once())
             ->method('generate')
-            ->with(DoctrineRouter::ROUTE_NAME_PREFIX, array('_locale' => 'de'), false)
+            ->with(DynamicRouter::ROUTE_NAME_PREFIX, array('_locale' => 'de'), false)
             ->will($this->returnValue('/base/de'));
 
         $router = new TestRouter($this->repository, null, $generator, $route_de);
@@ -201,7 +201,7 @@ class DoctrineRouterTest extends CmfUnitTestCase
 
     public function testGetMatcher()
     {
-        $router = new DoctrineRouter($this->repository);
+        $router = new DynamicRouter($this->repository);
         $router->setContext($this->context);
         $matcher = $router->getMatcher(new \Symfony\Component\Routing\RouteCollection());
         $this->assertInstanceOf('Symfony\Component\Routing\Matcher\UrlMatcherInterface', $matcher);
@@ -228,7 +228,7 @@ class DoctrineRouterTest extends CmfUnitTestCase
         $matcher->expects($this->once())
             ->method('match')
             ->with($url_alias)
-            ->will($this->returnValue(array('_route' => DoctrineRouter::ROUTE_NAME_PREFIX.'_company_more')));
+            ->will($this->returnValue(array('_route' => DynamicRouter::ROUTE_NAME_PREFIX.'_company_more')));
 
         $router = new TestRouter($this->repository, $matcher);
         $router->setContext($this->context);
@@ -238,7 +238,7 @@ class DoctrineRouterTest extends CmfUnitTestCase
 
         $expected = array(
             '_controller' => 'NameSpace\\Controller::action',
-            '_route' => DoctrineRouter::ROUTE_NAME_PREFIX.'_company_more',
+            '_route' => DynamicRouter::ROUTE_NAME_PREFIX.'_company_more',
             'path' => $url_alias,
             '_content' => $this->contentDocument,
         );
@@ -269,7 +269,7 @@ class DoctrineRouterTest extends CmfUnitTestCase
             ->method('match')
             ->with($url_alias)
             ->will($this->returnValue(array(
-                '_route' => DoctrineRouter::ROUTE_NAME_PREFIX.'_company_more_no_reference',
+                '_route' => DynamicRouter::ROUTE_NAME_PREFIX.'_company_more_no_reference',
                 'type' => 'found'
         )));
 
@@ -279,7 +279,7 @@ class DoctrineRouterTest extends CmfUnitTestCase
 
         $expected = array(
             '_controller' => 'NameSpace\\Controller::action',
-            '_route' => DoctrineRouter::ROUTE_NAME_PREFIX.'_company_more_no_reference',
+            '_route' => DynamicRouter::ROUTE_NAME_PREFIX.'_company_more_no_reference',
             'path' => $url_alias,
             'type' => 'found',
         );
@@ -333,7 +333,7 @@ class DoctrineRouterTest extends CmfUnitTestCase
         $matcher->expects($this->once())
             ->method('match')
             ->with($url_alias)
-            ->will($this->returnValue(array('_route' => DoctrineRouter::ROUTE_NAME_PREFIX.'_company_more_no_resolution')));
+            ->will($this->returnValue(array('_route' => DynamicRouter::ROUTE_NAME_PREFIX.'_company_more_no_resolution')));
 
         $router = new TestRouter($this->repository, $matcher);
         $router->setContext($this->context);
@@ -367,7 +367,7 @@ class RouteMock extends Route implements \Symfony\Cmf\Component\Routing\RouteObj
 /**
  * Extend to return a mock matcher if specified in the constructor
  */
-class TestRouter extends DoctrineRouter
+class TestRouter extends DynamicRouter
 {
     private $matcher;
     private $generator;

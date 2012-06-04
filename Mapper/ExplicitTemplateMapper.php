@@ -2,6 +2,8 @@
 
 namespace Symfony\Cmf\Component\Routing\Mapper;
 
+use Symfony\Component\Routing\Route;
+
 use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 
 /**
@@ -37,7 +39,7 @@ class ExplicitTemplateMapper implements ControllerMapperInterface
      *
      * {@inheritDoc}
      */
-    public function getController(RouteObjectInterface $document, array &$defaults)
+    public function getController(Route $document, array &$defaults)
     {
         if (! isset($defaults[RouteObjectInterface::TEMPLATE_NAME])) {
             return false;

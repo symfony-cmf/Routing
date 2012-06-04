@@ -13,34 +13,34 @@ use Symfony\Component\Routing\Matcher\UrlMatcher;
 
 use Symfony\Cmf\Component\Routing\Mapper\ControllerMapperInterface;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
-
 /**
- * A router that reads route entries from an Object-Document Mapper store.
+ * A router that reads route entries from a repository. The repository can
+ * easily be implemented using an object-document mapper like Doctrine
+ * PHPCR-ODM but you are free to use something different.
  *
- * This is basically using the symfony routing matcher and generator. Different
+ * This router is based on the symfony routing matcher and generator. Different
  * to the default router, the route collection is loaded from the injected
  * route repository custom per request to not load a potentially large number
  * of routes that are known to not match anyways.
  *
  * If the route provides a content, that content is placed in the defaults
- * returned by the match() method in field '_content'.
+ * returned by the match() method in field RouteObjectInterface::CONTENT_OBJECT.
  *
  * @author Philippo de Santis
  * @author David Buchmann
  * @author Uwe Jäger
  */
-class DoctrineRouter implements RouterInterface
+class DynamicRouter implements RouterInterface
 {
     /**
      * Symfony routes always need a name in the collection. We generate routes
      * based on the route object, but need to use a name for example in error
      * reporting.
-     * When generating, we just use this prefix, when matching, we add the full
-     * repository path with "/" replaced by "_" to get unique names.
+     * When generating, we just use this prefix, when matching, we append
+     * whatever the repository returned as ID, replacing anything but
+     * [^a-z0-9A-Z_.] with "_" to get unique valid route names.
      */
-    const ROUTE_NAME_PREFIX = 'cmf_routing_doctrine_route';
+    const ROUTE_NAME_PREFIX = 'cmf_routing_dynamic_route';
 
     /**
      * @var array of ControllerMapperInterface
@@ -48,6 +48,7 @@ class DoctrineRouter implements RouterInterface
     protected $mappers = array();
     /**
      * The route repository to get routes from
+     *
      * @var RouteRepositoryInterface
      */
     protected $routeRepository;
@@ -170,7 +171,7 @@ class DoctrineRouter implements RouterInterface
      *
      * array(
      *   "_controller" => "NameSpace\Controller::indexAction",
-     *   "reference" => $document,
+     *   "_content" => $document,
      * )
      *
      * The controller can be either the fully qualified class name or the
@@ -217,7 +218,7 @@ class DoctrineRouter implements RouterInterface
         }
 
         if ($route instanceof RouteObjectInterface && $content = $route->getRouteContent()) {
-            $defaults['_content'] = $content;
+            $defaults[RouteObjectInterface::CONTENT_OBJECT] = $content;
         }
         $defaults['path'] = $url; // TODO: get rid of this
 
@@ -250,7 +251,7 @@ class DoctrineRouter implements RouterInterface
      *
      * @param array $parameters which should contain a content field containing a RouteAwareInterface object
      *
-     * @return the route instance
+     * @return Route the route instance
      *
      * @throws RouteNotFoundException if there is no content field in the
      *      parameters or its not possible to build a route from that object

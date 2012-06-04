@@ -2,10 +2,10 @@
 
 namespace Symfony\Cmf\Component\Routing\Mapper;
 
-use Symfony\Cmf\Component\Routing\RouteObjectInterface;
+use Symfony\Component\Routing\Route;
 
 /**
- * Interface for all controller mappers that work with the DoctrineRouter
+ * Interface for all controller mappers that work with the DynamicRouter
  *
  * @author David Buchmann
  */
@@ -14,7 +14,7 @@ interface ControllerMapperInterface
     /**
      * Retrieves the right controller for the given route $document.
      *
-     * @param RouteObjectInterface $document the document or entity for the route
+     * @param Route $route the document or entity for the route
      * @param array $defaults the getRouteDefaults array which may be altered by
      *      the mapper
      *
@@ -22,6 +22,6 @@ interface ControllerMapperInterface
      *      the action, i.e. symfony_cmf_content.controller:indexAction
      *      or false if the mapper can not determine the router
      */
-    function getController(RouteObjectInterface $document, array &$defaults);
+    function getController(Route $route, array &$defaults);
 
 }

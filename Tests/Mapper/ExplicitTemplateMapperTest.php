@@ -1,6 +1,6 @@
 <?php
 
-namespace Symfony\Cmf\Component\Routing\Tests\Controller;
+namespace Symfony\Cmf\Component\Routing\Tests\Mapper;
 
 use Symfony\Cmf\Component\Routing\Test\CmfUnitTestCase;
 
@@ -16,7 +16,7 @@ class ExplicitTemplateMapperTest extends CmfUnitTestCase
 
     public function setUp()
     {
-        $this->document = $this->buildMock('Symfony\\Cmf\\Component\\Routing\\RouteObjectInterface',
+        $this->document = $this->buildMock('Symfony\\Cmf\\Component\\Routing\\Tests\\Mapper\\RouteObject',
                                             array('getRouteContent', 'getRouteDefaults', 'getUrl'));
 
         $this->mapper = new ExplicitTemplateMapper('symfony_cmf_content.controller:indexAction');

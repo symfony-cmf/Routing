@@ -1,6 +1,6 @@
 <?php
 
-namespace Symfony\Cmf\Component\Routing\Tests\Controller;
+namespace Symfony\Cmf\Component\Routing\Tests\Mapper;
 
 use Symfony\Cmf\Component\Routing\Test\CmfUnitTestCase;
 use Symfony\Cmf\Component\Routing\Mapper\TemplateClassMapper;
@@ -14,10 +14,10 @@ class TemplateClassMapperTest extends CmfUnitTestCase
 
     public function setUp()
     {
-        $this->document = $this->buildMock('Symfony\\Cmf\\Component\\Routing\\RouteObjectInterface',
+        $this->document = $this->buildMock('Symfony\\Cmf\\Component\\Routing\\Tests\\Mapper\\RouteObject',
                                             array('getRouteContent', 'getRouteDefaults', 'getUrl'));
 
-        $mapping = array('Symfony\\Cmf\\Component\\Routing\\Tests\\Controller\\TemplateTargetDocument'
+        $mapping = array('Symfony\\Cmf\\Component\\Routing\\Tests\\Mapper\\TemplateTargetDocument'
         => 'SomeBundle:Topic:template.html.twig');
 
         $this->mapper = new TemplateClassMapper('symfony_cmf_content.controller:indexAction', $mapping);
