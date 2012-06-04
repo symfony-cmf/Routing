@@ -13,7 +13,7 @@ namespace Symfony\Cmf\Component\Routing;
 interface RouteObjectInterface
 {
     /**
-     * Constant for the field that is given to the ControllerAliasResolver.
+     * Constant for the field that is given to the ControllerAliasMapper.
      * The value must be configured in the controllers_by_alias mapping.
      *
      * This is ignored if a _controller default value is provided as well
@@ -28,7 +28,7 @@ interface RouteObjectInterface
 
     /**
      * Get the content document this route entry stands for. If non-null,
-     * the ControllerClassResolver uses it to identify a controller and
+     * the ControllerClassMapper uses it to identify a controller and
      * the content is passed to the controller.
      *
      * If there is no specific content for this url (i.e. its an "application"

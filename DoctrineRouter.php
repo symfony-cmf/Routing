@@ -11,7 +11,7 @@ use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\Generator\UrlGenerator;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
 
-use Symfony\Cmf\Component\Routing\Resolver\ControllerResolverInterface;
+use Symfony\Cmf\Component\Routing\Mapper\ControllerMapperInterface;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -43,9 +43,9 @@ class DoctrineRouter implements RouterInterface
     const ROUTE_NAME_PREFIX = 'cmf_routing_doctrine_route';
 
     /**
-     * @var array of ContentResolverInterface
+     * @var array of ControllerMapperInterface
      */
-    protected $resolvers = array();
+    protected $mappers = array();
     /**
      * The route repository to get routes from
      * @var RouteRepositoryInterface
@@ -53,8 +53,10 @@ class DoctrineRouter implements RouterInterface
     protected $routeRepository;
 
     /**
-     * The content repository used to resolve content by it's id
+     * The content repository used to find content by it's id
      * This can be used to specify a parameter content_id when generating urls
+     *
+     * This is optional and might not be initialized.
      *
      * @var  ContentRepositoryInterface
      */
@@ -76,7 +78,7 @@ class DoctrineRouter implements RouterInterface
     }
 
     /**
-     * Set an optional content repository to resolve content ids
+     * Set an optional content repository to find content by ids
      *
      * @param ContentRepositoryInterface $contentRepository
      */
@@ -86,15 +88,15 @@ class DoctrineRouter implements RouterInterface
     }
 
     /**
-     * Add as many resolvers as you want, they are asked for the controller in
+     * Add as many mappers as you want, they are asked for the controller in
      * the order they are added here.
      *
-     * @param ControllerResolverInterface $resolver a helper to resolve the
-     *      controller responsible for the matched url
+     * @param ControllerMapperInterface $mapper a helper to map the request to
+     *      controller name
      */
-    public function addControllerResolver(ControllerResolverInterface $resolver)
+    public function addControllerMapper(ControllerMapperInterface $mapper)
     {
-        $this->resolvers[] = $resolver;
+        $this->mappers[] = $mapper;
     }
 
     /**
@@ -198,17 +200,17 @@ class DoctrineRouter implements RouterInterface
         $route = $collection->get($defaults['_route']);
 
         if (empty($defaults['_controller'])) {
-            // if content does not provide explicit controller, try to find it with one of the resolvers
+            // if content does not provide explicit controller, try to find it with one of the mappers
             $controller = false;
-            foreach ($this->resolvers as $resolver) {
-                $controller = $resolver->getController($route, $defaults);
+            foreach ($this->mappers as $mapper) {
+                $controller = $mapper->getController($route, $defaults);
                 if ($controller !== false) {
                     break;
                 }
             }
 
             if (false === $controller) {
-                throw new ResourceNotFoundException("The resolver was not able to determine a controller for '$url'");;
+                throw new ResourceNotFoundException("The mapper was not able to determine a controller for '$url'");;
             }
 
             $defaults['_controller'] = $controller;

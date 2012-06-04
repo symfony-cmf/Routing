@@ -1,17 +1,17 @@
 <?php
 
-namespace Symfony\Cmf\Component\Routing\Resolver;
+namespace Symfony\Cmf\Component\Routing\Mapper;
 
 use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 
 /**
  * Decide the controller by a map from alias to controller name injected into
- * the resolver.
+ * the mapper.
  * Only works with route objects that return a 'type' field in the defaults.
  *
  * @author David Buchmann
  */
-class ControllerAliasResolver implements ControllerResolverInterface
+class ControllerAliasMapper implements ControllerMapperInterface
 {
     /**
      * array containing the mapping between phpcr_alias and controller

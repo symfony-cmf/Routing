@@ -1,6 +1,6 @@
 <?php
 
-namespace Symfony\Cmf\Component\Routing\Resolver;
+namespace Symfony\Cmf\Component\Routing\Mapper;
 
 use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 
@@ -10,7 +10,7 @@ use Symfony\Cmf\Component\Routing\RouteObjectInterface;
  *
  * @author David Buchmann
  */
-class ExplicitTemplateResolver implements ControllerResolverInterface
+class ExplicitTemplateMapper implements ControllerMapperInterface
 {
     /**
      * the controller name or service name that will accept a content and a
@@ -21,7 +21,7 @@ class ExplicitTemplateResolver implements ControllerResolverInterface
     private $genericController;
 
     /**
-     * Instantiate the template resolver
+     * Instantiate the template mapper
      *
      * @param string $genericController the controller name or service name
      *      that will accept a content and a template

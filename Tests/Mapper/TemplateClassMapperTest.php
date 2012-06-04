@@ -3,10 +3,15 @@
 namespace Symfony\Cmf\Component\Routing\Tests\Controller;
 
 use Symfony\Cmf\Component\Routing\Test\CmfUnitTestCase;
-use Symfony\Cmf\Component\Routing\Resolver\TemplateClassResolver;
+use Symfony\Cmf\Component\Routing\Mapper\TemplateClassMapper;
 
-class TemplateClassResolverTest extends CmfUnitTestCase
+class TemplateClassMapperTest extends CmfUnitTestCase
 {
+    /**
+     * @var TemplateClassMapper
+     */
+    private $mapper;
+
     public function setUp()
     {
         $this->document = $this->buildMock('Symfony\\Cmf\\Component\\Routing\\RouteObjectInterface',
@@ -15,7 +20,7 @@ class TemplateClassResolverTest extends CmfUnitTestCase
         $mapping = array('Symfony\\Cmf\\Component\\Routing\\Tests\\Controller\\TemplateTargetDocument'
         => 'SomeBundle:Topic:template.html.twig');
 
-        $this->resolver = new TemplateClassResolver('symfony_cmf_content.controller:indexAction', $mapping);
+        $this->mapper = new TemplateClassMapper('symfony_cmf_content.controller:indexAction', $mapping);
     }
 
     public function testTemplateFoundInMapping()
@@ -25,7 +30,7 @@ class TemplateClassResolverTest extends CmfUnitTestCase
             ->will($this->returnValue(new TemplateTargetDocument));
 
         $defaults = array();
-        $this->assertEquals('symfony_cmf_content.controller:indexAction', $this->resolver->getController($this->document, $defaults));
+        $this->assertEquals('symfony_cmf_content.controller:indexAction', $this->mapper->getController($this->document, $defaults));
         $this->assertEquals(array('_template' => 'SomeBundle:Topic:template.html.twig'), $defaults);
     }
 
@@ -36,7 +41,7 @@ class TemplateClassResolverTest extends CmfUnitTestCase
             ->will($this->returnValue(new TemplateUnknownDocument()));
 
         $defaults = array();
-        $this->assertEquals(null, $this->resolver->getController($this->document, $defaults));
+        $this->assertEquals(null, $this->mapper->getController($this->document, $defaults));
         $this->assertEquals(array(), $defaults);
     }
 
@@ -47,7 +52,7 @@ class TemplateClassResolverTest extends CmfUnitTestCase
             ->will($this->returnValue(null));
 
         $defaults = array();
-        $this->assertEquals(null, $this->resolver->getController($this->document, $defaults));
+        $this->assertEquals(null, $this->mapper->getController($this->document, $defaults));
         $this->assertEquals(array(), $defaults);
     }
 }

@@ -3,10 +3,15 @@
 namespace Symfony\Cmf\Component\Routing\Tests\Controller;
 
 use Symfony\Cmf\Component\Routing\Test\CmfUnitTestCase;
-use Symfony\Cmf\Component\Routing\Resolver\ControllerClassResolver;
+use Symfony\Cmf\Component\Routing\Mapper\ControllerClassMapper;
 
-class ControllerClassResolverTest extends CmfUnitTestCase
+class ControllerClassMapperTest extends CmfUnitTestCase
 {
+    /**
+     * @var ControllerClassMapper
+     */
+    private $mapper;
+
     public function setUp()
     {
         $this->document = $this->buildMock('Symfony\\Cmf\\Component\\Routing\\RouteObjectInterface',
@@ -15,7 +20,7 @@ class ControllerClassResolverTest extends CmfUnitTestCase
         $mapping = array('Symfony\\Cmf\\Component\\Routing\\Tests\\Controller\\TargetDocument'
                             => 'symfony_cmf_content.controller:indexAction');
 
-        $this->resolver = new ControllerClassResolver($mapping);
+        $this->mapper = new ControllerClassMapper($mapping);
     }
 
     public function testControllerFoundInMapping()
@@ -25,7 +30,7 @@ class ControllerClassResolverTest extends CmfUnitTestCase
                 ->will($this->returnValue(new TargetDocument));
 
         $defaults = array();
-        $this->assertEquals('symfony_cmf_content.controller:indexAction', $this->resolver->getController($this->document, $defaults));
+        $this->assertEquals('symfony_cmf_content.controller:indexAction', $this->mapper->getController($this->document, $defaults));
         $this->assertEquals(array(), $defaults);
     }
 
@@ -36,7 +41,7 @@ class ControllerClassResolverTest extends CmfUnitTestCase
                 ->will($this->returnValue(new UnknownDocument));
 
         $defaults = array();
-        $this->assertEquals(null, $this->resolver->getController($this->document, $defaults));
+        $this->assertEquals(null, $this->mapper->getController($this->document, $defaults));
         $this->assertEquals(array(), $defaults);
     }
 
@@ -47,7 +52,7 @@ class ControllerClassResolverTest extends CmfUnitTestCase
             ->will($this->returnValue(null));
 
         $defaults = array();
-        $this->assertEquals(null, $this->resolver->getController($this->document, $defaults));
+        $this->assertEquals(null, $this->mapper->getController($this->document, $defaults));
         $this->assertEquals(array(), $defaults);
     }
 }

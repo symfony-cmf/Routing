@@ -15,7 +15,7 @@ class DoctrineRouterTest extends CmfUnitTestCase
     protected $routeDocument;
     protected $loader;
     protected $repository;
-    protected $resolver;
+    protected $mapper;
     protected $router;
     protected $context;
 
@@ -27,12 +27,12 @@ class DoctrineRouterTest extends CmfUnitTestCase
         $this->loader = $this->buildMock("Symfony\\Component\\Config\\Loader\\LoaderInterface");
         $this->repository = $this->buildMock("Symfony\\Cmf\\Component\\Routing\\RouteRepositoryInterface", array('findManyByUrl'));
 
-        $this->resolver = $this->buildMock('Symfony\\Cmf\\Component\\Routing\\Resolver\\ControllerResolverInterface', array('getController'));
+        $this->mapper = $this->buildMock('Symfony\\Cmf\\Component\\Routing\\Mapper\\ControllerMapperInterface', array('getController'));
 
         $this->context = $this->buildMock('Symfony\\Component\\Routing\\RequestContext');
 
         $this->router = new DoctrineRouter($this->repository);
-        $this->router->addControllerResolver($this->resolver);
+        $this->router->addControllerMapper($this->mapper);
     }
 
     /**
@@ -220,7 +220,7 @@ class DoctrineRouterTest extends CmfUnitTestCase
                 ->with($url_alias)
                 ->will($this->returnValue(array($url_alias => $this->routeDocument)));
 
-        $this->resolver->expects($this->once())
+        $this->mapper->expects($this->once())
                 ->method('getController')
                 ->will($this->returnValue('NameSpace\\Controller::action'));
 
@@ -232,7 +232,7 @@ class DoctrineRouterTest extends CmfUnitTestCase
 
         $router = new TestRouter($this->repository, $matcher);
         $router->setContext($this->context);
-        $router->addControllerResolver($this->resolver);
+        $router->addControllerMapper($this->mapper);
 
         $results = $router->match($url_alias);
 
@@ -254,7 +254,7 @@ class DoctrineRouterTest extends CmfUnitTestCase
             ->method('getRouteContent')
             ->will($this->returnValue(null));
 
-        $this->resolver->expects($this->once())
+        $this->mapper->expects($this->once())
                 ->method('getController')
                 ->with($this->routeDocument)
                 ->will($this->returnValue('NameSpace\\Controller::action'));
@@ -275,7 +275,7 @@ class DoctrineRouterTest extends CmfUnitTestCase
 
         $router = new TestRouter($this->repository, $matcher);
         $router->setContext($this->context);
-        $router->addControllerResolver($this->resolver);
+        $router->addControllerMapper($this->mapper);
 
         $expected = array(
             '_controller' => 'NameSpace\\Controller::action',
@@ -307,7 +307,7 @@ class DoctrineRouterTest extends CmfUnitTestCase
 
         $router = new TestRouter($this->repository, $matcher);
         $router->setContext($this->context);
-        $router->addControllerResolver($this->resolver);
+        $router->addControllerMapper($this->mapper);
 
         $router->match($url_alias);
     }
@@ -319,7 +319,7 @@ class DoctrineRouterTest extends CmfUnitTestCase
     {
         $url_alias = "/company/more_no_resolution";
 
-        $this->resolver->expects($this->once())
+        $this->mapper->expects($this->once())
             ->method('getController')
             ->with($this->routeDocument)
             ->will($this->returnValue(false));
@@ -337,7 +337,7 @@ class DoctrineRouterTest extends CmfUnitTestCase
 
         $router = new TestRouter($this->repository, $matcher);
         $router->setContext($this->context);
-        $router->addControllerResolver($this->resolver);
+        $router->addControllerMapper($this->mapper);
 
         $router->match($url_alias);
     }
