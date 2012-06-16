@@ -66,7 +66,7 @@ The match method of the DynamicRouter does the following steps
 * If the defaults do not contain the field _controller, loop through the
     ControllerMapperInterface list to find the controller. If none of the
     mapper finds a controller, throw a ResourceNotFoundException
-* If the route implements RouteObjectInterace and returns a non-null content,
+* If the route implements RouteObjectInterface and returns a non-null content,
     set it in the returned array with key ``_content``.
 
 
