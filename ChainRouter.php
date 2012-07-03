@@ -22,23 +22,33 @@ use Symfony\Component\HttpKernel\Log\LoggerInterface;
  */
 class ChainRouter implements RouterInterface, WarmableInterface
 {
+    /**
+     * @var \Symfony\Component\Routing\RequestContext
+     */
     private $context;
+
+    /**
+     * @var null|\Symfony\Component\HttpKernel\Log\LoggerInterface
+     */
     private $logger;
+
+    /**
+     * @var Symfony\Component\Routing\RouterInterface[]
+     */
+    private $routers = array();
 
     public function __construct(LoggerInterface $logger = null)
     {
         $this->logger = $logger;
     }
 
+    /**
+     * @return \Symfony\Component\Routing\RequestContext
+     */
     public function getContext()
     {
         return $this->context;
     }
-
-    /**
-     * @var array
-     */
-    private $routers = array();
 
     /**
      * Add a Router to the index
