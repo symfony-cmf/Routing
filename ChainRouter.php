@@ -141,7 +141,7 @@ class ChainRouter implements RouterInterface, WarmableInterface
     /**
      * Sets the Request Context
      *
-     * @param RouterContext $context
+     * @param \Symfony\Component\Routing\RequestContext $context
      */
     public function setContext(RequestContext $context)
     {
