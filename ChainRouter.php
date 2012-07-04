@@ -37,6 +37,11 @@ class ChainRouter implements RouterInterface, WarmableInterface
      */
     private $routers = array();
 
+    /**
+     * @var \Symfony\Component\Routing\RouterInterface[] Array of routers, sorted by priority
+     */
+    protected $sortedRouters;
+
     public function __construct(LoggerInterface $logger = null)
     {
         $this->logger = $logger;
@@ -63,6 +68,7 @@ class ChainRouter implements RouterInterface, WarmableInterface
         }
 
         $this->routers[$priority][] = $router;
+        $this->sortedRouters = array();
     }
 
     /**
@@ -72,14 +78,29 @@ class ChainRouter implements RouterInterface, WarmableInterface
      */
     public function all()
     {
-        krsort($this->routers);
-        $routers = array();
-
-        foreach ($this->routers as $all) {
-            $routers = array_merge($routers, $all);
+        if (empty($this->sortedRouters)) {
+            $this->sortedRouters = $this->sortRouters();
         }
 
-        return $routers;
+        return $this->sortedRouters;
+    }
+
+    /**
+     * Sort routers by priority.
+     * The highest priority number is the highest priority (reverse sorting)
+     *
+     * @return \Symfony\Component\Routing\RouterInterface[]
+     */
+    protected function sortRouters()
+    {
+        $sortedRouters = array();
+        krsort($this->routers);
+
+        foreach ($this->routers as $routers) {
+            $sortedRouters = array_merge($sortedRouters, $routers);
+        }
+
+        return $sortedRouters;
     }
 
     /**

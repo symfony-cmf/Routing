@@ -31,6 +31,81 @@ class ChainRouterTest extends CmfUnitTestCase
     }
 
     /**
+     * Routers are supposed to be sorted only once.
+     * This test will check that by trying to get all routers several times.
+     *
+     * @covers \Symfony\Cmf\Component\Routing\ChainRouter::sortRouters
+     * @covers \Symfony\Cmf\Component\Routing\ChainRouter::all
+     */
+    public function testSortRouters()
+    {
+        list($low, $medium, $high) = $this->createRouterMocks();
+        // We're using a mock here and not $this->router because we need to ensure that the sorting operation is done only once.
+        $router = $this->buildMock('Symfony\\Cmf\\Component\\Routing\\ChainRouter', array('sortRouters'));
+        $router
+            ->expects($this->once())
+            ->method('sortRouters')
+            ->will(
+                $this->returnValue(
+                    array($high, $medium, $low)
+                )
+            )
+        ;
+
+        $router->add($low, 10);
+        $router->add($medium, 50);
+        $router->add($high, 100);
+        $expectedSortedRouters = array($high, $medium, $low);
+        // Let's get all routers 5 times, we should only sort once.
+        for ($i = 0; $i < 5; ++$i) {
+            $this->assertSame($expectedSortedRouters, $router->all());
+        }
+    }
+
+    /**
+     * This test ensures that if a router is being added on the fly, the sorting is reset.
+     *
+     * @covers \Symfony\Cmf\Component\Routing\ChainRouter::sortRouters
+     * @covers \Symfony\Cmf\Component\Routing\ChainRouter::all
+     * @covers \Symfony\Cmf\Component\Routing\ChainRouter::add
+     */
+    public function testReSortRouters()
+    {
+        list($low, $medium, $high) = $this->createRouterMocks();
+        $highest = clone $high;
+        // We're using a mock here and not $this->router because we need to ensure that the sorting operation is done only once.
+        $router = $this->buildMock('Symfony\\Cmf\\Component\\Routing\\ChainRouter', array('sortRouters'));
+        $router
+            ->expects($this->at(0))
+            ->method('sortRouters')
+            ->will(
+                $this->returnValue(
+                    array($high, $medium, $low)
+                )
+            )
+        ;
+        // The second time sortRouters() is called, we're supposed to get the newly added router ($highest)
+        $router
+            ->expects($this->at(1))
+            ->method('sortRouters')
+            ->will(
+                $this->returnValue(
+                    array($highest, $high, $medium, $low)
+                )
+            )
+        ;
+
+        $router->add($low, 10);
+        $router->add($medium, 50);
+        $router->add($high, 100);
+        $this->assertSame(array($high, $medium, $low), $router->all());
+
+        // Now adding another router on the fly, sorting must have been reset
+        $router->add($highest, 101);
+        $this->assertSame(array($highest, $high, $medium, $low), $router->all());
+    }
+
+    /**
      * context must be propagated to chained routers and be stored locally
      */
     public function testContext()
