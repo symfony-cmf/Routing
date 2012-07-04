@@ -22,8 +22,20 @@ use Symfony\Component\HttpKernel\Log\LoggerInterface;
  */
 class ChainRouter implements RouterInterface, WarmableInterface
 {
+    /**
+     * @var \Symfony\Component\Routing\RequestContext
+     */
     private $context;
+
+    /**
+     * @var null|\Symfony\Component\HttpKernel\Log\LoggerInterface
+     */
     private $logger;
+
+    /**
+     * @var Symfony\Component\Routing\RouterInterface[]
+     */
+    private $routers = array();
 
     /**
      * @var \Symfony\Component\Routing\RouterInterface[] Array of routers, sorted by priority
@@ -35,15 +47,13 @@ class ChainRouter implements RouterInterface, WarmableInterface
         $this->logger = $logger;
     }
 
+    /**
+     * @return \Symfony\Component\Routing\RequestContext
+     */
     public function getContext()
     {
         return $this->context;
     }
-
-    /**
-     * @var array
-     */
-    private $routers = array();
 
     /**
      * Add a Router to the index
@@ -152,7 +162,7 @@ class ChainRouter implements RouterInterface, WarmableInterface
     /**
      * Sets the Request Context
      *
-     * @param RouterContext $context
+     * @param \Symfony\Component\Routing\RequestContext $context
      */
     public function setContext(RequestContext $context)
     {
