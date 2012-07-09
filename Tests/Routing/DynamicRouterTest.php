@@ -4,6 +4,7 @@ namespace Symfony\Cmf\Component\Routing\Tests\Routing;
 
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Cmf\Component\Routing\RouteRepositoryInterface;
+use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 use Symfony\Component\Routing\Route;
 
 use Symfony\Cmf\Component\Routing\Test\CmfUnitTestCase;
@@ -237,10 +238,10 @@ class DynamicRouterTest extends CmfUnitTestCase
         $results = $router->match($url_alias);
 
         $expected = array(
-            '_controller' => 'NameSpace\\Controller::action',
+            RouteObjectInterface::CONTROLLER_NAME => 'NameSpace\\Controller::action',
             '_route' => DynamicRouter::ROUTE_NAME_PREFIX.'_company_more',
             'path' => $url_alias,
-            '_content' => $this->contentDocument,
+            RouteObjectInterface::CONTENT_OBJECT => $this->contentDocument,
         );
 
         $this->assertEquals($expected, $results);
@@ -278,7 +279,7 @@ class DynamicRouterTest extends CmfUnitTestCase
         $router->addControllerMapper($this->mapper);
 
         $expected = array(
-            '_controller' => 'NameSpace\\Controller::action',
+            RouteObjectInterface::CONTROLLER_NAME => 'NameSpace\\Controller::action',
             '_route' => DynamicRouter::ROUTE_NAME_PREFIX.'_company_more_no_reference',
             'path' => $url_alias,
             'type' => 'found',

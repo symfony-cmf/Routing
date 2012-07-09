@@ -170,8 +170,8 @@ class DynamicRouter implements RouterInterface
      * Returns an array of parameter like this
      *
      * array(
-     *   "_controller" => "NameSpace\Controller::indexAction",
-     *   "_content" => $document,
+     *   RouteObjectInterface::CONTROLLER_NAME => "NameSpace\Controller::indexAction",
+     *   RouteObjectInterface::CONTENT_OBJECT => $document,
      * )
      *
      * The controller can be either the fully qualified class name or the
@@ -184,7 +184,8 @@ class DynamicRouter implements RouterInterface
      * @return array as described above
      *
      * @throws ResourceNotFoundException If the requested url does not exist in the ODM
-     * @throws MethodNotAllowedException If the resource was found but the request method is not allowed
+     * @throws \Symfony\Component\Routing\Exception\MethodNotAllowedException
+     *      If the resource was found but the request method is not allowed
      */
     public function match($url)
     {
@@ -200,7 +201,7 @@ class DynamicRouter implements RouterInterface
 
         $route = $collection->get($defaults['_route']);
 
-        if (empty($defaults['_controller'])) {
+        if (empty($defaults[RouteObjectInterface::CONTROLLER_NAME])) {
             // if content does not provide explicit controller, try to find it with one of the mappers
             $controller = false;
             foreach ($this->mappers as $mapper) {
@@ -214,7 +215,7 @@ class DynamicRouter implements RouterInterface
                 throw new ResourceNotFoundException("The mapper was not able to determine a controller for '$url'");;
             }
 
-            $defaults['_controller'] = $controller;
+            $defaults[RouteObjectInterface::CONTROLLER_NAME] = $controller;
         }
 
         if ($route instanceof RouteObjectInterface && $content = $route->getRouteContent()) {
@@ -230,7 +231,7 @@ class DynamicRouter implements RouterInterface
      *
      * @param RouteCollection $collection collection of routes for the current request
      *
-     * @return UrlMatcherInterface the url matcher instance
+     * @return \Symfony\Component\Routing\Matcher\UrlMatcherInterface the url matcher instance
      */
     public function getMatcher(RouteCollection $collection)
     {

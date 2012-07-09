@@ -23,6 +23,11 @@ interface RouteObjectInterface
     const CONTROLLER_ALIAS = '_controller_alias';
 
     /**
+     * Field name for an explicit controller name to be used with this route
+     */
+    const CONTROLLER_NAME = '_controller';
+
+    /**
      * Field name for an explicit template to be used with this route.
      * i.e. SymfonyCmfContentBundle:StaticContent:index.html.twig
      */
