@@ -11,6 +11,7 @@
             "homepage": "https://github.com/symfony-cmf/Routing/contributors"
         }
     ],
+    "minimum-stability": "dev",
     "require": {
         "php": ">=5.3.2",
         "symfony/routing": "2.1.*",
