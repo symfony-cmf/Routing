@@ -156,7 +156,7 @@ class ChainRouter implements RouterInterface, WarmableInterface
             }
         }
 
-        throw new RouteNotFoundException(sprintf('None of the chained router was able to generate route "%s".', $name));
+        throw new RouteNotFoundException(sprintf('None of the chained routers were able to generate route "%s".', $name));
     }
 
     /**
