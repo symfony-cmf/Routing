@@ -3,6 +3,7 @@
 namespace Symfony\Cmf\Component\Routing\Tests\Routing;
 
 use Symfony\Component\Routing\RouteCollection;
+use Symfony\Component\HttpFoundation\Request;
 
 use Symfony\Cmf\Component\Routing\ChainRouter;
 use Symfony\Cmf\Component\Routing\Test\CmfUnitTestCase;
@@ -159,7 +160,7 @@ class ChainRouterTest extends CmfUnitTestCase
         $this->router->add($low, 10);
         $this->router->add($high, 100);
 
-        $result = $this->router->match('/test');
+        $result = $this->router->matchRequest(Request::create('/test'));
         $this->assertEquals(array('test'), $result);
     }
 
@@ -186,7 +187,7 @@ class ChainRouterTest extends CmfUnitTestCase
         $this->router->add($low, 10);
         $this->router->add($high, 100);
 
-        $result = $this->router->match('/test');
+        $result = $this->router->matchRequest(Request::create('/test'));
         $this->assertEquals(array('test'), $result);
     }
 
@@ -213,7 +214,7 @@ class ChainRouterTest extends CmfUnitTestCase
         $this->router->add($low, 10);
         $this->router->add($high, 100);
 
-        $this->router->match('/test');
+        $this->router->matchRequest(Request::create('/test'));
     }
 
     /**
@@ -241,7 +242,7 @@ class ChainRouterTest extends CmfUnitTestCase
         $this->router->add($low, 10);
         $this->router->add($high, 100);
 
-        $this->router->match('/test');
+        $this->router->matchRequest(Request::create('/test'));
     }
 
     public function testGenerate()
