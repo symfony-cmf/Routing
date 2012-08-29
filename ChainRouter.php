@@ -105,9 +105,38 @@ class ChainRouter implements RouterInterface, RequestMatcherInterface, WarmableI
         return $sortedRouters;
     }
 
+    /**
+     * Loops through all routes and tries to match the passed url.
+     *
+     * Note: You should use matchRequest if you can.
+     *
+     * @param string $url
+     * @throws ResourceNotFoundException $e
+     * @throws MethodNotAllowedException $e
+     * @return array
+     */
     public function match($url)
     {
-        throw new \BadMethodCallException('use matchRequest');
+        $methodNotAllowed = null;
+
+        /** @var $router RouterInterface */
+        foreach ($this->all() as $router) {
+            try {
+                return $router->match($url);
+            } catch (ResourceNotFoundException $e) {
+                if ($this->logger) {
+                    $this->logger->info('Router '.get_class($router).' was not able to match, message "'.$e->getMessage().'"');
+                }
+                // Needs special care
+            } catch (MethodNotAllowedException $e) {
+                if ($this->logger) {
+                    $this->logger->info('Router '.get_class($router).' throws MethodNotAllowedException with message "'.$e->getMessage().'"');
+                }
+                $methodNotAllowed = $e;
+            }
+        }
+
+        throw $methodNotAllowed ?: new ResourceNotFoundException("None of the routers in the chain matched '$url'");
     }
 
     /**
@@ -134,12 +163,12 @@ class ChainRouter implements RouterInterface, RequestMatcherInterface, WarmableI
                 return $router->match($request->getPathInfo());
             } catch (ResourceNotFoundException $e) {
                 if ($this->logger) {
-                    $this->logger->addInfo('Router '.get_class($router).' was not able to match, message "'.$e->getMessage().'"');
+                    $this->logger->info('Router '.get_class($router).' was not able to match, message "'.$e->getMessage().'"');
                 }
                 // Needs special care
             } catch (MethodNotAllowedException $e) {
                 if ($this->logger) {
-                    $this->logger->addInfo('Router '.get_class($router).' throws MethodNotAllowedException with message "'.$e->getMessage().'"');
+                    $this->logger->info('Router '.get_class($router).' throws MethodNotAllowedException with message "'.$e->getMessage().'"');
                 }
                 $methodNotAllowed = $e;
             }
@@ -165,7 +194,7 @@ class ChainRouter implements RouterInterface, RequestMatcherInterface, WarmableI
                 return $router->generate($name, $parameters, $absolute);
             } catch (RouteNotFoundException $e) {
                 if ($this->logger) {
-                    $this->logger->addInfo($e->getMessage());
+                    $this->logger->info($e->getMessage());
                 }
             }
         }
