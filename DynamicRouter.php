@@ -191,15 +191,8 @@ class DynamicRouter implements RouterInterface
     {
         $routes = $this->routeRepository->findManyByUrl($url);
 
-        $collection = new RouteCollection();
-
-        foreach ($routes as $key => $route) {
-            $collection->add(self::ROUTE_NAME_PREFIX.preg_replace('/[^a-z0-9A-Z_.]/', '_', $key), $route);
-        }
-
-        $defaults = $this->getMatcher($collection)->match($url);
-
-        $route = $collection->get($defaults['_route']);
+        $defaults = $this->getMatcher($routes)->match($url);
+        $route = $routes->get($defaults['_route']);
 
         if (empty($defaults[RouteObjectInterface::CONTROLLER_NAME])) {
             // if content does not provide explicit controller, try to find it with one of the mappers

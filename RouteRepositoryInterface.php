@@ -24,8 +24,8 @@ interface RouteRepositoryInterface
      *
      * @param string $url
      *
-     * @return array of Symfony\Component\Routing\Route with all urls that
-     *      could potentially match $url. Empty array if nothing can match.
+     * @return \Symfony\Component\Routing\RouteCollection with all urls that
+     *      could potentially match $url. Empty collection if nothing can match.
      *
      * @throws \Exception if the underlying storage has an error
      */
