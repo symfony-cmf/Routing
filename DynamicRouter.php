@@ -131,6 +131,8 @@ class DynamicRouter implements RouterInterface
         if (isset($parameters['route']) && '' !== $parameters['route']) {
             $route = $parameters['route'];
             unset($parameters['route']);
+        } elseif ($name) {
+            $route = $this->routeRepository->getRouteByName($name, $parameters);
         } else {
             $route = $this->getRouteFromContent($parameters);
             unset($parameters['route']); // could be an empty string

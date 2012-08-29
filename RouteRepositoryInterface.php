@@ -30,4 +30,14 @@ interface RouteRepositoryInterface
      * @throws \Exception if the underlying storage has an error
      */
     function findManyByUrl($url);
+
+    /**
+     * Find the route using the provided route name (and parameters)
+     *
+     * @param $name
+     * @param array $parameters
+     *
+     * @return Symfony\Component\Routing\Route
+     */
+    public function getRouteByName($name, $parameters = array());
 }
