@@ -130,9 +130,8 @@ class ChainRouter implements RouterInterface, RequestMatcherInterface, WarmableI
                 // matching requests is more powerful than matching URLs only, so try that first
                 if ($router instanceof RequestMatcherInterface) {
                     return $router->matchRequest($request);
-                } else {
-                    return $router->match($request->getPathInfo());
                 }
+                return $router->match($request->getPathInfo());
             } catch (ResourceNotFoundException $e) {
                 if ($this->logger) {
                     $this->logger->addInfo('Router '.get_class($router).' was not able to match, message "'.$e->getMessage().'"');
