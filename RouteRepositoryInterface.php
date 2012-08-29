@@ -38,6 +38,9 @@ interface RouteRepositoryInterface
      * @param array $parameters
      *
      * @return Symfony\Component\Routing\Route
+     *
+     * @throws \Symfony\Component\Routing\Exception\RouteNotFoundException if
+     *      there is no route with that name in this repository
      */
     public function getRouteByName($name, $parameters = array());
 }

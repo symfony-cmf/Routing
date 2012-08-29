@@ -26,7 +26,7 @@ class DynamicRouterTest extends CmfUnitTestCase
         $this->contentDocument = $this->buildMock('Symfony\\Cmf\\Component\\Routing\\RouteAwareInterface');
         $this->routeDocument = $this->buildMock('Symfony\\Cmf\\Component\\Routing\\Tests\\Routing\\RouteMock', array('getDefaults', 'getRouteContent'));
         $this->loader = $this->buildMock("Symfony\\Component\\Config\\Loader\\LoaderInterface");
-        $this->repository = $this->buildMock("Symfony\\Cmf\\Component\\Routing\\RouteRepositoryInterface", array('findManyByUrl'));
+        $this->repository = $this->buildMock("Symfony\\Cmf\\Component\\Routing\\RouteRepositoryInterface", array('findManyByUrl', 'getRouteByName'));
 
         $this->mapper = $this->buildMock('Symfony\\Cmf\\Component\\Routing\\Mapper\\ControllerMapperInterface', array('getController'));
 
@@ -63,7 +63,29 @@ class DynamicRouterTest extends CmfUnitTestCase
         $this->assertInstanceOf('Symfony\Component\Routing\Generator\UrlGeneratorInterface', $generator);
     }
 
-    public function testGenerate()
+    public function testGenerateFromName()
+    {
+        $route = new RouteMock();
+        $this->repository->expects($this->once())
+            ->method('getRouteByName')
+            ->with('my_route_name')
+            ->will($this->returnValue($route));
+
+        $generator = $this->getMockBuilder('Symfony\Component\Routing\Generator\UrlGenerator')->disableOriginalConstructor()->getMock();
+        $generator->expects($this->once())
+            ->method('generate')
+            ->with(DynamicRouter::ROUTE_GENERATE_DUMMY_NAME, array(), false)
+            ->will($this->returnValue('/base/test/route'));
+
+        $router = new TestRouter($this->repository, null, $generator, $route);
+        $router->setContext($this->context);
+
+        $url = $router->generate('my_route_name');
+        $this->assertEquals('/base/test/route', $url);
+
+    }
+
+    public function testGenerateFromContent()
     {
         $route = new RouteMock();
         $this->contentDocument->expects($this->once())
@@ -73,13 +95,41 @@ class DynamicRouterTest extends CmfUnitTestCase
         $generator = $this->getMockBuilder('Symfony\Component\Routing\Generator\UrlGenerator')->disableOriginalConstructor()->getMock();
         $generator->expects($this->once())
             ->method('generate')
-            ->with(DynamicRouter::ROUTE_NAME_PREFIX, array(), false)
+            ->with(DynamicRouter::ROUTE_GENERATE_DUMMY_NAME, array(), false)
             ->will($this->returnValue('/base/test/route'));
 
         $router = new TestRouter($this->repository, null, $generator, $route);
         $router->setContext($this->context);
 
-        $url = $router->generate('ignore', array('content'=>$this->contentDocument));
+        $url = $router->generate('', array('content'=>$this->contentDocument));
+        $this->assertEquals('/base/test/route', $url);
+    }
+
+    public function testGenerateFromContentId()
+    {
+        $route = new RouteMock();
+        $this->contentDocument->expects($this->once())
+            ->method('getRoutes')
+            ->will($this->returnValue(array($route)));
+
+        $contentRepository = $this->buildMock("Symfony\\Cmf\\Component\\Routing\\ContentRepositoryInterface", array('findById'));
+        $contentRepository->expects($this->once())
+            ->method('findById')
+            ->with('/content/id')
+            ->will($this->returnValue($this->contentDocument))
+        ;
+
+        $generator = $this->getMockBuilder('Symfony\Component\Routing\Generator\UrlGenerator')->disableOriginalConstructor()->getMock();
+        $generator->expects($this->once())
+            ->method('generate')
+            ->with(DynamicRouter::ROUTE_GENERATE_DUMMY_NAME, array(), false)
+            ->will($this->returnValue('/base/test/route'));
+
+        $router = new TestRouter($this->repository, null, $generator, $route);
+        $router->setContext($this->context);
+        $router->setContentRepository($contentRepository);
+
+        $url = $router->generate('', array('content_id' => '/content/id'));
         $this->assertEquals('/base/test/route', $url);
     }
 
@@ -92,13 +142,13 @@ class DynamicRouterTest extends CmfUnitTestCase
         $generator = $this->getMockBuilder('Symfony\Component\Routing\Generator\UrlGenerator')->disableOriginalConstructor()->getMock();
         $generator->expects($this->once())
             ->method('generate')
-            ->with(DynamicRouter::ROUTE_NAME_PREFIX, array(), false)
+            ->with(DynamicRouter::ROUTE_GENERATE_DUMMY_NAME, array(), false)
             ->will($this->returnValue('/'));
 
         $router = new TestRouter($this->repository, null, $generator);
         $router->setContext($this->context);
 
-        $url = $router->generate('ignore', array('content'=>$this->contentDocument, 'route' => ''));
+        $url = $router->generate('', array('content'=>$this->contentDocument, 'route' => ''));
         $this->assertEquals('/', $url);
     }
 
@@ -113,13 +163,13 @@ class DynamicRouterTest extends CmfUnitTestCase
         $generator = $this->getMockBuilder('Symfony\Component\Routing\Generator\UrlGenerator')->disableOriginalConstructor()->getMock();
         $generator->expects($this->once())
             ->method('generate')
-            ->with(DynamicRouter::ROUTE_NAME_PREFIX, array(), true)
+            ->with(DynamicRouter::ROUTE_GENERATE_DUMMY_NAME, array(), true)
             ->will($this->returnValue('http://test.domain/base/test/route'));
 
         $router = new TestRouter($this->repository, null, $generator);
         $router->setContext($this->context);
 
-        $url = $router->generate('ignore', array('content'=>$content), true);
+        $url = $router->generate('', array('content'=>$content), true);
         $this->assertEquals('http://test.domain/base/test/route', $url);
     }
 
@@ -128,14 +178,14 @@ class DynamicRouterTest extends CmfUnitTestCase
         $generator = $this->getMockBuilder('Symfony\Component\Routing\Generator\UrlGenerator')->disableOriginalConstructor()->getMock();
         $generator->expects($this->once())
             ->method('generate')
-            ->with(DynamicRouter::ROUTE_NAME_PREFIX, array(), false)
+            ->with(DynamicRouter::ROUTE_GENERATE_DUMMY_NAME, array(), false)
             ->will($this->returnValue('/base/test/route'));
 
         $router = new TestRouter($this->repository, null, $generator);
         $router->setContext($this->context);
 
 
-        $url = $router->generate('ignore', array('route'=>new RouteMock()));
+        $url = $router->generate('', array('route'=>new RouteMock()));
         $this->assertEquals('/base/test/route', $url);
     }
 
@@ -150,13 +200,13 @@ class DynamicRouterTest extends CmfUnitTestCase
         $generator = $this->getMockBuilder('Symfony\Component\Routing\Generator\UrlGenerator')->disableOriginalConstructor()->getMock();
         $generator->expects($this->once())
             ->method('generate')
-            ->with(DynamicRouter::ROUTE_NAME_PREFIX, array('_locale' => 'de'), false)
+            ->with(DynamicRouter::ROUTE_GENERATE_DUMMY_NAME, array('_locale' => 'de'), false)
             ->will($this->returnValue('/base/de'));
 
         $router = new TestRouter($this->repository, null, $generator, $route_de);
         $router->setContext($this->context);
 
-        $url = $router->generate('ignore', array('content'=>$this->contentDocument, '_locale' => 'de'));
+        $url = $router->generate('', array('content'=>$this->contentDocument, '_locale' => 'de'));
         $this->assertEquals('/base/de', $url);
     }
 
@@ -165,14 +215,14 @@ class DynamicRouterTest extends CmfUnitTestCase
      */
     public function testGenerateNoContent()
     {
-        $this->router->generate('ignore', array());
+        $this->router->generate('', array());
     }
     /**
      * @expectedException Symfony\Component\Routing\Exception\RouteNotFoundException
      */
     public function testGenerateInvalidContent()
     {
-        $this->router->generate('ignore', array('content' => $this));
+        $this->router->generate('', array('content' => $this));
     }
     /**
      * @expectedException Symfony\Component\Routing\Exception\RouteNotFoundException
@@ -183,7 +233,7 @@ class DynamicRouterTest extends CmfUnitTestCase
             ->method('getRoutes')
             ->will($this->returnValue(array()));
 
-        $this->router->generate('ignore', array('content'=>$this->contentDocument));
+        $this->router->generate('', array('content'=>$this->contentDocument));
     }
     /**
      * @expectedException Symfony\Component\Routing\Exception\RouteNotFoundException
@@ -194,7 +244,7 @@ class DynamicRouterTest extends CmfUnitTestCase
             ->method('getRoutes')
             ->will($this->returnValue(array($this)));
 
-        $this->router->generate('ignore', array('content'=>$this->contentDocument));
+        $this->router->generate('', array('content'=>$this->contentDocument));
     }
 
 

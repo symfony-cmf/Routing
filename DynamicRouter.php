@@ -40,7 +40,7 @@ class DynamicRouter implements RouterInterface
      * whatever the repository returned as ID, replacing anything but
      * [^a-z0-9A-Z_.] with "_" to get unique valid route names.
      */
-    const ROUTE_NAME_PREFIX = 'cmf_routing_dynamic_route';
+    const ROUTE_GENERATE_DUMMY_NAME = 'cmf_routing_dynamic_route';
 
     /**
      * @var array of ControllerMapperInterface
@@ -144,9 +144,9 @@ class DynamicRouter implements RouterInterface
         }
 
         $collection = new RouteCollection();
-        $collection->add(self::ROUTE_NAME_PREFIX, $route);
+        $collection->add(self::ROUTE_GENERATE_DUMMY_NAME, $route);
 
-        return $this->getGenerator($collection)->generate(self::ROUTE_NAME_PREFIX, $parameters, $absolute);
+        return $this->getGenerator($collection)->generate(self::ROUTE_GENERATE_DUMMY_NAME, $parameters, $absolute);
     }
 
     /**
