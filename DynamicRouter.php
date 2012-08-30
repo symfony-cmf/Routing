@@ -216,7 +216,6 @@ class DynamicRouter implements RouterInterface
         if ($route instanceof RouteObjectInterface && $content = $route->getRouteContent()) {
             $defaults[RouteObjectInterface::CONTENT_OBJECT] = $content;
         }
-        $defaults['path'] = $url; // TODO: get rid of this
 
         return $defaults;
     }
