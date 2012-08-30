@@ -292,7 +292,6 @@ class DynamicRouterTest extends CmfUnitTestCase
         $expected = array(
             RouteObjectInterface::CONTROLLER_NAME => 'NameSpace\\Controller::action',
             '_route' => '_company_more',
-            'path' => $url_alias,
             RouteObjectInterface::CONTENT_OBJECT => $this->contentDocument,
         );
 
@@ -335,7 +334,6 @@ class DynamicRouterTest extends CmfUnitTestCase
         $expected = array(
             RouteObjectInterface::CONTROLLER_NAME => 'NameSpace\\Controller::action',
             '_route' => 'route_alias',
-            'path' => $url_alias,
             'type' => 'found',
         );
 
