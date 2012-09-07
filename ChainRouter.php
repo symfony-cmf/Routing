@@ -30,11 +30,6 @@ class ChainRouter implements RouterInterface, RequestMatcherInterface, WarmableI
     private $context;
 
     /**
-     * @var null|\Symfony\Component\HttpKernel\Log\LoggerInterface
-     */
-    private $logger;
-
-    /**
      * @var Symfony\Component\Routing\RouterInterface[]
      */
     private $routers = array();
@@ -42,7 +37,17 @@ class ChainRouter implements RouterInterface, RequestMatcherInterface, WarmableI
     /**
      * @var \Symfony\Component\Routing\RouterInterface[] Array of routers, sorted by priority
      */
-    protected $sortedRouters;
+    private $sortedRouters;
+
+    /**
+     * @var \Symfony\Component\Routing\RouteCollection
+     */
+    private $routeCollection;
+
+    /**
+     * @var null|\Symfony\Component\HttpKernel\Log\LoggerInterface
+     */
+    protected $logger;
 
     public function __construct(LoggerInterface $logger = null)
     {
@@ -232,11 +237,13 @@ class ChainRouter implements RouterInterface, RequestMatcherInterface, WarmableI
 
     public function getRouteCollection()
     {
-        // TODO: is this the right thing? can we optimize?
-        $collection = new RouteCollection();
-        foreach ($this->all() as $router) {
-            $collection->addCollection($router->getRouteCollection());
+        if (!$this->routeCollection instanceof RouteCollection) {
+            $this->routeCollection = new RouteCollection();
+            foreach ($this->getAllRouters() as $router) {
+                $this->routeCollection->addCollection($router->getRouteCollection());
+            }
         }
-        return $collection;
+
+        return $this->routeCollection;
     }
 }
