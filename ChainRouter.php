@@ -74,9 +74,11 @@ class ChainRouter implements RouterInterface, RequestMatcherInterface, WarmableI
             $this->routers[$priority] = array();
         }
 
-        $context = $this->getContext();
-        if (null !== $context) {
-            $router->setContext($context);
+        if ($router instanceof RequestContextAwareInterface) {
+            $context = $this->getContext();
+            if (null !== $context) {
+                $router->setContext($context);
+            }
         }
 
         $this->routers[$priority][] = $router;
