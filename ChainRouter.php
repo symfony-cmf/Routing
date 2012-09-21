@@ -49,13 +49,16 @@ class ChainRouter implements RouterInterface, RequestMatcherInterface, WarmableI
      */
     protected $logger;
 
+    /**
+     * @param LoggerInterface $logger
+     */
     public function __construct(LoggerInterface $logger = null)
     {
         $this->logger = $logger;
     }
 
     /**
-     * @return \Symfony\Component\Routing\RequestContext
+     * @return RequestContext
      */
     public function getContext()
     {
@@ -65,8 +68,8 @@ class ChainRouter implements RouterInterface, RequestMatcherInterface, WarmableI
     /**
      * Add a Router to the index
      *
-     * @param RouterInterface $router
-     * @param integer $priority
+     * @param RouterInterface $router   The router instance
+     * @param integer         $priority The priority
      */
     public function add(RouterInterface $router, $priority = 0)
     {
@@ -103,7 +106,7 @@ class ChainRouter implements RouterInterface, RequestMatcherInterface, WarmableI
      * Sort routers by priority.
      * The highest priority number is the highest priority (reverse sorting)
      *
-     * @return \Symfony\Component\Routing\RouterInterface[]
+     * @return RouterInterface[]
      */
     protected function sortRouters()
     {
@@ -118,20 +121,17 @@ class ChainRouter implements RouterInterface, RequestMatcherInterface, WarmableI
     }
 
     /**
+     * {@inheritdoc}
+     *
      * Loops through all routes and tries to match the passed url.
      *
      * Note: You should use matchRequest if you can.
-     *
-     * @param string $url
-     * @throws ResourceNotFoundException $e
-     * @throws MethodNotAllowedException $e
-     * @return array
      */
     public function match($url)
     {
         $methodNotAllowed = null;
 
-        /** @var $router RouterInterface */
+        /** @var $router ChainedRouterInterface */
         foreach ($this->all() as $router) {
             try {
                 return $router->match($url);
@@ -152,14 +152,9 @@ class ChainRouter implements RouterInterface, RequestMatcherInterface, WarmableI
     }
 
     /**
+     * {@inheritdoc}
+     *
      * Loops through all routes and tries to match the passed request.
-     *
-     * @param Request $request the request to match
-     *
-     * @throws ResourceNotFoundException $e
-     * @throws MethodNotAllowedException $e
-     *
-     * @return array
      */
     public function matchRequest(Request $request)
     {
@@ -190,18 +185,24 @@ class ChainRouter implements RouterInterface, RequestMatcherInterface, WarmableI
     }
 
     /**
+     * {@inheritdoc}
+     *
      * Loops through all registered routers and returns a router if one is found.
      * It will always return the first route generated.
-     *
-     * @param string $name
-     * @param array $parameters
-     * @param Boolean $absolute
-     * @throws RouteNotFoundException
-     * @return string
      */
     public function generate($name, $parameters = array(), $absolute = false)
     {
+        /** @var $router ChainedRouterInterface */
         foreach ($this->all() as $router) {
+
+            if (!is_string($name) && !$router instanceof ChainedRouterInterface ) {
+                continue;
+            }
+
+            if ($router instanceof ChainedRouterInterface && !$router->supports($name)) {
+                continue;
+            }
+
             try {
                 return $router->generate($name, $parameters, $absolute);
             } catch (RouteNotFoundException $e) {
@@ -215,9 +216,7 @@ class ChainRouter implements RouterInterface, RequestMatcherInterface, WarmableI
     }
 
     /**
-     * Sets the Request Context
-     *
-     * @param \Symfony\Component\Routing\RequestContext $context
+     * {@inheritdoc}
      */
     public function setContext(RequestContext $context)
     {
@@ -231,6 +230,8 @@ class ChainRouter implements RouterInterface, RequestMatcherInterface, WarmableI
     }
 
     /**
+     * {@inheritdoc}
+     *
      * check for each contained router if it can warmup
      */
     public function warmUp($cacheDir)
@@ -242,6 +243,9 @@ class ChainRouter implements RouterInterface, RequestMatcherInterface, WarmableI
         }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getRouteCollection()
     {
         if (!$this->routeCollection instanceof RouteCollection) {

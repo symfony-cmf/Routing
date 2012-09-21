@@ -483,6 +483,30 @@ class ChainRouterTest extends CmfUnitTestCase
         $this->assertEquals(array('high', 'low'), $names);
     }
 
+    /**
+     * @expectedException \Symfony\Component\Routing\Exception\RouteNotFoundException
+     */
+    public function testSupport()
+    {
+
+        $router = $this->getMock('Symfony\Cmf\Component\Routing\ChainedRouterInterface');
+        $router
+            ->expects($this->once())
+            ->method('supports')
+            ->will($this->returnValue(false))
+        ;
+
+        $router
+            ->expects($this->never())
+            ->method('generate')
+            ->will($this->returnValue(false))
+        ;
+
+        $this->router->add($router);
+
+        $this->router->generate('foobar');
+    }
+
     protected function createRouterMocks()
     {
         return array(
