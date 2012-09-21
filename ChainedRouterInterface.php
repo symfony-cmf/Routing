@@ -4,12 +4,20 @@ namespace Symfony\Cmf\Component\Routing;
 
 use Symfony\Component\Routing\RouterInterface;
 
+/**
+ * Use this interface on custom routers that can handle non-string route
+ * "names".
+ */
 interface ChainedRouterInterface extends RouterInterface
 {
     /**
-     * This method checks if the current router supports the passed object
+     * Whether the router supports the thing in $name to generate a route.
      *
-     * @param $name mixed The route name or route object
+     * This check does not need to look if the specific instance can be
+     * resolved to a route, only whether the router can generate routes from
+     * objects of this class.
+
+     * @param mixed $name The route name or route object
      *
      * @return bool
      */
