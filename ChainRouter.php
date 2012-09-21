@@ -91,10 +91,12 @@ class ChainRouter implements RouterInterface, RequestMatcherInterface, WarmableI
         if (empty($this->sortedRouters)) {
             $this->sortedRouters = $this->sortRouters();
 
+            // setContext() is done here instead of in add() to avoid fatal errors when clearing and warming up caches
+            // See https://github.com/symfony-cmf/Routing/pull/18
             $context = $this->getContext();
-            foreach ($this->sortedRouters as $router) {
-                if ($router instanceof RequestContextAwareInterface) {
-                    if (null !== $context) {
+            if (null !== $context) {
+                foreach ($this->sortedRouters as $router) {
+                    if ($router instanceof RequestContextAwareInterface) {
                         $router->setContext($context);
                     }
                 }
