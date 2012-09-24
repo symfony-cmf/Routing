@@ -77,13 +77,6 @@ class ChainRouter implements RouterInterface, RequestMatcherInterface, WarmableI
             $this->routers[$priority] = array();
         }
 
-        if ($router instanceof RequestContextAwareInterface) {
-            $context = $this->getContext();
-            if (null !== $context) {
-                $router->setContext($context);
-            }
-        }
-
         $this->routers[$priority][] = $router;
         $this->sortedRouters = array();
     }
@@ -97,6 +90,17 @@ class ChainRouter implements RouterInterface, RequestMatcherInterface, WarmableI
     {
         if (empty($this->sortedRouters)) {
             $this->sortedRouters = $this->sortRouters();
+
+            // setContext() is done here instead of in add() to avoid fatal errors when clearing and warming up caches
+            // See https://github.com/symfony-cmf/Routing/pull/18
+            $context = $this->getContext();
+            if (null !== $context) {
+                foreach ($this->sortedRouters as $router) {
+                    if ($router instanceof RequestContextAwareInterface) {
+                        $router->setContext($context);
+                    }
+                }
+            }
         }
 
         return $this->sortedRouters;
@@ -220,13 +224,13 @@ class ChainRouter implements RouterInterface, RequestMatcherInterface, WarmableI
      */
     public function setContext(RequestContext $context)
     {
-        $this->context = $context;
-
         foreach ($this->all() as $router) {
             if ($router instanceof RequestContextAwareInterface) {
                 $router->setContext($context);
             }
         }
+
+        $this->context = $context;
     }
 
     /**
