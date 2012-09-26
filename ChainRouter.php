@@ -199,7 +199,7 @@ class ChainRouter implements RouterInterface, RequestMatcherInterface, WarmableI
         /** @var $router ChainedRouterInterface */
         foreach ($this->all() as $router) {
 
-            if (!is_string($name) && !$router instanceof ChainedRouterInterface ) {
+            if ($name && !is_string($name) && !$router instanceof ChainedRouterInterface ) {
                 continue;
             }
 
