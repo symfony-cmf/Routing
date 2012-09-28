@@ -54,6 +54,10 @@ class TemplateClassMapper implements ControllerMapperInterface
      */
     public function getController(Route $route, array &$defaults)
     {
+        if (!empty($defaults[RouteObjectInterface::TEMPLATE_NAME])) {
+            return $this->genericController;
+        }
+
         if (! $route instanceof RouteObjectInterface) {
             return false;
         }
