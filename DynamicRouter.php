@@ -30,7 +30,7 @@ use Symfony\Cmf\Component\Routing\Mapper\ControllerMapperInterface;
  * @author David Buchmann
  * @author Uwe Jäger
  */
-class DynamicRouter implements RouterInterface
+class DynamicRouter implements RouterInterface, ChainedRouterInterface
 {
     /**
      * Symfony routes always need a name in the collection. We generate routes
@@ -131,10 +131,10 @@ class DynamicRouter implements RouterInterface
         if (isset($parameters['route']) && '' !== $parameters['route']) {
             $route = $parameters['route'];
             unset($parameters['route']);
-        } elseif ($name) {
+        } elseif (is_string($name) && $name) {
             $route = $this->routeRepository->getRouteByName($name, $parameters);
         } else {
-            $route = $this->getRouteFromContent($parameters);
+            $route = $this->getRouteFromContent($name, $parameters);
             unset($parameters['route']); // could be an empty string
         }
 
@@ -233,6 +233,11 @@ class DynamicRouter implements RouterInterface
         return new UrlMatcher($collection, $this->context);
     }
 
+    public function supports($name)
+    {
+        return is_string($name) || $name instanceof RouteAwareInterface;
+    }
+
     /**
      * Get the route based on the content field in parameters
      *
@@ -244,6 +249,7 @@ class DynamicRouter implements RouterInterface
      *
      * If none is found, falls back to just return the first route.
      *
+     * @param mixed $name
      * @param array $parameters which should contain a content field containing a RouteAwareInterface object
      *
      * @return Route the route instance
@@ -251,30 +257,32 @@ class DynamicRouter implements RouterInterface
      * @throws RouteNotFoundException if there is no content field in the
      *      parameters or its not possible to build a route from that object
      */
-    protected function getRouteFromContent(&$parameters)
+    protected function getRouteFromContent($name, &$parameters)
     {
-        if (isset($parameters['content_id']) && null !== $this->contentRepository) {
-            $parameters['content'] = $this->contentRepository->findById($parameters['content_id']);
+        if ($name instanceof RouteAwareInterface) {
+            $content = $name;
+        } elseif (isset($parameters['content_id']) && null !== $this->contentRepository) {
+            $content = $this->contentRepository->findById($parameters['content_id']);
+        } elseif (isset($parameters['content'])) {
+            $content = $parameters['content'];
         }
 
-        unset($parameters['content_id']);
+        unset($parameters['content'], $parameters['content_id']);
 
-        if (! isset($parameters['content'])) {
-            throw new RouteNotFoundException('No parameter "content" and neither "route"');
+        if (empty($content)) {
+            throw new RouteNotFoundException('Neither the route name, nor a parameter "content" or "content_id" could be resolved to an content instance');
         }
 
-        if (! $parameters['content'] instanceof RouteAwareInterface) {
-            $hint = is_object($parameters['content']) ? get_class($parameters['content']) : gettype($parameters['content']);
+        if (!$content instanceof RouteAwareInterface) {
+            $hint = is_object($content) ? get_class($content) : gettype($content);
             throw new RouteNotFoundException('The content does not implement RouteAwareInterface: ' . $hint);
         }
 
-        $routes = $parameters['content']->getRoutes();
+        $routes = $content->getRoutes();
         if (empty($routes)) {
-            $hint = property_exists($parameters['content'], 'path') ? $parameters['content']->path : get_class($parameters['content']);
+            $hint = property_exists($content, 'path') ? $content->path : get_class($content);
             throw new RouteNotFoundException('Document has no route: ' . $hint);
         }
-
-        unset($parameters['content']);
 
         $locale = $this->getLocale($parameters);
 

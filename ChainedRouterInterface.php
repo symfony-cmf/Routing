@@ -21,5 +21,5 @@ interface ChainedRouterInterface extends RouterInterface
      *
      * @return bool
      */
-    function supports($name);
+    public function supports($name);
 }
