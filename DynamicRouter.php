@@ -235,7 +235,7 @@ class DynamicRouter implements RouterInterface, ChainedRouterInterface
 
     public function supports($name)
     {
-        return is_string($name) || $name instanceof RouteAwareInterface;
+        return !$name || is_string($name) || $name instanceof RouteAwareInterface || $name instanceof RouteObjectInterface;
     }
 
     /**
