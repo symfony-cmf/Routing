@@ -293,6 +293,7 @@ class DynamicRouterTest extends CmfUnitTestCase
             RouteObjectInterface::CONTROLLER_NAME => 'NameSpace\\Controller::action',
             '_route' => '_company_more',
             RouteObjectInterface::CONTENT_OBJECT => $this->contentDocument,
+            'route' => $this->routeDocument
         );
 
         $this->assertEquals($expected, $results);
@@ -335,6 +336,7 @@ class DynamicRouterTest extends CmfUnitTestCase
             RouteObjectInterface::CONTROLLER_NAME => 'NameSpace\\Controller::action',
             '_route' => 'route_alias',
             'type' => 'found',
+            'route' => $this->routeDocument
         );
 
         $this->assertEquals($expected, $router->match($url_alias));
