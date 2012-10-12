@@ -143,6 +143,10 @@ class DynamicRouter implements RouterInterface, ChainedRouterInterface
             throw new RouteNotFoundException('Route of this document is not an instance of RouteObjectInterface but: '.$hint);
         }
 
+        if ( isset($parameters['_locale']) && ! $this->routeRepository->validateRouteLocale($route, $parameters['_locale'])) {
+            throw new RouteNotFoundException('Route of this document is not available in the requested locale: '.$parameters['_locale']);
+        }
+
         $collection = new RouteCollection();
         $collection->add(self::ROUTE_GENERATE_DUMMY_NAME, $route);
 
@@ -291,8 +295,7 @@ class DynamicRouter implements RouterInterface, ChainedRouterInterface
                 if (! $route instanceof SymfonyRoute) {
                     continue;
                 }
-                $defaults = $route->getDefaults();
-                if (isset($defaults['_locale']) && $locale == $defaults['_locale']) {
+                if ($locale == $route->getDefault('_locale')) {
                     return $route;
                 }
             }
