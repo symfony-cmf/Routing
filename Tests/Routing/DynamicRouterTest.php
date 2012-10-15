@@ -148,7 +148,7 @@ class DynamicRouterTest extends CmfUnitTestCase
         $router = new TestRouter($this->repository, null, $generator);
         $router->setContext($this->context);
 
-        $url = $router->generate('', array('content'=>$this->contentDocument, 'route' => ''));
+        $url = $router->generate('', array('content'=>$this->contentDocument));
         $this->assertEquals('/', $url);
     }
 
@@ -185,7 +185,7 @@ class DynamicRouterTest extends CmfUnitTestCase
         $router->setContext($this->context);
 
 
-        $url = $router->generate('', array('route'=>new RouteMock()));
+        $url = $router->generate(new RouteMock());
         $this->assertEquals('/base/test/route', $url);
     }
 
