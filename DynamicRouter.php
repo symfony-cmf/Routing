@@ -128,19 +128,17 @@ class DynamicRouter implements RouterInterface, ChainedRouterInterface
      */
     public function generate($name, $parameters = array(), $absolute = false)
     {
-        if (isset($parameters['route']) && '' !== $parameters['route']) {
-            $route = $parameters['route'];
-            unset($parameters['route']);
+        if ($name instanceof SymfonyRoute) {
+            $route = $name;
         } elseif (is_string($name) && $name) {
             $route = $this->routeRepository->getRouteByName($name, $parameters);
         } else {
             $route = $this->getRouteFromContent($name, $parameters);
-            unset($parameters['route']); // could be an empty string
         }
 
-        if (! $route instanceof RouteObjectInterface) {
+        if (! $route instanceof SymfonyRoute) {
             $hint = is_object($route) ? get_class($route) : gettype($route);
-            throw new RouteNotFoundException('Route of this document is not an instance of RouteObjectInterface but: '.$hint);
+            throw new RouteNotFoundException('Route of this document is not an instance of Symfony\Component\Routing\Route but: '.$hint);
         }
 
         $collection = new RouteCollection();
