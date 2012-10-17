@@ -152,7 +152,7 @@ class DynamicRouter implements RouterInterface, ChainedRouterInterface
      *
      * @param RouteCollection $collection collection of routes for the current request
      *
-     * @return UrlGeneratorInterface the url matcher instance
+     * @return \Symfony\Component\Routing\Generator\UrlGeneratorInterface the url matcher instance
      */
     public function getGenerator(RouteCollection $collection)
     {
