@@ -129,11 +129,11 @@ class DynamicRouter implements RouterInterface, ChainedRouterInterface
     public function generate($name, $parameters = array(), $absolute = false)
     {
         if ($name instanceof SymfonyRoute) {
-            $route = $name;
+            $route = $this->getBestLocaleRoute($name, $parameters);
         } elseif (is_string($name) && $name) {
-            $route = $this->routeRepository->getRouteByName($name, $parameters);
+            $route = $this->getRouteByName($name, $parameters);
         } else {
-            $route = $this->getRouteFromContent($name, $parameters);
+            $route = $this->getRouteByContent($name, $parameters);
         }
 
         if (! $route instanceof SymfonyRoute) {
@@ -237,6 +237,50 @@ class DynamicRouter implements RouterInterface, ChainedRouterInterface
     }
 
     /**
+     * Get the route by a string name
+     *
+     * @param string $route
+     * @param array $parameters
+     * @return \Symfony\Component\Routing\Route
+     *
+     * @throws RouteNotFoundException if there is no route found for the provided name
+     */
+    protected function getRouteByName($name, array $parameters)
+    {
+        $route = $this->routeRepository->getRouteByName($name, $parameters);
+        if (empty($route)) {
+            throw new RouteNotFoundException('No route found for name: ' . $name);
+        }
+
+        return $this->getBestLocaleRoute($route, $parameters);
+    }
+
+    /**
+     * Determine if there is a better route associated with the given route via associated content
+     *
+     * @param \Symfony\Component\Routing\Route $route
+     * @param array $parameters
+     * @return \Symfony\Component\Routing\Route
+     */
+    protected function getBestLocaleRoute($route, $parameters)
+    {
+        $locale = $this->getLocale($parameters);
+        if (!$this->checkLocaleRequirement($route, $locale)
+            && $route instanceof RouteObjectInterface
+        ) {
+            $content = $route->getRouteContent();
+            if ($content instanceof RouteAwareInterface) {
+                $routes = $content->getRoutes();
+                $contentRoute = $this->getRouteByLocale($routes, $locale);
+                if ($contentRoute) {
+                    return $contentRoute;
+                }
+            }
+        }
+
+        return $route;
+    }
+    /**
      * Get the route based on the content field in parameters
      *
      * Called in generate when there is no route given in the parameters.
@@ -255,7 +299,7 @@ class DynamicRouter implements RouterInterface, ChainedRouterInterface
      * @throws RouteNotFoundException if there is no content field in the
      *      parameters or its not possible to build a route from that object
      */
-    protected function getRouteFromContent($name, &$parameters)
+    protected function getRouteByContent($name, &$parameters)
     {
         if ($name instanceof RouteAwareInterface) {
             $content = $name;
@@ -278,26 +322,50 @@ class DynamicRouter implements RouterInterface, ChainedRouterInterface
 
         $routes = $content->getRoutes();
         if (empty($routes)) {
-            $hint = property_exists($content, 'path') ? $content->path : get_class($content);
+            $hint = method_exists($content, 'getPath') ? $content->getPath() : get_class($content);
             throw new RouteNotFoundException('Document has no route: ' . $hint);
         }
 
-        $locale = $this->getLocale($parameters);
+        $route = $this->getRouteByLocale($routes, $this->getLocale($parameters));
+        if ($route) {
+            return $route;
+        }
 
-        if (isset($locale)) {
-            foreach ($routes as $route) {
-                if (! $route instanceof SymfonyRoute) {
-                    continue;
-                }
-                $defaults = $route->getDefaults();
-                if (isset($defaults['_locale']) && $locale == $defaults['_locale']) {
-                    return $route;
-                }
+        // if none matched, continue and randomly return the first one
+        return reset($routes);
+    }
+
+    /**
+     * @param RouteCollection $routes
+     * @param string $locale
+     * @return bool|SymfonyRoute false if no route requirement matches the provided locale
+     */
+    protected function getRouteByLocale($routes, $locale)
+    {
+        foreach ($routes as $route) {
+            if (! $route instanceof SymfonyRoute) {
+                continue;
+            }
+
+            if ($this->checkLocaleRequirement($route, $locale)) {
+                return $route;
             }
         }
-        // if none matched, continue and randomly return the first one
 
-        return reset($routes);
+        return false;
+    }
+
+    /**
+     * @param SymfonyRoute $route
+     * @param string $locale
+     * @return bool TRUE if there is either no _locale, no _locale requirement or if the two match
+     */
+    private function checkLocaleRequirement(SymfonyRoute $route, $locale)
+    {
+        return empty($locale)
+            || !$route->getRequirement('_locale')
+            || preg_match('/'.$route->getRequirement('_locale').'/', $locale)
+        ;
     }
 
     /**
