@@ -23,5 +23,5 @@ interface ContentRepositoryInterface
      *
      * @return object A content that matches this id.
      */
-    function findById($id);
+    public function findById($id);
 }

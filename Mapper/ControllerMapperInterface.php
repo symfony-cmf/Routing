@@ -22,6 +22,5 @@ interface ControllerMapperInterface
      *      the action, i.e. symfony_cmf_content.controller:indexAction
      *      or false if the mapper can not determine the router
      */
-    function getController(Route $route, array &$defaults);
-
+    public function getController(Route $route, array &$defaults);
 }

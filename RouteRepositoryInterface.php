@@ -29,7 +29,7 @@ interface RouteRepositoryInterface
      *
      * @throws \Exception if the underlying storage has an error
      */
-    function findManyByUrl($url);
+    public function findManyByUrl($url);
 
     /**
      * Find the route using the provided route name (and parameters)

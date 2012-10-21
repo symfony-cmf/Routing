@@ -52,5 +52,5 @@ interface RouteObjectInterface
      *
      * @return object the document or entity this route entry points to
      */
-    function getRouteContent();
+    public function getRouteContent();
 }

@@ -44,14 +44,14 @@ interface RedirectRouteInterface extends RouteObjectInterface
      *
      * @return string target route name
      */
-    function getRouteName();
+    public function getRouteName();
 
     /**
      * Whether this should be a permanent or temporary redirect
      *
      * @return boolean
      */
-    function isPermanent();
+    public function isPermanent();
 
     /**
      * Get the parameters for the target route router::generate()
@@ -61,5 +61,5 @@ interface RedirectRouteInterface extends RouteObjectInterface
      *
      * @return array Information to build the route
      */
-    function getParameters();
+    public function getParameters();
 }
