@@ -194,6 +194,10 @@ class DynamicRouter implements RouterInterface, ChainedRouterInterface
         $defaults = $this->getMatcher($routes)->match($url);
         $route = $routes->get($defaults['_route']);
 
+        if ($route instanceof SymfonyRoute) {
+            $defaults['route'] = $route;
+        }
+
         if (empty($defaults[RouteObjectInterface::CONTROLLER_NAME])) {
             // if content does not provide explicit controller, try to find it with one of the mappers
             $controller = false;
