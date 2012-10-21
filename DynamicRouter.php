@@ -3,6 +3,7 @@
 namespace Symfony\Cmf\Component\Routing;
 
 use Symfony\Component\Routing\Route as SymfonyRoute;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
@@ -190,10 +191,17 @@ class DynamicRouter implements RouterInterface, ChainedRouterInterface
     public function match($url)
     {
         $routes = $this->routeRepository->findManyByUrl($url);
+        if (empty($routes)) {
+            throw new ResourceNotFoundException("No routes found in the route repository for '$url'");
+        }
 
-        $defaults = $this->getMatcher($routes)->match($url);
+        try {
+            $defaults = $this->getMatcher($routes)->match($url);
+        } catch (ResourceNotFoundException $e) {
+            throw new ResourceNotFoundException("None of the routes read from the route repository for '$url' matched the request: ".$e->getMessage());
+        }
+
         $route = $routes->get($defaults['_route']);
-
         if (empty($defaults[RouteObjectInterface::CONTROLLER_NAME])) {
             // if content does not provide explicit controller, try to find it with one of the mappers
             $controller = false;
