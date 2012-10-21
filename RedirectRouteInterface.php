@@ -39,6 +39,17 @@ interface RedirectRouteInterface extends RouteObjectInterface
     public function getUri();
 
     /**
+     * Get the target route document this route redirects to.
+     *
+     * If non-null, it is added as route into the parameters, which will lead
+     * to have the generate call issued by the RedirectController to have
+     * the target route in the parameters.
+     *
+     * @return RouteObjectInterface the route this redirection points to
+     */
+    public function getRouteTarget();
+
+    /**
      * Get the name of the target route for working with the symfony standard
      * router.
      *
