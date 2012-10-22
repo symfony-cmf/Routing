@@ -198,7 +198,7 @@ class DynamicRouter implements RouterInterface, ChainedRouterInterface
         try {
             $defaults = $this->getMatcher($routes)->match($url);
         } catch (ResourceNotFoundException $e) {
-            throw new ResourceNotFoundException("None of the routes read from the route repository for '$url' matched the request: ".$e->getMessage());
+            throw new ResourceNotFoundException("None of the routes read from the route repository for '$url' matched the request: ".$e->getMessage(), $e->getCode(), $e);
         }
 
         $route = $routes->get($defaults['_route']);
