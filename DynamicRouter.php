@@ -223,6 +223,10 @@ class DynamicRouter implements RouterInterface, ChainedRouterInterface
             $defaults[RouteObjectInterface::CONTENT_OBJECT] = $content;
         }
 
+        if ($route instanceof RouteObjectInterface && is_string($route->getRouteKey())) {
+            $defaults['_route'] = $route->getRouteKey();
+        }
+
         return $defaults;
     }
 

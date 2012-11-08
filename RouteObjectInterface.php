@@ -7,7 +7,9 @@ namespace Symfony\Cmf\Component\Routing;
  * addition to extending Symfony\Component\Routing\Route.
  *
  * If they do, the DynamicRouter will request the route content and put it into
- * the RouteObjectInterface::CONTENT_OBJECT field.
+ * the RouteObjectInterface::CONTENT_OBJECT field. The DynamicRouter will also
+ * request getRouteKey and when the method returns a string this will used
+ * as the route name by setting it as $defaults['_route'].
  *
  * Some fields in defaults have a special meaning in the getDefaults(). In addition
  * to the constants defined in this class, _locale and _controller are also used.
@@ -53,4 +55,13 @@ interface RouteObjectInterface
      * @return object the document or entity this route entry points to
      */
     public function getRouteContent();
+
+    /**
+     * Get the route key. This key will be used as the Route name (_route key in $defaults array).
+     *
+     * Return null if you want to use the default key from the RouteCollection.
+     *
+     * @return string the route name
+     */
+    public function getRouteKey();
 }
