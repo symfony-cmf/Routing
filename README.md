@@ -4,4 +4,4 @@ This library extends the Symfony2 Routing component. Even though it has Symfony
 in its name, it does not need the full Symfony2 framework and can be used in
 standalone projects.
 
-http://symfony.com/doc/master/cmf/reference/routing.html
+http://symfony.com/doc/master/cmf/components/routing.html
