@@ -199,10 +199,15 @@ class ChainRouter implements RouterInterface, RequestMatcherInterface, WarmableI
         /** @var $router ChainedRouterInterface */
         foreach ($this->all() as $router) {
 
-            if ($name && !is_string($name) && !$router instanceof ChainedRouterInterface ) {
-                continue;
+            // if $name and $router does not implement ChainedRouterInterface and $name is not a string, continue
+            // if $name and $router does not implement ChainedRouterInterface and $name is string but does not match a default Symfony2 route name, continue
+            if ($name && !$router instanceof ChainedRouterInterface) {
+                if (!is_string($name) || !preg_match('/^[a-z0-9A-Z_.]+$/', $name)) {
+                    continue;
+                }
             }
 
+            // If $router implements ChainedRouterInterface but doesn't support this route name, continue
             if ($router instanceof ChainedRouterInterface && !$router->supports($name)) {
                 continue;
             }
