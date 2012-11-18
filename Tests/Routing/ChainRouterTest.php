@@ -428,6 +428,68 @@ class ChainRouterTest extends CmfUnitTestCase
         $this->assertEquals($url, $result);
     }
 
+    public function testGenerateObjectName()
+    {
+        $name = new \stdClass();
+        $parameters = array('test' => 'value');
+
+        $defaultRouter = $this->getMock('Symfony\\Component\\Routing\\RouterInterface');
+        $chainedRouter = $this->getMock('Symfony\\Cmf\\Component\\Routing\\ChainedRouterInterface');
+
+        $defaultRouter
+            ->expects($this->never())
+            ->method('generate')
+        ;
+        $chainedRouter
+            ->expects($this->once())
+            ->method('supports')
+            ->will($this->returnValue(true))
+        ;
+        $chainedRouter
+            ->expects($this->once())
+            ->method('generate')
+            ->with($name, $parameters, false)
+            ->will($this->returnValue($name))
+        ;
+
+        $this->router->add($defaultRouter, 200);
+        $this->router->add($chainedRouter, 100);
+
+        $result = $this->router->generate($name, $parameters);
+        $this->assertEquals($name, $result);
+    }
+
+    public function testGenerateNonDefaultStringName()
+    {
+        $name = '/test/this';
+        $parameters = array('test' => 'value');
+
+        $defaultRouter = $this->getMock('Symfony\\Component\\Routing\\RouterInterface');
+        $chainedRouter = $this->getMock('Symfony\\Cmf\\Component\\Routing\\ChainedRouterInterface');
+
+        $defaultRouter
+            ->expects($this->never())
+            ->method('generate')
+        ;
+        $chainedRouter
+            ->expects($this->once())
+            ->method('supports')
+            ->will($this->returnValue(true))
+        ;
+        $chainedRouter
+            ->expects($this->once())
+            ->method('generate')
+            ->with($name, $parameters, false)
+            ->will($this->returnValue($name))
+        ;
+
+        $this->router->add($defaultRouter, 200);
+        $this->router->add($chainedRouter, 100);
+
+        $result = $this->router->generate($name, $parameters);
+        $this->assertEquals($name, $result);
+    }
+
     public function testWarmup()
     {
         $dir = 'test_dir';
