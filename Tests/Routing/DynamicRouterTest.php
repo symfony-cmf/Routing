@@ -211,21 +211,21 @@ class DynamicRouterTest extends CmfUnitTestCase
     }
 
     /**
-     * @expectedException Symfony\Component\Routing\Exception\RouteNotFoundException
+     * @expectedException \Symfony\Component\Routing\Exception\RouteNotFoundException
      */
     public function testGenerateNoContent()
     {
         $this->router->generate('', array());
     }
     /**
-     * @expectedException Symfony\Component\Routing\Exception\RouteNotFoundException
+     * @expectedException \Symfony\Component\Routing\Exception\RouteNotFoundException
      */
     public function testGenerateInvalidContent()
     {
         $this->router->generate('', array('content' => $this));
     }
     /**
-     * @expectedException Symfony\Component\Routing\Exception\RouteNotFoundException
+     * @expectedException \Symfony\Component\Routing\Exception\RouteNotFoundException
      */
     public function testGenerateNoRoutes()
     {
@@ -236,7 +236,7 @@ class DynamicRouterTest extends CmfUnitTestCase
         $this->router->generate('', array('content'=>$this->contentDocument));
     }
     /**
-     * @expectedException Symfony\Component\Routing\Exception\RouteNotFoundException
+     * @expectedException \Symfony\Component\Routing\Exception\RouteNotFoundException
      */
     public function testGenerateInvalidRoute()
     {
@@ -244,7 +244,7 @@ class DynamicRouterTest extends CmfUnitTestCase
             ->method('getRoutes')
             ->will($this->returnValue(array($this)));
 
-        $this->router->generate('', array('content'=>$this->contentDocument));
+        $this->router->generate('', array('content' => $this->contentDocument));
     }
 
 
