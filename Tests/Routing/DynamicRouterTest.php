@@ -284,7 +284,7 @@ class DynamicRouterTest extends CmfUnitTestCase
         $routeCollection->add('_company_more', $this->routeDocument);
         $this->repository->expects($this->once())
             ->method('getRouteCollectionForRequest')
-            ->with($this->anything()) // can't get phpunit to consider the request object equal
+            ->with($this->isInstanceOf('Symfony\\Component\\HttpFoundation\\Request'))
             ->will($this->returnValue($routeCollection));
 
         $this->mapper->expects($this->once())
@@ -328,7 +328,7 @@ class DynamicRouterTest extends CmfUnitTestCase
         $routeCollection->add('_company_more', $this->routeDocument);
         $this->repository->expects($this->once())
             ->method('getRouteCollectionForRequest')
-            ->with($this->anything()) // can't get phpunit to consider the request object equal
+            ->with($this->isInstanceOf('Symfony\\Component\\HttpFoundation\\Request'))
             ->will($this->returnValue($routeCollection));
 
         $this->mapper->expects($this->once())
@@ -374,7 +374,7 @@ class DynamicRouterTest extends CmfUnitTestCase
         $routeCollection->add('route_alias', $this->routeDocument);
         $this->repository->expects($this->once())
             ->method('getRouteCollectionForRequest')
-            ->with($this->anything()) // can't get phpunit to consider the request object equal
+            ->with($this->isInstanceOf('Symfony\\Component\\HttpFoundation\\Request'))
             ->will($this->returnValue($routeCollection));
 
         $matcher = $this->getMockBuilder('Symfony\Component\Routing\Matcher\UrlMatcher')->disableOriginalConstructor()->getMock();
@@ -409,7 +409,7 @@ class DynamicRouterTest extends CmfUnitTestCase
 
         $this->repository->expects($this->once())
             ->method('getRouteCollectionForRequest')
-            ->with($this->anything()) // can't get phpunit to consider the request object equal
+            ->with($this->isInstanceOf('Symfony\\Component\\HttpFoundation\\Request'))
             ->will($this->returnValue(new RouteCollection()));
 
         $matcher = $this->getMockBuilder('Symfony\Component\Routing\Matcher\UrlMatcher')->disableOriginalConstructor()->getMock();
@@ -443,7 +443,7 @@ class DynamicRouterTest extends CmfUnitTestCase
 
         $this->repository->expects($this->once())
             ->method('getRouteCollectionForRequest')
-            ->with($this->anything()) // can't get phpunit to consider the request object equal
+            ->with($this->isInstanceOf('Symfony\\Component\\HttpFoundation\\Request'))
             ->will($this->returnValue($routeCollection));
 
         $matcher = $this->getMockBuilder('Symfony\Component\Routing\Matcher\UrlMatcher')->disableOriginalConstructor()->getMock();
