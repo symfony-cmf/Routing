@@ -8,7 +8,7 @@ namespace Symfony\Cmf\Component\Routing;
  * Typically this could be a doctrine orm or odm repository, but you can
  * implement something else if you need to.
  */
-interface RouteRepositoryInterface
+interface RouteProviderInterface
 {
     /**
      * Find routes that could match this absolute path.

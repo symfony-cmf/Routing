@@ -9,7 +9,7 @@ use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 /**
  * A FinalMatcher returns only one route from a collection of candidate routes.
  */
-interface FinalMatcherInterface extends RequestMatcherInterface {
+interface FinalMatcherInterface extends UrlMatcherInterface {
 
   /**
    * Sets the route collection this matcher should use.
