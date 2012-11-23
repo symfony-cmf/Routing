@@ -2,8 +2,10 @@
 
 namespace Symfony\Cmf\Component\Routing\NestedMatcher;
 
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\RouteCollection;
+use Symfony\Component\Routing\Exception\ResourceNotFoundException;
+
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * A RouteFilter takes a RouteCollection and returns a filtered subset.
@@ -12,19 +14,23 @@ use Symfony\Component\Routing\RouteCollection;
  * router filters to handle their own empty-case handling, usually by throwing
  * an appropriate exception if no routes match the object's rules.
  *
+ * @author Crell
+ * @author David Buchmann
  */
 interface RouteFilterInterface
 {
     /**
-     * Matches a request against multiple routes.
+     * Filters the route collection against a request and returns all matching
+     * routes.
      *
-     * @param RouteCollection $collection
-     *    The collection against which to match.
-     * @param Request $request
-     *   A Request object against which to match.
+     * @param RouteCollection $collection The collection against which to match.
+     * @param Request         $request    A Request object against which to match.
      *
-     * @return RouteCollection
-     *   A RouteCollection of matched routes.
+     * @return RouteCollection A non-empty RouteCollection of matched routes.
+     *
+     * @throws ResourceNotFoundException if none of the routes in $collection
+     *      matches $request. This is a performance optimization to not continue
+     *      the match process when a match will no longer be possible.
      */
     public function filter(RouteCollection $collection, Request $request);
 }
