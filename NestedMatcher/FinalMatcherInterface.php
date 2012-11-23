@@ -8,20 +8,18 @@ use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 
 /**
  * A FinalMatcher returns only one route from a collection of candidate routes.
- *
- * Final matchers must also implement either RequestMatcherInterface or
- * UrlMatcherInterface.
  */
 interface FinalMatcherInterface {
 
   /**
-   * Sets the route collection this matcher should use.
+   * Matchs a request against a route collection.
    *
-   * @param \Symfony\Component\Routing\RouteCollection $collection
+   * @param RouteCollection $collection
    *   The collection against which to match.
+   * @param Request $request
+   *   The request to match.
    *
-   * @return \Drupal\Core\Routing\FinalMatcherInterface
-   *   The current matcher.
+   * @return array An array of parameters
    */
-  public function setCollection(RouteCollection $collection);
+  public function finalMatch(RouteCollection $collection, Request $request);
 }

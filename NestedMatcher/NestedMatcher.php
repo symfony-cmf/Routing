@@ -16,9 +16,6 @@ class NestedMatcher implements RequestMatcherInterface {
     /**
      * The final matcher.
      *
-     * This object must also match either RequestMatcherInterface or
-     * UrlMatcherInterface.
-     *
      * @var FinalMatcherInterface
      */
     protected $finalMatcher;
@@ -125,32 +122,7 @@ class NestedMatcher implements RequestMatcherInterface {
         $collection = $filter->filter($collection, $request);
       }
 
-      $this->finalMatcher->setCollection($collection);
-
-      if ($this->finalMatcher instanceof RequestMatcherInterface) {
-        $attributes = $this->finalMatcher->matchRequest($request);
-      }
-      else {
-        $context = new RequestConext();
-        $context->fromRequest($request);
-        $this->finalMatcher->setContext($context);
-        $attributes = $this->finalMatcher->match($this->getRequestPath($request));
-      }
-
-      return $attributes;
-    }
-
-    /**
-     * Retrieves the path to match against from the request in a UrlMatcher.
-     *
-     * (This is the part Drupal would override.)
-     *
-     * @param Request $request
-     *
-     * @return string The path to match against
-     */
-    protected function getRequestPath(Request $request) {
-      return $request->getPathInfo();
+      return $this->finalMatcher->finalMatch($collection, $request);
     }
 
     /**
