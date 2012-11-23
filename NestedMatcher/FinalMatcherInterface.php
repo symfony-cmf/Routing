@@ -8,8 +8,11 @@ use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 
 /**
  * A FinalMatcher returns only one route from a collection of candidate routes.
+ *
+ * Final matchers must also implement either RequestMatcherInterface or
+ * UrlMatcherInterface.
  */
-interface FinalMatcherInterface extends UrlMatcherInterface {
+interface FinalMatcherInterface {
 
   /**
    * Sets the route collection this matcher should use.

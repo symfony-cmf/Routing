@@ -16,6 +16,9 @@ class NestedMatcher implements RequestMatcherInterface {
     /**
      * The final matcher.
      *
+     * This object must also match either RequestMatcherInterface or
+     * UrlMatcherInterface.
+     *
      * @var FinalMatcherInterface
      */
     protected $finalMatcher;
@@ -42,12 +45,11 @@ class NestedMatcher implements RequestMatcherInterface {
     protected $routeProvider;
 
     /**
-     * The request context.
+     * Constructs a new NestedMatcher
      *
-     * @var RequestContext
+     * @param RouteProviderInterface $provider
+     *   The Route Provider this matcher should use.
      */
-    protected $context;
-
     public function __construct(RouteProviderInterface $provider) {
       $this->routeProvider = $provider;
     }
@@ -111,17 +113,16 @@ class NestedMatcher implements RequestMatcherInterface {
      */
     public function matchRequest(Request $request) {
 
-      $url = $request->attributes->get('system_path') ?: $request->getPathInfo();
-      $collection = $this->routeProvider->getRouteCollectionForRequest($url);
+      $collection = $this->routeProvider->getRouteCollectionForRequest($request);
 
       if (!count($collection)) {
         throw new ResourceNotFoundException();
       }
 
+      // Route Filters are expected to throw an exception themselves if they
+      // end up filtering the list down to 0.
       foreach ($this->getRouteFilters() as $filter) {
-        if ($collection) {
-          $collection = $filter->filter($collection, $request);
-        }
+        $collection = $filter->filter($collection, $request);
       }
 
       $this->finalMatcher->setCollection($collection);
@@ -133,10 +134,23 @@ class NestedMatcher implements RequestMatcherInterface {
         $context = new RequestConext();
         $context->fromRequest($request);
         $this->finalMatcher->setContext($context);
-        $attributes = $this->finalMatcher->match($url);
+        $attributes = $this->finalMatcher->match($this->getRequestPath($request));
       }
 
       return $attributes;
+    }
+
+    /**
+     * Retrieves the path to match against from the request in a UrlMatcher.
+     *
+     * (This is the part Drupal would override.)
+     *
+     * @param Request $request
+     *
+     * @return string The path to match against
+     */
+    protected function getRequestPath(Request $request) {
+      return $request->getPathInfo();
     }
 
     /**
@@ -171,29 +185,4 @@ class NestedMatcher implements RequestMatcherInterface {
 
       return $sortedFilters;
     }
-
-    /**
-     * Sets the request context.
-     *
-     * This method is unused. It is here only to satisfy the interface.
-     *
-     * @param \Symfony\Component\Routing\RequestContext $context
-     *   The context
-     */
-    public function setContext(RequestContext $context) {
-      $this->context = $context;
-    }
-
-    /**
-     * Gets the request context.
-     *
-     * This method is unused. It is here only to satisfy the interface.
-     *
-     * @return \Symfony\Component\Routing\RequestContext
-     *   The context
-     */
-    public function getContext() {
-      return $this->context;
-    }
-
 }
