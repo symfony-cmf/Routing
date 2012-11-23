@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 interface RouteProviderInterface
 {
     /**
-     * Find routes that could match this absolute path.
+     * Finds routes that may potentially match the request.
      *
      * This may return a mixed list of class instances, but all routes returned
      * must extend the core symfony route. The classes may also implement
@@ -24,29 +24,19 @@ interface RouteProviderInterface
      * an empty array. Exceptions are only used to abort the whole request in
      * case something is seriously broken, like the storage backend being down.
      *
-     * @param string $url
-     *
-     * @return \Symfony\Component\Routing\RouteCollection with all urls that
-     *      could potentially match $url. Empty collection if nothing can match.
-     *
-     * @throws \Exception if the underlying storage has an error
-     */
-    public function findManyByUrl($url);
-
-    /**
-     * Finds routes that may potentially match the request.
-     *
      * Note that implementations may not implement an optimal matching
      * algorithm, simply a reasonable first pass.  That allows for potentially
      * very large route sets to be filtered down to likely candidates, which
      * may then be filtered in memory more completely.
      *
-     * @return \Symfony\Component\Routing\RouteCollection with all urls that
+     * @param Request
+     *   A request against which to match.
+     *
+     * @return RouteCollection with all urls that
      *      could potentially match $request. Empty collection if nothing can
      *      match.
      */
     public function getRouteCollectionForRequest(Request $request);
-
 
     /**
      * Find the route using the provided route name (and parameters)
