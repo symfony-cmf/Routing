@@ -2,6 +2,8 @@
 
 namespace Symfony\Cmf\Component\Routing;
 
+use Symfony\Component\HttpFoundation\Request;
+
 /**
  * Interface for the route provider the DynamicRouter is using.
  *
@@ -30,6 +32,21 @@ interface RouteProviderInterface
      * @throws \Exception if the underlying storage has an error
      */
     public function findManyByUrl($url);
+
+    /**
+     * Finds routes that may potentially match the request.
+     *
+     * Note that implementations may not implement an optimal matching
+     * algorithm, simply a reasonable first pass.  That allows for potentially
+     * very large route sets to be filtered down to likely candidates, which
+     * may then be filtered in memory more completely.
+     *
+     * @return \Symfony\Component\Routing\RouteCollection with all urls that
+     *      could potentially match $request. Empty collection if nothing can
+     *      match.
+     */
+    public function getRouteCollectionForRequest(Request $request);
+
 
     /**
      * Find the route using the provided route name (and parameters)

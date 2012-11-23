@@ -2,14 +2,16 @@
 
 namespace Symfony\Cmf\Component\Routing\NestedMatcher;
 
-use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\RequestContext;
+use Symfony\Component\Routing\Exception\ResourceNotFoundException;
+use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 use Symfony\Cmf\Component\Routing\RouteProviderInterface;
 
 /**
  * The nested matcher layers multiple partial matchers together.
  */
-class NestedMatcher {
+class NestedMatcher implements RequestMatcherInterface {
 
     /**
      * The final matcher.
@@ -45,6 +47,10 @@ class NestedMatcher {
      * @var RequestContext
      */
     protected $context;
+
+    public function __construct(RouteProviderInterface $provider) {
+      $this->routeProvider = $provider;
+    }
 
     /**
      * Adds a partial matcher to the matching plan.
@@ -106,7 +112,11 @@ class NestedMatcher {
     public function matchRequest(Request $request) {
 
       $url = $request->attributes->get('system_path') ?: $request->getPathInfo();
-      $collection = $this->routeProvider->findManyByUrl($url);
+      $collection = $this->routeProvider->getRouteCollectionForRequest($url);
+
+      if (!count($collection)) {
+        throw new ResourceNotFoundException();
+      }
 
       foreach ($this->getRouteFilters() as $filter) {
         if ($collection) {

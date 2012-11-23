@@ -14,6 +14,7 @@ class UrlMatcher extends SymfonyUrlMatcher implements FinalMatcherInterface
 
     // The redefined $routes property and the constructor are only needed
     // until Symfony makes $routes protected.
+    // See: https://github.com/symfony/symfony/pull/6100
 
     /**
      * @var RouteCollection
