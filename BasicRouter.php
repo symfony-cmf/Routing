@@ -80,8 +80,8 @@ class BasicRouter implements RouterInterface, RequestMatcherInterface
      */
     public function matchRequest(Request $request)
     {
-        if (! $this->matcher instanceof RequestMatcherInterface) {
-            throw new \Exception('Wrong matcher type');
+        if (! $this->matcher instanceof UrlMatcherInterface) {
+            return $this->matcher->match($request->getPathInfo());
         }
 
         return $this->matcher->matchRequest($request);
