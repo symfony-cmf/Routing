@@ -18,18 +18,18 @@ class NestedMatcher implements NestedMatcherInterface {
   protected $finalMatcher;
 
   /**
-   * An array of PartialMatchers.
+   * An array of RouteFilterInterface objects.
    *
    * @var array
    */
-  protected $partialMatchers = array();
+  protected $filters = array();
 
   /**
-   * Array of PartialMatcherInterface objects, sorted.
+   * Array of RouteFilterInterface objects, sorted.
    *
    * @var type
    */
-  protected $sortedMatchers = array();
+  protected $sortedFilters = array();
 
   /**
    * The initial matcher to match against.
@@ -59,13 +59,13 @@ class NestedMatcher implements NestedMatcherInterface {
    * @return NestedMatcherInterface
    *   The current matcher.
    */
-  public function addPartialMatcher(PartialMatcherInterface $matcher, $priority = 0) {
-    if (empty($this->matchers[$priority])) {
-      $this->matchers[$priority] = array();
+  public function addRouteFilter(RouteFilterInterface $filter, $priority = 0) {
+    if (empty($this->filters[$priority])) {
+      $this->filters[$priority] = array();
     }
 
-    $this->matchers[$priority][] = $matcher;
-    $this->sortedMatchers = array();
+    $this->filter[$priority][] = $filter;
+    $this->sortedFilters = array();
   }
 
   /**
@@ -122,11 +122,10 @@ class NestedMatcher implements NestedMatcherInterface {
   public function matchRequest(Request $request) {
     $collection = $this->initialMatcher->matchRequestPartial($request);
 
-    foreach ($this->getPartialMatchers() as $matcher) {
+    foreach ($this->getRouteFilters() as $filter) {
       if ($collection) {
-        $matcher->setCollection($collection);
+        $collection = $filter->filter($collection, $request);
       }
-      $collection = $matcher->matchRequestPartial($request);
     }
 
     $attributes = $this->finalMatcher->setCollection($collection)->matchRequest($request);
@@ -140,31 +139,31 @@ class NestedMatcher implements NestedMatcherInterface {
     * @return array
     *   An array of RequestMatcherInterface objects.
     */
-  public function getPartialMatchers() {
-    if (empty($this->sortedMatchers)) {
-      $this->sortedMatchers = $this->sortMatchers();
+  public function getRouteFilters() {
+    if (empty($this->sortedFilters)) {
+      $this->sortedFilters = $this->sortFilters();
     }
 
     return $this->sortedMatchers;
   }
 
   /**
-    * Sort matchers by priority.
+    * Sort filters by priority.
     *
     * The highest priority number is the highest priority (reverse sorting).
     *
     * @return \Symfony\Component\Routing\RequestMatcherInterface[]
     *   An array of Matcher objects in the order they should be used.
     */
-  protected function sortMatchers() {
-    $sortedMatchers = array();
-    krsort($this->matchers);
+  protected function sortFilters() {
+    $sortedFilters = array();
+    krsort($this->filters);
 
-    foreach ($this->matchers as $matchers) {
-      $sortedMatchers = array_merge($sortedMatchers, $matchers);
+    foreach ($this->filters as $filters) {
+      $sortedFilters = array_merge($sortedFilters, $filters);
     }
 
-    return $sortedMatchers;
+    return $sortedFilters;
   }
 
   /**
