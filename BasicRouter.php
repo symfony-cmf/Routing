@@ -9,7 +9,6 @@ use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 use Symfony\Component\Routing\Matcher\UrlMatcherInterface;
-use Symfony\Component\HttpKernel\Log\LoggerInterface;
 
 class BasicRouter implements RouterInterface, RequestMatcherInterface
 {
