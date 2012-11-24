@@ -26,13 +26,10 @@ class UrlMatcher extends SymfonyUrlMatcher implements FinalMatcherInterface
     /**
      * {@inheritdoc}
      */
-    protected function getAttributes(Route $route)
+    protected function getAttributes(Route $route, $name, $attributes)
     {
-        $args = func_get_args();
-        array_shift($args);
-        // TODO: where does the $name come from?
-        $args[] = array('_name' => $name, '_route' => $route);
-
-        return $this->mergeDefaults(call_user_func_array('array_replace', $args), $route->getDefaults());
+        $attributes['_name'] = $name;
+        $attributes['_route'] = $route;
+        return $this->mergeDefaults($attributes, $route->getDefaults());
     }
 }
