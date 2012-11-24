@@ -126,7 +126,7 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
     public function matchRequest(Request $request)
     {
         $matcher = $this->getMatcher();
-        if (! $matcher instanceof UrlMatcherInterface) {
+        if ($matcher instanceof UrlMatcherInterface) {
             return $matcher->match($request->getPathInfo());
         }
 
