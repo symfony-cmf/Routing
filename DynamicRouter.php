@@ -31,7 +31,7 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
     /**
      * @var RouteEnhancerInterface[]
      */
-    protected $enhancers;
+    protected $enhancers = array();
 
     /**
      * @var RequestContext
