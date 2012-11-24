@@ -3,7 +3,6 @@
 namespace Symfony\Cmf\Component\Routing;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\Generator\UrlGenerator;
 use Symfony\Component\HttpKernel\Log\LoggerInterface;
 
@@ -24,10 +23,9 @@ class ProviderBasedGenerator extends UrlGenerator
      */
     protected $provider;
 
-    public function __construct(RouteProviderInterface $provider, RequestContext $context, LoggerInterface $logger = null)
+    public function __construct(RouteProviderInterface $provider, LoggerInterface $logger = null)
     {
         $this->provider = $provider;
-        $this->context = $context;
         $this->logger = $logger;
     }
 
