@@ -158,9 +158,7 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
      */
     public function generate($name, $parameters = array(), $absolute = false)
     {
-        $generator = $this->getGenerator();
-
-        return $generator->generate($name, $parameters, $absolute);
+        return $this->getGenerator()->generate($name, $parameters, $absolute);
     }
 
     /**
