@@ -34,6 +34,13 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
     protected $enhancers = array();
 
     /**
+     * Cached sorted list of enhancers
+     *
+     * @var RouteEnhancerInterface[]
+     */
+    protected $sortedEnhancers = array();
+
+    /**
      * @var RequestContext
      */
     protected $context;
@@ -132,7 +139,7 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
 
         $defaults = $matcher->matchRequest($request);
 
-        foreach ($this->enhancers as $enhancer) {
+        foreach ($this->getRouteEnhancers() as $enhancer) {
             $defaults = $enhancer->enhance($defaults, $request);
         }
 
@@ -162,15 +169,58 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
     }
 
     /**
-     * Add route enhancers to the router to let them generate information on matched routes.
+     * Add route enhancers to the router to let them generate information on
+     * matched routes.
      *
-     * The order of the enhancers is determined by the order they are added to the router.
+     * The order of the enhancers is determined by the priority, the higher the
+     * value, the earlier the enhancer is run.
      *
      * @param RouteEnhancerInterface $enhancer
+     * @param int                    $priority
      */
-    public function addRouteEnhancer(RouteEnhancerInterface $enhancer)
+    public function addRouteEnhancer(RouteEnhancerInterface $enhancer, $priority = 0)
     {
-        $this->enhancers[] = $enhancer;
+        if (empty($this->enhancers[$priority])) {
+            $this->enhancers[$priority] = array();
+        }
+
+        $this->enhancers[$priority][] = $enhancer;
+        $this->sortedEnhancers = array();
+
+        return $this;
+    }
+
+    /**
+     * Sorts the enhancers and flattens them.
+     *
+     * @return RouteEnhancerInterface[] the enhancers ordered by priority
+     */
+    public function getRouteEnhancers()
+    {
+        if (empty($this->sortedEnhancers)) {
+            $this->sortedEnhancers = $this->sortRouteEnhancers();
+        }
+
+        return $this->sortedEnhancers;
+    }
+
+    /**
+     * Sort enhancers by priority.
+     *
+     * The highest priority number is the highest priority (reverse sorting).
+     *
+     * @return RouteEnhancerInterface[] the sorted enhancers
+     */
+    protected function sortRouteEnhancers()
+    {
+        $sortedEnhancers = array();
+        krsort($this->enhancers);
+
+        foreach ($this->enhancers as $enhancers) {
+            $sortedEnhancers = array_merge($sortedEnhancers, $enhancers);
+        }
+
+        return $sortedEnhancers;
     }
 
     /**
