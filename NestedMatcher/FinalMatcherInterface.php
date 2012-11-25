@@ -8,6 +8,9 @@ use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 
 /**
  * A FinalMatcher returns only one route from a collection of candidate routes.
+ *
+ * @author Crell
+ * @author David Buchmann
  */
 interface FinalMatcherInterface
 {
@@ -21,9 +24,6 @@ interface FinalMatcherInterface
    *
    * @throws ResourceNotFoundException if none of the routes in $collection
    *    matches $request
-   *
-   * @author Crell
-   * @author David Buchmann
    */
   public function finalMatch(RouteCollection $collection, Request $request);
 }
