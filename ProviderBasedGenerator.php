@@ -46,4 +46,14 @@ class ProviderBasedGenerator extends UrlGenerator
 
         return $this->doGenerate($compiledRoute->getVariables(), $route->getDefaults(), $route->getRequirements(), $compiledRoute->getTokens(), $parameters, $name, $absolute, $compiledRoute->getHostnameTokens());
     }
+
+    /**
+     * Support a route object and any string as route name
+     *
+     * {@inheritDoc}
+     */
+    public function supports($name)
+    {
+        return is_string($name) || $name instanceof SymfonyRoute;
+    }
 }

@@ -10,11 +10,14 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 use Symfony\Component\Routing\Matcher\UrlMatcherInterface;
 
-use Symfony\Cmf\Component\Routing\Mapper\RouteEnhancerInterface;
+use Symfony\Cmf\Component\Routing\Enhancer\RouteEnhancerInterface;
 
 /**
- * A base router class for the cmf. Uses the RouteEnhancer concept to generate
- * data on routes.
+ * A flexible router accepting matcher and generator through injection and
+ * using the RouteEnhancer concept to generate additional data on the routes.
+ *
+ * @author Crell
+ * @author David Buchmann
  */
 class DynamicRouter implements RouterInterface, RequestMatcherInterface, ChainedRouterInterface
 {
@@ -92,6 +95,38 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
     }
 
     /**
+     * Generates a URL from the given parameters.
+     *
+     * If the generator is not able to generate the url, it must throw the RouteNotFoundException
+     * as documented below.
+     *
+     * @param string  $name       The name of the route
+     * @param mixed   $parameters An array of parameters
+     * @param Boolean $absolute   Whether to generate an absolute URL
+     *
+     * @return string The generated URL
+     *
+     * @throws RouteNotFoundException if route doesn't exist
+     *
+     * @api
+     */
+    public function generate($name, $parameters = array(), $absolute = false)
+    {
+        return $this->getGenerator()->generate($name, $parameters, $absolute);
+    }
+
+    /**
+     * Support any string as route name
+     *
+     * {@inheritDoc}
+     */
+    public function supports($name)
+    {
+        // TODO: check $this->generator instanceof VersatileGeneratorInterface
+        return $this->generator->supports($name);
+    }
+
+    /**
      * Tries to match a URL path with a set of routes.
      *
      * If the matcher can not find information, it must throw one of the
@@ -110,10 +145,12 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
     {
         $matcher = $this->getMatcher();
         if (! $matcher instanceof UrlMatcherInterface) {
-            throw new \Exception('Wrong matcher type');
+            throw new \InvalidArgumentException('Wrong matcher type, you need to call matchRequest');
         }
 
-        return $matcher->match($pathinfo);
+        $defaults = $matcher->match($pathinfo);
+
+        return $this->applyRouteEnhancers($defaults, Request::create($pathinfo));
     }
 
     /**
@@ -134,38 +171,27 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
     {
         $matcher = $this->getMatcher();
         if ($matcher instanceof UrlMatcherInterface) {
-            return $matcher->match($request->getPathInfo());
+            return $this->match($request->getPathInfo());
         }
 
         $defaults = $matcher->matchRequest($request);
 
-        foreach ($this->getRouteEnhancers() as $enhancer) {
-            $defaults = $enhancer->enhance($defaults, $request);
-        }
-
-        return $defaults;
-
+        return $this->applyRouteEnhancers($defaults, $request);
     }
 
     /**
-     * Generates a URL from the given parameters.
+     * Apply the route enhancers to the defaults, according to priorities
      *
-     * If the generator is not able to generate the url, it must throw the RouteNotFoundException
-     * as documented below.
-     *
-     * @param string  $name       The name of the route
-     * @param mixed   $parameters An array of parameters
-     * @param Boolean $absolute   Whether to generate an absolute URL
-     *
-     * @return string The generated URL
-     *
-     * @throws RouteNotFoundException if route doesn't exist
-     *
-     * @api
+     * @param array $defaults
+     * @param Request $request
+     * @return array
      */
-    public function generate($name, $parameters = array(), $absolute = false)
+    protected function applyRouteEnhancers($defaults, Request $request)
     {
-        return $this->getGenerator()->generate($name, $parameters, $absolute);
+        foreach ($this->getRouteEnhancers() as $enhancer) {
+            $defaults = $enhancer->enhance($defaults, $request);
+        }
+        return $defaults;
     }
 
     /**
@@ -245,15 +271,5 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
     public function getContext()
     {
         return $this->context;
-    }
-
-    /**
-     * Support any string as route name
-     *
-     * {@inheritDoc}
-     */
-    public function supports($name)
-    {
-        return is_string($name);
     }
 }
