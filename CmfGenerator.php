@@ -19,23 +19,8 @@ use Symfony\Cmf\Component\Routing\RouteProviderInterface;
  * @author David Buchmann
  * @author Uwe Jäger
  */
-class CmfGenerator implements UrlGeneratorInterface
+class CmfGenerator extends ProviderBasedGenerator
 {
-    /**
-     * Symfony routes always need a name in the collection. We generate routes
-     * based on the route object, but need to use a name for example in error
-     * reporting.
-     * When generating, we just use this prefix, when matching, we append
-     * whatever the repository returned as ID, replacing anything but
-     * [^a-z0-9A-Z_.] with "_" to get unique valid route names.
-     */
-    const ROUTE_GENERATE_DUMMY_NAME = 'cmf_routing_dynamic_route';
-
-    /**
-     * @var RequestContext
-     */
-    protected $context;
-
     /**
      * The content repository used to find content by it's id
      * This can be used to specify a parameter content_id when generating urls
@@ -45,11 +30,6 @@ class CmfGenerator implements UrlGeneratorInterface
      * @var  ContentRepositoryInterface
      */
     protected $contentRepository;
-
-    public function __construct(RouteProviderInterface $routeProvider)
-    {
-        $this->routeProvider = $routeProvider;
-    }
 
     /**
      * Set an optional content repository to find content by ids
@@ -86,23 +66,7 @@ class CmfGenerator implements UrlGeneratorInterface
             throw new RouteNotFoundException('Route of this document is not an instance of Symfony\Component\Routing\Route but: '.$hint);
         }
 
-        $collection = new RouteCollection();
-        $collection->add(self::ROUTE_GENERATE_DUMMY_NAME, $route);
-
-        return $this->getGenerator($collection)->generate(self::ROUTE_GENERATE_DUMMY_NAME, $parameters, $absolute);
-    }
-
-    /**
-     * Get an url matcher for this collection
-     *
-     * @param RouteCollection $collection collection of routes for the current request
-     *
-     * @return UrlGeneratorInterface the url matcher instance
-     */
-    public function getGenerator(RouteCollection $collection)
-    {
-        // TODO: option to configure class?
-        return new UrlGenerator($collection, $this->context);
+        return parent::generate($route, $parameters, $absolute);
     }
 
     /**
@@ -117,7 +81,7 @@ class CmfGenerator implements UrlGeneratorInterface
      */
     protected function getRouteByName($name, array $parameters)
     {
-        $route = $this->routeRepository->getRouteByName($name, $parameters);
+        $route = $this->provider->getRouteByName($name, $parameters);
         if (empty($route)) {
             throw new RouteNotFoundException('No route found for name: ' . $name);
         }
@@ -260,29 +224,5 @@ class CmfGenerator implements UrlGeneratorInterface
         }
 
         return null;
-    }
-
-    /**
-     * Sets the request context.
-     *
-     * @param RequestContext $context The context
-     *
-     * @api
-     */
-    public function setContext(RequestContext $context)
-    {
-        $this->context = $context;
-    }
-
-    /**
-     * Gets the request context.
-     *
-     * @return RequestContext The context
-     *
-     * @api
-     */
-    public function getContext()
-    {
-        return $this->context;
     }
 }

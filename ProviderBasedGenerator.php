@@ -6,6 +6,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGenerator;
 use Symfony\Component\HttpKernel\Log\LoggerInterface;
 
+use Symfony\Component\Routing\Route as SymfonyRoute;
+
 use Symfony\Cmf\Component\Routing\RouteProviderInterface;
 
 /**
@@ -15,11 +17,10 @@ use Symfony\Cmf\Component\Routing\RouteProviderInterface;
  */
 class ProviderBasedGenerator extends UrlGenerator
 {
-
     /**
      * The route provider for this generator.
      *
-     * @var Symfony\Cmf\Component\Routing\RouteProviderInterface
+     * @var RouteProviderInterface
      */
     protected $provider;
 
@@ -34,7 +35,9 @@ class ProviderBasedGenerator extends UrlGenerator
      */
     public function generate($name, $parameters = array(), $absolute = false)
     {
-        if (null === $route = $this->provider->getRouteByName($name)) {
+        if ($name instanceof SymfonyRoute) {
+            $route = $name;
+        } elseif (null === $route = $this->provider->getRouteByName($name)) {
             throw new RouteNotFoundException(sprintf('Route "%s" does not exist.', $name));
         }
 
@@ -44,4 +47,3 @@ class ProviderBasedGenerator extends UrlGenerator
         return $this->doGenerate($compiledRoute->getVariables(), $route->getDefaults(), $route->getRequirements(), $compiledRoute->getTokens(), $parameters, $name, $absolute, $compiledRoute->getHostnameTokens());
     }
 }
-
