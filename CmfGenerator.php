@@ -225,4 +225,12 @@ class CmfGenerator extends ProviderBasedGenerator
 
         return null;
     }
+
+    /**
+     * We additionally support empty name and data in parameters and RouteAware content
+     */
+    public function supports($name)
+    {
+        return ! $name || parent::supports($name) || $name instanceof RouteAwareInterface;
+    }
 }

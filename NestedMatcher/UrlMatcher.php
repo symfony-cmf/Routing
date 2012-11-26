@@ -4,7 +4,7 @@ namespace Symfony\Cmf\Component\Routing\NestedMatcher;
 
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
-use Symfony\Component\Routing\UrlMatcher as SymfonyUrlMatcher;
+use Symfony\Component\Routing\Matcher\UrlMatcher as SymfonyUrlMatcher;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
