@@ -1,6 +1,6 @@
 <?php
 
-namespace Symfony\Cmf\Component\Routing\Mapper;
+namespace Symfony\Cmf\Component\Routing\Enhancer;
 
 use Symfony\Component\Routing\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -51,7 +51,8 @@ class RouteContentEnhancer implements RouteEnhancerInterface
         }
 
         if (! isset($defaults[$this->routefield])
-            || ! $defaults[$this->routefield] instanceof RouteObjectInterface) {
+            || ! $defaults[$this->routefield] instanceof RouteObjectInterface
+        ) {
             // we can't determine the content
             return $defaults;
         }

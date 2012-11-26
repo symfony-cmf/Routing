@@ -1,6 +1,6 @@
 <?php
 
-namespace Symfony\Cmf\Component\Routing\Mapper;
+namespace Symfony\Cmf\Component\Routing\Enhancer;
 
 use Symfony\Component\HttpFoundation\Request;
 

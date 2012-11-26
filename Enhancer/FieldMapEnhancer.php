@@ -1,6 +1,6 @@
 <?php
 
-namespace Symfony\Cmf\Component\Routing\Mapper;
+namespace Symfony\Cmf\Component\Routing\Enhancer;
 
 use Symfony\Component\HttpFoundation\Request;
 
@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
  *
  * @author David Buchmann
  */
-class FieldReplaceEnhancer implements RouteEnhancerInterface
+class FieldMapEnhancer implements RouteEnhancerInterface
 {
     /**
      * @var string field for key in hashmap lookup
