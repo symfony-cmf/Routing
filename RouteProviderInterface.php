@@ -50,4 +50,7 @@ interface RouteProviderInterface
      *      there is no route with that name in this repository
      */
     public function getRouteByName($name, $parameters = array());
+
+    // TODO: do we need parameters? maybe to handle locale?
+    public function getRoutesByNames($names, $parameters = array());
 }
