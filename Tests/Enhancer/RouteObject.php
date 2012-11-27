@@ -11,5 +11,8 @@ use Symfony\Cmf\Component\Routing\RouteObjectInterface;
  */
 abstract class RouteObject extends Route implements RouteObjectInterface
 {
-
+    public function getRouteKey()
+    {
+        return null;
+    }
 }

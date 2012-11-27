@@ -302,6 +302,10 @@ class RouteMock extends SymfonyRoute implements RouteObjectInterface
         }
         return $this->locale;
     }
+    public function getRouteKey()
+    {
+        return null;
+    }
 }
 
 /**

@@ -7,6 +7,8 @@ use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\Matcher\UrlMatcher as SymfonyUrlMatcher;
 use Symfony\Component\HttpFoundation\Request;
 
+use Symfony\Cmf\Component\Routing\RouteObjectInterface;
+
 /**
  * Extended UrlMatcher to provide an additional interface and enhanced features.
  *
@@ -28,6 +30,9 @@ class UrlMatcher extends SymfonyUrlMatcher implements FinalMatcherInterface
      */
     protected function getAttributes(Route $route, $name, $attributes)
     {
+        if ($route instanceof RouteObjectInterface && is_string($route->getRouteKey())) {
+            $name = $route->getRouteKey();
+        }
         $attributes['_name'] = $name;
         $attributes['_route'] = $route;
         return $this->mergeDefaults($attributes, $route->getDefaults());

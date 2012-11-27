@@ -15,7 +15,7 @@ interface RouteAwareInterface
      * the routeContent field to store the reference to the content so you can
      * get the routes with Referrers(filter="routeContent")
      *
-     * @return array of RouteObjectInterface instances that point to this content
+     * @return \Symfony\Component\Routing\Route[] Route instances that point to this content
      */
     public function getRoutes();
 }
