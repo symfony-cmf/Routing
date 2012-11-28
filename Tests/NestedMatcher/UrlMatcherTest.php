@@ -6,6 +6,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\Route;
+use Symfony\Cmf\Component\Routing\NestedMatcher\UrlMatcher;
 
 use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 
@@ -14,6 +15,7 @@ use Symfony\Cmf\Component\Routing\Test\CmfUnitTestCase;
 class UrlMatcherTest extends CmfUnitTestCase
 {
     protected $routeDocument;
+    protected $routeCompiled;
     protected $matcher;
     protected $context;
     protected $request;
@@ -22,56 +24,118 @@ class UrlMatcherTest extends CmfUnitTestCase
 
     public function setUp()
     {
-        $this->routeDocument = $this->buildMock('Symfony\\Cmf\\Component\\Routing\\Tests\\Routing\\RouteMock', array('getDefaults'));
-
-        $this->generator = $this->buildMock('Symfony\\Component\\Routing\\Generator\\UrlGeneratorInterface', array('supports', 'generate', 'setContext', 'getContext'));
-        $this->enhancer = $this->buildMock('Symfony\\Cmf\\Component\\Routing\\Enhancer\\RouteEnhancerInterface', array('enhance'));
+        $this->routeDocument = $this->buildMock('Symfony\\Cmf\\Component\\Routing\\Tests\\Routing\\RouteMock', array('getDefaults', 'getRouteKey', 'compile'));
+        $this->routeCompiled = $this->buildMock('Symfony\\Component\\Routing\\CompiledRoute');
 
         $this->context = $this->buildMock('Symfony\\Component\\Routing\\RequestContext');
         $this->request = Request::create($this->url);
 
-        $this->router = new DynamicRouter($this->context, $this->matcher, $this->generator);
-        $this->router->addRouteEnhancer($this->enhancer);
+        $this->matcher = new UrlMatcher(new RouteCollection(), $this->context);
     }
 
     public function testMatchRouteKey()
     {
-        $url_alias = "/company/more";
+        $this->doTestMatchRouteKey($this->url);
+    }
 
-        $this->routeDocument->expects($this->once())
-            ->method('getRouteContent')
-            ->will($this->returnValue($this->contentDocument));
+    public function testMatchNoKey()
+    {
+        $this->doTestMatchRouteKey(null);
+    }
+
+    public function doTestMatchRouteKey($routeKey)
+    {
+        $this->routeCompiled->expects($this->atLeastOnce())
+            ->method('getStaticPrefix')
+            ->will($this->returnValue($this->url))
+        ;
+        $this->routeCompiled->expects($this->atLeastOnce())
+            ->method('getRegex')
+            ->will($this->returnValue('#'.str_replace('/', '\\/', $this->url).'#'))
+        ;
+        $this->routeDocument->expects($this->atLeastOnce())
+            ->method('compile')
+            ->will($this->returnValue($this->routeCompiled))
+        ;
         $this->routeDocument->expects($this->atLeastOnce())
             ->method('getRouteKey')
-            ->will($this->returnValue($url_alias));
+            ->will($this->returnValue($routeKey))
+        ;
+        $this->routeDocument->expects($this->atLeastOnce())
+            ->method('getDefaults')
+            ->will($this->returnValue(array('foo' => 'bar')))
+        ;
 
+        $mockCompiled = $this->buildMock('Symfony\\Component\\Routing\\CompiledRoute');
+        $mockCompiled->expects($this->any())
+            ->method('getStaticPrefix')
+            ->will($this->returnValue('/no/match'))
+        ;
+        $mockRoute = $this->getMockBuilder('Symfony\\Component\\Routing\\Route')->disableOriginalConstructor()->getMock();
+        $mockRoute->expects($this->any())
+            ->method('compile')
+            ->will($this->returnValue($mockCompiled))
+        ;
         $routeCollection = new RouteCollection();
+        $routeCollection->add('some', $mockRoute);
         $routeCollection->add('_company_more', $this->routeDocument);
-        $this->repository->expects($this->once())
-            ->method('findManyByUrl')
-            ->with($url_alias)
-            ->will($this->returnValue($routeCollection));
+        $routeCollection->add('other', $mockRoute);
 
-        $this->mapper->expects($this->once())
-            ->method('getController')
-            ->will($this->returnValue('NameSpace\\Controller::action'));
-
-        $matcher = $this->getMockBuilder('Symfony\Component\Routing\Matcher\UrlMatcher')->disableOriginalConstructor()->getMock();
-        $matcher->expects($this->once())
-            ->method('match')
-            ->with($url_alias)
-            ->will($this->returnValue(array('_route' => '_company_more')));
-
-        $router = new TestRouter($this->repository, $matcher);
-        $router->setContext($this->context);
-        $router->addControllerMapper($this->mapper);
-
-        $results = $router->match($url_alias);
+        $results = $this->matcher->finalMatch($routeCollection, $this->request);
 
         $expected = array(
-            RouteObjectInterface::CONTROLLER_NAME => 'NameSpace\\Controller::action',
-            '_route' => $url_alias,
-            RouteObjectInterface::CONTENT_OBJECT => $this->contentDocument,
+            '_name' => ($routeKey) ? $routeKey : '_company_more',
+            '_route' => $this->routeDocument,
+            'foo' => 'bar',
+        );
+
+        $this->assertEquals($expected, $results);
+    }
+
+    public function testMatchNoRouteObject()
+    {
+        $this->routeCompiled->expects($this->atLeastOnce())
+            ->method('getStaticPrefix')
+            ->will($this->returnValue($this->url))
+        ;
+        $this->routeCompiled->expects($this->atLeastOnce())
+            ->method('getRegex')
+            ->will($this->returnValue('#'.str_replace('/', '\\/', $this->url).'#'))
+        ;
+        $this->routeDocument = $this->getMockBuilder('Symfony\\Component\\Routing\\Route')->disableOriginalConstructor()->getMock();
+        $this->routeDocument->expects($this->atLeastOnce())
+            ->method('compile')
+            ->will($this->returnValue($this->routeCompiled))
+        ;
+        $this->routeDocument->expects($this->never())
+            ->method('getRouteKey')
+        ;
+        $this->routeDocument->expects($this->atLeastOnce())
+            ->method('getDefaults')
+            ->will($this->returnValue(array('foo' => 'bar')))
+        ;
+
+        $mockCompiled = $this->buildMock('Symfony\\Component\\Routing\\CompiledRoute');
+        $mockCompiled->expects($this->any())
+            ->method('getStaticPrefix')
+            ->will($this->returnValue('/no/match'))
+        ;
+        $mockRoute = $this->getMockBuilder('Symfony\\Component\\Routing\\Route')->disableOriginalConstructor()->getMock();
+        $mockRoute->expects($this->any())
+            ->method('compile')
+            ->will($this->returnValue($mockCompiled))
+        ;
+        $routeCollection = new RouteCollection();
+        $routeCollection->add('some', $mockRoute);
+        $routeCollection->add('_company_more', $this->routeDocument);
+        $routeCollection->add('other', $mockRoute);
+
+        $results = $this->matcher->finalMatch($routeCollection, $this->request);
+
+        $expected = array(
+            '_name' => '_company_more',
+            '_route' => $this->routeDocument,
+            'foo' => 'bar',
         );
 
         $this->assertEquals($expected, $results);
