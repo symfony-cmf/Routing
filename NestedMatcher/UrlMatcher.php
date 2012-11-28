@@ -22,7 +22,7 @@ class UrlMatcher extends SymfonyUrlMatcher implements FinalMatcherInterface
     public function finalMatch(RouteCollection $collection, Request $request)
     {
         $this->routes = $collection;
-        $this->match($request->getPathInfo());
+        return $this->match($request->getPathInfo());
     }
 
     /**
