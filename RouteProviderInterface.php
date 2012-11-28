@@ -41,7 +41,7 @@ interface RouteProviderInterface
     /**
      * Find the route using the provided route name (and parameters)
      *
-     * @param $name
+     * @param string $name
      * @param array $parameters
      *
      * @return Symfony\Component\Routing\Route
@@ -51,6 +51,22 @@ interface RouteProviderInterface
      */
     public function getRouteByName($name, $parameters = array());
 
+    /**
+     * Find many routes by their names using the provided list of names
+     *
+     * Note that this method may not throw an exception if some of the routes
+     * are not found. It will just return the list of those routes it found.
+     *
+     * This method exists in order to allow performance optimizations. The
+     * simple implementation could be to just repeatedly call
+     * $this->getRouteByName()
+     *
+     * @param string[] $names the list of names to retrieve
+     * @param array $parameters
+     *
+     * @return Symfony\Component\Routing\Route[] with the keys the names of the
+     *      $names argument.
+     */
     // TODO: do we need parameters? maybe to handle locale?
     public function getRoutesByNames($names, $parameters = array());
 }
