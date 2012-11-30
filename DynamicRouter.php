@@ -3,14 +3,15 @@
 namespace Symfony\Cmf\Component\Routing;
 
 use Symfony\Component\Routing\Route as SymfonyRoute;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Routing\RequestContext;
+use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\Generator\UrlGenerator;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
+use Symfony\Component\HttpFoundation\Request;
 
 use Symfony\Cmf\Component\Routing\Mapper\ControllerMapperInterface;
 
@@ -31,7 +32,7 @@ use Symfony\Cmf\Component\Routing\Mapper\ControllerMapperInterface;
  * @author David Buchmann
  * @author Uwe Jäger
  */
-class DynamicRouter implements RouterInterface, ChainedRouterInterface
+class DynamicRouter implements RouterInterface, RequestMatcherInterface, ChainedRouterInterface
 {
     /**
      * Symfony routes always need a name in the collection. We generate routes
@@ -190,15 +191,38 @@ class DynamicRouter implements RouterInterface, ChainedRouterInterface
      */
     public function match($url)
     {
-        $routes = $this->routeRepository->findManyByUrl($url);
+        throw new ResourceNotFoundException('The dynamic router is a request matcher only');
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * Returns an array of parameters gotten from the route that matched the request.     *
+     *
+     * @param Request $request the request container
+     *
+     * @return array with values from this route
+     *
+     * @throws ResourceNotFoundException If the requested url does not exist in the ODM
+     * @throws \Symfony\Component\Routing\Exception\MethodNotAllowedException
+     *      If the resource was found but the request method is not allowed
+     */
+    public function matchRequest(Request $request)
+    {
+        $routes = $this->routeRepository->getRouteCollectionForRequest($request);
         if (empty($routes)) {
-            throw new ResourceNotFoundException("No routes found in the route repository for '$url'");
+            throw new ResourceNotFoundException("No routes found in the route repository for this request");
         }
 
         try {
-            $defaults = $this->getMatcher($routes)->match($url);
+            $matcher = $this->getMatcher($routes);
+            if ($matcher instanceof RequestMatcherInterface) {
+                $defaults = $matcher->matchRequest($request);
+            } else {
+                $defaults = $this->getMatcher($routes)->match($request->getPathInfo());
+            }
         } catch (ResourceNotFoundException $e) {
-            throw new ResourceNotFoundException("None of the routes read from the route repository for '$url' matched the request: ".$e->getMessage(), $e->getCode(), $e);
+            throw new ResourceNotFoundException("None of the routes read from the route repository matched the request: ".$e->getMessage(), $e->getCode(), $e);
         }
 
         $route = $routes->get($defaults['_route']);
@@ -206,6 +230,7 @@ class DynamicRouter implements RouterInterface, ChainedRouterInterface
             // if content does not provide explicit controller, try to find it with one of the mappers
             $controller = false;
             foreach ($this->mappers as $mapper) {
+                /** @var $mapper ControllerMapperInterface */
                 $controller = $mapper->getController($route, $defaults);
                 if ($controller !== false) {
                     break;
@@ -213,7 +238,7 @@ class DynamicRouter implements RouterInterface, ChainedRouterInterface
             }
 
             if (false === $controller) {
-                throw new ResourceNotFoundException("The mapper was not able to determine a controller for '$url'");;
+                throw new ResourceNotFoundException("The mapper was not able to determine a controller");;
             }
 
             $defaults[RouteObjectInterface::CONTROLLER_NAME] = $controller;
@@ -306,7 +331,7 @@ class DynamicRouter implements RouterInterface, ChainedRouterInterface
      * @param mixed $name
      * @param array $parameters which should contain a content field containing a RouteAwareInterface object
      *
-     * @return Route the route instance
+     * @return SymfonyRoute the route instance
      *
      * @throws RouteNotFoundException if there is no content field in the
      *      parameters or its not possible to build a route from that object

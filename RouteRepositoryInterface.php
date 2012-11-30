@@ -2,6 +2,12 @@
 
 namespace Symfony\Cmf\Component\Routing;
 
+use Symfony\Component\Routing\Route;
+use Symfony\Component\Routing\RouteCollection;
+use Symfony\Component\Routing\Exception\RouteNotFoundException;
+use Symfony\Component\Routing\Exception\ResourceNotFoundException;
+use Symfony\Component\HttpFoundation\Request;
+
 /**
  * Interface for the route provider the DynamicRouter is using.
  *
@@ -11,36 +17,43 @@ namespace Symfony\Cmf\Component\Routing;
 interface RouteRepositoryInterface
 {
     /**
-     * Find routes that could match this absolute path.
+     * Provide routes that could match this absolute path.
      *
      * This may return a mixed list of class instances, but all routes returned
-     * must extend the core symfony route. The classes may also implement
+     * must be instanceof the core symfony route. The classes may also implement
      * RouteObjectInterface to link to a content document.
      *
-     * This method may not throw an exception based on implementation specific
-     * restrictions on the url. That case is considered a not found - returning
-     * an empty array. Exceptions are only used to abort the whole request in
-     * case something is seriously broken, like the storage backend being down.
+     * The repository <em>may</em> throw a ResourceNotFoundException if the route
+     * collection is empty. It can do this to provide more detailed information
+     * on what it was looking for, as the DynamicRouter just has a generic message.
      *
-     * @param string $url
+     * This method may not throw other exception than ResourceNotFoundException
+     * based on implementation specific restrictions on i.e. the url. That case
+     * is considered a not found. Exceptions are only used to abort the whole
+     * request in case something is seriously broken, like the storage backend
+     * being down.
      *
-     * @return \Symfony\Component\Routing\RouteCollection with all urls that
+     * @param Request $request
+     *
+     * @return RouteCollection with all urls that
      *      could potentially match $url. Empty collection if nothing can match.
      *
+     * @throws ResourceNotFoundException may be thrown instead of returning an
+     *      empty route collection.
      * @throws \Exception if the underlying storage has an error
      */
-    public function findManyByUrl($url);
+    public function getRouteCollectionForRequest(Request $request);
 
     /**
      * Find the route using the provided route name (and parameters)
      *
-     * @param $name
+     * @param mixed $name
      * @param array $parameters
      *
-     * @return Symfony\Component\Routing\Route
+     * @return Route
      *
-     * @throws \Symfony\Component\Routing\Exception\RouteNotFoundException if
-     *      there is no route with that name in this repository
+     * @throws RouteNotFoundException if there is no route with that name in
+     *      this repository
      */
     public function getRouteByName($name, $parameters = array());
 }
