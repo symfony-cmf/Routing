@@ -72,11 +72,20 @@ class DynamicRouter implements RouterInterface, ChainedRouterInterface
     protected $context;
 
     /**
-     * @param RouteRepositoryInterface $routeRepository The repository to get routes from
+     * The regexp pattern that needs to be matched before a dynamic lookup is made
+     *
+     * @var string
      */
-    public function __construct(RouteRepositoryInterface $routeRepository)
+    protected $uriFilterRegexp;
+
+    /**
+     * @param RouteRepositoryInterface $routeRepository The repository to get routes from
+     * @param string $uriFilterRegexp The regexp pattern that needs to be matched before a dynamic lookup is made
+     */
+    public function __construct(RouteRepositoryInterface $routeRepository, $uriFilterRegexp = '')
     {
         $this->routeRepository = $routeRepository;
+        $this->uriFilterRegexp = $uriFilterRegexp;
     }
 
     /**
@@ -190,6 +199,10 @@ class DynamicRouter implements RouterInterface, ChainedRouterInterface
      */
     public function match($url)
     {
+        if (! empty($this->uriFilterRegexp) && ! preg_match($this->uriFilterRegexp, $url)) {
+            throw new ResourceNotFoundException("$url does not match the '{$this->uriFilterRegexp}' pattern");
+        }
+
         $routes = $this->routeRepository->findManyByUrl($url);
         if (empty($routes)) {
             throw new ResourceNotFoundException("No routes found in the route repository for '$url'");
