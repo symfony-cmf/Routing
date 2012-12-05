@@ -4,10 +4,10 @@ namespace Symfony\Cmf\Component\Routing\Tests\Routing;
 
 use Symfony\Component\Routing\Route as SymfonyRoute;
 
-use Symfony\Cmf\Component\Routing\CmfGenerator;
+use Symfony\Cmf\Component\Routing\ContentAwareGenerator;
 use Symfony\Cmf\Component\Routing\Test\CmfUnitTestCase;
 
-class CmfGeneratorTest extends CmfUnitTestCase
+class ContentAwareGeneratorTest extends CmfUnitTestCase
 {
     protected $contentDocument;
     protected $routeDocument;

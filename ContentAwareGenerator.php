@@ -19,7 +19,7 @@ use Symfony\Cmf\Component\Routing\RouteProviderInterface;
  * @author David Buchmann
  * @author Uwe Jäger
  */
-class CmfGenerator extends ProviderBasedGenerator
+class ContentAwareGenerator extends ProviderBasedGenerator
 {
     /**
      * The content repository used to find content by it's id
