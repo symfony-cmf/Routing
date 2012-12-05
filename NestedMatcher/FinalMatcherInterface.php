@@ -9,7 +9,7 @@ use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 /**
  * A FinalMatcher returns only one route from a collection of candidate routes.
  *
- * @author Crell
+ * @author Larry Garfield
  * @author David Buchmann
  */
 interface FinalMatcherInterface

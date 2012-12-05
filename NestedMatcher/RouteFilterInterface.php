@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
  * router filters to handle their own empty-case handling, usually by throwing
  * an appropriate exception if no routes match the object's rules.
  *
- * @author Crell
+ * @author Larry Garfield
  * @author David Buchmann
  */
 interface RouteFilterInterface

@@ -19,7 +19,7 @@ use Symfony\Cmf\Component\Routing\RouteProviderInterface;
  * 2) Apply any RouteFilterInterface to reduce the route collection
  * 3) Have FinalMatcherInterface select the best match of the remaining routes
  *
- * @author Crell
+ * @author Larry Garfield
  * @author David Buchmann
  */
 class NestedMatcher implements RequestMatcherInterface

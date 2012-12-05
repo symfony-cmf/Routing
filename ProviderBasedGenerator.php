@@ -14,7 +14,7 @@ use Symfony\Cmf\Component\Routing\RouteProviderInterface;
 /**
  * A Generator that uses a RouteProvider rather than a RouteCollection
  *
- * @author crell
+ * @author Larry Garfield
  */
 class ProviderBasedGenerator extends UrlGenerator
 {

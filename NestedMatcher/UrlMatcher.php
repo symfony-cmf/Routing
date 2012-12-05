@@ -12,7 +12,7 @@ use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 /**
  * Extended UrlMatcher to provide an additional interface and enhanced features.
  *
- * @author Crell
+ * @author Larry Garfield
  */
 class UrlMatcher extends SymfonyUrlMatcher implements FinalMatcherInterface
 {
