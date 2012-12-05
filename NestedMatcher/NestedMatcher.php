@@ -5,6 +5,7 @@ namespace Symfony\Cmf\Component\Routing\NestedMatcher;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
+use Symfony\Component\Routing\Route;
 use Symfony\Cmf\Component\Routing\RouteProviderInterface;
 
 /**
@@ -58,7 +59,7 @@ class NestedMatcher implements RequestMatcherInterface
      */
     public function __construct(RouteProviderInterface $provider)
     {
-      $this->routeProvider = $provider;
+        $this->routeProvider = $provider;
     }
 
     /**
@@ -106,9 +107,9 @@ class NestedMatcher implements RequestMatcherInterface
      */
     public function setFinalMatcher(FinalMatcherInterface $final)
     {
-      $this->finalMatcher = $final;
+        $this->finalMatcher = $final;
 
-      return $this;
+        return $this;
     }
 
     /**
@@ -116,19 +117,32 @@ class NestedMatcher implements RequestMatcherInterface
      */
     public function matchRequest(Request $request)
     {
-      $collection = $this->routeProvider->getRouteCollectionForRequest($request);
+        $collection = $this->routeProvider->getRouteCollectionForRequest($request);
 
-      if (!count($collection)) {
-        throw new ResourceNotFoundException();
-      }
+        if (!count($collection)) {
+            throw new ResourceNotFoundException();
+        }
 
-      // Route Filters are expected to throw an exception themselves if they
-      // end up filtering the list down to 0.
-      foreach ($this->getRouteFilters() as $filter) {
-        $collection = $filter->filter($collection, $request);
-      }
+        // Route Filters are expected to throw an exception themselves if they
+        // end up filtering the list down to 0.
+        foreach ($this->getRouteFilters() as $filter) {
+            $collection = $filter->filter($collection, $request);
+        }
 
-      return $this->finalMatcher->finalMatch($collection, $request);
+        $attributes = $this->finalMatcher->finalMatch($collection, $request);
+
+        // Add some useful additional attributes if not already present.
+        if (!empty($attributes['_route'])) {
+            if (empty($attributes['_name']) && is_string($attributes['_route'])) {
+                $attributes['_name'] = $attributes['_route'];
+            }
+
+            if (! $attributes['_route'] instanceof Route) {
+                $attributes['_route'] = $this->routeProvider->getRouteByName($attributes['_route']);
+            }
+        }
+
+        return $attributes;
     }
 
     /**
@@ -138,11 +152,11 @@ class NestedMatcher implements RequestMatcherInterface
      */
     public function getRouteFilters()
     {
-      if (empty($this->sortedFilters)) {
-        $this->sortedFilters = $this->sortFilters();
-      }
+        if (empty($this->sortedFilters)) {
+           $this->sortedFilters = $this->sortFilters();
+        }
 
-      return $this->sortedFilters;
+        return $this->sortedFilters;
     }
 
     /**
@@ -154,13 +168,13 @@ class NestedMatcher implements RequestMatcherInterface
      */
     protected function sortFilters()
     {
-      $sortedFilters = array();
-      krsort($this->filters);
+        $sortedFilters = array();
+        krsort($this->filters);
 
-      foreach ($this->filters as $filters) {
-        $sortedFilters = array_merge($sortedFilters, $filters);
-      }
+        foreach ($this->filters as $filters) {
+            $sortedFilters = array_merge($sortedFilters, $filters);
+        }
 
-      return $sortedFilters;
+        return $sortedFilters;
     }
 }
