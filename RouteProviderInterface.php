@@ -29,10 +29,9 @@ interface RouteProviderInterface
      * very large route sets to be filtered down to likely candidates, which
      * may then be filtered in memory more completely.
      *
-     * @param Request
-     *   A request against which to match.
+     * @param Request $request A request against which to match.
      *
-     * @return RouteCollection with all urls that
+     * @return \Symfony\Component\Routing\RouteCollection with all urls that
      *      could potentially match $request. Empty collection if nothing can
      *      match.
      */
@@ -41,10 +40,11 @@ interface RouteProviderInterface
     /**
      * Find the route using the provided route name (and parameters)
      *
-     * @param string $name
-     * @param array $parameters
+     * @param string $name the route name to fetch
+     * @param array $parameters the parameters as they are passed to the
+     *      UrlGeneratorInterface::generate call
      *
-     * @return Symfony\Component\Routing\Route
+     * @return \Symfony\Component\Routing\Route
      *
      * @throws \Symfony\Component\Routing\Exception\RouteNotFoundException if
      *      there is no route with that name in this repository
@@ -61,12 +61,13 @@ interface RouteProviderInterface
      * simple implementation could be to just repeatedly call
      * $this->getRouteByName()
      *
-     * @param string[] $names the list of names to retrieve
-     * @param array $parameters
+     * @param array $names the list of names to retrieve
+     * @param array $parameters the parameters as they are passed to the
+     *      UrlGeneratorInterface::generate call. (Only one array, not one for
+     *      each entry in $names.
      *
-     * @return Symfony\Component\Routing\Route[] with the keys the names of the
-     *      $names argument.
+     * @return \Symfony\Component\Routing\Route[] iterable thing with the keys
+     *      the names of the $names argument.
      */
-    // TODO: do we need parameters? maybe to handle locale?
     public function getRoutesByNames($names, $parameters = array());
 }

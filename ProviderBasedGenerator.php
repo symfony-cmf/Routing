@@ -38,7 +38,7 @@ class ProviderBasedGenerator extends UrlGenerator
     {
         if ($name instanceof SymfonyRoute) {
             $route = $name;
-        } elseif (null === $route = $this->provider->getRouteByName($name)) {
+        } elseif (null === $route = $this->provider->getRouteByName($name, $parameters)) {
             throw new RouteNotFoundException(sprintf('Route "%s" does not exist.', $name));
         }
 
