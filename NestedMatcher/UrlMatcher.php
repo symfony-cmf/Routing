@@ -33,7 +33,7 @@ class UrlMatcher extends SymfonyUrlMatcher implements FinalMatcherInterface
         if ($route instanceof RouteObjectInterface && is_string($route->getRouteKey())) {
             $name = $route->getRouteKey();
         }
-        $attributes['_name'] = $name;
+        $attributes['_route_name'] = $name;
         $attributes['_route'] = $route;
         return $this->mergeDefaults($attributes, $route->getDefaults());
     }

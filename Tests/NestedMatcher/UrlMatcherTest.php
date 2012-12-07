@@ -84,7 +84,7 @@ class UrlMatcherTest extends CmfUnitTestCase
         $results = $this->matcher->finalMatch($routeCollection, $this->request);
 
         $expected = array(
-            '_name' => ($routeKey) ? $routeKey : '_company_more',
+            '_route_name' => ($routeKey) ? $routeKey : '_company_more',
             '_route' => $this->routeDocument,
             'foo' => 'bar',
         );
@@ -133,7 +133,7 @@ class UrlMatcherTest extends CmfUnitTestCase
         $results = $this->matcher->finalMatch($routeCollection, $this->request);
 
         $expected = array(
-            '_name' => '_company_more',
+            '_route_name' => '_company_more',
             '_route' => $this->routeDocument,
             'foo' => 'bar',
         );

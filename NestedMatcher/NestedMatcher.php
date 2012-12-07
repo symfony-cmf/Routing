@@ -132,9 +132,10 @@ class NestedMatcher implements RequestMatcherInterface
         $attributes = $this->finalMatcher->finalMatch($collection, $request);
 
         // Add some useful additional attributes if not already present.
+        // Our UrlMatcher does it, but only since Symfony 2.2
         if (!empty($attributes['_route'])) {
-            if (empty($attributes['_name']) && is_string($attributes['_route'])) {
-                $attributes['_name'] = $attributes['_route'];
+            if (empty($attributes['_route_name']) && is_string($attributes['_route'])) {
+                $attributes['_route_name'] = $attributes['_route'];
             }
 
             if (! $attributes['_route'] instanceof Route) {
