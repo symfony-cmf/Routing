@@ -25,7 +25,7 @@ class ContentAwareGeneratorTest extends CmfUnitTestCase
         $this->provider = $this->buildMock("Symfony\\Cmf\\Component\\Routing\\RouteProviderInterface");
         $this->context = $this->buildMock('Symfony\\Component\\Routing\\RequestContext');
 
-        $this->generator = new TestableCmfGenerator($this->provider);
+        $this->generator = new TestableContentAwareGenerator($this->provider);
     }
 
 
@@ -276,7 +276,7 @@ class ContentAwareGeneratorTest extends CmfUnitTestCase
 /**
  * Overwrite doGenerate to reduce amount of mocking needed
  */
-class TestableCmfGenerator extends CmfGenerator
+class TestableContentAwareGenerator extends ContentAwareGenerator
 {
     protected function doGenerate($variables, $defaults, $requirements, $tokens, $parameters, $name, $absolute, $hostnameTokens)
     {
