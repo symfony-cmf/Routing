@@ -44,6 +44,13 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
     protected $sortedEnhancers = array();
 
     /**
+     * The regexp pattern that needs to be matched before a dynamic lookup is made
+     *
+     * @var string
+     */
+    protected $uriFilterRegexp;
+
+    /**
      * @var RequestContext
      */
     protected $context;
@@ -53,7 +60,7 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
      * @param RequestMatcherInterface|UrlMatcherInterface $matcher
      * @param UrlGeneratorInterface                       $generator
      */
-    public function __construct(RequestContext $context, $matcher, UrlGeneratorInterface $generator)
+    public function __construct(RequestContext $context, $matcher, UrlGeneratorInterface $generator, $uriFilterRegexp = '')
     {
         $this->context = $context;
         if (! $matcher instanceof RequestMatcherInterface && ! $matcher instanceof UrlMatcherInterface) {
@@ -61,6 +68,7 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
         }
         $this->matcher = $matcher;
         $this->generator = $generator;
+        $this->uriFilterRegexp = $uriFilterRegexp;
 
         $this->generator->setContext($context);
     }
@@ -143,6 +151,10 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
      */
     public function match($pathinfo)
     {
+        if (! empty($this->uriFilterRegexp) && ! preg_match($this->uriFilterRegexp, $url)) {
+            throw new ResourceNotFoundException("$url does not match the '{$this->uriFilterRegexp}' pattern");
+        }
+
         $matcher = $this->getMatcher();
         if (! $matcher instanceof UrlMatcherInterface) {
             throw new \InvalidArgumentException('Wrong matcher type, you need to call matchRequest');
@@ -169,6 +181,10 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
      */
     public function matchRequest(Request $request)
     {
+        if (! empty($this->uriFilterRegexp) && ! preg_match($this->uriFilterRegexp, $request->getPathInfo())) {
+            throw new ResourceNotFoundException("$url does not match the '{$this->uriFilterRegexp}' pattern");
+        }
+
         $matcher = $this->getMatcher();
         if ($matcher instanceof UrlMatcherInterface) {
             return $this->match($request->getPathInfo());
