@@ -134,6 +134,35 @@ class ChainRouterTest extends CmfUnitTestCase
     }
 
     /**
+     * context must be propagated also when routers are added after context is set
+     */
+    public function testContextOrder()
+    {
+        list($low, $high) = $this->createRouterMocks();
+
+        $low
+            ->expects($this->once())
+            ->method('setContext')
+            ->with($this->context)
+        ;
+
+        $high
+            ->expects($this->once())
+            ->method('setContext')
+            ->with($this->context)
+        ;
+
+        $this->router->setContext($this->context);
+
+        $this->router->add($low, 10);
+        $this->router->add($high, 100);
+
+        $this->router->all();
+
+        $this->assertSame($this->context, $this->router->getContext());
+    }
+
+    /**
      * The first usable match is used, no further routers are queried once a match is found
      */
     public function testMatch()

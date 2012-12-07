@@ -2,74 +2,46 @@
 
 namespace Symfony\Cmf\Component\Routing;
 
-use Symfony\Component\Routing\Route as SymfonyRoute;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\RequestContext;
-use Symfony\Component\Routing\Exception\RouteNotFoundException;
-use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\RouteCollection;
-use Symfony\Component\Routing\Generator\UrlGenerator;
-use Symfony\Component\Routing\Matcher\UrlMatcher;
+use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
+use Symfony\Component\Routing\Matcher\UrlMatcherInterface;
 
-use Symfony\Cmf\Component\Routing\Mapper\ControllerMapperInterface;
+use Symfony\Cmf\Component\Routing\Enhancer\RouteEnhancerInterface;
 
 /**
- * A router that reads route entries from a repository. The repository can
- * easily be implemented using an object-document mapper like Doctrine
- * PHPCR-ODM but you are free to use something different.
+ * A flexible router accepting matcher and generator through injection and
+ * using the RouteEnhancer concept to generate additional data on the routes.
  *
- * This router is based on the symfony routing matcher and generator. Different
- * to the default router, the route collection is loaded from the injected
- * route repository custom per request to not load a potentially large number
- * of routes that are known to not match anyways.
- *
- * If the route provides a content, that content is placed in the defaults
- * returned by the match() method in field RouteObjectInterface::CONTENT_OBJECT.
- *
- * @author Philippo de Santis
+ * @author Crell
  * @author David Buchmann
- * @author Uwe Jäger
  */
-class DynamicRouter implements RouterInterface, ChainedRouterInterface
+class DynamicRouter implements RouterInterface, RequestMatcherInterface, ChainedRouterInterface
 {
     /**
-     * Symfony routes always need a name in the collection. We generate routes
-     * based on the route object, but need to use a name for example in error
-     * reporting.
-     * When generating, we just use this prefix, when matching, we append
-     * whatever the repository returned as ID, replacing anything but
-     * [^a-z0-9A-Z_.] with "_" to get unique valid route names.
+     * @var RequestMatcherInterface|UrlMatcherInterface
      */
-    const ROUTE_GENERATE_DUMMY_NAME = 'cmf_routing_dynamic_route';
+    protected $matcher;
 
     /**
-     * @var array of ControllerMapperInterface
+     * @var UrlGeneratorInterface
      */
-    protected $mappers = array();
-    /**
-     * The route repository to get routes from
-     *
-     * @var RouteRepositoryInterface
-     */
-    protected $routeRepository;
+    protected $generator;
 
     /**
-     * The content repository used to find content by it's id
-     * This can be used to specify a parameter content_id when generating urls
-     *
-     * This is optional and might not be initialized.
-     *
-     * @var  ContentRepositoryInterface
+     * @var RouteEnhancerInterface[]
      */
-    protected $contentRepository;
+    protected $enhancers = array();
 
     /**
-     * Context to get the base url from.
+     * Cached sorted list of enhancers
      *
-     * @var RequestContext
+     * @var RouteEnhancerInterface[]
      */
-    protected $context;
+    protected $sortedEnhancers = array();
 
     /**
      * The regexp pattern that needs to be matched before a dynamic lookup is made
@@ -79,39 +51,226 @@ class DynamicRouter implements RouterInterface, ChainedRouterInterface
     protected $uriFilterRegexp;
 
     /**
-     * @param RouteRepositoryInterface $routeRepository The repository to get routes from
-     * @param string $uriFilterRegexp The regexp pattern that needs to be matched before a dynamic lookup is made
+     * @var RequestContext
      */
-    public function __construct(RouteRepositoryInterface $routeRepository, $uriFilterRegexp = '')
+    protected $context;
+
+    /**
+     * @param RequestContext                              $context
+     * @param RequestMatcherInterface|UrlMatcherInterface $matcher
+     * @param UrlGeneratorInterface                       $generator
+     */
+    public function __construct(RequestContext $context, $matcher, UrlGeneratorInterface $generator, $uriFilterRegexp = '')
     {
-        $this->routeRepository = $routeRepository;
+        $this->context = $context;
+        if (! $matcher instanceof RequestMatcherInterface && ! $matcher instanceof UrlMatcherInterface) {
+            throw new \InvalidArgumentException('Invalid $matcher');
+        }
+        $this->matcher = $matcher;
+        $this->generator = $generator;
         $this->uriFilterRegexp = $uriFilterRegexp;
+
+        $this->generator->setContext($context);
     }
 
     /**
-     * Set an optional content repository to find content by ids
-     *
-     * @param ContentRepositoryInterface $contentRepository
+     * Not implemented.
      */
-    public function setContentRepository(ContentRepositoryInterface $contentRepository)
+    public function getRouteCollection()
     {
-        $this->contentRepository = $contentRepository;
+        return new RouteCollection();
     }
 
     /**
-     * Add as many mappers as you want, they are asked for the controller in
-     * the order they are added here.
-     *
-     * @param ControllerMapperInterface $mapper a helper to map the request to
-     *      controller name
+     * @return RequestMatcherInterface|UrlMatcherInterface
      */
-    public function addControllerMapper(ControllerMapperInterface $mapper)
+    public function getMatcher()
     {
-        $this->mappers[] = $mapper;
+        // we may not set the context in DynamicRouter::setContext as this would lead to symfony cache warmup problems
+        $this->matcher->setContext($this->getContext());
+
+        return $this->matcher;
     }
 
     /**
+     * @return UrlGeneratorInterface
+     */
+    public function getGenerator()
+    {
+        $this->generator->setContext($this->getContext());
+
+        return $this->generator;
+    }
+
+    /**
+     * Generates a URL from the given parameters.
+     *
+     * If the generator is not able to generate the url, it must throw the RouteNotFoundException
+     * as documented below.
+     *
+     * @param string  $name       The name of the route
+     * @param mixed   $parameters An array of parameters
+     * @param Boolean $absolute   Whether to generate an absolute URL
+     *
+     * @return string The generated URL
+     *
+     * @throws RouteNotFoundException if route doesn't exist
+     *
+     * @api
+     */
+    public function generate($name, $parameters = array(), $absolute = false)
+    {
+        return $this->getGenerator()->generate($name, $parameters, $absolute);
+    }
+
+    /**
+     * Support any string as route name
+     *
      * {@inheritDoc}
+     */
+    public function supports($name)
+    {
+        // TODO: check $this->generator instanceof VersatileGeneratorInterface
+        return $this->generator->supports($name);
+    }
+
+    /**
+     * Tries to match a URL path with a set of routes.
+     *
+     * If the matcher can not find information, it must throw one of the
+     * exceptions documented below.
+     *
+     * @param string $pathinfo The path info to be parsed (raw format, i.e. not urldecoded)
+     *
+     * @return array An array of parameters
+     *
+     * @throws ResourceNotFoundException If the resource could not be found
+     * @throws MethodNotAllowedException If the resource was found but the request method is not allowed
+     *
+     * @api
+     */
+    public function match($pathinfo)
+    {
+        if (! empty($this->uriFilterRegexp) && ! preg_match($this->uriFilterRegexp, $url)) {
+            throw new ResourceNotFoundException("$url does not match the '{$this->uriFilterRegexp}' pattern");
+        }
+
+        $matcher = $this->getMatcher();
+        if (! $matcher instanceof UrlMatcherInterface) {
+            throw new \InvalidArgumentException('Wrong matcher type, you need to call matchRequest');
+        }
+
+        $defaults = $matcher->match($pathinfo);
+
+        return $this->applyRouteEnhancers($defaults, Request::create($pathinfo));
+    }
+
+    /**
+     * Tries to match a request with a set of routes and returns the array of
+     * information for that route.
+     *
+     * If the matcher can not find information, it must throw one of the
+     * exceptions documented below.
+     *
+     * @param Request $request The request to match
+     *
+     * @return array An array of parameters
+     *
+     * @throws ResourceNotFoundException If no matching resource could be found
+     * @throws MethodNotAllowedException If a matching resource was found but the request method is not allowed
+     */
+    public function matchRequest(Request $request)
+    {
+        if (! empty($this->uriFilterRegexp) && ! preg_match($this->uriFilterRegexp, $request->getPathInfo())) {
+            throw new ResourceNotFoundException("{$request->getPathInfo()} does not match the '{$this->uriFilterRegexp}' pattern");
+        }
+
+        $matcher = $this->getMatcher();
+        if ($matcher instanceof UrlMatcherInterface) {
+            return $this->match($request->getPathInfo());
+        }
+
+        $defaults = $matcher->matchRequest($request);
+
+        return $this->applyRouteEnhancers($defaults, $request);
+    }
+
+    /**
+     * Apply the route enhancers to the defaults, according to priorities
+     *
+     * @param array $defaults
+     * @param Request $request
+     * @return array
+     */
+    protected function applyRouteEnhancers($defaults, Request $request)
+    {
+        foreach ($this->getRouteEnhancers() as $enhancer) {
+            $defaults = $enhancer->enhance($defaults, $request);
+        }
+        return $defaults;
+    }
+
+    /**
+     * Add route enhancers to the router to let them generate information on
+     * matched routes.
+     *
+     * The order of the enhancers is determined by the priority, the higher the
+     * value, the earlier the enhancer is run.
+     *
+     * @param RouteEnhancerInterface $enhancer
+     * @param int                    $priority
+     */
+    public function addRouteEnhancer(RouteEnhancerInterface $enhancer, $priority = 0)
+    {
+        if (empty($this->enhancers[$priority])) {
+            $this->enhancers[$priority] = array();
+        }
+
+        $this->enhancers[$priority][] = $enhancer;
+        $this->sortedEnhancers = array();
+
+        return $this;
+    }
+
+    /**
+     * Sorts the enhancers and flattens them.
+     *
+     * @return RouteEnhancerInterface[] the enhancers ordered by priority
+     */
+    public function getRouteEnhancers()
+    {
+        if (empty($this->sortedEnhancers)) {
+            $this->sortedEnhancers = $this->sortRouteEnhancers();
+        }
+
+        return $this->sortedEnhancers;
+    }
+
+    /**
+     * Sort enhancers by priority.
+     *
+     * The highest priority number is the highest priority (reverse sorting).
+     *
+     * @return RouteEnhancerInterface[] the sorted enhancers
+     */
+    protected function sortRouteEnhancers()
+    {
+        $sortedEnhancers = array();
+        krsort($this->enhancers);
+
+        foreach ($this->enhancers as $enhancers) {
+            $sortedEnhancers = array_merge($sortedEnhancers, $enhancers);
+        }
+
+        return $sortedEnhancers;
+    }
+
+    /**
+     * Sets the request context.
+     *
+     * @param RequestContext $context The context
+     *
+     * @api
      */
     public function setContext(RequestContext $context)
     {
@@ -119,294 +278,14 @@ class DynamicRouter implements RouterInterface, ChainedRouterInterface
     }
 
     /**
-     * {@inheritDoc}
+     * Gets the request context.
+     *
+     * @return RequestContext The context
+     *
+     * @api
      */
     public function getContext()
     {
         return $this->context;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @param string $name ignored
-     * @param array $parameters must either contain the field 'route' with a
-     *      RouteObjectInterface or the field 'content' with the document
-     *      instance to get the route for (implementing RouteAwareInterface)
-     *
-     * @throws RouteNotFoundException If there is no such route in the database
-     */
-    public function generate($name, $parameters = array(), $absolute = false)
-    {
-        if ($name instanceof SymfonyRoute) {
-            $route = $this->getBestLocaleRoute($name, $parameters);
-        } elseif (is_string($name) && $name) {
-            $route = $this->getRouteByName($name, $parameters);
-        } else {
-            $route = $this->getRouteByContent($name, $parameters);
-        }
-
-        if (! $route instanceof SymfonyRoute) {
-            $hint = is_object($route) ? get_class($route) : gettype($route);
-            throw new RouteNotFoundException('Route of this document is not an instance of Symfony\Component\Routing\Route but: '.$hint);
-        }
-
-        $collection = new RouteCollection();
-        $collection->add(self::ROUTE_GENERATE_DUMMY_NAME, $route);
-
-        return $this->getGenerator($collection)->generate(self::ROUTE_GENERATE_DUMMY_NAME, $parameters, $absolute);
-    }
-
-    /**
-     * Get an url matcher for this collection
-     *
-     * @param RouteCollection $collection collection of routes for the current request
-     *
-     * @return \Symfony\Component\Routing\Generator\UrlGeneratorInterface the url matcher instance
-     */
-    public function getGenerator(RouteCollection $collection)
-    {
-        // TODO: option to configure class?
-        return new UrlGenerator($collection, $this->context);
-    }
-
-    public function getRouteCollection()
-    {
-        /* TODO */
-        return new RouteCollection();
-    }
-
-    /**
-     * Returns an array of parameter like this
-     *
-     * array(
-     *   RouteObjectInterface::CONTROLLER_NAME => "NameSpace\Controller::indexAction",
-     *   RouteObjectInterface::CONTENT_OBJECT => $document,
-     * )
-     *
-     * The controller can be either the fully qualified class name or the
-     * service name of a controller that is registered as a service. In both
-     * cases, the action to call on that controller is appended, separated with
-     * two colons.
-     *
-     * @param string $url the full requested url.
-     *
-     * @return array as described above
-     *
-     * @throws ResourceNotFoundException If the requested url does not exist in the ODM
-     * @throws \Symfony\Component\Routing\Exception\MethodNotAllowedException
-     *      If the resource was found but the request method is not allowed
-     */
-    public function match($url)
-    {
-        if (! empty($this->uriFilterRegexp) && ! preg_match($this->uriFilterRegexp, $url)) {
-            throw new ResourceNotFoundException("$url does not match the '{$this->uriFilterRegexp}' pattern");
-        }
-
-        $routes = $this->routeRepository->findManyByUrl($url);
-        if (empty($routes)) {
-            throw new ResourceNotFoundException("No routes found in the route repository for '$url'");
-        }
-
-        try {
-            $defaults = $this->getMatcher($routes)->match($url);
-        } catch (ResourceNotFoundException $e) {
-            throw new ResourceNotFoundException("None of the routes read from the route repository for '$url' matched the request: ".$e->getMessage(), $e->getCode(), $e);
-        }
-
-        $route = $routes->get($defaults['_route']);
-        if (empty($defaults[RouteObjectInterface::CONTROLLER_NAME])) {
-            // if content does not provide explicit controller, try to find it with one of the mappers
-            $controller = false;
-            foreach ($this->mappers as $mapper) {
-                $controller = $mapper->getController($route, $defaults);
-                if ($controller !== false) {
-                    break;
-                }
-            }
-
-            if (false === $controller) {
-                throw new ResourceNotFoundException("The mapper was not able to determine a controller for '$url'");;
-            }
-
-            $defaults[RouteObjectInterface::CONTROLLER_NAME] = $controller;
-        }
-
-        if ($route instanceof RouteObjectInterface && $content = $route->getRouteContent()) {
-            $defaults[RouteObjectInterface::CONTENT_OBJECT] = $content;
-        }
-
-        if ($route instanceof RouteObjectInterface && is_string($route->getRouteKey())) {
-            $defaults['_route'] = $route->getRouteKey();
-        }
-
-        return $defaults;
-    }
-
-    /**
-     * Get an url matcher for this collection
-     *
-     * @param RouteCollection $collection collection of routes for the current request
-     *
-     * @return \Symfony\Component\Routing\Matcher\UrlMatcherInterface the url matcher instance
-     */
-    public function getMatcher(RouteCollection $collection)
-    {
-        // TODO: option to configure class?
-        return new UrlMatcher($collection, $this->context);
-    }
-
-    public function supports($name)
-    {
-        return !$name || is_string($name) || $name instanceof RouteAwareInterface || $name instanceof RouteObjectInterface;
-    }
-
-    /**
-     * Get the route by a string name
-     *
-     * @param string $route
-     * @param array $parameters
-     * @return \Symfony\Component\Routing\Route
-     *
-     * @throws RouteNotFoundException if there is no route found for the provided name
-     */
-    protected function getRouteByName($name, array $parameters)
-    {
-        $route = $this->routeRepository->getRouteByName($name, $parameters);
-        if (empty($route)) {
-            throw new RouteNotFoundException('No route found for name: ' . $name);
-        }
-
-        return $this->getBestLocaleRoute($route, $parameters);
-    }
-
-    /**
-     * Determine if there is a better route associated with the given route via associated content
-     *
-     * @param \Symfony\Component\Routing\Route $route
-     * @param array $parameters
-     * @return \Symfony\Component\Routing\Route
-     */
-    protected function getBestLocaleRoute($route, $parameters)
-    {
-        $locale = $this->getLocale($parameters);
-        if (!$this->checkLocaleRequirement($route, $locale)
-            && $route instanceof RouteObjectInterface
-        ) {
-            $content = $route->getRouteContent();
-            if ($content instanceof RouteAwareInterface) {
-                $routes = $content->getRoutes();
-                $contentRoute = $this->getRouteByLocale($routes, $locale);
-                if ($contentRoute) {
-                    return $contentRoute;
-                }
-            }
-        }
-
-        return $route;
-    }
-    /**
-     * Get the route based on the content field in parameters
-     *
-     * Called in generate when there is no route given in the parameters.
-     *
-     * If there is more than one route for the content, tries to find the
-     * first one that matches the _locale (provided in $parameters or otherwise
-     * defaulting to the request locale).
-     *
-     * If none is found, falls back to just return the first route.
-     *
-     * @param mixed $name
-     * @param array $parameters which should contain a content field containing a RouteAwareInterface object
-     *
-     * @return Route the route instance
-     *
-     * @throws RouteNotFoundException if there is no content field in the
-     *      parameters or its not possible to build a route from that object
-     */
-    protected function getRouteByContent($name, &$parameters)
-    {
-        if ($name instanceof RouteAwareInterface) {
-            $content = $name;
-        } elseif (isset($parameters['content_id']) && null !== $this->contentRepository) {
-            $content = $this->contentRepository->findById($parameters['content_id']);
-        } elseif (isset($parameters['content'])) {
-            $content = $parameters['content'];
-        }
-
-        unset($parameters['content'], $parameters['content_id']);
-
-        if (empty($content)) {
-            throw new RouteNotFoundException('Neither the route name, nor a parameter "content" or "content_id" could be resolved to an content instance');
-        }
-
-        if (!$content instanceof RouteAwareInterface) {
-            $hint = is_object($content) ? get_class($content) : gettype($content);
-            throw new RouteNotFoundException('The content does not implement RouteAwareInterface: ' . $hint);
-        }
-
-        $routes = $content->getRoutes();
-        if (empty($routes)) {
-            $hint = method_exists($content, 'getPath') ? $content->getPath() : get_class($content);
-            throw new RouteNotFoundException('Document has no route: ' . $hint);
-        }
-
-        $route = $this->getRouteByLocale($routes, $this->getLocale($parameters));
-        if ($route) {
-            return $route;
-        }
-
-        // if none matched, continue and randomly return the first one
-        return reset($routes);
-    }
-
-    /**
-     * @param RouteCollection $routes
-     * @param string $locale
-     * @return bool|SymfonyRoute false if no route requirement matches the provided locale
-     */
-    protected function getRouteByLocale($routes, $locale)
-    {
-        foreach ($routes as $route) {
-            if (! $route instanceof SymfonyRoute) {
-                continue;
-            }
-
-            if ($this->checkLocaleRequirement($route, $locale)) {
-                return $route;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * @param SymfonyRoute $route
-     * @param string $locale
-     * @return bool TRUE if there is either no _locale, no _locale requirement or if the two match
-     */
-    private function checkLocaleRequirement(SymfonyRoute $route, $locale)
-    {
-        return empty($locale)
-            || !$route->getRequirement('_locale')
-            || preg_match('/'.$route->getRequirement('_locale').'/', $locale)
-        ;
-    }
-
-    /**
-     * Determine the locale to be used with this request
-     *
-     * @param array $parameters the parameters determined by the route
-     *
-     * @return string|null the locale following of the parameters or any other
-     *  information the router has available.
-     */
-    protected function getLocale($parameters)
-    {
-        if (isset($parameters['_locale'])) {
-            return $parameters['_locale'];
-        }
-
-        return null;
     }
 }

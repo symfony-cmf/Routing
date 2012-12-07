@@ -1,6 +1,6 @@
 <?php
 
-namespace Symfony\Cmf\Component\Routing\Tests\Mapper;
+namespace Symfony\Cmf\Component\Routing\Tests\Enhancer;
 
 use Symfony\Component\Routing\Route;
 use Symfony\Cmf\Component\Routing\RouteObjectInterface;

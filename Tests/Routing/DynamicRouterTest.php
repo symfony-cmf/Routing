@@ -2,38 +2,41 @@
 
 namespace Symfony\Cmf\Component\Routing\Tests\Routing;
 
+use Symfony\Component\HttpFoundation\Request;
+
 use Symfony\Component\Routing\RouteCollection;
-use Symfony\Cmf\Component\Routing\RouteRepositoryInterface;
-use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 use Symfony\Component\Routing\Route;
 
-use Symfony\Cmf\Component\Routing\Test\CmfUnitTestCase;
+use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 use Symfony\Cmf\Component\Routing\DynamicRouter;
+
+use Symfony\Cmf\Component\Routing\Test\CmfUnitTestCase;
 
 class DynamicRouterTest extends CmfUnitTestCase
 {
-    protected $contentDocument;
     protected $routeDocument;
-    protected $loader;
-    protected $repository;
-    protected $mapper;
+    protected $matcher;
+    protected $generator;
+    protected $enhancer;
     protected $router;
     protected $context;
+    protected $request;
 
+    protected $url = '/foo/bar';
 
     public function setUp()
     {
-        $this->contentDocument = $this->buildMock('Symfony\\Cmf\\Component\\Routing\\RouteAwareInterface');
-        $this->routeDocument = $this->buildMock('Symfony\\Cmf\\Component\\Routing\\Tests\\Routing\\RouteMock', array('getDefaults', 'getRouteContent', 'getRouteKey'));
-        $this->loader = $this->buildMock("Symfony\\Component\\Config\\Loader\\LoaderInterface");
-        $this->repository = $this->buildMock("Symfony\\Cmf\\Component\\Routing\\RouteRepositoryInterface", array('findManyByUrl', 'getRouteByName'));
+        $this->routeDocument = $this->buildMock('Symfony\\Cmf\\Component\\Routing\\Tests\\Routing\\RouteMock', array('getDefaults'));
 
-        $this->mapper = $this->buildMock('Symfony\\Cmf\\Component\\Routing\\Mapper\\ControllerMapperInterface', array('getController'));
+        $this->matcher = $this->buildMock('Symfony\\Component\\Routing\\Matcher\\UrlMatcherInterface');
+        $this->generator = $this->buildMock('Symfony\\Component\\Routing\\Generator\\UrlGeneratorInterface', array('supports', 'generate', 'setContext', 'getContext'));
+        $this->enhancer = $this->buildMock('Symfony\\Cmf\\Component\\Routing\\Enhancer\\RouteEnhancerInterface', array('enhance'));
 
         $this->context = $this->buildMock('Symfony\\Component\\Routing\\RequestContext');
+        $this->request = Request::create($this->url);
 
-        $this->router = new DynamicRouter($this->repository);
-        $this->router->addControllerMapper($this->mapper);
+        $this->router = new DynamicRouter($this->context, $this->matcher, $this->generator);
+        $this->router->addRouteEnhancer($this->enhancer);
     }
 
     /**
@@ -57,453 +60,142 @@ class DynamicRouterTest extends CmfUnitTestCase
 
     public function testGetGenerator()
     {
-        $router = new DynamicRouter($this->repository);
-        $router->setContext($this->context);
-        $generator = $router->getGenerator(new \Symfony\Component\Routing\RouteCollection());
+        $this->generator->expects($this->once())
+            ->method('setContext')
+            ->with($this->equalTo($this->context));
+
+        $generator = $this->router->getGenerator();
         $this->assertInstanceOf('Symfony\Component\Routing\Generator\UrlGeneratorInterface', $generator);
+        $this->assertSame($this->generator, $generator);
     }
 
-    public function testGenerateFromName()
+    public function testGenerate()
     {
-        $route = new RouteMock();
-        $this->repository->expects($this->once())
-            ->method('getRouteByName')
-            ->with('my_route_name')
-            ->will($this->returnValue($route));
+        $name = 'my_route_name';
+        $parameters = array('foo' => 'bar');
+        $absolute = true;
 
-        $generator = $this->getMockBuilder('Symfony\Component\Routing\Generator\UrlGenerator')->disableOriginalConstructor()->getMock();
-        $generator->expects($this->once())
+        $this->generator->expects($this->once())
             ->method('generate')
-            ->with(DynamicRouter::ROUTE_GENERATE_DUMMY_NAME, array(), false)
-            ->will($this->returnValue('/base/test/route'));
-
-        $router = new TestRouter($this->repository, null, $generator, $route);
-        $router->setContext($this->context);
-
-        $url = $router->generate('my_route_name');
-        $this->assertEquals('/base/test/route', $url);
-
-    }
-
-    public function testGenerateFromContent()
-    {
-        $route = new RouteMock();
-        $this->contentDocument->expects($this->once())
-            ->method('getRoutes')
-            ->will($this->returnValue(array($route)));
-
-        $generator = $this->getMockBuilder('Symfony\Component\Routing\Generator\UrlGenerator')->disableOriginalConstructor()->getMock();
-        $generator->expects($this->once())
-            ->method('generate')
-            ->with(DynamicRouter::ROUTE_GENERATE_DUMMY_NAME, array(), false)
-            ->will($this->returnValue('/base/test/route'));
-
-        $router = new TestRouter($this->repository, null, $generator, $route);
-        $router->setContext($this->context);
-
-        $url = $router->generate('', array('content'=>$this->contentDocument));
-        $this->assertEquals('/base/test/route', $url);
-    }
-
-    public function testGenerateFromContentId()
-    {
-        $route = new RouteMock();
-        $this->contentDocument->expects($this->once())
-            ->method('getRoutes')
-            ->will($this->returnValue(array($route)));
-
-        $contentRepository = $this->buildMock("Symfony\\Cmf\\Component\\Routing\\ContentRepositoryInterface", array('findById'));
-        $contentRepository->expects($this->once())
-            ->method('findById')
-            ->with('/content/id')
-            ->will($this->returnValue($this->contentDocument))
+            ->with($name, $parameters, $absolute)
+            ->will($this->returnValue('http://test'))
         ;
 
-        $generator = $this->getMockBuilder('Symfony\Component\Routing\Generator\UrlGenerator')->disableOriginalConstructor()->getMock();
-        $generator->expects($this->once())
-            ->method('generate')
-            ->with(DynamicRouter::ROUTE_GENERATE_DUMMY_NAME, array(), false)
-            ->will($this->returnValue('/base/test/route'));
-
-        $router = new TestRouter($this->repository, null, $generator, $route);
-        $router->setContext($this->context);
-        $router->setContentRepository($contentRepository);
-
-        $url = $router->generate('', array('content_id' => '/content/id'));
-        $this->assertEquals('/base/test/route', $url);
+        $url = $this->router->generate($name, $parameters, $absolute);
+        $this->assertEquals('http://test', $url);
     }
 
-    public function testGenerateEmptyRouteString()
+    public function testSupports()
     {
-        $this->contentDocument->expects($this->once())
-            ->method('getRoutes')
-            ->will($this->returnValue(array(new RouteMock())));
+        $name = 'foo/bar';
+        $this->generator->expects($this->once())
+            ->method('supports')
+            ->with($this->equalTo($name))
+            ->will($this->returnValue(true))
+        ;
 
-        $generator = $this->getMockBuilder('Symfony\Component\Routing\Generator\UrlGenerator')->disableOriginalConstructor()->getMock();
-        $generator->expects($this->once())
-            ->method('generate')
-            ->with(DynamicRouter::ROUTE_GENERATE_DUMMY_NAME, array(), false)
-            ->will($this->returnValue('/'));
-
-        $router = new TestRouter($this->repository, null, $generator);
-        $router->setContext($this->context);
-
-        $url = $router->generate('', array('content'=>$this->contentDocument));
-        $this->assertEquals('/', $url);
+        $this->assertTrue($this->router->supports($name));
     }
-
-    public function testGenerateAbsolute()
-    {
-        $content = $this->buildMock('Symfony\\Cmf\\Component\\Routing\\RouteAwareInterface');
-        $content->expects($this->once())
-            ->method('getRoutes')
-            ->will($this->returnValue(array(new RouteMock())));
-
-
-        $generator = $this->getMockBuilder('Symfony\Component\Routing\Generator\UrlGenerator')->disableOriginalConstructor()->getMock();
-        $generator->expects($this->once())
-            ->method('generate')
-            ->with(DynamicRouter::ROUTE_GENERATE_DUMMY_NAME, array(), true)
-            ->will($this->returnValue('http://test.domain/base/test/route'));
-
-        $router = new TestRouter($this->repository, null, $generator);
-        $router->setContext($this->context);
-
-        $url = $router->generate('', array('content'=>$content), true);
-        $this->assertEquals('http://test.domain/base/test/route', $url);
-    }
-
-    public function testGenerateFromRoute()
-    {
-        $generator = $this->getMockBuilder('Symfony\Component\Routing\Generator\UrlGenerator')->disableOriginalConstructor()->getMock();
-        $generator->expects($this->once())
-            ->method('generate')
-            ->with(DynamicRouter::ROUTE_GENERATE_DUMMY_NAME, array(), false)
-            ->will($this->returnValue('/base/test/route'));
-
-        $router = new TestRouter($this->repository, null, $generator);
-        $router->setContext($this->context);
-
-
-        $url = $router->generate(new RouteMock());
-        $this->assertEquals('/base/test/route', $url);
-    }
-
-    public function testGenerateMultilang()
-    {
-        $route_en = new RouteMock('en');
-        $route_de = new RouteMock('de');
-        $this->contentDocument->expects($this->once())
-            ->method('getRoutes')
-            ->will($this->returnValue(array($route_en, $route_de)));
-
-        $generator = $this->getMockBuilder('Symfony\Component\Routing\Generator\UrlGenerator')->disableOriginalConstructor()->getMock();
-        $generator->expects($this->once())
-            ->method('generate')
-            ->with(DynamicRouter::ROUTE_GENERATE_DUMMY_NAME, array('_locale' => 'de'), false)
-            ->will($this->returnValue('/base/de'));
-
-        $router = new TestRouter($this->repository, null, $generator, $route_de);
-        $router->setContext($this->context);
-
-        $url = $router->generate('', array('content'=>$this->contentDocument, '_locale' => 'de'));
-        $this->assertEquals('/base/de', $url);
-    }
-
-    /**
-     * @expectedException \Symfony\Component\Routing\Exception\RouteNotFoundException
-     */
-    public function testGenerateNoContent()
-    {
-        $this->router->generate('', array());
-    }
-    /**
-     * @expectedException \Symfony\Component\Routing\Exception\RouteNotFoundException
-     */
-    public function testGenerateInvalidContent()
-    {
-        $this->router->generate('', array('content' => $this));
-    }
-    /**
-     * @expectedException \Symfony\Component\Routing\Exception\RouteNotFoundException
-     */
-    public function testGenerateNoRoutes()
-    {
-        $this->contentDocument->expects($this->once())
-            ->method('getRoutes')
-            ->will($this->returnValue(array()));
-
-        $this->router->generate('', array('content'=>$this->contentDocument));
-    }
-    /**
-     * @expectedException \Symfony\Component\Routing\Exception\RouteNotFoundException
-     */
-    public function testGenerateInvalidRoute()
-    {
-        $this->contentDocument->expects($this->once())
-            ->method('getRoutes')
-            ->will($this->returnValue(array($this)));
-
-        $this->router->generate('', array('content' => $this->contentDocument));
-    }
-
 
     /// match tests ///
 
     public function testGetMatcher()
     {
-        $router = new DynamicRouter($this->repository);
-        $router->setContext($this->context);
-        $matcher = $router->getMatcher(new \Symfony\Component\Routing\RouteCollection());
-        $this->assertInstanceOf('Symfony\Component\Routing\Matcher\UrlMatcherInterface', $matcher);
+        $this->matcher->expects($this->once())
+            ->method('setContext')
+            ->with($this->equalTo($this->context));
+
+        $matcher = $this->router->getMatcher();
+        $this->assertInstanceOf('Symfony\\Component\\Routing\\Matcher\\UrlMatcherInterface', $matcher);
+        $this->assertSame($this->matcher, $matcher);
     }
 
-    public function testMatch()
+    public function testMatchUrl()
     {
-        $url_alias = "/company/more";
-
-        $this->routeDocument->expects($this->once())
-            ->method('getRouteContent')
-            ->will($this->returnValue($this->contentDocument));
-
-        $routeCollection = new RouteCollection();
-        $routeCollection->add('_company_more', $this->routeDocument);
-        $this->repository->expects($this->once())
-                ->method('findManyByUrl')
-                ->with($url_alias)
-                ->will($this->returnValue($routeCollection));
-
-        $this->mapper->expects($this->once())
-                ->method('getController')
-                ->will($this->returnValue('NameSpace\\Controller::action'));
-
-        $matcher = $this->getMockBuilder('Symfony\Component\Routing\Matcher\UrlMatcher')->disableOriginalConstructor()->getMock();
-        $matcher->expects($this->once())
+        $routeDefaults = array('foo' => 'bar');
+        $this->matcher->expects($this->once())
             ->method('match')
-            ->with($url_alias)
-            ->will($this->returnValue(array('_route' => '_company_more')));
+            ->with($this->url)
+            ->will($this->returnValue($routeDefaults))
+        ;
 
-        $router = new TestRouter($this->repository, $matcher);
-        $router->setContext($this->context);
-        $router->addControllerMapper($this->mapper);
+        $expected = array('this' => 'that');
+        $this->enhancer->expects($this->once())
+            ->method('enhance')
+            ->with($this->equalTo($routeDefaults), $this->equalTo($this->request))
+            ->will($this->returnValue($expected))
+        ;
 
-        $results = $router->match($url_alias);
-
-        $expected = array(
-            RouteObjectInterface::CONTROLLER_NAME => 'NameSpace\\Controller::action',
-            '_route' => '_company_more',
-            RouteObjectInterface::CONTENT_OBJECT => $this->contentDocument,
-        );
+        $results = $this->router->match($this->url);
 
         $this->assertEquals($expected, $results);
     }
 
-    public function testMatchRouteKey()
+
+    public function testMatchRequestWithUrlMatcher()
     {
-        $url_alias = "/company/more";
+        $routeDefaults = array('foo' => 'bar');
 
-        $this->routeDocument->expects($this->once())
-            ->method('getRouteContent')
-            ->will($this->returnValue($this->contentDocument));
-        $this->routeDocument->expects($this->atLeastOnce())
-            ->method('getRouteKey')
-            ->will($this->returnValue($url_alias));
-
-        $routeCollection = new RouteCollection();
-        $routeCollection->add('_company_more', $this->routeDocument);
-        $this->repository->expects($this->once())
-            ->method('findManyByUrl')
-            ->with($url_alias)
-            ->will($this->returnValue($routeCollection));
-
-        $this->mapper->expects($this->once())
-            ->method('getController')
-            ->will($this->returnValue('NameSpace\\Controller::action'));
-
-        $matcher = $this->getMockBuilder('Symfony\Component\Routing\Matcher\UrlMatcher')->disableOriginalConstructor()->getMock();
-        $matcher->expects($this->once())
+        $this->matcher->expects($this->once())
             ->method('match')
-            ->with($url_alias)
-            ->will($this->returnValue(array('_route' => '_company_more')));
+            ->with($this->url)
+            ->will($this->returnValue($routeDefaults))
+        ;
 
-        $router = new TestRouter($this->repository, $matcher);
-        $router->setContext($this->context);
-        $router->addControllerMapper($this->mapper);
+        $expected = array('this' => 'that');
+        $this->enhancer->expects($this->once())
+            ->method('enhance')
+            // somehow request object gets confused, check on instance only
+            ->with($this->equalTo($routeDefaults), $this->isInstanceOf('Symfony\\Component\\HttpFoundation\\Request'))
+            ->will($this->returnValue($expected))
+        ;
 
-        $results = $router->match($url_alias);
-
-        $expected = array(
-            RouteObjectInterface::CONTROLLER_NAME => 'NameSpace\\Controller::action',
-            '_route' => $url_alias,
-            RouteObjectInterface::CONTENT_OBJECT => $this->contentDocument,
-        );
+        $results = $this->router->matchRequest($this->request);
 
         $this->assertEquals($expected, $results);
     }
 
-    public function testNoReferenceMatch()
+    public function testMatchRequest()
     {
-        $url_alias = "/company/more_no_reference";
+        $routeDefaults = array('foo' => 'bar');
 
-        $this->routeDocument->expects($this->once())
-            ->method('getRouteContent')
-            ->will($this->returnValue(null));
+        $matcher = $this->buildMock('Symfony\\Component\\Routing\\Matcher\\RequestMatcherInterface', array('matchRequest', 'setContext', 'getContext'));
+        $router = new DynamicRouter($this->context, $matcher, $this->generator);
 
-        $this->mapper->expects($this->once())
-                ->method('getController')
-                ->with($this->routeDocument)
-                ->will($this->returnValue('NameSpace\\Controller::action'));
-
-        $routeCollection = new RouteCollection();
-        $routeCollection->add('route_alias', $this->routeDocument);
-        $this->repository->expects($this->once())
-                ->method('findManyByUrl')
-                ->with($url_alias)
-                ->will($this->returnValue($routeCollection));
-
-        $matcher = $this->getMockBuilder('Symfony\Component\Routing\Matcher\UrlMatcher')->disableOriginalConstructor()->getMock();
         $matcher->expects($this->once())
-            ->method('match')
-            ->with($url_alias)
-            ->will($this->returnValue(array(
-                '_route' => 'route_alias',
-                'type' => 'found'
-        )));
+            ->method('matchRequest')
+            ->with($this->request)
+            ->will($this->returnValue($routeDefaults))
+        ;
 
-        $router = new TestRouter($this->repository, $matcher);
-        $router->setContext($this->context);
-        $router->addControllerMapper($this->mapper);
+        $expected = array('this' => 'that');
+        $this->enhancer->expects($this->once())
+            ->method('enhance')
+            ->with($this->equalTo($routeDefaults), $this->equalTo($this->request)) // TODO: why do we not get the right thing?
+            ->will($this->returnValue($expected))
+        ;
 
-        $expected = array(
-            RouteObjectInterface::CONTROLLER_NAME => 'NameSpace\\Controller::action',
-            '_route' => 'route_alias',
-            'type' => 'found',
-        );
+        $router->addRouteEnhancer($this->enhancer);
 
-        $this->assertEquals($expected, $router->match($url_alias));
+        $this->assertEquals($expected, $router->matchRequest($this->request));
     }
 
     /**
-     * @expectedException Symfony\Component\Routing\Exception\ResourceNotFoundException
+     * @expectedException \InvalidArgumentException
      */
-    public function testNoRouteMatch()
+    public function testMatchUrlWithRequestMatcher()
     {
-        $url_alias = "/company/more_no_match";
+        $matcher = $this->buildMock('Symfony\\Component\\Routing\\Matcher\\RequestMatcherInterface', array('matchRequest', 'setContext', 'getContext'));
+        $router = new DynamicRouter($this->context, $matcher, $this->generator);
 
-        $this->repository->expects($this->once())
-                ->method('findManyByUrl')
-                ->with($url_alias)
-                ->will($this->returnValue(new RouteCollection()));
-
-        $matcher = $this->getMockBuilder('Symfony\Component\Routing\Matcher\UrlMatcher')->disableOriginalConstructor()->getMock();
-        $matcher->expects($this->once())
-            ->method('match')
-            ->with($url_alias)
-            ->will($this->throwException(new \Symfony\Component\Routing\Exception\ResourceNotFoundException()));
-
-        $router = new TestRouter($this->repository, $matcher);
-        $router->setContext($this->context);
-        $router->addControllerMapper($this->mapper);
-
-        $router->match($url_alias);
+        $router->match($this->url);
     }
 
     /**
-     * @expectedException Symfony\Component\Routing\Exception\ResourceNotFoundException
+     * @expectedException \InvalidArgumentException
      */
-    public function testNoResolution()
+    public function testInvalidMatcher()
     {
-        $url_alias = "/company/more_no_resolution";
-
-        $this->mapper->expects($this->once())
-            ->method('getController')
-            ->with($this->routeDocument)
-            ->will($this->returnValue(false));
-
-        $routeCollection = new RouteCollection();
-        $routeCollection->add('route_alias', $this->routeDocument);
-
-        $this->repository->expects($this->once())
-            ->method('findManyByUrl')
-            ->with($url_alias)
-            ->will($this->returnValue($routeCollection));
-
-        $matcher = $this->getMockBuilder('Symfony\Component\Routing\Matcher\UrlMatcher')->disableOriginalConstructor()->getMock();
-        $matcher->expects($this->once())
-            ->method('match')
-            ->with($url_alias)
-            ->will($this->returnValue(array('_route' => 'route_alias')));
-
-        $router = new TestRouter($this->repository, $matcher);
-        $router->setContext($this->context);
-        $router->addControllerMapper($this->mapper);
-
-        $router->match($url_alias);
-    }
-}
-
-class RouteMock extends Route implements \Symfony\Cmf\Component\Routing\RouteObjectInterface
-{
-    private $locale;
-    public function __construct($locale = null)
-    {
-        $this->locale = $locale;
-    }
-    public function getRouteContent()
-    {
-        return null;
-    }
-    public function getDefaults()
-    {
-        $defaults = array();
-        if (! is_null($this->locale)) {
-            $defaults['_locale'] = $this->locale;
-        }
-        return $defaults;
-    }
-    public function getRouteKey()
-    {
-        return null;
-    }
-}
-
-/**
- * Extend to return a mock matcher if specified in the constructor
- */
-class TestRouter extends DynamicRouter
-{
-    private $matcher;
-    private $generator;
-    private $expectRoute;
-    public function __construct(RouteRepositoryInterface $routeRepository, $matcher = null, $generator = null, $expectRoute = null)
-    {
-        parent::__construct($routeRepository);
-        $this->matcher = $matcher;
-        $this->generator = $generator;
-    }
-    public function getMatcher(RouteCollection $collection)
-    {
-        if ($this->matcher) {
-            return $this->matcher;
-        }
-        return parent::getMatcher($collection);
-    }
-    public function getGenerator(RouteCollection $collection)
-    {
-        if ($this->generator) {
-            if ($this->expectRoute) {
-                $found = false;
-                foreach ($collection as $route) {
-                    if ($route === $this->expectRoute) {
-                        $found = true;
-                    }
-                }
-                if (! $found) {
-                    throw new \Exception('expected route was not in collection');
-                }
-            }
-            return $this->generator;
-        }
-        return parent::getGenerator($collection);
+        new DynamicRouter($this->context, $this, $this->generator);
     }
 }
