@@ -182,7 +182,7 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
     public function matchRequest(Request $request)
     {
         if (! empty($this->uriFilterRegexp) && ! preg_match($this->uriFilterRegexp, $request->getPathInfo())) {
-            throw new ResourceNotFoundException("$url does not match the '{$this->uriFilterRegexp}' pattern");
+            throw new ResourceNotFoundException("{$request->getPathInfo()} does not match the '{$this->uriFilterRegexp}' pattern");
         }
 
         $matcher = $this->getMatcher();
