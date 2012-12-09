@@ -23,7 +23,9 @@ class UrlMatcher extends SymfonyUrlMatcher implements FinalMatcherInterface
     public function finalMatch(RouteCollection $collection, Request $request)
     {
         $this->routes = $collection;
-        $this->setContext(RequestContext::fromRequest($request));
+        $context = new RequestContext();
+        $context->fromRequest($request);
+        $this->setContext($context);
         return $this->match($request->getPathInfo());
     }
 
