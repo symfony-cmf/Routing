@@ -9,6 +9,7 @@ use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 use Symfony\Component\Routing\Matcher\UrlMatcherInterface;
+use Symfony\Component\Routing\RequestContextAwareInterface;
 
 use Symfony\Cmf\Component\Routing\Enhancer\RouteEnhancerInterface;
 
@@ -87,7 +88,10 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
     public function getMatcher()
     {
         // we may not set the context in DynamicRouter::setContext as this would lead to symfony cache warmup problems
-        $this->matcher->setContext($this->getContext());
+        // a request matcher does not need the request context separately as it can get it from the request.
+        if ($this->matcher instanceof RequestContextAwareInterface) {
+            $this->matcher->setContext($this->getContext());
+        }
 
         return $this->matcher;
     }

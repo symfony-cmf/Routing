@@ -6,6 +6,7 @@ use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\Matcher\UrlMatcher as SymfonyUrlMatcher;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\RequestContext;
 
 use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 
@@ -22,6 +23,7 @@ class UrlMatcher extends SymfonyUrlMatcher implements FinalMatcherInterface
     public function finalMatch(RouteCollection $collection, Request $request)
     {
         $this->routes = $collection;
+        $this->setContext(RequestContext::fromRequest($request));
         return $this->match($request->getPathInfo());
     }
 
