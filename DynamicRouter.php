@@ -60,6 +60,7 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
      * @param RequestContext                              $context
      * @param RequestMatcherInterface|UrlMatcherInterface $matcher
      * @param UrlGeneratorInterface                       $generator
+     * @param string                                      $uriFilterRegexp
      */
     public function __construct(RequestContext $context, $matcher, UrlGeneratorInterface $generator, $uriFilterRegexp = '')
     {
