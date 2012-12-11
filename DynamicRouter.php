@@ -10,6 +10,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 use Symfony\Component\Routing\Matcher\UrlMatcherInterface;
 use Symfony\Component\Routing\RequestContextAwareInterface;
+use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 
 use Symfony\Cmf\Component\Routing\Enhancer\RouteEnhancerInterface;
 
@@ -156,8 +157,8 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
      */
     public function match($pathinfo)
     {
-        if (! empty($this->uriFilterRegexp) && ! preg_match($this->uriFilterRegexp, $url)) {
-            throw new ResourceNotFoundException("$url does not match the '{$this->uriFilterRegexp}' pattern");
+        if (! empty($this->uriFilterRegexp) && ! preg_match($this->uriFilterRegexp, $pathinfo)) {
+            throw new ResourceNotFoundException("$pathinfo does not match the '{$this->uriFilterRegexp}' pattern");
         }
 
         $matcher = $this->getMatcher();
