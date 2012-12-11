@@ -6,13 +6,13 @@ use Symfony\Component\HttpFoundation\Request;
 
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\Route;
-use Symfony\Cmf\Component\Routing\NestedMatcher\UrlMatcher;
+use Symfony\Cmf\Component\Routing\NestedMatcher\ConfigurableUrlMatcher;
 
 use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 
 use Symfony\Cmf\Component\Routing\Test\CmfUnitTestCase;
 
-class UrlMatcherTest extends CmfUnitTestCase
+class ConfigurableUrlMatcherTest extends CmfUnitTestCase
 {
     protected $routeDocument;
     protected $routeCompiled;
@@ -24,31 +24,16 @@ class UrlMatcherTest extends CmfUnitTestCase
 
     public function setUp()
     {
-        $reflection = new \ReflectionClass('Symfony\\Component\\Routing\\Matcher\\UrlMatcher');
-        if (! $reflection->hasMethod('getAttributes')) {
-            $this->markTestSkipped('This only works with symfony 2.2');
-        }
-
         $this->routeDocument = $this->buildMock('Symfony\\Cmf\\Component\\Routing\\Tests\\Routing\\RouteMock', array('getDefaults', 'getRouteKey', 'compile'));
         $this->routeCompiled = $this->buildMock('Symfony\\Component\\Routing\\CompiledRoute');
 
         $this->context = $this->buildMock('Symfony\\Component\\Routing\\RequestContext');
         $this->request = Request::create($this->url);
 
-        $this->matcher = new UrlMatcher(new RouteCollection(), $this->context);
+        $this->matcher = new ConfigurableUrlMatcher();
     }
 
-    public function testMatchRouteKey()
-    {
-        $this->doTestMatchRouteKey($this->url);
-    }
-
-    public function testMatchNoKey()
-    {
-        $this->doTestMatchRouteKey(null);
-    }
-
-    public function doTestMatchRouteKey($routeKey)
+    public function testMatch()
     {
         $this->routeCompiled->expects($this->atLeastOnce())
             ->method('getStaticPrefix')
@@ -61,10 +46,6 @@ class UrlMatcherTest extends CmfUnitTestCase
         $this->routeDocument->expects($this->atLeastOnce())
             ->method('compile')
             ->will($this->returnValue($this->routeCompiled))
-        ;
-        $this->routeDocument->expects($this->atLeastOnce())
-            ->method('getRouteKey')
-            ->will($this->returnValue($routeKey))
         ;
         $this->routeDocument->expects($this->atLeastOnce())
             ->method('getDefaults')
@@ -89,7 +70,7 @@ class UrlMatcherTest extends CmfUnitTestCase
         $results = $this->matcher->finalMatch($routeCollection, $this->request);
 
         $expected = array(
-            '_route_name' => ($routeKey) ? $routeKey : '_company_more',
+            '_route_name' => '_company_more',
             '_route' => $this->routeDocument,
             'foo' => 'bar',
         );
