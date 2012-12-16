@@ -13,6 +13,8 @@ use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 /**
  * Extended UrlMatcher to provide an additional interface and enhanced features.
  *
+ * This class requires Symfony 2.2 for a refactoring done to the symfony UrlMatcher
+ *
  * @author Larry Garfield
  */
 class UrlMatcher extends SymfonyUrlMatcher implements FinalMatcherInterface
