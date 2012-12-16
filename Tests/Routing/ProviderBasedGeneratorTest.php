@@ -87,7 +87,7 @@ class ProviderBasedGeneratorTest extends CmfUnitTestCase
  */
 class TestableProviderBasedGenerator extends ProviderBasedGenerator
 {
-    protected function doGenerate($variables, $defaults, $requirements, $tokens, $parameters, $name, $absolute, $hostnameTokens)
+    protected function doGenerate($variables, $defaults, $requirements, $tokens, $parameters, $name, $absolute, $hostnameTokens = null)
     {
         return 'result_url';
     }
