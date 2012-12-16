@@ -29,7 +29,6 @@ class ConfigurableUrlMatcher implements FinalMatcherInterface
      */
     public function finalMatch(RouteCollection $collection, Request $request)
     {
-
         $context = new RequestContext();
         $context->fromRequest($request);
         $matcher = $this->getMatcher($collection, $context);

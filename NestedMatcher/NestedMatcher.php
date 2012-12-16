@@ -118,7 +118,6 @@ class NestedMatcher implements RequestMatcherInterface
     public function matchRequest(Request $request)
     {
         $collection = $this->routeProvider->getRouteCollectionForRequest($request);
-
         if (!count($collection)) {
             throw new ResourceNotFoundException();
         }
