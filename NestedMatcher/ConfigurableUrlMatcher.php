@@ -7,6 +7,7 @@ use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\HttpFoundation\Request;
 
+use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 use Symfony\Cmf\Component\Routing\NestedMatcher\FinalMatcherInterface;
 
 /**
@@ -33,13 +34,19 @@ class ConfigurableUrlMatcher implements FinalMatcherInterface
         $context->fromRequest($request);
         $matcher = $this->getMatcher($collection, $context);
         $attributes = $matcher->match($request->getPathInfo());
-        if (!empty($attributes['_route'])) {
-            if (empty($attributes['_route_name']) && is_string($attributes['_route'])) {
-                $attributes['_route_name'] = $attributes['_route'];
+
+        // cleanup route attributes
+        if (! isset($attributes['_route']) || ! $attributes['_route'] instanceof Route) {
+            $name = $attributes['_route'];
+            $route = $collection->get($attributes['_route']);
+            $attributes['_route'] = $route;
+
+            if ($route instanceof RouteObjectInterface && is_string($route->getRouteKey())) {
+                $name = $route->getRouteKey();
             }
 
-            if (! $attributes['_route'] instanceof Route) {
-                $attributes['_route'] = $collection->get($attributes['_route']);
+            if (empty($attributes['_route_name']) && is_string($name)) {
+                $attributes['_route_name'] = $name;
             }
         }
 
