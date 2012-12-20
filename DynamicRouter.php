@@ -163,10 +163,12 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
 
         $matcher = $this->getMatcher();
         if (! $matcher instanceof UrlMatcherInterface) {
-            throw new \InvalidArgumentException('Wrong matcher type, you need to call matchRequest');
+            $request = Request::create($pathinfo);
+            $defaults = $matcher->matchRequest($request);
+        } else {
+            $defaults = $matcher->match($pathinfo);
         }
 
-        $defaults = $matcher->match($pathinfo);
 
         return $this->applyRouteEnhancers($defaults, Request::create($pathinfo));
     }
