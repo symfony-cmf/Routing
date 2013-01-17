@@ -47,7 +47,7 @@ class ConfigurableUrlMatcher implements FinalMatcherInterface
                 $name = $route->getRouteKey();
             }
 
-            if (empty($attributes[RouteObjectInterface::ROUTE_NAME]) && is_string($name)) {
+            if (is_string($name)) {
                 $attributes[RouteObjectInterface::ROUTE_NAME] = $name;
             }
         }
