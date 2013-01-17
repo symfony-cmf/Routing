@@ -70,8 +70,8 @@ class ConfigurableUrlMatcherTest extends CmfUnitTestCase
         $results = $this->matcher->finalMatch($routeCollection, $this->request);
 
         $expected = array(
-            '_route_name' => '_company_more',
-            '_route' => $this->routeDocument,
+            RouteObjectInterface::ROUTE_NAME => '_company_more',
+            RouteObjectInterface::ROUTE_OBJECT => $this->routeDocument,
             'foo' => 'bar',
         );
 
@@ -119,8 +119,8 @@ class ConfigurableUrlMatcherTest extends CmfUnitTestCase
         $results = $this->matcher->finalMatch($routeCollection, $this->request);
 
         $expected = array(
-            '_route_name' => '_company_more',
-            '_route' => $this->routeDocument,
+            RouteObjectInterface::ROUTE_NAME => '_company_more',
+            RouteObjectInterface::ROUTE_OBJECT => $this->routeDocument,
             'foo' => 'bar',
         );
 
