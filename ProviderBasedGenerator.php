@@ -46,13 +46,13 @@ class ProviderBasedGenerator extends UrlGenerator implements VersatileGeneratorI
         $compiledRoute = $route->compile();
 
         // handle symfony 2.1 and 2.2
-        // getHostnameTokens exists only since 2.2
-        $hostnameTokens = null;
-        if (method_exists($compiledRoute, 'getHostnameTokens')) {
-            $hostnameTokens = $compiledRoute->getHostnameTokens();
+        // getHostTokens exists only since 2.2
+        $hostTokens = null;
+        if (method_exists($compiledRoute, 'getHostTokens')) {
+            $hostTokens = $compiledRoute->getHostTokens();
         }
 
-        return $this->doGenerate($compiledRoute->getVariables(), $route->getDefaults(), $route->getRequirements(), $compiledRoute->getTokens(), $parameters, $name, $absolute, $hostnameTokens);
+        return $this->doGenerate($compiledRoute->getVariables(), $route->getDefaults(), $route->getRequirements(), $compiledRoute->getTokens(), $parameters, $name, $absolute, $hostTokens);
     }
 
     /**
