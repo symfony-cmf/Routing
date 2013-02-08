@@ -46,8 +46,8 @@ class ContentAwareGenerator extends ProviderBasedGenerator
      *
      * @param string $name       ignored
      * @param array  $parameters must either contain the field 'route' with a
-     *      RouteObjectInterface or the field 'content' with the document
-     *      instance to get the route for (implementing RouteAwareInterface)
+     *      RouteObjectInterface or the field 'content_id' with a document
+     *      id to get the route for (implementing RouteAwareInterface)
      *
      * @throws RouteNotFoundException If there is no such route in the database
      */
@@ -130,7 +130,7 @@ class ContentAwareGenerator extends ProviderBasedGenerator
      *
      * If none is found, falls back to just return the first route.
      *
-     * @param mixed $name
+     * @param mixed $content
      * @param array $parameters which should contain a content field containing a RouteAwareInterface object
      *
      * @return SymfonyRoute the route instance
@@ -138,20 +138,17 @@ class ContentAwareGenerator extends ProviderBasedGenerator
      * @throws RouteNotFoundException if there is no content field in the
      *      parameters or its not possible to build a route from that object
      */
-    protected function getRouteByContent($name, &$parameters)
+    protected function getRouteByContent($content, &$parameters)
     {
-        if ($name instanceof RouteAwareInterface) {
-            $content = $name;
-        } elseif (isset($parameters['content_id']) && null !== $this->contentRepository) {
+        if (!$content instanceof RouteAwareInterface
+            && isset($parameters['content_id'])
+            && null !== $this->contentRepository
+        ) {
             $content = $this->contentRepository->findById($parameters['content_id']);
-        } elseif (isset($parameters['content'])) {
-            $content = $parameters['content'];
         }
 
-        unset($parameters['content'], $parameters['content_id']);
-
         if (empty($content)) {
-            throw new RouteNotFoundException('Neither the route name, nor a parameter "content" or "content_id" could be resolved to an content instance');
+            throw new RouteNotFoundException('Neither the route name, nor the "content_id" parameter could be resolved to an content instance');
         }
 
         if (!$content instanceof RouteAwareInterface) {
@@ -164,6 +161,8 @@ class ContentAwareGenerator extends ProviderBasedGenerator
             $hint = method_exists($content, 'getPath') ? $content->getPath() : get_class($content);
             throw new RouteNotFoundException('Document has no route: ' . $hint);
         }
+
+        unset($parameters['content_id']);
 
         $route = $this->getRouteByLocale($routes, $this->getLocale($parameters));
         if ($route) {

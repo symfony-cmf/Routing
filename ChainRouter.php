@@ -198,7 +198,6 @@ class ChainRouter implements RouterInterface, RequestMatcherInterface, WarmableI
     {
         /** @var $router RouterInterface */
         foreach ($this->all() as $router) {
-
             // if $name and $router does not implement ChainedRouterInterface and $name is not a string, continue
             // if $name and $router does not implement ChainedRouterInterface and $name is string but does not match a default Symfony2 route name, continue
             if ($name && !$router instanceof ChainedRouterInterface) {
@@ -215,13 +214,16 @@ class ChainRouter implements RouterInterface, RequestMatcherInterface, WarmableI
             try {
                 return $router->generate($name, $parameters, $absolute);
             } catch (RouteNotFoundException $e) {
+                if ($router instanceof ChainedRouterInterface) {
+                    $name = $router->getRouteName($name, $parameters);
+                }
                 if ($this->logger) {
-                    $this->logger->info($e->getMessage());
+                    $this->logger->info("Unable to generate route for '$name': ".$e->getMessage());
                 }
             }
         }
 
-        throw new RouteNotFoundException(sprintf('None of the chained routers were able to generate route "%s".', $name));
+        throw new RouteNotFoundException(sprintf('None of the chained routers were able to generate route for "%s".', $name));
     }
 
     /**

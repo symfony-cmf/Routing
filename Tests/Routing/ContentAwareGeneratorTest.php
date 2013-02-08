@@ -89,7 +89,7 @@ class ContentAwareGeneratorTest extends CmfUnitTestCase
             ->will($this->returnValue($this->routeCompiled))
         ;
 
-        $this->assertEquals('result_url', $this->generator->generate('', array('content'=>$this->contentDocument)));
+        $this->assertEquals('result_url', $this->generator->generate($this->contentDocument));
     }
 
     public function testGenerateRouteMultilang()
@@ -224,7 +224,7 @@ class ContentAwareGeneratorTest extends CmfUnitTestCase
             ->will($this->returnValue($this->routeCompiled))
         ;
 
-        $this->assertEquals('result_url', $this->generator->generate('', array('content'=>$this->contentDocument, '_locale' => 'de')));
+        $this->assertEquals('result_url', $this->generator->generate($this->contentDocument, array('_locale' => 'de')));
     }
 
     /**
@@ -239,7 +239,7 @@ class ContentAwareGeneratorTest extends CmfUnitTestCase
      */
     public function testGenerateInvalidContent()
     {
-        $this->generator->generate('', array('content' => $this));
+        $this->generator->generate($this);
     }
     /**
      * @expectedException Symfony\Component\Routing\Exception\RouteNotFoundException
@@ -250,7 +250,7 @@ class ContentAwareGeneratorTest extends CmfUnitTestCase
             ->method('getRoutes')
             ->will($this->returnValue(array()));
 
-        $this->generator->generate('', array('content'=>$this->contentDocument));
+        $this->generator->generate($this->contentDocument);
     }
     /**
      * @expectedException Symfony\Component\Routing\Exception\RouteNotFoundException
@@ -261,7 +261,7 @@ class ContentAwareGeneratorTest extends CmfUnitTestCase
             ->method('getRoutes')
             ->will($this->returnValue(array($this)));
 
-        $this->generator->generate('', array('content'=>$this->contentDocument));
+        $this->generator->generate($this->contentDocument);
     }
 
     public function testSupports()

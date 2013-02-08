@@ -298,4 +298,23 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
     {
         return $this->context;
     }
+
+    /**
+     * Convert a route identifier (name, content object etc) into a string
+     * usable for logging and other debug/error messages
+     *
+     * @param mixed $name
+     * @param array $parameters which should contain a content field containing a RouteAwareInterface object
+     * @return string
+     *
+     * @api
+     */
+    public function getRouteName($name, $parameters = array())
+    {
+        if (empty($name) && isset($parameters['content_id'])) {
+            return $parameters['content_id'];
+        }
+
+        return $name;
+    }
 }
