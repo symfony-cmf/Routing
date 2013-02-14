@@ -148,7 +148,7 @@ class ContentAwareGenerator extends ProviderBasedGenerator
         }
 
         if (empty($content)) {
-            throw new RouteNotFoundException('Neither the route name, nor the "content_id" parameter could be resolved to an content instance');
+            throw new RouteNotFoundException('Neither the route $name argument, nor the "content_id" parameter could be resolved to find a route');
         }
 
         if (!$content instanceof RouteAwareInterface) {
