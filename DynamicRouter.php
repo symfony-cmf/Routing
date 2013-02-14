@@ -300,19 +300,15 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
     }
 
     /**
-     * Convert a route identifier (name, content object etc) into a string
-     * usable for logging and other debug/error messages
+     * {@inheritDoc}
      *
-     * @param mixed $name
-     * @param array $parameters which should contain a content field containing a RouteAwareInterface object
-     * @return string
-     *
-     * @api
+     * Forwards to the generator.
      */
-    public function getRouteName($name, $parameters = array())
+    public function getDebugRouteName($name, array $parameters = array())
     {
-        if (empty($name) && isset($parameters['content_id'])) {
-            return $parameters['content_id'];
+        if ($this->generator instanceof VersatileGeneratorInterface) {
+
+            return $this->generator->getDebugRouteName($name, $parameters);
         }
 
         return $name;

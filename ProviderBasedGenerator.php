@@ -64,4 +64,21 @@ class ProviderBasedGenerator extends UrlGenerator implements VersatileGeneratorI
     {
         return is_string($name) || $name instanceof SymfonyRoute;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getDebugRouteName($name, array $parameters = array()) {
+        if ($name instanceof RouteObjectInterface) {
+
+            return 'Route with key ' . $name->getRouteKey();
+        }
+        if ($name instanceof SymfonyRoute) {
+
+            return 'Route with pattern ' . $name->getPattern();
+        }
+
+        return $name;
+    }
+
 }

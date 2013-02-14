@@ -232,4 +232,20 @@ class ContentAwareGenerator extends ProviderBasedGenerator
     {
         return ! $name || parent::supports($name) || $name instanceof RouteAwareInterface;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getDebugRouteName($name, array $parameters = array()) {
+        if (empty($name) && isset($parameters['content_id'])) {
+
+            return 'Content id ' . $parameters['content_id'];
+        }
+        if ($name instanceof RouteAwareInterface) {
+
+            return 'Route aware content ' . $name;
+        }
+
+        return parent::getDebugRouteName($name, $parameters);
+    }
 }
