@@ -11,8 +11,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 interface VersatileGeneratorInterface extends UrlGeneratorInterface
 {
     /**
-     * If $name preg_match this pattern, the name is valid for symfony core
-     * compatible generators.
+     * If $name preg_match this pattern, the name is valid for symfony 2.1 core
+     * compatible generators. In 2.2 the pattern may be any string.
      */
     const CORE_NAME_PATTERN = '/^[a-z0-9A-Z_.]+$/';
 
