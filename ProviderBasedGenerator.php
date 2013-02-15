@@ -64,4 +64,19 @@ class ProviderBasedGenerator extends UrlGenerator implements VersatileGeneratorI
     {
         return is_string($name) || $name instanceof SymfonyRoute;
     }
+
+    /**
+     * Convert a route identifier (name, content object etc) into a string
+     * usable for logging and other debug/error messages
+     *
+     * @param mixed $name
+     * @param array $parameters which should contain a content field containing a RouteAwareInterface object
+     * @return string
+     *
+     * @api
+     */
+    public function getRouteDebugString($name, $parameters = array())
+    {
+        return "Route '$name' not found";
+    }
 }

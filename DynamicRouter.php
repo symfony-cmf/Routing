@@ -137,7 +137,6 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
     public function supports($name)
     {
         if ($this->generator instanceof VersatileGeneratorInterface) {
-
             return $this->generator->supports($name);
         }
 
@@ -297,5 +296,24 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
     public function getContext()
     {
         return $this->context;
+    }
+
+    /**
+     * Convert a route identifier (name, content object etc) into a string
+     * usable for logging and other debug/error messages
+     *
+     * @param mixed $name
+     * @param array $parameters which should contain a content field containing a RouteAwareInterface object
+     * @return string
+     *
+     * @api
+     */
+    public function getRouteDebugString($name, $parameters = array())
+    {
+        if ($this->generator instanceof VersatileGeneratorInterface) {
+            return $this->generator->getRouteDebugString($name, $parameters);
+        }
+
+        return "Route '$name' not found";
     }
 }

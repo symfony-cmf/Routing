@@ -133,26 +133,7 @@ class ChainRouter implements RouterInterface, RequestMatcherInterface, WarmableI
      */
     public function match($url)
     {
-        $methodNotAllowed = null;
-
-        /** @var $router RouterInterface */
-        foreach ($this->all() as $router) {
-            try {
-                return $router->match($url);
-            } catch (ResourceNotFoundException $e) {
-                if ($this->logger) {
-                    $this->logger->info('Router '.get_class($router).' was not able to match, message "'.$e->getMessage().'"');
-                }
-                // Needs special care
-            } catch (MethodNotAllowedException $e) {
-                if ($this->logger) {
-                    $this->logger->info('Router '.get_class($router).' throws MethodNotAllowedException with message "'.$e->getMessage().'"');
-                }
-                $methodNotAllowed = $e;
-            }
-        }
-
-        throw $methodNotAllowed ?: new ResourceNotFoundException("None of the routers in the chain matched '$url'");
+        return $this->matchRoute(null, $url);
     }
 
     /**
@@ -162,30 +143,54 @@ class ChainRouter implements RouterInterface, RequestMatcherInterface, WarmableI
      */
     public function matchRequest(Request $request)
     {
+        return $this->matchRoute($request);
+    }
+
+    /**
+     * Loops through all routes and tries to match the passed request or url.
+     * At least either a request or a url must be provided, if both are provided
+     * the request takes precedence.
+     *
+     * @param Request $request
+     * @param string $url
+     */
+    private function matchRoute(Request $request = null, $url = null)
+    {
         $methodNotAllowed = null;
 
         foreach ($this->all() as $router) {
             try {
-                // the request/url match logic is the same as in Symfony/Component/HttpKernel/EventListener/RouterListener.php
-                // matching requests is more powerful than matching URLs only, so try that first
-                if ($router instanceof RequestMatcherInterface) {
-                    return $router->matchRequest($request);
+                if ($request) {
+                    // the request/url match logic is the same as in Symfony/Component/HttpKernel/EventListener/RouterListener.php
+                    // matching requests is more powerful than matching URLs only, so try that first
+                    if ($router instanceof RequestMatcherInterface) {
+                        return $router->matchRequest($request);
+                    }
+
+                    if (null === $url) {
+                        $url = $request->getPathInfo();
+                    }
                 }
-                return $router->match($request->getPathInfo());
+
+                return $router->match($url);
             } catch (ResourceNotFoundException $e) {
                 if ($this->logger) {
-                    $this->logger->info('Router '.get_class($router).' was not able to match, message "'.$e->getMessage().'"');
+                    $this->logger->info("Router '".get_class($router)."' was not able to match, message '".$e->getMessage()."'");
                 }
                 // Needs special care
             } catch (MethodNotAllowedException $e) {
                 if ($this->logger) {
-                    $this->logger->info('Router '.get_class($router).' throws MethodNotAllowedException with message "'.$e->getMessage().'"');
+                    $this->logger->info("Router '".get_class($router)."' throws MethodNotAllowedException with message '".$e->getMessage()."'");
                 }
                 $methodNotAllowed = $e;
             }
         }
 
-        throw $methodNotAllowed ?: new ResourceNotFoundException("None of the routers in the chain matched this request");
+        if ($request) {
+            throw $methodNotAllowed ?: new ResourceNotFoundException("None of the routers in the chain matched the request '$request''");
+        }
+
+        throw $methodNotAllowed ?: new ResourceNotFoundException("None of the routers in the chain matched '$url'");
     }
 
     /**
@@ -196,9 +201,9 @@ class ChainRouter implements RouterInterface, RequestMatcherInterface, WarmableI
      */
     public function generate($name, $parameters = array(), $absolute = false)
     {
-        /** @var $router RouterInterface */
-        foreach ($this->all() as $router) {
+        $debug = array();
 
+        foreach ($this->all() as $router) {
             // if $router does not implement ChainedRouterInterface and $name is not a string, continue
             if ($name && !$router instanceof ChainedRouterInterface) {
                 if (! is_string($name)) {
@@ -214,13 +219,25 @@ class ChainRouter implements RouterInterface, RequestMatcherInterface, WarmableI
             try {
                 return $router->generate($name, $parameters, $absolute);
             } catch (RouteNotFoundException $e) {
+                if ($router instanceof VersatileGeneratorInterface) {
+                    /** @var $router VersatileGeneratorInterface */
+                    $debug[] = $info = $router->getRouteDebugString($name, $parameters);
+                } else {
+                    $debug[] = $info = "Route '$name' not found";
+                }
                 if ($this->logger) {
-                    $this->logger->info($e->getMessage());
+                    $this->logger->info("Router ".get_class($router)." was unable to generate route. Reason: $info (".$e->getMessage().')');
                 }
             }
         }
 
-        throw new RouteNotFoundException(sprintf('None of the chained routers were able to generate route "%s".', $name));
+        if (empty($debug)) {
+            $debug[] = "Route '$name' not found";
+        } else {
+            $debug = array_unique($debug);
+        }
+
+        throw new RouteNotFoundException('None of the chained routers were able to generate route: '.implode(', ', $debug));
     }
 
     /**
