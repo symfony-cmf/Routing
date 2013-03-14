@@ -141,7 +141,7 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
             return $this->generator->supports($name);
         }
 
-        return (!is_string($name) || !preg_match(VersatileGeneratorInterface::CORE_NAME_PATTERN, $name));
+        return is_string($name);
     }
 
     /**

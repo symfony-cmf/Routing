@@ -14,6 +14,8 @@ use Symfony\Cmf\Component\Routing\NestedMatcher\FinalMatcherInterface;
  * A final matcher that can proxy any matcher having the right constructor
  * signature, the same way the symfony core Router class does.
  *
+ * SYMFONY 2.1 COMPATIBILITY only. With 2.2 we could use the extending UrlMatcher class
+ *
  * @author DavidBuchmann
  */
 class ConfigurableUrlMatcher implements FinalMatcherInterface
@@ -35,7 +37,7 @@ class ConfigurableUrlMatcher implements FinalMatcherInterface
         $matcher = $this->getMatcher($collection, $context);
         $attributes = $matcher->match($request->getPathInfo());
 
-        // cleanup route attributes
+        // SYMFONY 2.1 COMPATIBILITY: cleanup route attributes
         if (! isset($attributes[RouteObjectInterface::ROUTE_OBJECT])
             || ! $attributes[RouteObjectInterface::ROUTE_OBJECT] instanceof Route
         ) {
