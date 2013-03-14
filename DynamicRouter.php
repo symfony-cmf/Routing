@@ -304,13 +304,13 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
      *
      * Forwards to the generator.
      */
-    public function getDebugRouteName($name, array $parameters = array())
+    public function getRouteDebugMessage($name, array $parameters = array())
     {
         if ($this->generator instanceof VersatileGeneratorInterface) {
 
-            return $this->generator->getDebugRouteName($name, $parameters);
+            return $this->generator->getRouteDebugMessage($name, $parameters);
         }
 
-        return $name;
+        return "Route '$name' not found";
     }
 }

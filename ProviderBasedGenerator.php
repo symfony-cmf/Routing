@@ -68,7 +68,8 @@ class ProviderBasedGenerator extends UrlGenerator implements VersatileGeneratorI
     /**
      * {@inheritDoc}
      */
-    public function getDebugRouteName($name, array $parameters = array()) {
+    public function getRouteDebugMessage($name, array $parameters = array())
+    {
         if ($name instanceof RouteObjectInterface) {
 
             return 'Route with key ' . $name->getRouteKey();

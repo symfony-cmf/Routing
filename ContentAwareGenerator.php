@@ -9,8 +9,6 @@ use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\Generator\UrlGenerator;
 
-use Symfony\Cmf\Component\Routing\RouteProviderInterface;
-
 /**
  * A generator that tries to generate routes from object, route names or
  * content objects or names.
@@ -158,8 +156,8 @@ class ContentAwareGenerator extends ProviderBasedGenerator
 
         $routes = $content->getRoutes();
         if (empty($routes)) {
-            $hint = method_exists($content, 'getPath') ? $content->getPath() : get_class($content);
-            throw new RouteNotFoundException('Document has no route: ' . $hint);
+            $hint = null !== $this->contentRepository && $this->contentRepository->getContentId($content) ?: get_class($content);
+            throw new RouteNotFoundException('Content document has no route: ' . $hint);
         }
 
         unset($parameters['content_id']);
@@ -236,7 +234,7 @@ class ContentAwareGenerator extends ProviderBasedGenerator
     /**
      * {@inheritDoc}
      */
-    public function getDebugRouteName($name, array $parameters = array()) {
+    public function getRouteDebugMessage($name, array $parameters = array()) {
         if (empty($name) && isset($parameters['content_id'])) {
 
             return 'Content id ' . $parameters['content_id'];
@@ -246,6 +244,6 @@ class ContentAwareGenerator extends ProviderBasedGenerator
             return 'Route aware content ' . $name;
         }
 
-        return parent::getDebugRouteName($name, $parameters);
+        return parent::getRouteDebugMessage($name, $parameters);
     }
 }
