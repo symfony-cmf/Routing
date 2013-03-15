@@ -106,8 +106,6 @@ class DynamicRouterTest extends CmfUnitTestCase
         $this->assertFalse($router->supports($this));
     }
 
-
-
     /// match tests ///
 
     public function testGetMatcher()

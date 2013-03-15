@@ -245,6 +245,59 @@ class ContentAwareGeneratorTest extends CmfUnitTestCase
     {
         $this->generator->generate($this);
     }
+
+    /**
+     * @expectedException Symfony\Component\Routing\Exception\RouteNotFoundException
+     */
+    public function testGenerateNoContentRepository()
+    {
+        $this->provider->expects($this->never())
+            ->method('getRouteByName')
+        ;
+
+        $this->generator->generate('', array('content_id' => '/content/id'));
+    }
+
+    /**
+     * @expectedException Symfony\Component\Routing\Exception\RouteNotFoundException
+     */
+    public function testGenerateNoContentFoundInRepository()
+    {
+        $this->provider->expects($this->never())
+            ->method('getRouteByName')
+        ;
+
+        $contentRepository = $this->buildMock("Symfony\\Cmf\\Component\\Routing\\ContentRepositoryInterface", array('findById', 'getContentId'));
+        $contentRepository->expects($this->once())
+            ->method('findById')
+            ->with('/content/id')
+            ->will($this->returnValue(null))
+        ;
+        $this->generator->setContentRepository($contentRepository);
+
+        $this->generator->generate('', array('content_id' => '/content/id'));
+    }
+
+    /**
+     * @expectedException Symfony\Component\Routing\Exception\RouteNotFoundException
+     */
+    public function testGenerateWrongContentClassInRepository()
+    {
+        $this->provider->expects($this->never())
+            ->method('getRouteByName')
+        ;
+
+        $contentRepository = $this->buildMock("Symfony\\Cmf\\Component\\Routing\\ContentRepositoryInterface", array('findById', 'getContentId'));
+        $contentRepository->expects($this->once())
+            ->method('findById')
+            ->with('/content/id')
+            ->will($this->returnValue($this))
+        ;
+        $this->generator->setContentRepository($contentRepository);
+
+        $this->generator->generate('', array('content_id' => '/content/id'));
+    }
+
     /**
      * @expectedException Symfony\Component\Routing\Exception\RouteNotFoundException
      */
