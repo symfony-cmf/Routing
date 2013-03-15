@@ -30,7 +30,7 @@ interface ContentRepositoryInterface
      *
      * @param object $content A content instance
      *
-     * @return string|null $id id of the content object or null if unable to determine and id
+     * @return string|null $id id of the content object or null if unable to determine an id
      */
     public function getContentId($content);
 }

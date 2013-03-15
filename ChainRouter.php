@@ -152,8 +152,8 @@ class ChainRouter implements RouterInterface, RequestMatcherInterface, WarmableI
      * At least the  url must be provided, if a request is additionally provided
      * the request takes precedence.
      *
+     * @param string  $url
      * @param Request $request
-     * @param string $url
      */
     private function doMatch($url, Request $request = null)
     {
@@ -213,7 +213,7 @@ class ChainRouter implements RouterInterface, RequestMatcherInterface, WarmableI
             try {
                 return $router->generate($name, $parameters, $absolute);
             } catch (RouteNotFoundException $e) {
-                $hint = ($router instanceof ChainedRouterInterface)
+                $hint = ($router instanceof VersatileGeneratorInterface)
                     ? $router->getRouteDebugMessage($name, $parameters)
                     : "Route '$name' not found";
                 $debug[] = $hint;
@@ -227,7 +227,7 @@ class ChainRouter implements RouterInterface, RequestMatcherInterface, WarmableI
             $debug = array_unique($debug);
             $info = implode(', ', $debug);
         } else {
-            $info = "No route named '$name' found";
+            $info = "No route '$name' found";
         }
 
         throw new RouteNotFoundException(sprintf('None of the chained routers were able to generate route: %s', $info));
