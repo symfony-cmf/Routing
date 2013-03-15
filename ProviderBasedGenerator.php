@@ -71,11 +71,10 @@ class ProviderBasedGenerator extends UrlGenerator implements VersatileGeneratorI
     public function getRouteDebugMessage($name, array $parameters = array())
     {
         if ($name instanceof RouteObjectInterface) {
-
             return 'Route with key ' . $name->getRouteKey();
         }
-        if ($name instanceof SymfonyRoute) {
 
+        if ($name instanceof SymfonyRoute) {
             return 'Route with pattern ' . $name->getPattern();
         }
 

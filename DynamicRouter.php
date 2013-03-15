@@ -307,7 +307,6 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
     public function getRouteDebugMessage($name, array $parameters = array())
     {
         if ($this->generator instanceof VersatileGeneratorInterface) {
-
             return $this->generator->getRouteDebugMessage($name, $parameters);
         }
 
