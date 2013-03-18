@@ -137,7 +137,6 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
     public function supports($name)
     {
         if ($this->generator instanceof VersatileGeneratorInterface) {
-
             return $this->generator->supports($name);
         }
 
@@ -208,8 +207,9 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
     /**
      * Apply the route enhancers to the defaults, according to priorities
      *
-     * @param array $defaults
+     * @param array   $defaults
      * @param Request $request
+     *
      * @return array
      */
     protected function applyRouteEnhancers($defaults, Request $request)
@@ -217,6 +217,7 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
         foreach ($this->getRouteEnhancers() as $enhancer) {
             $defaults = $enhancer->enhance($defaults, $request);
         }
+
         return $defaults;
     }
 

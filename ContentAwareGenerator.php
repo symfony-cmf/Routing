@@ -3,11 +3,8 @@
 namespace Symfony\Cmf\Component\Routing;
 
 use Symfony\Component\Routing\Route as SymfonyRoute;
-use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\RouteCollection;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Routing\Generator\UrlGenerator;
 
 /**
  * A generator that tries to generate routes from object, route names or

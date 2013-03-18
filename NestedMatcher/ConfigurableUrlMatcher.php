@@ -59,7 +59,7 @@ class ConfigurableUrlMatcher implements FinalMatcherInterface
 
     /**
      * @param RouteCollection $collection the route collection to match
-     * @param RequestContext  $context      the context to match in
+     * @param RequestContext  $context    the context to match in
      *
      * @return \Symfony\Component\Routing\Matcher\UrlMatcherInterface
      */

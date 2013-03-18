@@ -4,7 +4,6 @@ namespace Symfony\Cmf\Component\Routing\Tests\Routing;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\RouteCollection;
-use Symfony\Component\Routing\Route;
 
 use Symfony\Cmf\Component\Routing\DynamicRouter;
 
@@ -53,7 +52,6 @@ class DynamicRouterTest extends CmfUnitTestCase
         $this->assertInstanceOf('Symfony\\Component\\Routing\\RouteCollection', $collection);
         // TODO: once this is implemented, check content of collection
     }
-
 
     /// generator tests ///
 
@@ -139,7 +137,6 @@ class DynamicRouterTest extends CmfUnitTestCase
 
         $this->assertEquals($expected, $results);
     }
-
 
     public function testMatchRequestWithUrlMatcher()
     {

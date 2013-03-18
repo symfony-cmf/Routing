@@ -2,7 +2,6 @@
 
 namespace Symfony\Cmf\Component\Routing\Tests\Routing;
 
-use Symfony\Component\Routing\Route as SymfonyRoute;
 use Symfony\Cmf\Component\Routing\RouteAwareInterface;
 
 use Symfony\Cmf\Component\Routing\ContentAwareGenerator;
@@ -31,7 +30,6 @@ class ContentAwareGeneratorTest extends CmfUnitTestCase
 
         $this->generator = new TestableContentAwareGenerator($this->provider);
     }
-
 
     public function testGenerateFromContent()
     {
@@ -121,7 +119,6 @@ class ContentAwareGeneratorTest extends CmfUnitTestCase
 
         $this->assertEquals('result_url', $this->generator->generate($route_en, array('_locale' => 'de')));
     }
-
 
     public function testGenerateRouteMultilangNomatch()
     {
