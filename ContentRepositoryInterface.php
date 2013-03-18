@@ -24,4 +24,13 @@ interface ContentRepositoryInterface
      * @return object A content that matches this id.
      */
     public function findById($id);
+
+    /**
+     * Return the content id for the provided content object
+     *
+     * @param object $content A content instance
+     *
+     * @return string|null $id id of the content object or null if unable to determine an id
+     */
+    public function getContentId($content);
 }
