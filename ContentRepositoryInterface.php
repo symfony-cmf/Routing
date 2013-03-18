@@ -26,7 +26,8 @@ interface ContentRepositoryInterface
     public function findById($id);
 
     /**
-     * Return the content id for the provided content object
+     * Return the content identifier for the provided content object for
+     * debugging purposes.
      *
      * @param object $content A content instance
      *
