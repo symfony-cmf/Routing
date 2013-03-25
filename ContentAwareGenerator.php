@@ -198,7 +198,8 @@ class ContentAwareGenerator extends ProviderBasedGenerator
      * @param SymfonyRoute $route
      * @param string       $locale
      *
-     * @return bool TRUE if there is either no _locale, no _locale requirement or if the two match
+     * @return bool TRUE if there is either no $locale, no _locale requirement
+     *      on the route or if the requirement and the passed $locale match.
      */
     private function checkLocaleRequirement(SymfonyRoute $route, $locale)
     {
