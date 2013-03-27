@@ -12,7 +12,7 @@ class ChainRouterTest extends CmfUnitTestCase
 {
     public function setUp()
     {
-        $this->router = new ChainRouter($this->getMock('Symfony\Component\HttpKernel\Log\LoggerInterface'));
+        $this->router = new ChainRouter($this->getMock('Psr\Log\LoggerInterface'));
         $this->context = $this->getMock('Symfony\\Component\\Routing\\RequestContext');
     }
 
