@@ -79,7 +79,7 @@ class ContentAwareGenerator extends ProviderBasedGenerator
      *
      * @throws RouteNotFoundException if there is no route found for the provided name
      */
-    protected function getRouteByName($name, array $parameters)
+    protected function getRouteByName($name, array &$parameters)
     {
         $route = $this->provider->getRouteByName($name, $parameters);
         if (empty($route)) {
@@ -98,7 +98,7 @@ class ContentAwareGenerator extends ProviderBasedGenerator
      *
      * @return SymfonyRoute either the passed route or an alternative with better locale
      */
-    protected function getBestLocaleRoute(SymfonyRoute $route, $parameters)
+    protected function getBestLocaleRoute(SymfonyRoute $route, &$parameters)
     {
         if (! $route instanceof RouteObjectInterface) {
             // this route has no content, we can't get the alternatives
@@ -111,6 +111,7 @@ class ContentAwareGenerator extends ProviderBasedGenerator
                 $routes = $content->getRoutes();
                 $contentRoute = $this->getRouteByLocale($routes, $locale);
                 if ($contentRoute) {
+                    unset($parameters['_locale']);
                     return $contentRoute;
                 }
             }
@@ -167,6 +168,7 @@ class ContentAwareGenerator extends ProviderBasedGenerator
 
         $route = $this->getRouteByLocale($routes, $this->getLocale($parameters));
         if ($route) {
+            unset($parameters['_locale']);
             return $route;
         }
 
