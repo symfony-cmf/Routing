@@ -196,10 +196,10 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
 
         $matcher = $this->getMatcher();
         if ($matcher instanceof UrlMatcherInterface) {
-            return $this->match($request->getPathInfo());
+            $defaults = $this->match($request->getPathInfo());
+        } else {
+            $defaults = $matcher->matchRequest($request);
         }
-
-        $defaults = $matcher->matchRequest($request);
 
         return $this->applyRouteEnhancers($defaults, $request);
     }
