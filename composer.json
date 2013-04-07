@@ -17,6 +17,9 @@
         "symfony/routing": ">=2.1,<2.3-dev",
         "symfony/http-kernel": ">=2.1,<2.3-dev"
     },
+    "suggest": {
+        "symfony/http-foundation": "ChainRouter/DynamicRouter have optional support for Request instances, several enhancers require a Request instances, >=2.1,<2.3-dev"
+    },
     "autoload": {
         "psr-0": { "Symfony\\Cmf\\Component\\Routing": "" }
     },
