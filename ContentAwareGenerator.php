@@ -61,6 +61,8 @@ class ContentAwareGenerator extends ProviderBasedGenerator
             throw new RouteNotFoundException('Route of this document is not an instance of Symfony\Component\Routing\Route but: '.$hint);
         }
 
+        $this->unsetLocaleIfNotNeeded($route, $parameters);
+
         return parent::generate($route, $parameters, $absolute);
     }
 
@@ -248,5 +250,24 @@ class ContentAwareGenerator extends ProviderBasedGenerator
         }
 
         return parent::getRouteDebugMessage($name, $parameters);
+    }
+
+    /**
+     * Unset the _locale parameter if it is there and not needed
+     *
+     * @param SymfonyRoute $route
+     * @param array $parameters
+     */
+    protected  function unsetLocaleIfNotNeeded(SymfonyRoute $route, array &$parameters)
+    {
+        $locale = $this->getLocale($parameters);
+        if (null !== $locale) {
+            if (preg_match('/'.$route->getRequirement('_locale').'/', $locale) && $locale == $route->getDefault('_locale')) {
+                $compiledRoute = $route->compile();
+                if (!in_array('_locale', $compiledRoute->getVariables())) {
+                    unset($parameters['_locale']);
+                }
+            }
+        }
     }
 }
