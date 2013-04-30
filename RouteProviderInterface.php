@@ -31,7 +31,7 @@ interface RouteProviderInterface
      *
      * @param Request $request A request against which to match.
      *
-     * @return \Symfony\Component\Routing\RouteCollection with all urls that
+     * @return \Symfony\Component\Routing\RouteCollection with all Routes that
      *      could potentially match $request. Empty collection if nothing can
      *      match.
      */

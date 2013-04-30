@@ -91,8 +91,11 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
      */
     public function getMatcher()
     {
-        // we may not set the context in DynamicRouter::setContext as this would lead to symfony cache warmup problems
-        // a request matcher does not need the request context separately as it can get it from the request.
+        /* we may not set the context in DynamicRouter::setContext as this
+         * would lead to symfony cache warmup problems.
+         * a request matcher does not need the request context separately as it
+         * can get it from the request.
+         */
         if ($this->matcher instanceof RequestContextAwareInterface) {
             $this->matcher->setContext($this->getContext());
         }
@@ -113,8 +116,8 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
     /**
      * Generates a URL from the given parameters.
      *
-     * If the generator is not able to generate the url, it must throw the RouteNotFoundException
-     * as documented below.
+     * If the generator is not able to generate the url, it must throw the
+     * RouteNotFoundException as documented below.
      *
      * @param string  $name       The name of the route
      * @param mixed   $parameters An array of parameters
@@ -151,12 +154,14 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
      * If the matcher can not find information, it must throw one of the
      * exceptions documented below.
      *
-     * @param string $pathinfo The path info to be parsed (raw format, i.e. not urldecoded)
+     * @param string $pathinfo The path info to be parsed (raw format, i.e. not
+     *      urldecoded)
      *
      * @return array An array of parameters
      *
      * @throws ResourceNotFoundException If the resource could not be found
-     * @throws MethodNotAllowedException If the resource was found but the request method is not allowed
+     * @throws MethodNotAllowedException If the resource was found but the
+     *      request method is not allowed
      *
      * @api
      */
@@ -188,16 +193,20 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
      * @return array An array of parameters
      *
      * @throws ResourceNotFoundException If no matching resource could be found
-     * @throws MethodNotAllowedException If a matching resource was found but the request method is not allowed
+     * @throws MethodNotAllowedException If a matching resource was found but
+     *      the request method is not allowed
      */
     public function matchRequest(Request $request)
     {
-        if (! empty($this->uriFilterRegexp) && ! preg_match($this->uriFilterRegexp, $request->getPathInfo())) {
+        if (! empty($this->uriFilterRegexp)
+            && ! preg_match($this->uriFilterRegexp, $request->getPathInfo())
+        ) {
             throw new ResourceNotFoundException("{$request->getPathInfo()} does not match the '{$this->uriFilterRegexp}' pattern");
         }
 
         $matcher = $this->getMatcher();
         if ($matcher instanceof UrlMatcherInterface) {
+            // the match method will enhance the route $defaults
             return $this->match($request->getPathInfo());
         }
 
