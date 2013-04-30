@@ -43,13 +43,7 @@ class ProviderBasedGenerator extends UrlGenerator implements VersatileGeneratorI
 
         // the Route has a cache of its own and is not recompiled as long as it does not get modified
         $compiledRoute = $route->compile();
-
-        // handle symfony 2.1 and 2.2
-        // getHostTokens exists only since 2.2
-        $hostTokens = null;
-        if (method_exists($compiledRoute, 'getHostTokens')) {
-            $hostTokens = $compiledRoute->getHostTokens();
-        }
+        $hostTokens = $compiledRoute->getHostTokens();
 
         return $this->doGenerate($compiledRoute->getVariables(), $route->getDefaults(), $route->getRequirements(), $compiledRoute->getTokens(), $parameters, $name, $absolute, $hostTokens);
     }
