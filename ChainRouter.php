@@ -30,7 +30,8 @@ class ChainRouter implements RouterInterface, RequestMatcherInterface, WarmableI
     private $context;
 
     /**
-     * @var Symfony\Component\Routing\RouterInterface[]
+     * Array of arrays of routers grouped by priority
+     * @var array
      */
     private $routers = array();
 
