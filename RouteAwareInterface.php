@@ -13,7 +13,7 @@ interface RouteAwareInterface
      *
      * Note: For PHPCR ODM, as explained in RouteObjectInterface the route must use the
      * routeContent field to store the reference to the content so you can get the routes with
-     * Referrers(referringDocument="Symfony\Cmf\Bundle\RoutingExtraBundle\Document\Route", referencedBy="routeContent")
+     * Referrers(referringDocument="Symfony\Cmf\Bundle\RoutingBundle\Document\Route", referencedBy="routeContent")
      *
      * @return \Symfony\Component\Routing\Route[] Route instances that point to this content
      */
