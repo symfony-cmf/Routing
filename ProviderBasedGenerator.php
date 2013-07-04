@@ -45,7 +45,9 @@ class ProviderBasedGenerator extends UrlGenerator implements VersatileGeneratorI
         $compiledRoute = $route->compile();
         $hostTokens = $compiledRoute->getHostTokens();
 
-        return $this->doGenerate($compiledRoute->getVariables(), $route->getDefaults(), $route->getRequirements(), $compiledRoute->getTokens(), $parameters, $name, $absolute, $hostTokens);
+        $debug_message = $this->getRouteDebugMessage($name);
+
+        return $this->doGenerate($compiledRoute->getVariables(), $route->getDefaults(), $route->getRequirements(), $compiledRoute->getTokens(), $parameters, $debug_message, $absolute, $hostTokens);
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace Symfony\Cmf\Component\Routing\Tests\Routing;
 
 use Symfony\Cmf\Component\Routing\RouteObjectInterface;
+use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\Route;
 
 use Symfony\Cmf\Component\Routing\ProviderBasedGenerator;
@@ -86,6 +87,30 @@ class ProviderBasedGeneratorTest extends CmfUnitTestCase
         $this->assertContains('/some/key', $this->generator->getRouteDebugMessage(new RouteObject()));
         $this->assertContains('/de/test', $this->generator->getRouteDebugMessage(new Route('/de/test')));
         $this->assertContains('/some/route', $this->generator->getRouteDebugMessage('/some/route'));
+    }
+
+  /**
+   * Tests the generate method with passing in a route object into generate().
+   *
+   * @expectedException \Symfony\Component\Routing\Exception\InvalidParameterException
+   */
+    public function testGenerateByRoute()
+    {
+        $this->generator = new ProviderBasedGenerator($this->provider);
+
+        // Setup a route with a numeric parameter, but pass in a string, so it
+        // fails and getRouteDebugMessage should be triggered.
+        $route = new Route('/test');
+        $route->setPattern('/test/{number}');
+        $route->setRequirement('number', '\+d');
+
+        $this->generator->setStrictRequirements(true);
+
+        $context = new RequestContext();
+        $this->generator->setContext($context);
+
+        $this->assertSame(null, $this->generator->generate($route, array('number' => 'string')));
+
     }
 }
 
