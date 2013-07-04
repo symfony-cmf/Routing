@@ -101,7 +101,7 @@ class ProviderBasedGeneratorTest extends CmfUnitTestCase
         // Setup a route with a numeric parameter, but pass in a string, so it
         // fails and getRouteDebugMessage should be triggered.
         $route = new Route('/test');
-        $route->setPath('/test/{number}');
+        $route->setPattern('/test/{number}');
         $route->setRequirement('number', '\+d');
 
         $this->generator->setStrictRequirements(true);
