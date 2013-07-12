@@ -18,6 +18,9 @@
         "symfony/http-kernel": "~2.2",
         "psr/log": "~1.0"
     },
+    "require-dev": {
+        "symfony/dependency-injection": "~2.0"
+    },
     "suggest": {
         "symfony/http-foundation": "ChainRouter/DynamicRouter have optional support for Request instances, several enhancers require a Request instances, ~2.2"
     },
