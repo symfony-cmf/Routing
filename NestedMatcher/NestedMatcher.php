@@ -55,11 +55,13 @@ class NestedMatcher implements RequestMatcherInterface
     /**
      * Constructs a new NestedMatcher
      *
-     * @param RouteProviderInterface $provider The Route Provider this matcher should use.
+     * @param RouteProviderInterface $provider The Route Provider this matcher should use
+     * @param FinalMatcherInterface  $final    The Final Matcher to match the routes
      */
-    public function __construct(RouteProviderInterface $provider)
+    public function __construct(RouteProviderInterface $provider, FinalMatcherInterface $final)
     {
         $this->routeProvider = $provider;
+        $this->finalMatcher = $final;
     }
 
     /**
