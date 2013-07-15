@@ -1,6 +1,6 @@
 <?php
 
-namespace Symfony\Cmf\Component\Routing\DependencyInjection;
+namespace Symfony\Cmf\Component\Routing\Compiler\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;

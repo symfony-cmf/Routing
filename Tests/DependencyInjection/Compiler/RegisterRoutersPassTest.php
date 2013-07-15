@@ -1,6 +1,6 @@
 <?php
 
-namespace Symfony\Cmf\Routing\Tests\DependencyInjection;
+namespace Symfony\Cmf\Routing\Tests\DependencyInjection\Compiler;
 
 use Symfony\Cmf\Component\Routing\DependencyInjection\RegisterRoutersPass;
 
