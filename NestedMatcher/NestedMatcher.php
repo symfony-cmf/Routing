@@ -55,19 +55,24 @@ class NestedMatcher implements RequestMatcherInterface
     /**
      * Constructs a new NestedMatcher
      *
-     * @param RouteProviderInterface $provider The Route Provider this matcher should use
-     * @param FinalMatcherInterface  $final    The Final Matcher to match the routes
+     * @param RouteProviderInterface $provider The Route Provider this matcher
+     *                                         should use
+     * @param FinalMatcherInterface  $final    The Final Matcher to match the
+     *                                         routes
      */
-    public function __construct(RouteProviderInterface $provider, FinalMatcherInterface $final)
-    {
-        $this->routeProvider = $provider;
-        $this->finalMatcher = $final;
+    public function __construct(
+        RouteProviderInterface $provider = null,
+        FinalMatcherInterface $final = null
+    ) {
+        $this->setRouteProvider($provider);
+        $this->setFinalMatcher($final);
     }
 
     /**
      * Sets the route provider for the matching plan.
      *
-     * @param RouteProviderInterface $provider A route provider. It is responsible for its own configuration.
+     * @param RouteProviderInterface $provider A route provider. It is
+     *      responsible for its own configuration.
      *
      * @return NestedMatcher this object to have a fluent interface
      */
@@ -84,7 +89,8 @@ class NestedMatcher implements RequestMatcherInterface
      * Partial matchers will be run in the order in which they are added.
      *
      * @param RouteFilterInterface $filter
-     * @param int                  $priority (optional) The priority of the filter. Higher number filters will be used first. Default to 0.
+     * @param int                  $priority (optional) The priority of the
+     *      filter. Higher number filters will be used first. Default to 0.
      *
      * @return NestedMatcher this object to have a fluent interface
      */
@@ -103,7 +109,8 @@ class NestedMatcher implements RequestMatcherInterface
     /**
      * Sets the final matcher for the matching plan.
      *
-     * @param FinalMatcherInterface $final The final matcher that will have to pick the route that will be used.
+     * @param FinalMatcherInterface $final The final matcher that will have to
+     *      pick the route that will be used.
      *
      * @return NestedMatcher this object to have a fluent interface
      */
