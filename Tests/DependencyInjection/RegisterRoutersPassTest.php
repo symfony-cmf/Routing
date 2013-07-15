@@ -13,6 +13,9 @@ class RegisterRoutersPassTest extends \PHPUnit_Framework_TestCase
      */
     public function testValidRouters($name, $priority = null)
     {
+        if (!method_exists($this, 'callback')) {
+            $this->markTestSkipped('PHPUnit version too old for this test');
+        }
         $services = array();
         $services[$name] = array(0 => array('priority' => $priority));
 
