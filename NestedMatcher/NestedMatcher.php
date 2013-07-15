@@ -64,8 +64,12 @@ class NestedMatcher implements RequestMatcherInterface
         RouteProviderInterface $provider = null,
         FinalMatcherInterface $final = null
     ) {
-        $this->setRouteProvider($provider);
-        $this->setFinalMatcher($final);
+        if (null !== $provider) {
+            $this->setRouteProvider($provider);
+        }
+        if (null !== $final) {
+            $this->setFinalMatcher($final);
+        }
     }
 
     /**
