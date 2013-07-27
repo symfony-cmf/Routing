@@ -50,11 +50,12 @@ interface RouteObjectInterface
      * If there is no specific content for this url (i.e. its an "application"
      * page), may return null.
      *
-     * To interoperate with the standard Symfony\Cmf\Bundle\ContentBundle\Document\StaticContent
-     * the instance MUST store the property in the field <code>routeContent</code>
-     * to have referrer resolution work.
-     *
      * @return object the document or entity this route entry points to
+     */
+    public function getContent();
+
+    /**
+     * @deprecated use getContent instead
      */
     public function getRouteContent();
 
