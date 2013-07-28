@@ -55,11 +55,6 @@ interface RouteObjectInterface
     public function getContent();
 
     /**
-     * @deprecated use getContent instead
-     */
-    public function getRouteContent();
-
-    /**
      * Get the route key.
      *
      * This key will be used as route name instead of the symfony core compatible
