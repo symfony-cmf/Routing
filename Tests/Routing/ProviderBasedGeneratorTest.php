@@ -132,7 +132,7 @@ class RouteObject implements RouteObjectInterface
         return '/some/key';
     }
 
-    public function getRouteContent()
+    public function getContent()
     {
         return null;
     }
