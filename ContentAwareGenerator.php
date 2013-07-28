@@ -103,7 +103,7 @@ class ContentAwareGenerator extends ProviderBasedGenerator
         }
         $locale = $this->getLocale($parameters);
         if (! $this->checkLocaleRequirement($route, $locale)) {
-            $content = $route->getRouteContent();
+            $content = $route->getContent();
             if ($content instanceof RouteAwareInterface) {
                 $routes = $content->getRoutes();
                 $contentRoute = $this->getRouteByLocale($routes, $locale);

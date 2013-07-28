@@ -58,7 +58,7 @@ class RouteContentEnhancer implements RouteEnhancerInterface
         }
         $route = $defaults[$this->routefield];
 
-        $content = $route->getRouteContent();
+        $content = $route->getContent();
         if (! $content) {
             // we have no content
             return $defaults;

@@ -21,7 +21,7 @@ class RouteContentEnhancerTest extends CmfUnitTestCase
     public function setUp()
     {
         $this->document = $this->buildMock('Symfony\\Cmf\\Component\\Routing\\Tests\\Enhancer\\RouteObject',
-                                            array('getRouteContent', 'getRouteDefaults', 'getUrl'));
+                                            array('getContent', 'getRouteDefaults', 'getUrl'));
 
         $this->mapper = new RouteContentEnhancer(RouteObjectInterface::ROUTE_OBJECT, '_content');
 
@@ -32,7 +32,7 @@ class RouteContentEnhancerTest extends CmfUnitTestCase
     {
         $targetDocument = new TargetDocument();
         $this->document->expects($this->once())
-            ->method('getRouteContent')
+            ->method('getContent')
             ->will($this->returnValue($targetDocument));
 
         $defaults = array(RouteObjectInterface::ROUTE_OBJECT => $this->document);
@@ -44,7 +44,7 @@ class RouteContentEnhancerTest extends CmfUnitTestCase
     public function testFieldAlreadyThere()
     {
         $this->document->expects($this->never())
-            ->method('getRouteContent')
+            ->method('getContent')
         ;
 
         $defaults = array(RouteObjectInterface::ROUTE_OBJECT => $this->document, '_content' => 'foo');
@@ -55,7 +55,7 @@ class RouteContentEnhancerTest extends CmfUnitTestCase
     public function testNoContent()
     {
         $this->document->expects($this->once())
-            ->method('getRouteContent')
+            ->method('getContent')
             ->will($this->returnValue(null));
 
         $defaults = array(RouteObjectInterface::ROUTE_OBJECT => $this->document);
