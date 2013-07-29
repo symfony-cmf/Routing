@@ -209,7 +209,7 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
      */
     public function matchRequest(Request $request)
     {
-        $event = new RouterMatchEvent();
+        $event = new RouterMatchEvent($request);
         $this->eventDispatcher->dispatch(Events::PRE_DYNAMIC_MATCH_REQUEST, $event);
 
         if (! empty($this->uriFilterRegexp)
