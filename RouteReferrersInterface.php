@@ -6,7 +6,7 @@ namespace Symfony\Cmf\Component\Routing;
  * Interface to be implemented by content that wants to be compatible with the
  * DynamicRouter
  */
-interface RouteAwareInterface
+interface RouteReferrersInterface
 {
     /**
      * Get the routes that point to this content.
