@@ -29,7 +29,7 @@ interface VersatileGeneratorInterface extends UrlGeneratorInterface
      *
      * @param mixed $name
      * @param array $parameters which should contain a content field containing
-     *                          a RouteAwareInterface object
+     *                          a RouteReferrersInterface object
      *
      * @return string
      */
