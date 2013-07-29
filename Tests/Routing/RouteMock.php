@@ -13,10 +13,12 @@ class RouteMock extends SymfonyRoute implements RouteObjectInterface
     {
         $this->locale = $locale;
     }
-    public function getRouteContent()
+
+    public function getContent()
     {
         return null;
     }
+
     public function getDefaults()
     {
         $defaults = array();
@@ -26,6 +28,7 @@ class RouteMock extends SymfonyRoute implements RouteObjectInterface
 
         return $defaults;
     }
+
     public function getRequirement($key)
     {
         if (! $key == '_locale') {
@@ -34,6 +37,7 @@ class RouteMock extends SymfonyRoute implements RouteObjectInterface
 
         return $this->locale;
     }
+
     public function getRouteKey()
     {
         return null;
