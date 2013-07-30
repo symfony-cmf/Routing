@@ -201,6 +201,12 @@ class ChainRouter implements RouterInterface, RequestMatcherInterface, WarmableI
     {
         $debug = array();
 
+        if (is_object($name)) {
+            $displayName = get_class($name);
+        } else {
+            $displayName = $name;
+        }
+
         foreach ($this->all() as $router) {
             // if $router does not implement ChainedRouterInterface and $name is not a string, continue
             if ($name && !$router instanceof ChainedRouterInterface) {
@@ -219,7 +225,7 @@ class ChainRouter implements RouterInterface, RequestMatcherInterface, WarmableI
             } catch (RouteNotFoundException $e) {
                 $hint = ($router instanceof VersatileGeneratorInterface)
                     ? $router->getRouteDebugMessage($name, $parameters)
-                    : "Route '$name' not found";
+                    : "Route '$displayName' not found";
                 $debug[] = $hint;
                 if ($this->logger) {
                     $this->logger->info('Router '.get_class($router)." was unable to generate route. Reason: '$hint': ".$e->getMessage());
@@ -231,7 +237,7 @@ class ChainRouter implements RouterInterface, RequestMatcherInterface, WarmableI
             $debug = array_unique($debug);
             $info = implode(', ', $debug);
         } else {
-            $info = "No route '$name' found";
+            $info = "No route '$displayName' found";
         }
 
         throw new RouteNotFoundException(sprintf('None of the chained routers were able to generate route: %s', $info));
