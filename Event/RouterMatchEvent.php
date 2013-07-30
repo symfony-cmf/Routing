@@ -20,6 +20,9 @@ class RouterMatchEvent extends Event
         $this->request = $request;
     }
 
+    /**
+     * @return Request | null
+     */
     public function getRequest()
     {
         return $this->request;
