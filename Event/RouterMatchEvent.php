@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 class RouterMatchEvent extends Event
 {
     /**
-     * @var \Symfony\Component\HttpFoundation\Request
+     * @var Request
      */
     protected $request;
 
