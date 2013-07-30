@@ -2,7 +2,7 @@
 
 namespace Symfony\Cmf\Component\Routing\Tests\Routing;
 
-use Symfony\Cmf\Component\Routing\RouteAwareInterface;
+use Symfony\Cmf\Component\Routing\RouteReferrersInterface;
 
 use Symfony\Cmf\Component\Routing\ContentAwareGenerator;
 use Symfony\Cmf\Component\Routing\Test\CmfUnitTestCase;
@@ -22,7 +22,7 @@ class ContentAwareGeneratorTest extends CmfUnitTestCase
 
     public function setUp()
     {
-        $this->contentDocument = $this->buildMock('Symfony\\Cmf\\Component\\Routing\\RouteAwareInterface');
+        $this->contentDocument = $this->buildMock('Symfony\\Cmf\\Component\\Routing\\RouteReferrersInterface');
         $this->routeDocument = $this->buildMock('Symfony\\Cmf\\Component\\Routing\\Tests\\Routing\\RouteMock', array('getDefaults', 'compile'));
         $this->routeCompiled = $this->buildMock('Symfony\\Component\\Routing\\CompiledRoute');
         $this->provider = $this->buildMock("Symfony\\Cmf\\Component\\Routing\\RouteProviderInterface");
@@ -367,7 +367,7 @@ class TestableContentAwareGenerator extends ContentAwareGenerator
     }
 }
 
-class RouteAware implements RouteAwareInterface
+class RouteAware implements RouteReferrersInterface
 {
     public function getRoutes()
     {

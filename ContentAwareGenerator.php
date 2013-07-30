@@ -42,7 +42,7 @@ class ContentAwareGenerator extends ProviderBasedGenerator
      * @param string $name       ignored
      * @param array  $parameters must either contain the field 'route' with a
      *      RouteObjectInterface or the field 'content_id' with a document
-     *      id to get the route for (implementing RouteAwareInterface)
+     *      id to get the route for (implementing RouteReferrersInterface)
      *
      * @throws RouteNotFoundException If there is no such route in the database
      */
@@ -104,7 +104,7 @@ class ContentAwareGenerator extends ProviderBasedGenerator
         $locale = $this->getLocale($parameters);
         if (! $this->checkLocaleRequirement($route, $locale)) {
             $content = $route->getContent();
-            if ($content instanceof RouteAwareInterface) {
+            if ($content instanceof RouteReferrersInterface) {
                 $routes = $content->getRoutes();
                 $contentRoute = $this->getRouteByLocale($routes, $locale);
                 if ($contentRoute) {
@@ -117,8 +117,8 @@ class ContentAwareGenerator extends ProviderBasedGenerator
     }
 
     /**
-     * Get the route based on the $name that is a RouteAwareInterface or a
-     * RouteAwareInterface content found in the content repository with the
+     * Get the route based on the $name that is a RouteReferrersInterface or a
+     * RouteReferrersInterface content found in the content repository with the
      * content_id specified in parameters.
      *
      * Called in generate when there is no route given in the parameters.
@@ -131,7 +131,8 @@ class ContentAwareGenerator extends ProviderBasedGenerator
      * first route.
      *
      * @param mixed $name
-     * @param array $parameters which should contain a content field containing a RouteAwareInterface object
+     * @param array $parameters which should contain a content field containing
+     *      a RouteReferrersInterface object
      *
      * @return SymfonyRoute the route instance
      *
@@ -139,7 +140,7 @@ class ContentAwareGenerator extends ProviderBasedGenerator
      */
     protected function getRouteByContent($name, &$parameters)
     {
-        if ($name instanceof RouteAwareInterface) {
+        if ($name instanceof RouteReferrersInterface) {
             $content = $name;
         } elseif (isset($parameters['content_id'])
             && null !== $this->contentRepository
@@ -148,12 +149,12 @@ class ContentAwareGenerator extends ProviderBasedGenerator
             if (empty($content)) {
                 throw new RouteNotFoundException('The content repository found nothing at id ' . $parameters['content_id']);
             }
-            if (!$content instanceof RouteAwareInterface) {
-                throw new RouteNotFoundException('Content repository did not return a RouteAwareInterface for id ' . $parameters['content_id']);
+            if (!$content instanceof RouteReferrersInterface) {
+                throw new RouteNotFoundException('Content repository did not return a RouteReferrersInterface for id ' . $parameters['content_id']);
             }
         } else {
             $hint = is_object($name) ? get_class($name) : gettype($name);
-            throw new RouteNotFoundException("The route name argument '$hint' is not RouteAwareInterface and there is no 'content_id' parameter");
+            throw new RouteNotFoundException("The route name argument '$hint' is not RouteReferrersInterface and there is no 'content_id' parameter");
         }
 
         $routes = $content->getRoutes();
@@ -233,7 +234,7 @@ class ContentAwareGenerator extends ProviderBasedGenerator
      */
     public function supports($name)
     {
-        return ! $name || parent::supports($name) || $name instanceof RouteAwareInterface;
+        return ! $name || parent::supports($name) || $name instanceof RouteReferrersInterface;
     }
 
     /**
@@ -245,7 +246,7 @@ class ContentAwareGenerator extends ProviderBasedGenerator
             return 'Content id ' . $parameters['content_id'];
         }
 
-        if ($name instanceof RouteAwareInterface) {
+        if ($name instanceof RouteReferrersInterface) {
             return 'Route aware content ' . $name;
         }
 
