@@ -20,10 +20,12 @@
     },
     "require-dev": {
         "symfony/dependency-injection": "~2.0",
-        "symfony/config": "~2.2"
+        "symfony/config": "~2.2",
+        "symfony/event-dispatcher": "~2.1"
     },
     "suggest": {
-        "symfony/http-foundation": "ChainRouter/DynamicRouter have optional support for Request instances, several enhancers require a Request instances, ~2.2"
+        "symfony/http-foundation": "ChainRouter/DynamicRouter have optional support for Request instances, several enhancers require a Request instances, ~2.2",
+        "symfony/event-dispatcher": "DynamicRouter can optionally trigger an event at the start of matching, ~2.1"
     },
     "autoload": {
         "psr-0": { "Symfony\\Cmf\\Component\\Routing": "" }

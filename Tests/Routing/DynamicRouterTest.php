@@ -2,6 +2,8 @@
 
 namespace Symfony\Cmf\Component\Routing\Tests\Routing;
 
+use Symfony\Cmf\Component\Routing\Event\Events;
+use Symfony\Cmf\Component\Routing\Event\RouterMatchEvent;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\RouteCollection;
 
@@ -177,7 +179,7 @@ class DynamicRouterTest extends CmfUnitTestCase
         $expected = array('this' => 'that');
         $this->enhancer->expects($this->once())
             ->method('enhance')
-            ->with($this->equalTo($routeDefaults), $this->equalTo($this->request)) // TODO: why do we not get the right thing?
+            ->with($this->equalTo($routeDefaults), $this->equalTo($this->request))
             ->will($this->returnValue($expected))
         ;
 
@@ -261,5 +263,25 @@ class DynamicRouterTest extends CmfUnitTestCase
         $generator = $this->buildMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface', array('generate', 'setContext', 'getContext'));
         $router = new DynamicRouter($this->context, $this->matcher, $generator);
         $this->assertInternalType('string', $router->getRouteDebugMessage('test'));
+    }
+
+    public function testEventHandler()
+    {
+        $eventDispatcher = $this->buildMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        $router = new DynamicRouter($this->context, $this->matcher, $this->generator, '', $eventDispatcher);
+
+        $eventDispatcher->expects($this->once())
+            ->method('dispatch')
+            ->with(Events::PRE_DYNAMIC_MATCH, $this->equalTo(new RouterMatchEvent()))
+        ;
+
+        $routeDefaults = array('foo' => 'bar');
+        $this->matcher->expects($this->once())
+            ->method('match')
+            ->with($this->url)
+            ->will($this->returnValue($routeDefaults))
+        ;
+
+        $this->assertEquals($routeDefaults, $router->match($this->url));
     }
 }
