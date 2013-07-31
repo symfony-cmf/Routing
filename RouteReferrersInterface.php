@@ -2,20 +2,25 @@
 
 namespace Symfony\Cmf\Component\Routing;
 
+use Symfony\Component\Routing\Route;
+
 /**
- * Interface to be implemented by content that wants to be compatible with the
- * DynamicRouter
+ * Interface to be implemented by content that exposes editable route
+ * referrers.
  */
-interface RouteReferrersInterface
+interface RouteReferrersInterface extends RouteReferrersReadInterface
 {
     /**
-     * Get the routes that point to this content.
+     * Add a route to the collection.
      *
-     * Note: For PHPCR ODM, as explained in RouteObjectInterface the route must use the
-     * routeContent field to store the reference to the content so you can get the routes with
-     * Referrers(referringDocument="Symfony\Cmf\Bundle\RoutingBundle\Doctrine\Phpcr\Route", referencedBy="routeContent")
-     *
-     * @return \Symfony\Component\Routing\Route[] Route instances that point to this content
+     * @param Route $route
      */
-    public function getRoutes();
+    public function addRoute($route);
+
+    /**
+     * Remove a route from the collection.
+     *
+     * @param Route $route
+     */
+    public function removeRoute($route);
 }

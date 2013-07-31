@@ -16,8 +16,8 @@ interface ContentRepositoryInterface
     /**
      * Return a content object by it's id or null if there is none.
      *
-     * If the returned content implements RouteReferrersInterface, it will be used
-     * to get the route from it to generate an URL.
+     * If the returned content implements RouteReferrersReadInterface, it will
+     * be used to get the route from it to generate an URL.
      *
      * @param string $id id of the content object
      *
