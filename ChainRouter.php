@@ -168,6 +168,7 @@ class ChainRouter implements RouterInterface, RequestMatcherInterface, WarmableI
                     if (null === $request) {
                         $request = Request::create($url);
                     }
+
                     return $router->matchRequest($request);
                 }
                 // every router implements the match method

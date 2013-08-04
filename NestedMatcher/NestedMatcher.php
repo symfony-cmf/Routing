@@ -57,7 +57,7 @@ class NestedMatcher implements RequestMatcherInterface
      *
      * @param RouteProviderInterface $provider The Route Provider this matcher
      *                                         should use
-     * @param FinalMatcherInterface  $final    The Final Matcher to match the
+     * @param FinalMatcherInterface $final The Final Matcher to match the
      *                                         routes
      */
     public function __construct(

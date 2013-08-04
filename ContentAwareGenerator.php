@@ -258,9 +258,9 @@ class ContentAwareGenerator extends ProviderBasedGenerator
      * Unset the _locale parameter if it is there and not needed
      *
      * @param SymfonyRoute $route
-     * @param array $parameters
+     * @param array        $parameters
      */
-    protected  function unsetLocaleIfNotNeeded(SymfonyRoute $route, array &$parameters)
+    protected function unsetLocaleIfNotNeeded(SymfonyRoute $route, array &$parameters)
     {
         $locale = $this->getLocale($parameters);
         if (null !== $locale) {

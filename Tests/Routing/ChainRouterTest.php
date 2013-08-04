@@ -267,7 +267,6 @@ class ChainRouterTest extends CmfUnitTestCase
         $this->assertEquals(array('test'), $result);
     }
 
-
     /**
      * If there is a method not allowed but another router matches, that one is used
      */
