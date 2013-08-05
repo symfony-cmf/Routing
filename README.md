@@ -5,8 +5,14 @@
 [![Total Downloads](https://poser.pugx.org/symfony-cmf/routing/d/total.png)](https://packagist.org/packages/symfony-cmf/routing)
 
 The Symfony CMF Routing component extends the Symfony2 core routing component.
-Even though it has Symfony in its name, it does not need the full Symfony2
-Framework and can be used in standalone projects.
+It provides:
+
+ * A ChainRouter to run several routers in parallel
+ * A DynamicRouter that can load routes from any database and can generate
+   additional information in the route match.
+
+Even though it has Symfony in its name, the Routing component does not need the
+full Symfony2 Framework and can be used in standalone projects.
 
 For Symfon2 projects, an optional
 [RoutingBundle](https://github.com/symfony-cmf/RoutingBundle)
@@ -18,7 +24,7 @@ and licensed under the [MIT License](LICENSE).
 
 ## Requirements
 
-* The Symfony 2.2.x Routing component
+* The Symfony Routing component (>= 2.2.0)
 * See also the `require` section of [composer.json](composer.json)
 
 
@@ -30,7 +36,7 @@ For the install guide and reference, see:
 
 See also:
 
-* [All Symfony CMF documentation](http://symfony.com/doc/master/cmf/index.html)- complete Symfony CMF reference
+* [All Symfony CMF documentation](http://symfony.com/doc/master/cmf/index.html) - complete Symfony CMF reference
 * [Symfony CMF Website](http://cmf.symfony.com/) - introduction, live demo, support and community links
 
 
