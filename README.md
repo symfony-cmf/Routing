@@ -40,7 +40,7 @@ Pull requests are welcome. Please see our
 [CONTRIBUTING](https://github.com/symfony-cmf/symfony-cmf/blob/master/CONTRIBUTING.md)
 guide.
 
-Unit and/or functional tests exist for this bundle. See the
+Unit and/or functional tests exist for this component. See the
 [Testing documentation](http://symfony.com/doc/master/cmf/components/testing.html)
 for a guide to running the tests.
 
