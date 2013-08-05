@@ -41,8 +41,8 @@ interface RouteProviderInterface
      * Find the route using the provided route name (and parameters)
      *
      * @param string $name       the route name to fetch
-     * @param array  $parameters the parameters as they are passed to the
-     *      UrlGeneratorInterface::generate call
+     * @param array  $parameters DEPRECATED the parameters as they are passed
+     *      to the UrlGeneratorInterface::generate call
      *
      * @return \Symfony\Component\Routing\Route
      *
@@ -62,9 +62,9 @@ interface RouteProviderInterface
      * $this->getRouteByName()
      *
      * @param array $names      the list of names to retrieve
-     * @param array $parameters the parameters as they are passed to the
-     *      UrlGeneratorInterface::generate call. (Only one array, not one for
-     *      each entry in $names.
+     * @param array $parameters DEPRECATED the parameters as they are passed to
+     *      the UrlGeneratorInterface::generate call. (Only one array, not one
+     *      for each entry in $names.
      *
      * @return \Symfony\Component\Routing\Route[] iterable thing with the keys
      *      the names of the $names argument.
