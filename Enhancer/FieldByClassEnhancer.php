@@ -4,8 +4,6 @@ namespace Symfony\Cmf\Component\Routing\Enhancer;
 
 use Symfony\Component\HttpFoundation\Request;
 
-use Symfony\Cmf\Component\Routing\RouteObjectInterface;
-
 /**
  * This enhancer sets a field if not yet existing from the class of an object
  * in another field.

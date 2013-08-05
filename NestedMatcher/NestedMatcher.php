@@ -5,7 +5,6 @@ namespace Symfony\Cmf\Component\Routing\NestedMatcher;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
-use Symfony\Component\Routing\Route;
 use Symfony\Cmf\Component\Routing\RouteProviderInterface;
 
 /**
@@ -55,7 +54,7 @@ class NestedMatcher implements RequestMatcherInterface
     /**
      * Constructs a new NestedMatcher
      *
-     * @param RouteProviderInterface $provider The Route Provider this matcher
+     * @param RouteProviderInterface $provider The route provider this matcher
      *                                         should use
      * @param FinalMatcherInterface $final The Final Matcher to match the
      *                                         routes
@@ -135,7 +134,7 @@ class NestedMatcher implements RequestMatcherInterface
             throw new ResourceNotFoundException();
         }
 
-        // Route Filters are expected to throw an exception themselves if they
+        // Route filters are expected to throw an exception themselves if they
         // end up filtering the list down to 0.
         foreach ($this->getRouteFilters() as $filter) {
             $collection = $filter->filter($collection, $request);

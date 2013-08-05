@@ -2,7 +2,6 @@
 
 namespace Symfony\Cmf\Component\Routing\Enhancer;
 
-use Symfony\Component\Routing\Route;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -19,9 +18,10 @@ interface RouteEnhancerInterface
     /**
      * Update the defaults based on its own data and the request.
      *
-     * @param array $defaults the getRouteDefaults array
+     * @param array $defaults the getRouteDefaults array.
      *
-     * @return array the modified defaults. Each enhancer MUST return the $defaults but may add or remove values
+     * @return array the modified defaults. Each enhancer MUST return the
+     *      $defaults but may add or remove values.
      */
     public function enhance(array $defaults, Request $request);
 }
