@@ -21,10 +21,10 @@ class ProviderBasedGeneratorTest extends CmfUnitTestCase
 
     public function setUp()
     {
-        $this->routeDocument = $this->buildMock('Symfony\\Component\\Routing\\Route', array('getDefaults', 'compile'));
-        $this->routeCompiled = $this->buildMock('Symfony\\Component\\Routing\\CompiledRoute');
-        $this->provider = $this->buildMock("Symfony\\Cmf\\Component\\Routing\\RouteProviderInterface");
-        $this->context = $this->buildMock('Symfony\\Component\\Routing\\RequestContext');
+        $this->routeDocument = $this->buildMock('Symfony\Component\Routing\Route', array('getDefaults', 'compile'));
+        $this->routeCompiled = $this->buildMock('Symfony\Component\Routing\CompiledRoute');
+        $this->provider = $this->buildMock('Symfony\Cmf\Component\Routing\RouteProviderInterface');
+        $this->context = $this->buildMock('Symfony\Component\Routing\RequestContext');
 
         $this->generator= new TestableProviderBasedGenerator($this->provider);
     }

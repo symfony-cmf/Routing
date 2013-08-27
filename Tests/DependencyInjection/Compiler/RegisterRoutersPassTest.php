@@ -39,6 +39,7 @@ class RegisterRoutersPassTest extends \PHPUnit_Framework_TestCase
         $builder = $this->getMock('Symfony\Component\DependencyInjection\ContainerBuilder', array('hasDefinition', 'findTaggedServiceIds', 'getDefinition'));
         $builder->expects($this->any())
             ->method('hasDefinition')
+            ->with('cmf_routing.router')
             ->will($this->returnValue(true));
 
         $builder->expects($this->atLeastOnce())
@@ -60,5 +61,29 @@ class RegisterRoutersPassTest extends \PHPUnit_Framework_TestCase
             array('my_primary_router', 99),
             array('my_router', 0),
         );
+    }
+
+    /**
+     * If there is no chain router defined in the container builder, nothing
+     * should be processed.
+     */
+    public function testNoChainRouter()
+    {
+        $builder = $this->getMock('Symfony\Component\DependencyInjection\ContainerBuilder', array('hasDefinition', 'findTaggedServiceIds', 'getDefinition'));
+        $builder->expects($this->once())
+            ->method('hasDefinition')
+            ->with('cmf_routing.router')
+            ->will($this->returnValue(false))
+        ;
+
+        $builder->expects($this->never())
+            ->method('findTaggedServiceIds')
+        ;
+        $builder->expects($this->never())
+            ->method('getDefinition')
+        ;
+
+        $registerRoutersPass = new RegisterRoutersPass();
+        $registerRoutersPass->process($builder);
     }
 }

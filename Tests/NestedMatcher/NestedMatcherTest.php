@@ -21,17 +21,17 @@ class NestedMatcherTest extends CmfUnitTestCase
 
     public function setUp()
     {
-        $this->provider = $this->buildMock("Symfony\\Cmf\\Component\\Routing\\RouteProviderInterface");
-        $this->routeFilter1 = $this->buildMock('Symfony\\Cmf\\Component\\Routing\\NestedMatcher\\RouteFilterInterface');
-        $this->routeFilter2 = $this->buildMock('Symfony\\Cmf\\Component\\Routing\\NestedMatcher\\RouteFilterInterface');
-        $this->finalMatcher = $this->buildMock('Symfony\\Cmf\\Component\\Routing\\NestedMatcher\\FinalMatcherInterface');
+        $this->provider = $this->buildMock('Symfony\Cmf\Component\Routing\RouteProviderInterface');
+        $this->routeFilter1 = $this->buildMock('Symfony\Cmf\Component\Routing\NestedMatcher\RouteFilterInterface');
+        $this->routeFilter2 = $this->buildMock('Symfony\Cmf\Component\Routing\NestedMatcher\RouteFilterInterface');
+        $this->finalMatcher = $this->buildMock('Symfony\Cmf\Component\Routing\NestedMatcher\FinalMatcherInterface');
     }
 
     public function testNestedMatcher()
     {
         $request = Request::create('/path/one');
         $routeCollection = new RouteCollection();
-        $route = $this->getMockBuilder('Symfony\\Component\\Routing\\Route')->disableOriginalConstructor()->getMock();
+        $route = $this->getMockBuilder('Symfony\Component\Routing\Route')->disableOriginalConstructor()->getMock();
         $routeCollection->add('route', $route);
 
         $this->provider->expects($this->once())
@@ -71,10 +71,10 @@ class NestedMatcherTest extends CmfUnitTestCase
     {
         $request = Request::create('/path/one');
         $routeCollection = new RouteCollection();
-        $route = $this->getMockBuilder('Symfony\\Component\\Routing\\Route')->disableOriginalConstructor()->getMock();
+        $route = $this->getMockBuilder('Symfony\Component\Routing\Route')->disableOriginalConstructor()->getMock();
         $routeCollection->add('route', $route);
 
-        $wrongProvider = $this->buildMock("Symfony\\Cmf\\Component\\Routing\\RouteProviderInterface");
+        $wrongProvider = $this->buildMock('Symfony\Cmf\Component\Routing\RouteProviderInterface');
         $wrongProvider->expects($this->never())
             ->method('getRouteCollectionForRequest')
         ;
@@ -123,7 +123,7 @@ class NestedMatcherTest extends CmfUnitTestCase
 
         $matcher = new NestedMatcher($this->provider, $this->finalMatcher);
 
-        $this->setExpectedException('Symfony\\Component\\Routing\\Exception\\ResourceNotFoundException');
+        $this->setExpectedException('Symfony\Component\Routing\Exception\ResourceNotFoundException');
         $matcher->matchRequest($request);
     }
 

@@ -22,11 +22,11 @@ class ContentAwareGeneratorTest extends CmfUnitTestCase
 
     public function setUp()
     {
-        $this->contentDocument = $this->buildMock('Symfony\\Cmf\\Component\\Routing\\RouteReferrersReadInterface');
-        $this->routeDocument = $this->buildMock('Symfony\\Cmf\\Component\\Routing\\Tests\\Routing\\RouteMock', array('getDefaults', 'compile'));
-        $this->routeCompiled = $this->buildMock('Symfony\\Component\\Routing\\CompiledRoute');
-        $this->provider = $this->buildMock("Symfony\\Cmf\\Component\\Routing\\RouteProviderInterface");
-        $this->context = $this->buildMock('Symfony\\Component\\Routing\\RequestContext');
+        $this->contentDocument = $this->buildMock('Symfony\Cmf\Component\Routing\RouteReferrersReadInterface');
+        $this->routeDocument = $this->buildMock('Symfony\Cmf\Component\Routing\Tests\Routing\RouteMock', array('getDefaults', 'compile'));
+        $this->routeCompiled = $this->buildMock('Symfony\Component\Routing\CompiledRoute');
+        $this->provider = $this->buildMock('Symfony\Cmf\Component\Routing\RouteProviderInterface');
+        $this->context = $this->buildMock('Symfony\Component\Routing\RequestContext');
 
         $this->generator = new TestableContentAwareGenerator($this->provider);
     }
@@ -54,7 +54,7 @@ class ContentAwareGeneratorTest extends CmfUnitTestCase
             ->method('getRouteByName')
         ;
 
-        $contentRepository = $this->buildMock("Symfony\\Cmf\\Component\\Routing\\ContentRepositoryInterface", array('findById', 'getContentId'));
+        $contentRepository = $this->buildMock('Symfony\Cmf\Component\Routing\ContentRepositoryInterface', array('findById', 'getContentId'));
         $contentRepository->expects($this->once())
             ->method('findById')
             ->with('/content/id')
@@ -96,7 +96,7 @@ class ContentAwareGeneratorTest extends CmfUnitTestCase
 
     public function testGenerateRouteMultilang()
     {
-        $route_en = $this->buildMock('Symfony\\Cmf\\Component\\Routing\\Tests\\Routing\\RouteMock', array('getDefaults', 'compile', 'getContent'));
+        $route_en = $this->buildMock('Symfony\Cmf\Component\Routing\Tests\Routing\RouteMock', array('getDefaults', 'compile', 'getContent'));
         $route_en->setLocale('en');
         $route_de = $this->routeDocument;
         $route_de->setLocale('de');
@@ -120,9 +120,34 @@ class ContentAwareGeneratorTest extends CmfUnitTestCase
         $this->assertEquals('result_url', $this->generator->generate($route_en, array('_locale' => 'de')));
     }
 
+    public function testGenerateRouteMultilangDefaultLocale()
+    {
+        $route = $this->buildMock('Symfony\Cmf\Component\Routing\Tests\Routing\RouteMock');
+        $route->expects($this->any())
+            ->method('compile')
+            ->will($this->returnValue($this->routeCompiled))
+        ;
+        $route->expects($this->any())
+            ->method('getRequirement')
+            ->with('_locale')
+            ->will($this->returnValue('de|en'))
+        ;
+        $route->expects($this->any())
+            ->method('getDefault')
+            ->with('_locale')
+            ->will($this->returnValue('en'))
+        ;
+        $this->routeCompiled->expects($this->any())
+            ->method('getVariables')
+            ->will($this->returnValue(array()))
+        ;
+
+        $this->assertEquals('result_url', $this->generator->generate($route, array('_locale' => 'en')));
+    }
+
     public function testGenerateRouteMultilangLocaleNomatch()
     {
-        $route_en = $this->buildMock('Symfony\\Cmf\\Component\\Routing\\Tests\\Routing\\RouteMock', array('getDefaults', 'compile', 'getContent'));
+        $route_en = $this->buildMock('Symfony\Cmf\Component\Routing\Tests\Routing\RouteMock', array('getDefaults', 'compile', 'getContent'));
         $route_en->setLocale('en');
         $route_de = $this->routeDocument;
         $route_de->setLocale('de');
@@ -148,7 +173,7 @@ class ContentAwareGeneratorTest extends CmfUnitTestCase
 
     public function testGenerateNoncmfRouteMultilang()
     {
-        $route_en = $this->buildMock('Symfony\\Component\\Routing\\Route', array('getDefaults', 'compile', 'getContent'));
+        $route_en = $this->buildMock('Symfony\Component\Routing\Route', array('getDefaults', 'compile', 'getContent'));
 
         $route_en->expects($this->once())
             ->method('compile')
@@ -161,7 +186,7 @@ class ContentAwareGeneratorTest extends CmfUnitTestCase
     public function testGenerateRoutenameMultilang()
     {
         $name = 'foo/bar';
-        $route_en = $this->buildMock('Symfony\\Cmf\\Component\\Routing\\Tests\\Routing\\RouteMock', array('getDefaults', 'compile', 'getContent'));
+        $route_en = $this->buildMock('Symfony\Cmf\Component\Routing\Tests\Routing\RouteMock', array('getDefaults', 'compile', 'getContent'));
         $route_en->setLocale('en');
         $route_de = $this->routeDocument;
         $route_de->setLocale('de');
@@ -208,7 +233,7 @@ class ContentAwareGeneratorTest extends CmfUnitTestCase
 
     public function testGenerateDocumentMultilang()
     {
-        $route_en = $this->buildMock('Symfony\\Cmf\\Component\\Routing\\Tests\\Routing\\RouteMock', array('getDefaults', 'compile'));
+        $route_en = $this->buildMock('Symfony\Cmf\Component\Routing\Tests\Routing\RouteMock', array('getDefaults', 'compile'));
         $route_en->setLocale('en');
         $route_de = $this->routeDocument;
         $route_de->setLocale('de');
@@ -230,7 +255,7 @@ class ContentAwareGeneratorTest extends CmfUnitTestCase
 
     public function testGenerateDocumentMultilangLocaleNomatch()
     {
-        $route_en = $this->buildMock('Symfony\\Cmf\\Component\\Routing\\Tests\\Routing\\RouteMock', array('getDefaults', 'compile'));
+        $route_en = $this->buildMock('Symfony\Cmf\Component\Routing\Tests\Routing\RouteMock', array('getDefaults', 'compile'));
         $route_en->setLocale('en');
         $route_de = $this->routeDocument;
         $route_de->setLocale('de');
@@ -251,14 +276,14 @@ class ContentAwareGeneratorTest extends CmfUnitTestCase
     }
 
     /**
-     * @expectedException Symfony\Component\Routing\Exception\RouteNotFoundException
+     * @expectedException \Symfony\Component\Routing\Exception\RouteNotFoundException
      */
     public function testGenerateNoContent()
     {
         $this->generator->generate('', array());
     }
     /**
-     * @expectedException Symfony\Component\Routing\Exception\RouteNotFoundException
+     * @expectedException \Symfony\Component\Routing\Exception\RouteNotFoundException
      */
     public function testGenerateInvalidContent()
     {
@@ -266,7 +291,7 @@ class ContentAwareGeneratorTest extends CmfUnitTestCase
     }
 
     /**
-     * @expectedException Symfony\Component\Routing\Exception\RouteNotFoundException
+     * @expectedException \Symfony\Component\Routing\Exception\RouteNotFoundException
      */
     public function testGenerateNoContentRepository()
     {
@@ -278,7 +303,7 @@ class ContentAwareGeneratorTest extends CmfUnitTestCase
     }
 
     /**
-     * @expectedException Symfony\Component\Routing\Exception\RouteNotFoundException
+     * @expectedException \Symfony\Component\Routing\Exception\RouteNotFoundException
      */
     public function testGenerateNoContentFoundInRepository()
     {
@@ -286,7 +311,7 @@ class ContentAwareGeneratorTest extends CmfUnitTestCase
             ->method('getRouteByName')
         ;
 
-        $contentRepository = $this->buildMock("Symfony\\Cmf\\Component\\Routing\\ContentRepositoryInterface", array('findById', 'getContentId'));
+        $contentRepository = $this->buildMock('Symfony\Cmf\Component\Routing\ContentRepositoryInterface', array('findById', 'getContentId'));
         $contentRepository->expects($this->once())
             ->method('findById')
             ->with('/content/id')
@@ -298,7 +323,7 @@ class ContentAwareGeneratorTest extends CmfUnitTestCase
     }
 
     /**
-     * @expectedException Symfony\Component\Routing\Exception\RouteNotFoundException
+     * @expectedException \Symfony\Component\Routing\Exception\RouteNotFoundException
      */
     public function testGenerateWrongContentClassInRepository()
     {
@@ -306,7 +331,7 @@ class ContentAwareGeneratorTest extends CmfUnitTestCase
             ->method('getRouteByName')
         ;
 
-        $contentRepository = $this->buildMock("Symfony\\Cmf\\Component\\Routing\\ContentRepositoryInterface", array('findById', 'getContentId'));
+        $contentRepository = $this->buildMock('Symfony\Cmf\Component\Routing\ContentRepositoryInterface', array('findById', 'getContentId'));
         $contentRepository->expects($this->once())
             ->method('findById')
             ->with('/content/id')
@@ -318,7 +343,7 @@ class ContentAwareGeneratorTest extends CmfUnitTestCase
     }
 
     /**
-     * @expectedException Symfony\Component\Routing\Exception\RouteNotFoundException
+     * @expectedException \Symfony\Component\Routing\Exception\RouteNotFoundException
      */
     public function testGenerateNoRoutes()
     {
@@ -329,7 +354,7 @@ class ContentAwareGeneratorTest extends CmfUnitTestCase
         $this->generator->generate($this->contentDocument);
     }
     /**
-     * @expectedException Symfony\Component\Routing\Exception\RouteNotFoundException
+     * @expectedException \Symfony\Component\Routing\Exception\RouteNotFoundException
      */
     public function testGenerateInvalidRoute()
     {

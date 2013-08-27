@@ -18,9 +18,9 @@ class FieldByClassEnhancerTest extends CmfUnitTestCase
 
     public function setUp()
     {
-        $this->document = $this->buildMock('Symfony\\Cmf\\Component\\Routing\\Tests\\Enhancer\\RouteObject');
+        $this->document = $this->buildMock('Symfony\Cmf\Component\Routing\Tests\Enhancer\RouteObject');
 
-        $mapping = array('Symfony\\Cmf\\Component\\Routing\\Tests\\Enhancer\\RouteObject'
+        $mapping = array('Symfony\Cmf\Component\Routing\Tests\Enhancer\RouteObject'
                             => 'cmf_content.controller:indexAction');
 
         $this->mapper = new FieldByClassEnhancer('_content', '_controller', $mapping);

@@ -20,7 +20,7 @@ class RouteContentEnhancerTest extends CmfUnitTestCase
 
     public function setUp()
     {
-        $this->document = $this->buildMock('Symfony\\Cmf\\Component\\Routing\\Tests\\Enhancer\\RouteObject',
+        $this->document = $this->buildMock('Symfony\Cmf\Component\Routing\Tests\Enhancer\RouteObject',
                                             array('getContent', 'getRouteDefaults', 'getUrl'));
 
         $this->mapper = new RouteContentEnhancer(RouteObjectInterface::ROUTE_OBJECT, '_content');
@@ -64,7 +64,7 @@ class RouteContentEnhancerTest extends CmfUnitTestCase
 
     public function testNoCmfRoute()
     {
-        $defaults = array(RouteObjectInterface::ROUTE_OBJECT => $this->buildMock('Symfony\\Component\\Routing\\Route'));
+        $defaults = array(RouteObjectInterface::ROUTE_OBJECT => $this->buildMock('Symfony\Component\Routing\Route'));
         $this->assertEquals($defaults, $this->mapper->enhance($defaults, $this->request));
     }
 }

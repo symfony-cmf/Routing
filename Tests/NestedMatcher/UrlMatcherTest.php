@@ -24,10 +24,10 @@ class UrlMatcherTest extends CmfUnitTestCase
 
     public function setUp()
     {
-        $this->routeDocument = $this->buildMock('Symfony\\Cmf\\Component\\Routing\\Tests\\Routing\\RouteMock', array('getDefaults', 'getRouteKey', 'compile'));
-        $this->routeCompiled = $this->buildMock('Symfony\\Component\\Routing\\CompiledRoute');
+        $this->routeDocument = $this->buildMock('Symfony\Cmf\Component\Routing\Tests\Routing\RouteMock', array('getDefaults', 'getRouteKey', 'compile'));
+        $this->routeCompiled = $this->buildMock('Symfony\Component\Routing\CompiledRoute');
 
-        $this->context = $this->buildMock('Symfony\\Component\\Routing\\RequestContext');
+        $this->context = $this->buildMock('Symfony\Component\Routing\RequestContext');
         $this->request = Request::create($this->url);
 
         $this->matcher = new UrlMatcher(new RouteCollection(), $this->context);
@@ -51,7 +51,7 @@ class UrlMatcherTest extends CmfUnitTestCase
         ;
         $this->routeCompiled->expects($this->atLeastOnce())
             ->method('getRegex')
-            ->will($this->returnValue('#'.str_replace('/', '\\/', $this->url).'#'))
+            ->will($this->returnValue('#'.str_replace('/', '\/', $this->url).'#'))
         ;
         $this->routeDocument->expects($this->atLeastOnce())
             ->method('compile')
@@ -66,12 +66,12 @@ class UrlMatcherTest extends CmfUnitTestCase
             ->will($this->returnValue(array('foo' => 'bar')))
         ;
 
-        $mockCompiled = $this->buildMock('Symfony\\Component\\Routing\\CompiledRoute');
+        $mockCompiled = $this->buildMock('Symfony\Component\Routing\CompiledRoute');
         $mockCompiled->expects($this->any())
             ->method('getStaticPrefix')
             ->will($this->returnValue('/no/match'))
         ;
-        $mockRoute = $this->getMockBuilder('Symfony\\Component\\Routing\\Route')->disableOriginalConstructor()->getMock();
+        $mockRoute = $this->getMockBuilder('Symfony\Component\Routing\Route')->disableOriginalConstructor()->getMock();
         $mockRoute->expects($this->any())
             ->method('compile')
             ->will($this->returnValue($mockCompiled))
@@ -100,9 +100,9 @@ class UrlMatcherTest extends CmfUnitTestCase
         ;
         $this->routeCompiled->expects($this->atLeastOnce())
             ->method('getRegex')
-            ->will($this->returnValue('#'.str_replace('/', '\\/', $this->url).'#'))
+            ->will($this->returnValue('#'.str_replace('/', '\/', $this->url).'#'))
         ;
-        $this->routeDocument = $this->getMockBuilder('Symfony\\Component\\Routing\\Route')->disableOriginalConstructor()->getMock();
+        $this->routeDocument = $this->getMockBuilder('Symfony\Component\Routing\Route')->disableOriginalConstructor()->getMock();
         $this->routeDocument->expects($this->atLeastOnce())
             ->method('compile')
             ->will($this->returnValue($this->routeCompiled))
@@ -115,12 +115,12 @@ class UrlMatcherTest extends CmfUnitTestCase
             ->will($this->returnValue(array('foo' => 'bar')))
         ;
 
-        $mockCompiled = $this->buildMock('Symfony\\Component\\Routing\\CompiledRoute');
+        $mockCompiled = $this->buildMock('Symfony\Component\Routing\CompiledRoute');
         $mockCompiled->expects($this->any())
             ->method('getStaticPrefix')
             ->will($this->returnValue('/no/match'))
         ;
-        $mockRoute = $this->getMockBuilder('Symfony\\Component\\Routing\\Route')->disableOriginalConstructor()->getMock();
+        $mockRoute = $this->getMockBuilder('Symfony\Component\Routing\Route')->disableOriginalConstructor()->getMock();
         $mockRoute->expects($this->any())
             ->method('compile')
             ->will($this->returnValue($mockCompiled))
