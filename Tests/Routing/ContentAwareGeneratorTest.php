@@ -276,13 +276,18 @@ class ContentAwareGeneratorTest extends CmfUnitTestCase
     }
 
     /**
+     * Generate without any information.
+     *
      * @expectedException \Symfony\Component\Routing\Exception\RouteNotFoundException
      */
     public function testGenerateNoContent()
     {
         $this->generator->generate('', array());
     }
+
     /**
+     * Generate with an object that is neither a route nor route aware.
+     *
      * @expectedException \Symfony\Component\Routing\Exception\RouteNotFoundException
      */
     public function testGenerateInvalidContent()
@@ -291,6 +296,8 @@ class ContentAwareGeneratorTest extends CmfUnitTestCase
     }
 
     /**
+     * Generate with a content_id but there is no content repository.
+     *
      * @expectedException \Symfony\Component\Routing\Exception\RouteNotFoundException
      */
     public function testGenerateNoContentRepository()
@@ -303,6 +310,8 @@ class ContentAwareGeneratorTest extends CmfUnitTestCase
     }
 
     /**
+     * Generate with content_id but the content is not found.
+     *
      * @expectedException \Symfony\Component\Routing\Exception\RouteNotFoundException
      */
     public function testGenerateNoContentFoundInRepository()
@@ -323,6 +332,8 @@ class ContentAwareGeneratorTest extends CmfUnitTestCase
     }
 
     /**
+     * Generate with content_id but the object at id is not route aware.
+     *
      * @expectedException \Symfony\Component\Routing\Exception\RouteNotFoundException
      */
     public function testGenerateWrongContentClassInRepository()
@@ -343,6 +354,8 @@ class ContentAwareGeneratorTest extends CmfUnitTestCase
     }
 
     /**
+     * Generate from a content that has no routes associated.
+     *
      * @expectedException \Symfony\Component\Routing\Exception\RouteNotFoundException
      */
     public function testGenerateNoRoutes()
@@ -354,6 +367,8 @@ class ContentAwareGeneratorTest extends CmfUnitTestCase
         $this->generator->generate($this->contentDocument);
     }
     /**
+     * Generate from a content that returns something that is not a route as route.
+     *
      * @expectedException \Symfony\Component\Routing\Exception\RouteNotFoundException
      */
     public function testGenerateInvalidRoute()

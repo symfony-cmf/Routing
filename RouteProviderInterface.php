@@ -38,7 +38,7 @@ interface RouteProviderInterface
     public function getRouteCollectionForRequest(Request $request);
 
     /**
-     * Find the route using the provided route name (and parameters)
+     * Find the route using the provided route name.
      *
      * @param string $name       the route name to fetch
      * @param array  $parameters DEPRECATED the parameters as they are passed
@@ -52,14 +52,15 @@ interface RouteProviderInterface
     public function getRouteByName($name, $parameters = array());
 
     /**
-     * Find many routes by their names using the provided list of names
+     * Find many routes by their names using the provided list of names.
      *
      * Note that this method may not throw an exception if some of the routes
-     * are not found. It will just return the list of those routes it found.
+     * are not found or are not actually Route instances. It will just return the
+     * list of those Route instances it found.
      *
      * This method exists in order to allow performance optimizations. The
      * simple implementation could be to just repeatedly call
-     * $this->getRouteByName()
+     * $this->getRouteByName() while catching and ignoring eventual exceptions.
      *
      * @param array $names      the list of names to retrieve
      * @param array $parameters DEPRECATED the parameters as they are passed to
