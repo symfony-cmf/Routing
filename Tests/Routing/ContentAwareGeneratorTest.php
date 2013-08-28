@@ -380,6 +380,32 @@ class ContentAwareGeneratorTest extends CmfUnitTestCase
         $this->generator->generate($this->contentDocument);
     }
 
+    public function testGetLocaleAttribute()
+    {
+        $this->generator->setDefaultLocale('en');
+
+        $attributes = array('_locale' => 'fr');
+        $this->assertEquals('fr', $this->generator->getLocale($attributes));
+    }
+
+    public function testGetLocaleDefault()
+    {
+        $this->generator->setDefaultLocale('en');
+
+        $attributes = array();
+        $this->assertEquals('en', $this->generator->getLocale($attributes));
+    }
+
+    public function testGetLocaleContext()
+    {
+        $this->generator->setDefaultLocale('en');
+
+        $this->generator->getContext()->setParameter('_locale', 'de');
+
+        $attributes = array();
+        $this->assertEquals('de', $this->generator->getLocale($attributes));
+    }
+
     public function testSupports()
     {
         $this->assertTrue($this->generator->supports(''));
@@ -404,6 +430,12 @@ class TestableContentAwareGenerator extends ContentAwareGenerator
     protected function doGenerate($variables, $defaults, $requirements, $tokens, $parameters, $name, $absolute, $hostTokens = null)
     {
         return 'result_url';
+    }
+
+    // expose as public
+    public function getLocale($parameters)
+    {
+        return parent::getLocale($parameters);
     }
 }
 
