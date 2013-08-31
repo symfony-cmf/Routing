@@ -65,6 +65,14 @@ class ProviderBasedGenerator extends UrlGenerator implements VersatileGeneratorI
      */
     public function getRouteDebugMessage($name, array $parameters = array())
     {
+        if (is_scalar($name)) {
+            return $name;
+        }
+
+        if (is_array($name)) {
+            return serialize($name);
+        }
+
         if ($name instanceof RouteObjectInterface) {
             return 'Route with key ' . $name->getRouteKey();
         }
@@ -73,7 +81,7 @@ class ProviderBasedGenerator extends UrlGenerator implements VersatileGeneratorI
             return 'Route with pattern ' . $name->getPattern();
         }
 
-        return $name;
+        return get_class($name);
     }
 
 }

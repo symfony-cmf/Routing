@@ -391,7 +391,7 @@ class ContentAwareGeneratorTest extends CmfUnitTestCase
     public function testGetRouteDebugMessage()
     {
         $this->assertContains('/some/content', $this->generator->getRouteDebugMessage(null, array('content_id' => '/some/content')));
-        $this->assertContains('/some/content', $this->generator->getRouteDebugMessage(new RouteAware()));
+        $this->assertContains('Route aware content Symfony\Cmf\Component\Routing\Tests\Routing\RouteAware', $this->generator->getRouteDebugMessage(new RouteAware()));
         $this->assertContains('/some/content', $this->generator->getRouteDebugMessage('/some/content'));
     }
 }
@@ -412,9 +412,5 @@ class RouteAware implements RouteReferrersReadInterface
     public function getRoutes()
     {
         return array();
-    }
-    public function __toString()
-    {
-        return '/some/content';
     }
 }
