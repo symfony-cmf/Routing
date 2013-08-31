@@ -248,7 +248,7 @@ class ContentAwareGenerator extends ProviderBasedGenerator
         }
 
         if ($name instanceof RouteReferrersReadInterface) {
-            return 'Route aware content ' . $name;
+            return 'Route aware content ' . parent::getRouteDebugMessage($name, $parameters);
         }
 
         return parent::getRouteDebugMessage($name, $parameters);
