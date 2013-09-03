@@ -17,6 +17,14 @@ use Symfony\Component\Routing\RouteCollection;
 class ContentAwareGenerator extends ProviderBasedGenerator
 {
     /**
+     * The locale to use when neither the parameters nor the request context
+     * indicate the locale to use.
+     *
+     * @var string
+     */
+    protected $defaultLocale = null;
+
+    /**
      * The content repository used to find content by it's id
      * This can be used to specify a parameter content_id when generating urls
      *
@@ -218,8 +226,9 @@ class ContentAwareGenerator extends ProviderBasedGenerator
      *
      * @param array $parameters the parameters determined by the route
      *
-     * @return string|null the locale following of the parameters or any other
-     *  information the router has available.
+     * @return string the locale following of the parameters or any other
+     *  information the router has available. defaultLocale if no other locale
+     *  can be determined.
      */
     protected function getLocale($parameters)
     {
@@ -227,7 +236,22 @@ class ContentAwareGenerator extends ProviderBasedGenerator
             return $parameters['_locale'];
         }
 
-        return null;
+        if ($this->getContext()->hasParameter('_locale')) {
+            return $this->getContext()->getParameter('_locale');
+        }
+
+        return $this->defaultLocale;
+    }
+
+    /**
+     * Overwrite the locale to be used by default if there is neither one in
+     * the parameters when building the route nor a request available (i.e. CLI).
+     *
+     * @param string $locale
+     */
+    public function setDefaultLocale($locale)
+    {
+        $this->defaultLocale = $locale;
     }
 
     /**

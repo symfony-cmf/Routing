@@ -2,13 +2,14 @@
 
 namespace Symfony\Cmf\Component\Routing;
 
+use Symfony\Component\Routing\Generator\UrlGenerator;
 use Symfony\Component\Routing\Route as SymfonyRoute;
+use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 
-use Symfony\Component\Routing\Generator\UrlGenerator;
-use Psr\Log\LoggerInterface;
-
 use Symfony\Cmf\Component\Routing\RouteProviderInterface;
+
+use Psr\Log\LoggerInterface;
 
 /**
  * A Generator that uses a RouteProvider rather than a RouteCollection
@@ -28,6 +29,7 @@ class ProviderBasedGenerator extends UrlGenerator implements VersatileGeneratorI
     {
         $this->provider = $provider;
         $this->logger = $logger;
+        $this->context = new RequestContext();
     }
 
     /**
