@@ -2,6 +2,7 @@
 
 namespace Symfony\Cmf\Component\Routing;
 
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Routing\Route as SymfonyRoute;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\RouteCollection;
@@ -181,7 +182,11 @@ class ContentAwareGenerator extends ProviderBasedGenerator
             return $route;
         }
 
-        // if none matched, continue and randomly return the first one
+        // if none matched, randomly return the first one
+        if ($routes instanceof Collection) {
+            return $routes->first();
+        }
+
         return reset($routes);
     }
 
