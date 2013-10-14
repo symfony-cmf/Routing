@@ -24,7 +24,7 @@
         "symfony/event-dispatcher": "~2.1"
     },
     "suggest": {
-        "symfony/event-dispatcher": "DynamicRouter can optionally trigger an event at the start of matching, symfony/event-dispatcher: ~2.1"
+        "symfony/event-dispatcher": "DynamicRouter can optionally trigger an event at the start of matching. Minimal version ~2.1"
     },
     "autoload": {
         "psr-0": { "Symfony\\Cmf\\Component\\Routing": "" }
