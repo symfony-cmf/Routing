@@ -37,7 +37,7 @@ class FieldPresenceEnhancer implements RouteEnhancerInterface
     private $value;
 
     /**
-     * @param string $source the field name of the class
+     * @param null|string $source the field name of the class, null to disable the check
      * @param string $target the field name to set from the map
      * @param string $value  value to set target field to if source field exists
      */
@@ -58,7 +58,7 @@ class FieldPresenceEnhancer implements RouteEnhancerInterface
             return $defaults;
         }
 
-        if (! isset($defaults[$this->source])) {
+        if (null !== $this->source && !isset($defaults[$this->source])) {
             return $defaults;
         }
 
