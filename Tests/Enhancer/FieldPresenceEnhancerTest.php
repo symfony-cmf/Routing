@@ -52,9 +52,21 @@ class FieldPresenceEnhancerTest extends CmfUnitTestCase
         $this->assertEquals($defaults, $this->mapper->enhance($defaults, $this->request));
     }
 
-    public function testHasNoTemplate()
+    public function testHasNoSourceValue()
     {
         $defaults = array('foo' => 'bar');
         $this->assertEquals($defaults, $this->mapper->enhance($defaults, $this->request));
+    }
+
+    public function testHasNoSource()
+    {
+        $this->mapper = new FieldPresenceEnhancer(null, '_controller', 'cmf_content.controller:indexAction');
+
+        $defaults = array('foo' => 'bar');
+        $expected = array(
+            'foo' => 'bar',
+            '_controller' => 'cmf_content.controller:indexAction',
+        );
+        $this->assertEquals($expected, $this->mapper->enhance($defaults, $this->request));
     }
 }
