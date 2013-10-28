@@ -32,7 +32,7 @@ and licensed under the [MIT License](LICENSE).
 
 For the install guide and reference, see:
 
-* [Routing component documentation](http://symfony.com/doc/master/cmf/components/routing.html)
+* [Routing component documentation](http://symfony.com/doc/master/cmf/book/routing.html)
 
 See also:
 
