@@ -77,26 +77,34 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
     protected $context;
 
     /**
+     * @var RouteCollection
+     */
+    private $routeCollection;
+
+    /**
      * @param RequestContext                              $context
      * @param RequestMatcherInterface|UrlMatcherInterface $matcher
      * @param UrlGeneratorInterface                       $generator
      * @param string                                      $uriFilterRegexp
      * @param EventDispatcherInterface|null               $eventDispatcher
+     * @param RouteProviderInterface                      $provider
      */
     public function __construct(RequestContext $context,
                                 $matcher,
                                 UrlGeneratorInterface $generator,
                                 $uriFilterRegexp = '',
-                                EventDispatcherInterface $eventDispatcher = null
+                                EventDispatcherInterface $eventDispatcher = null,
+                                RouteProviderInterface $provider = null
     ) {
         $this->context = $context;
         if (! $matcher instanceof RequestMatcherInterface && ! $matcher instanceof UrlMatcherInterface) {
-            throw new \InvalidArgumentException('Invalid $matcher');
+            throw new \InvalidArgumentException('Matcher must implement either Symfony\Component\Routing\Matcher\RequestMatcherInterface or Symfony\Component\Routing\Matcher\UrlMatcherInterface');
         }
         $this->matcher = $matcher;
         $this->generator = $generator;
         $this->eventDispatcher = $eventDispatcher;
         $this->uriFilterRegexp = $uriFilterRegexp;
+        $this->provider = $provider;
 
         $this->generator->setContext($context);
     }
@@ -106,7 +114,12 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
      */
     public function getRouteCollection()
     {
-        return new RouteCollection();
+        if (!$this->routeCollection instanceof RouteCollection) {
+            $this->routeCollection = $this->provider
+                ? new LazyRouteCollection($this->provider) : new RouteCollection();
+        }
+
+        return $this->routeCollection;
     }
 
     /**
