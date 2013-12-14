@@ -72,13 +72,21 @@ interface RouteProviderInterface
      * simple implementation could be to just repeatedly call
      * $this->getRouteByName() while catching and ignoring eventual exceptions.
      *
-     * @param array $names      the list of names to retrieve
+     * If $names is null, this method SHOULD return a collection of all routes
+     * known to this provider. If there are many routes to be expected, usage of
+     * a lazy loading collection is recommended. A provider MAY only return a
+     * subset of routes to e.g. support paging or other concepts, but be aware
+     * that the DynamicRouter will only call this method once per
+     * DynamicRouter::getRouteCollection() call.
+     *
+     * @param array|null $names the list of names to retrieve, in case of null
+     *                          the provider will determine what routes to return
      * @param array $parameters DEPRECATED the parameters as they are passed to
      *      the UrlGeneratorInterface::generate call. (Only one array, not one
      *      for each entry in $names.
      *
-     * @return \Symfony\Component\Routing\Route[] iterable thing with the keys
-     *      the names of the $names argument.
+     * @return \Symfony\Component\Routing\Route[] iteratable with the keys
+     *                                            as names of the $names argument.
      */
     public function getRoutesByNames($names, $parameters = array());
 }

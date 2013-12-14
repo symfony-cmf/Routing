@@ -296,7 +296,7 @@ class ChainRouter implements RouterInterface, RequestMatcherInterface, WarmableI
     public function getRouteCollection()
     {
         if (!$this->routeCollection instanceof RouteCollection) {
-            $this->routeCollection = new RouteCollection();
+            $this->routeCollection = new ChainRouteCollection();
             foreach ($this->all() as $router) {
                 $this->routeCollection->addCollection($router->getRouteCollection());
             }
