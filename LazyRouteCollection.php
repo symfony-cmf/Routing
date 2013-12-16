@@ -37,7 +37,7 @@ class LazyRouteCollection extends RouteCollection
      */
     public function count()
     {
-        return count($this->all());
+        return count($this->all(null));
     }
 
     /**
