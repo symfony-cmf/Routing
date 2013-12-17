@@ -47,7 +47,7 @@ class LazyRouteCollection extends RouteCollection
      */
     public function all()
     {
-        return $this->provider->getRoutesByNames();
+        return $this->provider->getRoutesByNames(null);
     }
 
     /**
