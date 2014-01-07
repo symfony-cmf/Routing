@@ -51,15 +51,13 @@ interface RouteProviderInterface
      * Find the route using the provided route name.
      *
      * @param string $name       the route name to fetch
-     * @param array  $parameters DEPRECATED the parameters as they are passed
-     *      to the UrlGeneratorInterface::generate call
      *
      * @return \Symfony\Component\Routing\Route
      *
      * @throws \Symfony\Component\Routing\Exception\RouteNotFoundException if
      *      there is no route with that name in this repository
      */
-    public function getRouteByName($name, $parameters = array());
+    public function getRouteByName($name);
 
     /**
      * Find many routes by their names using the provided list of names.

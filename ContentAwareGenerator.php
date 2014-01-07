@@ -97,7 +97,7 @@ class ContentAwareGenerator extends ProviderBasedGenerator
      */
     protected function getRouteByName($name, array $parameters)
     {
-        $route = $this->provider->getRouteByName($name, $parameters);
+        $route = $this->provider->getRouteByName($name);
         if (empty($route)) {
             throw new RouteNotFoundException('No route found for name: ' . $name);
         }
