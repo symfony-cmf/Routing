@@ -22,9 +22,23 @@ final class Events
     const PRE_DYNAMIC_MATCH = 'cmf_routing.pre_dynamic_match';
 
     /**
-     * Fired before a Request is matched in \Symfony\Cmf\Component\Routing\DynamicRouter#match
+     * Fired after a path is final matched in \Symfony\Cmf\Component\Routing\DynamicRouter#match
+     *
+     * The event object is RoutePostMatchEvent.
+     */
+    const POST_DYNAMIC_MATCH = 'cmf_routing.post_dynamic_match';
+
+    /**
+     * Fired before a Request is matched in \Symfony\Cmf\Component\Routing\DynamicRouter#matchRequest
      *
      * The event object is RouteMatchEvent.
      */
     const PRE_DYNAMIC_MATCH_REQUEST = 'cmf_routing.pre_dynamic_match_request';
+
+    /**
+     * Fired after a Request is final matched in \Symfony\Cmf\Component\Routing\DynamicRouter#matchRequest
+     *
+     * The event object is RoutePostMatchEvent.
+     */
+    const POST_DYNAMIC_MATCH_REQUEST = 'cmf_routing.post_dynamic_match_request';
 }
