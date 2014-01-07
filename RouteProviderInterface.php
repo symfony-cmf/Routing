@@ -79,12 +79,9 @@ interface RouteProviderInterface
      *
      * @param array|null $names the list of names to retrieve, in case of null
      *                          the provider will determine what routes to return
-     * @param array $parameters DEPRECATED the parameters as they are passed to
-     *      the UrlGeneratorInterface::generate call. (Only one array, not one
-     *      for each entry in $names.
      *
      * @return \Symfony\Component\Routing\Route[] iteratable with the keys
      *                                            as names of the $names argument.
      */
-    public function getRoutesByNames($names, $parameters = array());
+    public function getRoutesByNames($names);
 }

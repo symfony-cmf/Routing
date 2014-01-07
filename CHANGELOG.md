@@ -2,7 +2,7 @@ Changelog
 =========
 
 * **2013-01-07**: Removed the deprecated $parameters argument in
-  RouteProviderInterface::getRouteByName
+  RouteProviderInterface::getRouteByName and getRoutesByNames.
 
 1.1.0-RC1
 ---------
