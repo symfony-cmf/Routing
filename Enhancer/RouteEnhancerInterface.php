@@ -28,7 +28,8 @@ interface RouteEnhancerInterface
     /**
      * Update the defaults based on its own data and the request.
      *
-     * @param array $defaults the getRouteDefaults array.
+     * @param array   $defaults the getRouteDefaults array.
+     * @param Request $request  the Request instance.
      *
      * @return array the modified defaults. Each enhancer MUST return the
      *      $defaults but may add or remove values.
