@@ -12,6 +12,7 @@
 
 namespace Symfony\Cmf\Component\Routing;
 
+use Symfony\Cmf\Component\Routing\Event\RouterPostMatchEvent;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\RouteCollection;
@@ -220,6 +221,11 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
 
         $defaults = $matcher->match($pathinfo);
 
+        if ($this->eventDispatcher) {
+            $event = new RouterPostMatchEvent($defaults);
+            $this->eventDispatcher->dispatch(Events::POST_DYNAMIC_MATCH, $event);
+        }
+
         return $this->applyRouteEnhancers($defaults, $request);
     }
 
@@ -256,6 +262,11 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
             $defaults = $matcher->match($request->getPathInfo());
         } else {
             $defaults = $matcher->matchRequest($request);
+        }
+
+        if ($this->eventDispatcher) {
+            $event = new RouterPostMatchEvent($defaults, $request);
+            $this->eventDispatcher->dispatch(Events::POST_DYNAMIC_MATCH_REQUEST, $event);
         }
 
         return $this->applyRouteEnhancers($defaults, $request);

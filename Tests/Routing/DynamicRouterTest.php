@@ -14,6 +14,7 @@ namespace Symfony\Cmf\Component\Routing\Tests\Routing;
 
 use Symfony\Cmf\Component\Routing\Event\Events;
 use Symfony\Cmf\Component\Routing\Event\RouterMatchEvent;
+use Symfony\Cmf\Component\Routing\Event\RouterPostMatchEvent;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\RouteCollection;
 
@@ -279,13 +280,18 @@ class DynamicRouterTest extends CmfUnitTestCase
     {
         $eventDispatcher = $this->buildMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
         $router = new DynamicRouter($this->context, $this->matcher, $this->generator, '', $eventDispatcher);
+        $routeDefaults = array('foo' => 'bar');
 
-        $eventDispatcher->expects($this->once())
+        $eventDispatcher->expects($this->at(0))
             ->method('dispatch')
             ->with(Events::PRE_DYNAMIC_MATCH, $this->equalTo(new RouterMatchEvent()))
         ;
 
-        $routeDefaults = array('foo' => 'bar');
+        $eventDispatcher->expects($this->at(1))
+            ->method('dispatch')
+            ->with(Events::POST_DYNAMIC_MATCH, $this->equalTo(new RouterPostMatchEvent($routeDefaults)))
+        ;
+
         $this->matcher->expects($this->once())
             ->method('match')
             ->with($this->url)
@@ -299,9 +305,10 @@ class DynamicRouterTest extends CmfUnitTestCase
     {
         $eventDispatcher = $this->buildMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
         $router = new DynamicRouter($this->context, $this->matcher, $this->generator, '', $eventDispatcher);
+        $routeDefaults = array('foo' => 'bar');
 
         $that = $this;
-        $eventDispatcher->expects($this->once())
+        $eventDispatcher->expects($this->at(0))
             ->method('dispatch')
             ->with(Events::PRE_DYNAMIC_MATCH_REQUEST, $this->callback(function($event) use ($that) {
                 $that->assertInstanceOf('Symfony\Cmf\Component\Routing\Event\RouterMatchEvent', $event);
@@ -310,8 +317,17 @@ class DynamicRouterTest extends CmfUnitTestCase
                 return true;
             }))
         ;
+        $eventDispatcher->expects($this->at(1))
+            ->method('dispatch')
+            ->with(Events::POST_DYNAMIC_MATCH_REQUEST, $this->callback(function($event) use ($that, $routeDefaults) {
+                $that->assertInstanceOf('Symfony\Cmf\Component\Routing\Event\RouterPostMatchEvent', $event);
+                $that->assertEquals($that->request, $event->getRequest());
+                $that->assertEquals($routeDefaults, $event->getDefaults());
 
-        $routeDefaults = array('foo' => 'bar');
+                return true;
+            }))
+        ;
+
         $this->matcher->expects($this->once())
             ->method('match')
             ->with($this->url)
