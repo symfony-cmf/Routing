@@ -185,12 +185,12 @@ class ChainRouter implements RouterInterface, RequestMatcherInterface, WarmableI
                 return $router->match($url);
             } catch (ResourceNotFoundException $e) {
                 if ($this->logger) {
-                    $this->logger->info('Router '.get_class($router).' was not able to match, message "'.$e->getMessage().'"');
+                    $this->logger->debug('Router '.get_class($router).' was not able to match, message "'.$e->getMessage().'"');
                 }
                 // Needs special care
             } catch (MethodNotAllowedException $e) {
                 if ($this->logger) {
-                    $this->logger->info('Router '.get_class($router).' throws MethodNotAllowedException with message "'.$e->getMessage().'"');
+                    $this->logger->debug('Router '.get_class($router).' throws MethodNotAllowedException with message "'.$e->getMessage().'"');
                 }
                 $methodNotAllowed = $e;
             }
@@ -231,7 +231,7 @@ class ChainRouter implements RouterInterface, RequestMatcherInterface, WarmableI
                 $hint = $this->getErrorMessage($name, $router, $parameters);
                 $debug[] = $hint;
                 if ($this->logger) {
-                    $this->logger->info('Router '.get_class($router)." was unable to generate route. Reason: '$hint': ".$e->getMessage());
+                    $this->logger->debug('Router '.get_class($router)." was unable to generate route. Reason: '$hint': ".$e->getMessage());
                 }
             }
         }
