@@ -110,7 +110,7 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
     }
 
     /**
-     * Not implemented.
+     * {@inheritDoc}
      */
     public function getRouteCollection()
     {
