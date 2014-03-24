@@ -13,6 +13,9 @@
 namespace Symfony\Cmf\Component\Routing;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Exception\RouteNotFoundException;
+use Symfony\Component\Routing\Route;
+use Symfony\Component\Routing\RouteCollection;
 
 /**
  * Interface for the route provider the DynamicRouter is using.
@@ -41,7 +44,7 @@ interface RouteProviderInterface
      *
      * @param Request $request A request against which to match.
      *
-     * @return \Symfony\Component\Routing\RouteCollection with all Routes that
+     * @return RouteCollection with all Routes that
      *      could potentially match $request. Empty collection if nothing can
      *      match.
      */
@@ -50,12 +53,12 @@ interface RouteProviderInterface
     /**
      * Find the route using the provided route name.
      *
-     * @param string $name       the route name to fetch
+     * @param string $name The route name to fetch.
      *
-     * @return \Symfony\Component\Routing\Route
+     * @return Route
      *
-     * @throws \Symfony\Component\Routing\Exception\RouteNotFoundException if
-     *      there is no route with that name in this repository
+     * @throws RouteNotFoundException If there is no route with that name in
+     *                                this repository
      */
     public function getRouteByName($name);
 
@@ -77,11 +80,11 @@ interface RouteProviderInterface
      * that the DynamicRouter will only call this method once per
      * DynamicRouter::getRouteCollection() call.
      *
-     * @param array|null $names the list of names to retrieve, in case of null
-     *                          the provider will determine what routes to return
+     * @param array|null $names The list of names to retrieve, In case of null,
+     *                          the provider will determine what routes to return.
      *
-     * @return \Symfony\Component\Routing\Route[] iteratable with the keys
-     *                                            as names of the $names argument.
+     * @return Route[] Iterable list with the keys being the names from the
+ *                     $names array.
      */
     public function getRoutesByNames($names);
 }

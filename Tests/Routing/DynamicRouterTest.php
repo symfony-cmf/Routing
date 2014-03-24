@@ -58,11 +58,19 @@ class DynamicRouterTest extends CmfUnitTestCase
         $this->assertSame($this->context, $this->router->getContext());
     }
 
-    public function testRouteCollection()
+    public function testRouteCollectionEmpty()
     {
         $collection = $this->router->getRouteCollection();
         $this->assertInstanceOf('Symfony\Component\Routing\RouteCollection', $collection);
-        // TODO: once this is implemented, check content of collection
+    }
+
+    public function testRouteCollectionLazy()
+    {
+        $provider = $this->getMock('Symfony\Cmf\Component\Routing\RouteProviderInterface');
+        $router = new DynamicRouter($this->context, $this->matcher, $this->generator, '', null, $provider);
+
+        $collection = $router->getRouteCollection();
+        $this->assertInstanceOf('Symfony\Cmf\Component\Routing\LazyRouteCollection', $collection);
     }
 
     /// generator tests ///
