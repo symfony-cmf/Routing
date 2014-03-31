@@ -88,4 +88,22 @@ class CandidatesTest extends \PHPUnit_Framework_Testcase
             $paths
         );
     }
+
+    public function testGetCandidatesLimit()
+    {
+        $candidates = new Candidates(array(), 1);
+
+        $request = Request::create('/my/path/is/deep.html');
+
+        $paths = $candidates->getCandidates($request);
+
+        $this->assertEquals(
+            array(
+                '/my/path/is/deep.html',
+                '/my/path/is/deep',
+            ),
+            $paths
+        );
+
+    }
 }

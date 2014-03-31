@@ -30,11 +30,24 @@ class Candidates implements CandidatesInterface
     protected $locales;
 
     /**
-     * @param array $locales The locales to support.
+     * A limit to apply to the number of candidates generated.
+     *
+     * This is to prevent abusive requests with a lot of "/". The limit is per
+     * batch, that is if a locale matches you could get as many as 2 * $limit
+     * candidates if the URL has that many slashes.
+     *
+     * @var int
      */
-    public function __construct(array $locales = array())
+    protected $limit;
+
+    /**
+     * @param array $locales The locales to support.
+     * @param int   $limit   A limit to apply to the candidates generated.
+     */
+    public function __construct(array $locales = array(), $limit = 20)
     {
         $this->setLocales($locales);
+        $this->limit = $limit;
     }
 
     /**
@@ -125,7 +138,11 @@ class Candidates implements CandidatesInterface
             }
 
             $part = $url;
+            $count = 0;
             while (false !== ($pos = strrpos($part, '/'))) {
+                if (++$count > $this->limit) {
+                    return $candidates;
+                }
                 $candidates[] = $prefix . $part;
                 $part = substr($url, 0, $pos);
             }
