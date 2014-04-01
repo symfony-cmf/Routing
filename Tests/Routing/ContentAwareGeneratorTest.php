@@ -437,7 +437,7 @@ class ContentAwareGeneratorTest extends CmfUnitTestCase
  */
 class TestableContentAwareGenerator extends ContentAwareGenerator
 {
-    protected function doGenerate($variables, $defaults, $requirements, $tokens, $parameters, $name, $absolute, $hostTokens = null)
+    protected function doGenerate($variables, $defaults, $requirements, $tokens, $parameters, $name, $referenceType, $hostTokens, array $requiredSchemes = array())
     {
         return 'result_url';
     }
