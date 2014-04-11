@@ -24,7 +24,7 @@ and licensed under the [MIT License](LICENSE).
 
 ## Requirements
 
-* The Symfony Routing component (>= 2.2.0)
+* The Symfony Routing component (2.3+)
 * See also the `require` section of [composer.json](composer.json)
 
 
