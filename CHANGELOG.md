@@ -4,6 +4,7 @@ Changelog
 1.2.0-RC1
 ---------
 
+* **2013-12-23**: add support for ChainRouter::getRouteCollection()
 * **2013-01-07**: Removed the deprecated $parameters argument in
   RouteProviderInterface::getRouteByName and getRoutesByNames.
 
