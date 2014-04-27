@@ -9,7 +9,6 @@
  * file that was distributed with this source code.
  */
 
-
 namespace Symfony\Cmf\Component\Routing\NestedMatcher;
 
 use Symfony\Component\Routing\Route;

@@ -9,7 +9,6 @@
  * file that was distributed with this source code.
  */
 
-
 namespace Symfony\Cmf\Component\Routing;
 
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;

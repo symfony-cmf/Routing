@@ -9,7 +9,6 @@
  * file that was distributed with this source code.
  */
 
-
 namespace Symfony\Cmf\Component\Routing\Tests\Routing;
 
 use Symfony\Cmf\Component\Routing\Event\Events;
@@ -311,7 +310,7 @@ class DynamicRouterTest extends CmfUnitTestCase
         $that = $this;
         $eventDispatcher->expects($this->once())
             ->method('dispatch')
-            ->with(Events::PRE_DYNAMIC_MATCH_REQUEST, $this->callback(function($event) use ($that) {
+            ->with(Events::PRE_DYNAMIC_MATCH_REQUEST, $this->callback(function ($event) use ($that) {
                 $that->assertInstanceOf('Symfony\Cmf\Component\Routing\Event\RouterMatchEvent', $event);
                 $that->assertEquals($that->request, $event->getRequest());
 

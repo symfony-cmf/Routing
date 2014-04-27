@@ -11,7 +11,6 @@
 
 namespace Symfony\Cmf\Component\Routing\Candidates;
 
-use Doctrine\ODM\PHPCR\DocumentManager;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -98,7 +97,7 @@ class Candidates implements CandidatesInterface
     /**
      * Determine the locale of this URL.
      *
-     * @param string          $url The url to determine the locale from.
+     * @param string $url The url to determine the locale from.
      *
      * @return string|boolean The locale if $url starts with one of the allowed locales.
      */
@@ -125,7 +124,7 @@ class Candidates implements CandidatesInterface
      * @param string $prefix A prefix to prepend to every pattern.
      *
      * @return array Paths that could represent routes that match $url and are
-     *      child of $prefix.
+     *               child of $prefix.
      */
     protected function getCandidatesFor($url, $prefix = '')
     {

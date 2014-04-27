@@ -9,7 +9,6 @@
  * file that was distributed with this source code.
  */
 
-
 namespace Symfony\Cmf\Component\Routing\Enhancer;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -32,7 +31,7 @@ interface RouteEnhancerInterface
      * @param Request $request  the Request instance.
      *
      * @return array the modified defaults. Each enhancer MUST return the
-     *      $defaults but may add or remove values.
+     *               $defaults but may add or remove values.
      */
     public function enhance(array $defaults, Request $request);
 }

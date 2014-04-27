@@ -9,7 +9,6 @@
  * file that was distributed with this source code.
  */
 
-
 namespace Symfony\Cmf\Component\Routing;
 
 use Symfony\Component\Config\Resource\ResourceInterface;
@@ -60,6 +59,7 @@ class ChainRouteCollection extends RouteCollection
         foreach ($this->routeCollections as $routeCollection) {
             $count+= $routeCollection->count();
         }
+
         return $count;
     }
 
@@ -128,7 +128,7 @@ class ChainRouteCollection extends RouteCollection
      * Adds a route collection at the end of the current set by appending all
      * routes of the added collection.
      *
-     * @param RouteCollection $collection      A RouteCollection instance
+     * @param RouteCollection $collection A RouteCollection instance
      */
     public function addCollection(RouteCollection $collection)
     {

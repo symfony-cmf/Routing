@@ -11,11 +11,8 @@
 
 namespace Symfony\Cmf\Component\Routing\Tests\Candidates;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Cmf\Component\Routing\Candidates\Candidates;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Route;
-use Symfony\Component\Routing\RouteCollection;
 
 class CandidatesTest extends \PHPUnit_Framework_Testcase
 {

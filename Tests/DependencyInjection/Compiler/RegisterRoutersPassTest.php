@@ -9,7 +9,6 @@
  * file that was distributed with this source code.
  */
 
-
 namespace Symfony\Cmf\Routing\Tests\DependencyInjection\Compiler;
 
 use Symfony\Cmf\Component\Routing\DependencyInjection\Compiler\RegisterRoutersPass;
@@ -34,7 +33,7 @@ class RegisterRoutersPassTest extends \PHPUnit_Framework_TestCase
         $definition = $this->getMock('Symfony\Component\DependencyInjection\Definition');
         $definition->expects($this->atLeastOnce())
             ->method('addMethodCall')
-            ->with($this->equalTo('add'), $this->callback(function($arg) use ($name, $priority) {
+            ->with($this->equalTo('add'), $this->callback(function ($arg) use ($name, $priority) {
                 if (!$arg[0] instanceof Reference || $name !== $arg[0]->__toString()) {
                     return false;
                 }

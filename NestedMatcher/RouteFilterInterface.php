@@ -9,7 +9,6 @@
  * file that was distributed with this source code.
  */
 
-
 namespace Symfony\Cmf\Component\Routing\NestedMatcher;
 
 use Symfony\Component\Routing\RouteCollection;
@@ -39,8 +38,10 @@ interface RouteFilterInterface
      * @return RouteCollection A non-empty RouteCollection of matched routes.
      *
      * @throws ResourceNotFoundException if none of the routes in $collection
-     *      matches $request. This is a performance optimization to not continue
-     *      the match process when a match will no longer be possible.
+     *                                   matches $request. This is a performance
+     *                                   optimization to not continue the match
+     *                                   process when a match will no longer be
+     *                                   possible.
      */
     public function filter(RouteCollection $collection, Request $request);
 }

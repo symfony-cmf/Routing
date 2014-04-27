@@ -9,7 +9,6 @@
  * file that was distributed with this source code.
  */
 
-
 namespace Symfony\Cmf\Component\Routing\Test;
 
 class CmfUnitTestCase extends \PHPUnit_Framework_TestCase

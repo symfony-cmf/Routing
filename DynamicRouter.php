@@ -9,7 +9,6 @@
  * file that was distributed with this source code.
  */
 
-
 namespace Symfony\Cmf\Component\Routing;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -191,13 +190,13 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
      * exceptions documented below.
      *
      * @param string $pathinfo The path info to be parsed (raw format, i.e. not
-     *      urldecoded)
+     *                         urldecoded)
      *
      * @return array An array of parameters
      *
      * @throws ResourceNotFoundException If the resource could not be found
      * @throws MethodNotAllowedException If the resource was found but the
-     *      request method is not allowed
+     *                                   request method is not allowed
      *
      * @api
      */
@@ -236,7 +235,7 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
      *
      * @throws ResourceNotFoundException If no matching resource could be found
      * @throws MethodNotAllowedException If a matching resource was found but
-     *      the request method is not allowed
+     *                                   the request method is not allowed
      */
     public function matchRequest(Request $request)
     {

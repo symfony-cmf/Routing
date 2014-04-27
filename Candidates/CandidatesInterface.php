@@ -26,7 +26,7 @@ interface CandidatesInterface
      *
      * @return array a list of PHPCR-ODM ids
      */
-    function getCandidates(Request $request);
+    public function getCandidates(Request $request);
 
     /**
      * Determine if $name is a valid candidate, e.g. in getRouteByName.
@@ -35,7 +35,7 @@ interface CandidatesInterface
      *
      * @return boolean
      */
-    function isCandidate($name);
+    public function isCandidate($name);
 
     /**
      * Provide a best effort query restriction to limit a query to only find
@@ -43,5 +43,5 @@ interface CandidatesInterface
      *
      * @param object $queryBuilder A query builder suited for the storage backend.
      */
-    function restrictQuery($queryBuilder);
+    public function restrictQuery($queryBuilder);
 }

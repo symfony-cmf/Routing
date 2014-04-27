@@ -9,7 +9,6 @@
  * file that was distributed with this source code.
  */
 
-
 namespace Symfony\Cmf\Component\Routing;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -44,9 +43,8 @@ interface RouteProviderInterface
      *
      * @param Request $request A request against which to match.
      *
-     * @return RouteCollection with all Routes that
-     *      could potentially match $request. Empty collection if nothing can
-     *      match.
+     * @return RouteCollection with all Routes that could potentially match
+     *                         $request. Empty collection if nothing can match.
      */
     public function getRouteCollectionForRequest(Request $request);
 
