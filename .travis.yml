@@ -7,14 +7,15 @@ php:
     - 5.6
     - hhvm
 
+env: 
+  SYMFONY_VERSION=2.3.*
+
 matrix:
   allow_failures:
     - env: SYMFONY_VERSION=dev-master
   include:
     - php: 5.5
       env: SYMFONY_VERSION=2.2.*
-    - php: 5.5
-      env: SYMFONY_VERSION=2.3.*
     - php: 5.5
       env: SYMFONY_VERSION=2.4.*
     - php: 5.5
@@ -23,7 +24,7 @@ matrix:
       env: SYMFONY_VERSION=dev-master
 
 before_script:
-  - sh -c 'if [ "$SYMFONY_VERSION" != "" ]; then composer require symfony/routing:${SYMFONY_VERSION} --prefer-source; fi;'
+  - composer require symfony/routing:${SYMFONY_VERSION} --prefer-source
 
 script: phpunit --coverage-text
 
