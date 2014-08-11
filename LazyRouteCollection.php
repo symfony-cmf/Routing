@@ -20,13 +20,46 @@ class LazyRouteCollection extends RouteCollection
     /**
      * The route provider for this generator.
      *
-     * @var RouteProviderInterface
+     * @var RangedRouteProviderInterface
      */
     protected $provider;
 
-    public function __construct(RouteProviderInterface $provider)
+    /**
+     * Contains the amount of route which are loaded on each provider request.
+     */
+    const ROUTE_LOADED_PER_TIME = 50;
+
+    /**
+     * Stores the current loaded routes.
+     *
+     * @var \Symfony\Component\Routing\Route[]
+     */
+    protected $elements;
+
+    /**
+     * Contains the current item the iterator points to.
+     *
+     * @var int
+     */
+    protected $currentRoute = 0;
+
+    public function __construct(RangedRouteProviderInterface $provider)
     {
         $this->provider = $provider;
+    }
+
+    /**
+     * Gets the current RouteCollection as an Iterator that includes all routes.
+     *
+     * It implements \IteratorAggregate.
+     *
+     * @see all()
+     *
+     * @return \ArrayIterator An \ArrayIterator object for iterating over routes
+     */
+    public function getIterator()
+    {
+      return new \ArrayIterator($this);
     }
 
     /**
@@ -64,4 +97,58 @@ class LazyRouteCollection extends RouteCollection
             return null;
         }
     }
+
+    /**
+     * Loads the next routes into the elements array.
+     *
+     * @param int $offset
+     *   The offset used in the db query.
+     */
+    protected function loadNextElements($offset)
+    {
+      $this->elements = array();
+
+      $this->elements = $this->provider->getRoutesRanged($offset, static::ROUTE_LOADED_PER_TIME);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function current() {
+      return current($this->elements);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function next() {
+      $result = next($this->elements);
+      if ($result === FALSE) {
+        $this->loadNextElements($this->currentRoute + 1);
+      }
+      $this->currentRoute++;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function key() {
+      return key($this->elements);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function valid() {
+      return key($this->elements);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function rewind() {
+      $this->currentRoute = 0;
+      $this->loadNextElements($this->currentRoute);
+    }
+
 }
