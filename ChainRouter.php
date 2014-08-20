@@ -31,7 +31,7 @@ use Psr\Log\LoggerInterface;
  * @author Henrik Bjornskov <henrik@bjrnskov.dk>
  * @author Magnus Nordlander <magnus@e-butik.se>
  */
-class ChainRouter implements RouterInterface, RequestMatcherInterface, WarmableInterface
+class ChainRouter implements ChainRouterInterface, WarmableInterface
 {
     /**
      * @var \Symfony\Component\Routing\RequestContext
@@ -76,10 +76,7 @@ class ChainRouter implements RouterInterface, RequestMatcherInterface, WarmableI
     }
 
     /**
-     * Add a Router to the index
-     *
-     * @param RouterInterface $router   The router instance
-     * @param integer         $priority The priority
+     * {@inheritdoc}
      */
     public function add(RouterInterface $router, $priority = 0)
     {
@@ -92,9 +89,7 @@ class ChainRouter implements RouterInterface, RequestMatcherInterface, WarmableI
     }
 
     /**
-     * Sorts the routers and flattens them.
-     *
-     * @return RouterInterface[]
+     * {@inheritdoc}
      */
     public function all()
     {

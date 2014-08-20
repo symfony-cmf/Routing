@@ -1,6 +1,7 @@
 Changelog
 =========
 
+* **2014-08-20**: Added an interface for the ChainRouter
 * **2014-06-06**: Updated to PSR-4 autoloading
 
 1.2.0
