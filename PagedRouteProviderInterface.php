@@ -25,7 +25,8 @@ interface PagedRouteProviderInterface extends RouteProviderInterface
      * @param int $offset
      *   The sequence will start with that offset in the list of all routes.
      * @param int $length [optional]
-     *   The sequence will have that many routes in it.
+     *   The sequence will have that many routes in it. If no length is
+     *   specified all routes are returned.
      *
      * @return \Symfony\Component\Routing\Route[]
      *   Routes keyed by the route name.
