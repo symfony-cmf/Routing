@@ -59,12 +59,7 @@ class LazyRouteCollection extends RouteCollection
      */
     public function count()
     {
-        if ($this->provider instanceof PagedRouteProviderInterface) {
-            return $this->provider->getRoutesCount();
-        }
-        else {
-            return count($this->all());
-        }
+        return count($this->all());
     }
 
     /**

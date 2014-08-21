@@ -87,4 +87,44 @@ class PagedRouteCollectionTest extends CmfUnitTestCase
         $data[] = array(42, 23, array(array(0, 23), array(23, 23)));
         return $data;
     }
+
+    /**
+     * Tests the count() method.
+     */
+    public function testCount() {
+        $this->routeProvider->expects($this->once())
+            ->method('getRoutesCount')
+            ->will($this->returnValue(12));
+        $routeCollection = new PagedRouteCollection($this->routeProvider);
+        $this->assertEquals(12, $routeCollection->count());
+    }
+
+    /**
+     * Tests the rewind method once the iterator is at the end.
+     */
+    public function testIteratingAndRewind() {
+        $routes = array();
+        for ($i = 0; $i < 30; $i++) {
+            $routes['test_' . $i] = new Route("/example-$i");
+        }
+        $this->routeProvider->expects($this->any())
+            ->method('getRoutesPaged')
+            ->will($this->returnValueMap(array(
+                array(0, 10, array_slice($routes, 0, 10)),
+                array(10, 10, array_slice($routes, 9, 10)),
+                array(20, 10, array()),
+            )));
+
+        $routeCollection = new PagedRouteCollection($this->routeProvider, 10);
+
+        // Force the iterating process.
+        $routeCollection->rewind();
+        for ($i = 0; $i < 29; $i++) {
+            $routeCollection->next();
+        }
+        $routeCollection->rewind();
+
+        $this->assertEquals('test_0', $routeCollection->key());
+        $this->assertEquals($routes['test_0'], $routeCollection->current());
+    }
 }

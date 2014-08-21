@@ -1,6 +1,5 @@
 <?php
 
-
 /**
  * This file is part of the Symfony CMF package.
  *
@@ -15,14 +14,12 @@ namespace Symfony\Cmf\Component\Routing;
 /**
  * Provides a route collection which avoids having all routes in memory.
  *
- * Internally this does load multiple routes over time using a
+ * Internally, this does load multiple routes over time using a
  * PagedRouteProviderInterface $route_provider.
  */
-class PagedRouteCollection implements \Iterator
+class PagedRouteCollection implements \Iterator, \Countable
 {
     /**
-     * The ranged route provider.
-     *
      * @var PagedRouteProviderInterface
      */
     protected $provider;
@@ -33,7 +30,7 @@ class PagedRouteCollection implements \Iterator
      *
      * @var int
      */
-    protected $routesLoadedInParallel;
+    protected $routesBatchSize;
 
     /**
      * Contains the current item the iterator points to.
@@ -49,30 +46,25 @@ class PagedRouteCollection implements \Iterator
      */
     protected $currentRoutes;
 
-    public function __construct(PagedRouteProviderInterface $pagedRouteProvider, $routesLoadedInParallel = 50)
+    public function __construct(PagedRouteProviderInterface $pagedRouteProvider, $routesBatchSize = 50)
     {
         $this->provider = $pagedRouteProvider;
-        $this->routesLoadedInParallel = $routesLoadedInParallel;
+        $this->routesBatchSize = $routesBatchSize;
     }
 
     /**
      * Loads the next routes into the elements array.
      *
-     * @param int $offset
-     *   The offset used in the db query.
+     * @param int $offset The offset used in the db query.
      */
     protected function loadNextElements($offset)
     {
-        // Don't ask for routes if there cannot be more. Therefore compare the
-        // last loaded routes with the amount loaded each time. In case in the
-        // last load could not fulfill the full amount, we can safely assume
-        // that there aren't more routes available.
-        if (isset($this->currentRoutes) && count($this->currentRoutes) < $this->routesLoadedInParallel)
-        {
+        // If the last batch was smaller than the batch size, this means there
+        // are no more routes available.
+        if (isset($this->currentRoutes) && count($this->currentRoutes) < $this->routesBatchSize) {
             $this->currentRoutes = array();
-        }
-        else {
-            $this->currentRoutes = $this->provider->getRoutesPaged($offset, $this->routesLoadedInParallel);
+        } else {
+            $this->currentRoutes = $this->provider->getRoutesPaged($offset, $this->routesBatchSize);
         }
     }
 
@@ -90,7 +82,7 @@ class PagedRouteCollection implements \Iterator
     public function next()
     {
         $result = next($this->currentRoutes);
-        if ($result === FALSE) {
+        if (false === $result) {
             $this->loadNextElements($this->current + 1);
         }
         $this->current++;
@@ -117,7 +109,18 @@ class PagedRouteCollection implements \Iterator
      */
     public function rewind()
     {
-       $this->current = 0;
-       $this->loadNextElements($this->current);
+        $this->current = 0;
+        $this->currentRoutes = NULL;
+        $this->loadNextElements($this->current);
+    }
+
+    /**
+     * Gets the number of Routes in this collection.
+     *
+     * @return int The number of routes
+     */
+    public function count()
+    {
+        return $this->provider->getRoutesCount();
     }
 }
