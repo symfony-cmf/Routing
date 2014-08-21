@@ -35,7 +35,7 @@ class LazyRouteCollectionTest extends CmfUnitTestCase {
             ->with(null)
             ->will($this->returnValue($testRoutes));
         $lazyRouteCollection = new LazyRouteCollection($routeProvider);
-        $this->assertEquals($testRoutes, $lazyRouteCollection->getIterator());
+        $this->assertEquals($testRoutes, iterator_to_array($lazyRouteCollection->getIterator()));
         $this->assertEquals($testRoutes, $lazyRouteCollection->all());
     }
 
@@ -45,16 +45,9 @@ class LazyRouteCollectionTest extends CmfUnitTestCase {
     public function testGetIteratorWithPagedRouteProvider()
     {
         $routeProvider = $this->getMock('Symfony\Cmf\Component\Routing\PagedRouteProviderInterface');
-        $testRoutes = array(
-          'route_1' => new Route('/route-1'),
-          'route_2"' => new Route('/route-2'),
-        );
-        $routeProvider->expects($this->exactly(1))
-          ->method('getRoutesByNames')
-          ->with(null)
-          ->will($this->returnValue($testRoutes));
+
         $lazyRouteCollection = new LazyRouteCollection($routeProvider);
-        $this->assertEquals($testRoutes, $lazyRouteCollection->getIterator());
-        $this->assertEquals($testRoutes, $lazyRouteCollection->all());
+        $this->assertInstanceOf('Symfony\Cmf\Component\Routing\PagedRouteCollection', $lazyRouteCollection->getIterator());
+        $this->assertInstanceOf('Symfony\Cmf\Component\Routing\PagedRouteCollection', $lazyRouteCollection->all());
     }
 }
