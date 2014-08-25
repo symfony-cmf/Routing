@@ -407,8 +407,7 @@ class ChainRouterTest extends CmfUnitTestCase
 
         $this->router->add($high, 20);
 
-        $result = $this->router->match($url);
-        $this->assertEquals(array('test'), $result);
+        $this->router->match($url);
     }
 
     /**
