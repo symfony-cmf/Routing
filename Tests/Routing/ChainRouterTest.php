@@ -386,6 +386,31 @@ class ChainRouterTest extends CmfUnitTestCase
     }
 
     /**
+     * Call match on ChainRouter that has RequestMatcher in the chain.
+     *
+     * @expectedException \Symfony\Component\Routing\Exception\ResourceNotFoundException
+     * @expectedExceptionMessage None of the routers in the chain matched url '/test'
+     */
+    public function testMatchWithRequestMatchersNotFound()
+    {
+        $url = '/test';
+        $request = Request::create('/test');
+
+        $high = $this->getMock('Symfony\Cmf\Component\Routing\Tests\Routing\RequestMatcher');
+
+        $high
+            ->expects($this->once())
+            ->method('matchRequest')
+            ->with($request)
+            ->will($this->throwException(new \Symfony\Component\Routing\Exception\ResourceNotFoundException))
+        ;
+
+        $this->router->add($high, 20);
+
+        $this->router->match($url);
+    }
+
+    /**
      * If any of the routers throws a not allowed exception and no other matches, we need to see this
      *
      * @expectedException \Symfony\Component\Routing\Exception\MethodNotAllowedException

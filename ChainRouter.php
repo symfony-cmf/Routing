@@ -164,16 +164,17 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
     {
         $methodNotAllowed = null;
 
+        $requestForMatching = $request;
         foreach ($this->all() as $router) {
             try {
                 // the request/url match logic is the same as in Symfony/Component/HttpKernel/EventListener/RouterListener.php
                 // matching requests is more powerful than matching URLs only, so try that first
                 if ($router instanceof RequestMatcherInterface) {
-                    if (null === $request) {
-                        $request = Request::create($url);
+                    if (empty($requestForMatching)) {
+                        $requestForMatching = Request::create($url);
                     }
 
-                    return $router->matchRequest($request);
+                    return $router->matchRequest($requestForMatching);
                 }
                 // every router implements the match method
                 return $router->match($url);
