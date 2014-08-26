@@ -170,13 +170,12 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
                 // matching requests is more powerful than matching URLs only, so try that first
                 if ($router instanceof RequestMatcherInterface) {
                     if (null === $request) {
-                        $request_for_matching = Request::create($url);
-                    }
-                    else {
-                        $request_for_matching = $request;
+                        $requestForMatching = Request::create($url);
+                    } else {
+                        $requestForMatching = $request;
                     }
 
-                    return $router->matchRequest($request_for_matching);
+                    return $router->matchRequest($requestForMatching);
                 }
                 // every router implements the match method
                 return $router->match($url);
