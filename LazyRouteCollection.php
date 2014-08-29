@@ -24,9 +24,30 @@ class LazyRouteCollection extends RouteCollection
      */
     protected $provider;
 
+    /**
+     * The actual paged route collection.
+     *
+     * @var PagedRouteCollection
+     */
+    protected $pagedRouteCollection;
+
     public function __construct(RouteProviderInterface $provider)
     {
         $this->provider = $provider;
+        if ($this->provider instanceof PagedRouteProviderInterface) {
+            $this->pagedRouteCollection = new PagedRouteCollection($this->provider);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getIterator()
+    {
+        if ($this->pagedRouteCollection) {
+            return $this->pagedRouteCollection;
+        }
+        return new \ArrayIterator($this->all());
     }
 
     /**
@@ -46,6 +67,9 @@ class LazyRouteCollection extends RouteCollection
      */
     public function all()
     {
+        if ($this->pagedRouteCollection) {
+            return $this->pagedRouteCollection;
+        }
         return $this->provider->getRoutesByNames(null);
     }
 
