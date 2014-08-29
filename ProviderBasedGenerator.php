@@ -60,6 +60,10 @@ class ProviderBasedGenerator extends UrlGenerator implements VersatileGeneratorI
 
         $debug_message = $this->getRouteDebugMessage($name);
 
+        if ($route->getHost() && $route->getHost() !== $this->context->getHost()) {
+            $absolute = true;
+        }
+
         return $this->doGenerate($compiledRoute->getVariables(), $route->getDefaults(), $route->getRequirements(), $compiledRoute->getTokens(), $parameters, $debug_message, $absolute, $hostTokens);
     }
 

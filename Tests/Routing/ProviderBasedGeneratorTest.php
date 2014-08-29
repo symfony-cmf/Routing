@@ -122,6 +122,33 @@ class ProviderBasedGeneratorTest extends CmfUnitTestCase
         $this->assertSame(null, $this->generator->generate($route, array('number' => 'string')));
 
     }
+
+    public function hostDataProvider()
+    {
+        return array(
+            array(null, null, '/test'),
+            array('www.example.com', null, '/test'),
+            array('www.example.com', 'www.example.com', '/test'),
+            array('www.example.com', 'fr.example.com', 'http://fr.example.com/test'),
+        );
+    }
+
+    /**
+     * @dataProvider hostDataProvider
+     */
+    public function testGenerateAbsoluteRouteIfHostIsDifferent($contextHost, $routeHost, $expectedUrl)
+    {
+        $this->generator = new ProviderBasedGenerator($this->provider);
+
+        $route = new Route('/test');
+        $route->setHost($routeHost);
+
+        $context = new RequestContext();
+        $context->setHost($contextHost);
+        $this->generator->setContext($context);
+
+        $this->assertSame($expectedUrl, $this->generator->generate($route));
+    }
 }
 
 /**
