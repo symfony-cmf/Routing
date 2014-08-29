@@ -91,7 +91,8 @@ class PagedRouteCollectionTest extends CmfUnitTestCase
     /**
      * Tests the count() method.
      */
-    public function testCount() {
+    public function testCount()
+    {
         $this->routeProvider->expects($this->once())
             ->method('getRoutesCount')
             ->will($this->returnValue(12));
@@ -102,7 +103,8 @@ class PagedRouteCollectionTest extends CmfUnitTestCase
     /**
      * Tests the rewind method once the iterator is at the end.
      */
-    public function testIteratingAndRewind() {
+    public function testIteratingAndRewind()
+    {
         $routes = array();
         for ($i = 0; $i < 30; $i++) {
             $routes['test_' . $i] = new Route("/example-$i");

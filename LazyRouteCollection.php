@@ -47,9 +47,7 @@ class LazyRouteCollection extends RouteCollection
         if ($this->pagedRouteCollection) {
             return $this->pagedRouteCollection;
         }
-        else {
-            return new \ArrayIterator($this->all());
-        }
+        return new \ArrayIterator($this->all());
     }
 
     /**
@@ -72,9 +70,7 @@ class LazyRouteCollection extends RouteCollection
         if ($this->pagedRouteCollection) {
             return $this->pagedRouteCollection;
         }
-        else {
-            return $this->provider->getRoutesByNames(null);
-        }
+        return $this->provider->getRoutesByNames(null);
     }
 
     /**
