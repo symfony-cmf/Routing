@@ -14,14 +14,25 @@ namespace Symfony\Cmf\Component\Routing\Tests\Routing;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
+use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\HttpFoundation\Request;
 
 use Symfony\Cmf\Component\Routing\ChainRouter;
 use Symfony\Cmf\Component\Routing\Test\CmfUnitTestCase;
+use Symfony\Component\Routing\RouterInterface;
 
 class ChainRouterTest extends CmfUnitTestCase
 {
+    /**
+     * @var ChainRouter
+     */
+    private $router;
+    /**
+     * @var RequestContext|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $context;
+
     public function setUp()
     {
         $this->router = new ChainRouter($this->getMock('Psr\Log\LoggerInterface'));
@@ -54,6 +65,7 @@ class ChainRouterTest extends CmfUnitTestCase
     {
         list($low, $medium, $high) = $this->createRouterMocks();
         // We're using a mock here and not $this->router because we need to ensure that the sorting operation is done only once.
+        /** @var $router ChainRouter|\PHPUnit_Framework_MockObject_MockObject */
         $router = $this->buildMock('Symfony\Cmf\Component\Routing\ChainRouter', array('sortRouters'));
         $router
             ->expects($this->once())
@@ -87,6 +99,7 @@ class ChainRouterTest extends CmfUnitTestCase
         list($low, $medium, $high) = $this->createRouterMocks();
         $highest = clone $high;
         // We're using a mock here and not $this->router because we need to ensure that the sorting operation is done only once.
+        /** @var $router ChainRouter|\PHPUnit_Framework_MockObject_MockObject */
         $router = $this->buildMock('Symfony\Cmf\Component\Routing\ChainRouter', array('sortRouters'));
         $router
             ->expects($this->at(0))
@@ -253,7 +266,6 @@ class ChainRouterTest extends CmfUnitTestCase
     public function testMatchWithRequestMatchers()
     {
         $url = '/test';
-        $request = Request::create('/test');
 
         list($low) = $this->createRouterMocks();
 
@@ -262,7 +274,9 @@ class ChainRouterTest extends CmfUnitTestCase
         $high
             ->expects($this->once())
             ->method('matchRequest')
-            ->with($request)
+            ->with($this->callback(function (Request $r) use ($url) {
+                return $r->getPathInfo() === $url;
+            }))
             ->will($this->throwException(new \Symfony\Component\Routing\Exception\ResourceNotFoundException))
         ;
         $low
@@ -687,6 +701,9 @@ class ChainRouterTest extends CmfUnitTestCase
         $this->router->generate('foobar');
     }
 
+    /**
+     * @return RouterInterface[]|\PHPUnit_Framework_MockObject_MockObject[]
+     */
     protected function createRouterMocks()
     {
         return array(
