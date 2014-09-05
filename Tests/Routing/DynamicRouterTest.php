@@ -136,27 +136,6 @@ class DynamicRouterTest extends CmfUnitTestCase
         $this->assertSame($this->matcher, $matcher);
     }
 
-    public function testMatchUrl()
-    {
-        $routeDefaults = array('foo' => 'bar');
-        $this->matcher->expects($this->once())
-            ->method('match')
-            ->with($this->url)
-            ->will($this->returnValue($routeDefaults))
-        ;
-
-        $expected = array('this' => 'that');
-        $this->enhancer->expects($this->once())
-            ->method('enhance')
-            ->with($this->equalTo($routeDefaults), $this->equalTo($this->request))
-            ->will($this->returnValue($expected))
-        ;
-
-        $results = $this->router->match($this->url);
-
-        $this->assertEquals($expected, $results);
-    }
-
     public function testMatchRequestWithUrlMatcher()
     {
         $routeDefaults = array('foo' => 'bar');
@@ -248,17 +227,6 @@ class DynamicRouterTest extends CmfUnitTestCase
     /**
      * @expectedException \InvalidArgumentException
      */
-    public function testMatchUrlWithRequestMatcher()
-    {
-        $matcher = $this->buildMock('Symfony\Component\Routing\Matcher\RequestMatcherInterface', array('matchRequest', 'setContext', 'getContext'));
-        $router = new DynamicRouter($this->context, $matcher, $this->generator);
-
-        $router->match($this->url);
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testInvalidMatcher()
     {
         new DynamicRouter($this->context, $this, $this->generator);
@@ -280,26 +248,6 @@ class DynamicRouterTest extends CmfUnitTestCase
         $generator = $this->buildMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface', array('generate', 'setContext', 'getContext'));
         $router = new DynamicRouter($this->context, $this->matcher, $generator);
         $this->assertInternalType('string', $router->getRouteDebugMessage('test'));
-    }
-
-    public function testEventHandler()
-    {
-        $eventDispatcher = $this->buildMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
-        $router = new DynamicRouter($this->context, $this->matcher, $this->generator, '', $eventDispatcher);
-
-        $eventDispatcher->expects($this->once())
-            ->method('dispatch')
-            ->with(Events::PRE_DYNAMIC_MATCH, $this->equalTo(new RouterMatchEvent()))
-        ;
-
-        $routeDefaults = array('foo' => 'bar');
-        $this->matcher->expects($this->once())
-            ->method('match')
-            ->with($this->url)
-            ->will($this->returnValue($routeDefaults))
-        ;
-
-        $this->assertEquals($routeDefaults, $router->match($this->url));
     }
 
     public function testEventHandlerRequest()
