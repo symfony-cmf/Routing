@@ -187,25 +187,6 @@ class DynamicRouterTest extends CmfUnitTestCase
     /**
      * @expectedException \Symfony\Component\Routing\Exception\ResourceNotFoundException
      */
-    public function testMatchFilter()
-    {
-        $router = new DynamicRouter($this->context, $this->matcher, $this->generator, '#/different/prefix.*#');
-        $router->addRouteEnhancer($this->enhancer);
-
-        $this->matcher->expects($this->never())
-            ->method('match')
-        ;
-
-        $this->enhancer->expects($this->never())
-            ->method('enhance')
-        ;
-
-        $router->match($this->url);
-    }
-
-    /**
-     * @expectedException \Symfony\Component\Routing\Exception\ResourceNotFoundException
-     */
     public function testMatchRequestFilter()
     {
         $matcher = $this->buildMock('Symfony\Component\Routing\Matcher\RequestMatcherInterface', array('matchRequest', 'setContext', 'getContext'));

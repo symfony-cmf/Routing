@@ -11,6 +11,7 @@
 
 namespace Symfony\Cmf\Component\Routing\Tests\Routing;
 
+use Symfony\Cmf\Component\Routing\VersatileGeneratorInterface;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
@@ -569,7 +570,7 @@ class ChainRouterTest extends CmfUnitTestCase
         $name = new \stdClass();
         $parameters = array('test' => 'value');
 
-        $chainedRouter = $this->getMock('Symfony\Cmf\Component\Routing\ChainedRouterInterface');
+        $chainedRouter = $this->getMock('Symfony\Cmf\Component\Routing\Tests\Routing\VersatileRequestMatcher');
         $chainedRouter
             ->expects($this->once())
             ->method('supports')
@@ -597,7 +598,7 @@ class ChainRouterTest extends CmfUnitTestCase
         $parameters = array('test' => 'value');
 
         $defaultRouter = $this->getMock('Symfony\Component\Routing\RouterInterface');
-        $chainedRouter = $this->getMock('Symfony\Cmf\Component\Routing\ChainedRouterInterface');
+        $chainedRouter = $this->getMock('Symfony\Cmf\Component\Routing\Tests\Routing\VersatileRequestMatcher');
 
         $defaultRouter
             ->expects($this->never())
@@ -683,7 +684,7 @@ class ChainRouterTest extends CmfUnitTestCase
     public function testSupport()
     {
 
-        $router = $this->getMock('Symfony\Cmf\Component\Routing\ChainedRouterInterface');
+        $router = $this->getMock('Symfony\Cmf\Component\Routing\Tests\Routing\VersatileRequestMatcher');
         $router
             ->expects($this->once())
             ->method('supports')
@@ -718,6 +719,10 @@ abstract class WarmableRouterMock implements \Symfony\Component\Routing\RouterIn
 {
 }
 
-abstract class RequestMatcher implements \Symfony\Component\Routing\RouterInterface, \Symfony\Component\Routing\Matcher\RequestMatcherInterface
+abstract class RequestMatcher implements \Symfony\Component\Routing\Generator\UrlGeneratorInterface, \Symfony\Component\Routing\Matcher\RequestMatcherInterface
+{
+}
+
+abstract class VersatileRequestMatcher implements VersatileGeneratorInterface, \Symfony\Component\Routing\Matcher\RequestMatcherInterface
 {
 }
