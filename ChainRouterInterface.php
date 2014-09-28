@@ -25,12 +25,14 @@ use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 interface ChainRouterInterface extends RouterInterface, RequestMatcherInterface
 {
     /**
-     * Add a Router to the index
+     * Add a Router to the index.
      *
-     * @param RouterInterface $router   The router instance
-     * @param integer         $priority The priority
+     * The router must implement either RouterInterface or RequestMatcherInterface and UrlGeneratorInterface.
+     *
+     * @param RouterInterface|RequestMatcherInterface $router   The router instance
+     * @param integer                                 $priority The priority
      */
-    public function add(RouterInterface $router, $priority = 0);
+    public function add($router, $priority = 0);
 
     /**
      * Sorts the routers and flattens them.

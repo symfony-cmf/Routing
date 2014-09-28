@@ -11,11 +11,14 @@
 
 namespace Symfony\Cmf\Component\Routing;
 
-use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 
 /**
- * Interface to combine the VersatileGeneratorInterface with the RouterInterface
+ * Interface to combine the VersatileGeneratorInterface
+ *
+ * @deprecated This interface adds no value and should not be relied on.
+ * Better use VersatileGeneratorInterface directly.
  */
-interface ChainedRouterInterface extends RouterInterface, VersatileGeneratorInterface
+interface ChainedRouterInterface extends VersatileGeneratorInterface
 {
 }

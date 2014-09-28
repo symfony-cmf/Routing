@@ -14,7 +14,6 @@ namespace Symfony\Cmf\Component\Routing;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\RouteCollection;
-use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 use Symfony\Component\Routing\Matcher\UrlMatcherInterface;
@@ -34,7 +33,7 @@ use Symfony\Cmf\Component\Routing\Event\RouterMatchEvent;
  * @author Larry Garfield
  * @author David Buchmann
  */
-class DynamicRouter implements RouterInterface, RequestMatcherInterface, ChainedRouterInterface
+class DynamicRouter implements UrlGeneratorInterface, RequestMatcherInterface, ChainedRouterInterface
 {
     /**
      * @var RequestMatcherInterface|UrlMatcherInterface
@@ -181,45 +180,6 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
         }
 
         return is_string($name);
-    }
-
-    /**
-     * Tries to match a URL path with a set of routes.
-     *
-     * If the matcher can not find information, it must throw one of the
-     * exceptions documented below.
-     *
-     * @param string $pathinfo The path info to be parsed (raw format, i.e. not
-     *                         urldecoded)
-     *
-     * @return array An array of parameters
-     *
-     * @throws ResourceNotFoundException If the resource could not be found
-     * @throws MethodNotAllowedException If the resource was found but the
-     *                                   request method is not allowed
-     *
-     * @api
-     */
-    public function match($pathinfo)
-    {
-        $request = Request::create($pathinfo);
-        if ($this->eventDispatcher) {
-            $event = new RouterMatchEvent();
-            $this->eventDispatcher->dispatch(Events::PRE_DYNAMIC_MATCH, $event);
-        }
-
-        if (! empty($this->uriFilterRegexp) && ! preg_match($this->uriFilterRegexp, $pathinfo)) {
-            throw new ResourceNotFoundException("$pathinfo does not match the '{$this->uriFilterRegexp}' pattern");
-        }
-
-        $matcher = $this->getMatcher();
-        if (! $matcher instanceof UrlMatcherInterface) {
-            throw new \InvalidArgumentException('Wrong matcher type, you need to call matchRequest');
-        }
-
-        $defaults = $matcher->match($pathinfo);
-
-        return $this->applyRouteEnhancers($defaults, $request);
     }
 
     /**

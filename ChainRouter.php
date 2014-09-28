@@ -11,6 +11,7 @@
 
 namespace Symfony\Cmf\Component\Routing;
 
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 use Symfony\Component\Routing\RequestContext;
@@ -78,8 +79,14 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
     /**
      * {@inheritdoc}
      */
-    public function add(RouterInterface $router, $priority = 0)
+    public function add($router, $priority = 0)
     {
+        if (!($router instanceof RouterInterface
+              || $router instanceof RequestMatcherInterface
+                 && $router instanceof UrlGeneratorInterface
+        )) {
+            throw new \InvalidArgumentException(sprintf('%s is not a valid router.', get_class($router)));
+        }
         if (empty($this->routers[$priority])) {
             $this->routers[$priority] = array();
         }
@@ -208,15 +215,13 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
         $debug = array();
 
         foreach ($this->all() as $router) {
-            // if $router does not implement ChainedRouterInterface and $name is not a string, continue
-            if ($name && !$router instanceof ChainedRouterInterface) {
-                if (! is_string($name)) {
-                    continue;
-                }
+            // if $router does not announce it is capable of handling non-string routes and $name is not a string, continue
+            if ($name && !is_string($name) && !$router instanceof VersatileGeneratorInterface) {
+                continue;
             }
 
-            // If $router implements ChainedRouterInterface but doesn't support this route name, continue
-            if ($router instanceof ChainedRouterInterface && !$router->supports($name)) {
+            // If $router is versatile and doesn't support this route name, continue
+            if ($router instanceof VersatileGeneratorInterface && !$router->supports($name)) {
                 continue;
             }
 

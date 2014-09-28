@@ -1,6 +1,15 @@
 Changelog
 =========
 
+* **2014-09-05**: Dropped DynamicRouter::match and DynamicRouter no longer
+  implements RouterInterface but only RequestMatcherInterface and
+  UrlGeneratorInterface. The match method is redundant with matchRequest but
+  there was a potential information loss by re-creating the request. If you use
+  DynamicRouter directly, get access to the Request object or if you are
+  stand-alone create the request with Request::createFromGlobals().
+  Deprecated ChainedRouterInterface as it adds no additional information over
+  VersatileGeneratorInterface.
+
 1.3.0-RC1
 ---------
 
