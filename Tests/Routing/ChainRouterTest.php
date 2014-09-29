@@ -11,9 +11,12 @@
 
 namespace Symfony\Cmf\Component\Routing\Tests\Routing;
 
+use Symfony\Cmf\Component\Routing\VersatileGeneratorInterface;
+use Symfony\Component\HttpKernel\CacheWarmer\WarmableInterface;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
+use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\HttpFoundation\Request;
@@ -569,7 +572,7 @@ class ChainRouterTest extends CmfUnitTestCase
         $name = new \stdClass();
         $parameters = array('test' => 'value');
 
-        $chainedRouter = $this->getMock('Symfony\Cmf\Component\Routing\ChainedRouterInterface');
+        $chainedRouter = $this->getMock('Symfony\Cmf\Component\Routing\Tests\Routing\VersatileRouter');
         $chainedRouter
             ->expects($this->once())
             ->method('supports')
@@ -597,7 +600,7 @@ class ChainRouterTest extends CmfUnitTestCase
         $parameters = array('test' => 'value');
 
         $defaultRouter = $this->getMock('Symfony\Component\Routing\RouterInterface');
-        $chainedRouter = $this->getMock('Symfony\Cmf\Component\Routing\ChainedRouterInterface');
+        $chainedRouter = $this->getMock('Symfony\Cmf\Component\Routing\Tests\Routing\VersatileRouter');
 
         $defaultRouter
             ->expects($this->never())
@@ -683,7 +686,7 @@ class ChainRouterTest extends CmfUnitTestCase
     public function testSupport()
     {
 
-        $router = $this->getMock('Symfony\Cmf\Component\Routing\ChainedRouterInterface');
+        $router = $this->getMock('Symfony\Cmf\Component\Routing\Tests\Routing\VersatileRouter');
         $router
             ->expects($this->once())
             ->method('supports')
@@ -714,10 +717,14 @@ class ChainRouterTest extends CmfUnitTestCase
     }
 }
 
-abstract class WarmableRouterMock implements \Symfony\Component\Routing\RouterInterface, \Symfony\Component\HttpKernel\CacheWarmer\WarmableInterface
+abstract class WarmableRouterMock implements RouterInterface, WarmableInterface
 {
 }
 
-abstract class RequestMatcher implements \Symfony\Component\Routing\RouterInterface, \Symfony\Component\Routing\Matcher\RequestMatcherInterface
+abstract class RequestMatcher implements RouterInterface, RequestMatcherInterface
+{
+}
+
+abstract class VersatileRouter implements VersatileGeneratorInterface, RequestMatcherInterface
 {
 }

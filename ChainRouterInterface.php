@@ -15,27 +15,25 @@ use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 
 /**
- * ChainRouterInterface
+ * Interface for a router that proxies routing to other routers.
  *
- * Allows access to a lot of different routers.
- *
- * @author Henrik Bjornskov <henrik@bjrnskov.dk>
- * @author Magnus Nordlander <magnus@e-butik.se>
+ * @author Daniel Wehner <dawehner@googlemail.com>
  */
 interface ChainRouterInterface extends RouterInterface, RequestMatcherInterface
 {
     /**
-     * Add a Router to the index
+     * Add a Router to the index.
      *
-     * @param RouterInterface $router   The router instance
+     * @param RouterInterface $router   The router instance. Instead of RouterInterface, may also
+     *                                  be RequestMatcherInterface and UrlGeneratorInterface.
      * @param integer         $priority The priority
      */
-    public function add(RouterInterface $router, $priority = 0);
+    public function add($router, $priority = 0);
 
     /**
      * Sorts the routers and flattens them.
      *
-     * @return RouterInterface[]
+     * @return RouterInterface[] or RequestMatcherInterface and UrlGeneratorInterface.
      */
     public function all();
 }
