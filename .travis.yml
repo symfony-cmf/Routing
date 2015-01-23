@@ -8,16 +8,23 @@ php:
   - hhvm
 
 env: 
-  - SYMFONY_VERSION=2.5.*
+  - SYMFONY_VERSION=2.6.*
 
 matrix:
   include:
-    - php: 5.5
+    - php: 5.6
       env: SYMFONY_VERSION=2.3.*
-    - php: 5.5
-      env: SYMFONY_VERSION=2.4.*
-    - php: 5.5
-      env: SYMFONY_VERSION=2.*
+    - php: 5.6
+      env: SYMFONY_VERSION=2.5.*
+    - php: 5.6
+      env: SYMFONY_VERSION=2.7.*
+    - php: 5.6
+      env: SYMFONY_VERSION=3.0.*
+  allow_failures:
+    - php: 5.6
+      env: SYMFONY_VERSION=2.7.*
+    - php: 5.6
+      env: SYMFONY_VERSION=3.0.*
 
 before_install:
   - composer require symfony/routing:${SYMFONY_VERSION} --prefer-source
