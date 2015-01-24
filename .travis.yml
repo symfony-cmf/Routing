@@ -35,6 +35,7 @@ matrix:
       env: SYMFONY_VERSION=3.0.*
 
 before_install:
+  - composer selfupdate
   - composer require symfony/routing:${SYMFONY_VERSION} --no-update
   - composer update --prefer-dist $COMPOSER_FLAGS
 
