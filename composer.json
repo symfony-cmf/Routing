@@ -19,6 +19,7 @@
         "psr/log": "~1.0"
     },
     "require-dev": {
+        "symfony-cmf/testing": "1.*",
         "symfony/dependency-injection": "~2.0@stable",
         "symfony/config": "~2.2",
         "symfony/event-dispatcher": "~2.1"
