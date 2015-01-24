@@ -20,7 +20,7 @@
     },
     "require-dev": {
         "symfony-cmf/testing": "1.*",
-        "symfony/dependency-injection": "~2.0@stable",
+        "symfony/dependency-injection": "~2.0@stable, >=2.0.5",
         "symfony/config": "~2.2",
         "symfony/event-dispatcher": "~2.1"
     },
