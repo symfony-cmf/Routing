@@ -18,6 +18,8 @@ env:
 
 matrix:
   include:
+    - php: 5.3.3
+      env: SYMFONY_VERSION=2.3.* COMPOSER_FLAGS="--prefer-lowest"
     - php: 5.6
       env: SYMFONY_VERSION=2.3.*
     - php: 5.6
@@ -33,7 +35,9 @@ matrix:
       env: SYMFONY_VERSION=3.0.*
 
 before_install:
-  - composer require symfony/routing:${SYMFONY_VERSION} --prefer-dist
+  - composer selfupdate
+  - composer require symfony/routing:${SYMFONY_VERSION} --no-update
+  - composer update --prefer-dist $COMPOSER_FLAGS
 
 script: phpunit --coverage-text
 
