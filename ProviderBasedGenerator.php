@@ -91,7 +91,7 @@ class ProviderBasedGenerator extends UrlGenerator implements VersatileGeneratorI
         }
 
         if ($name instanceof SymfonyRoute) {
-            return 'Route with pattern ' . $name->getPattern();
+            return 'Route with path ' . $name->getPath();
         }
 
         return get_class($name);
