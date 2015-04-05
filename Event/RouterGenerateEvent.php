@@ -23,17 +23,17 @@ class RouterGenerateEvent extends Event
     /**
      * @var string
      */
-    protected $name;
+    private $name;
 
     /**
      * @var array
      */
-    protected $parameters;
+    private $parameters;
 
     /**
      * @var bool
      */
-    protected $absolute;
+    private $absolute;
 
     /**
      * @param string $name 
