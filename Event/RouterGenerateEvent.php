@@ -21,8 +21,7 @@ use Symfony\Component\EventDispatcher\Event;
 class RouterGenerateEvent extends Event
 {
     /**
-     * The route to generate a url for
-     * This could be a route name or an instance of Symfony's Route class
+     * The name of the route or the Route instance
      * 
      * @var string|Symfony\Component\Routing\Route
      */
@@ -43,7 +42,7 @@ class RouterGenerateEvent extends Event
     private $absolute;
 
     /**
-     * @param string $name 
+     * @param string|Symfony\Component\Routing\Route $name 
      * @param array $parameters 
      * @param bool $absolute 
      */
@@ -57,7 +56,7 @@ class RouterGenerateEvent extends Event
     /**
      * Get route name
      * 
-     * @return string
+     * @return string|Symfony\Component\Routing\Route
      */
     public function getName()
     {
@@ -67,7 +66,7 @@ class RouterGenerateEvent extends Event
     /**
      * Set route name
      * 
-     * @param string $name 
+     * @param string|Symfony\Component\Routing\Route $name 
      */
     public function setName($name)
     {
