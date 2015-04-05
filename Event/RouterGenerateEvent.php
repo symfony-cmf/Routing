@@ -21,9 +21,10 @@ use Symfony\Component\EventDispatcher\Event;
 class RouterGenerateEvent extends Event
 {
     /**
-     * The route name to generate a url for
+     * The route to generate a url for
+     * This could be a route name or an instance of Symfony's Route class
      * 
-     * @var string
+     * @var string|Symfony\Component\Routing\Route
      */
     private $name;
 
