@@ -96,7 +96,7 @@ class RouterGenerateEvent extends Event
     /**
      * Set a route parameter
      * 
-     * @param mixed $key 
+     * @param string $key 
      * @param mixed $value 
      */
     public function setParameter($key, $value)
@@ -107,7 +107,7 @@ class RouterGenerateEvent extends Event
     /**
      * Remove a route parameter by key
      * 
-     * @param mixed $key 
+     * @param string $key 
      */
     public function removeParameter($key)
     {
