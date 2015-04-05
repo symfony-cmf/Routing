@@ -13,6 +13,11 @@ namespace Symfony\Cmf\Component\Routing\Event;
 
 use Symfony\Component\EventDispatcher\Event;
 
+/**
+ * Event fired before the dynamic router generates a url for a route
+ * The name, parameters and absolute properties are used by the url generator
+ * @see Symfony\Component\Routing\Generator\UrlGeneratorInterface::generate()
+ */
 class RouterGenerateEvent extends Event
 {
     /**
@@ -43,7 +48,7 @@ class RouterGenerateEvent extends Event
     }
 
     /**
-     * @return array
+     * @return string
      */
     public function getName()
     {
