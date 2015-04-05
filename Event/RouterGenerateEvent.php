@@ -21,17 +21,23 @@ use Symfony\Component\EventDispatcher\Event;
 class RouterGenerateEvent extends Event
 {
     /**
+     * The route name to generate a url for
+     * 
      * @var string
      */
     private $name;
 
     /**
+     * The parameters to use when generating the url
+     * 
      * @var array
      */
     private $parameters;
 
     /**
-     * @var bool
+     * Whether the generated url should be absolute
+     * 
+     * @var array
      */
     private $absolute;
 
@@ -48,6 +54,8 @@ class RouterGenerateEvent extends Event
     }
 
     /**
+     * Get route name
+     * 
      * @return string
      */
     public function getName()
@@ -56,6 +64,8 @@ class RouterGenerateEvent extends Event
     }
 
     /**
+     * Set route name
+     * 
      * @param string $name 
      */
     public function setName($name)
@@ -64,6 +74,8 @@ class RouterGenerateEvent extends Event
     }
 
     /**
+     * Get route parameters
+     * 
      * @return array
      */
     public function getParameters()
@@ -72,6 +84,8 @@ class RouterGenerateEvent extends Event
     }
 
     /**
+     * Set the route parameters
+     *
      * @param array $parameters 
      */
     public function setParameters(array $parameters)
@@ -80,6 +94,29 @@ class RouterGenerateEvent extends Event
     }
 
     /**
+     * Set a route parameter
+     * 
+     * @param mixed $key 
+     * @param mixed $value 
+     */
+    public function setParameter($key, $value)
+    {
+        $this->parameters[$key] = $value;
+    }
+
+    /**
+     * Remove a route parameter by key
+     * 
+     * @param mixed $key 
+     */
+    public function removeParameter($key)
+    {
+        unset($this->parameters[$key]);
+    }
+
+    /**
+     * Should the generated url be absolute
+     * 
      * @return bool
      */
     public function isAbsolute()
@@ -88,7 +125,9 @@ class RouterGenerateEvent extends Event
     }
 
     /**
-     * @param bool $absolute
+     * Set whether the generated url should be absolute
+     * 
+     * @param bool $absolute 
      */
     public function setAbsolute($absolute)
     {
