@@ -26,6 +26,7 @@ use Symfony\Cmf\Component\Routing\Enhancer\RouteEnhancerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Cmf\Component\Routing\Event\Events;
 use Symfony\Cmf\Component\Routing\Event\RouterMatchEvent;
+use Symfony\Cmf\Component\Routing\Event\RouterGenerateEvent;
 
 /**
  * A flexible router accepting matcher and generator through injection and
@@ -166,6 +167,14 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
      */
     public function generate($name, $parameters = array(), $absolute = false)
     {
+        if ($this->eventDispatcher) {
+            $event = new RouterGenerateEvent($name, $parameters, $absolute);
+            $this->eventDispatcher->dispatch(Events::PRE_DYNAMIC_GENERATE, $event);
+            $name = $event->getName();
+            $parameters = $event->getParameters();
+            $absolute = $event->isAbsolute();
+        }
+
         return $this->getGenerator()->generate($name, $parameters, $absolute);
     }
 

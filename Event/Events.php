@@ -26,4 +26,11 @@ final class Events
      * The event object is RouteMatchEvent.
      */
     const PRE_DYNAMIC_MATCH_REQUEST = 'cmf_routing.pre_dynamic_match_request';
+
+    /**
+     * Fired before a route is generated in \Symfony\Cmf\Component\Routing\DynamicRouter#generate
+     *
+     * The event object is RouteGenerateEvent.
+     */
+    const PRE_DYNAMIC_GENERATE = 'cmf_routing.pre_dynamic_generate';
 }
