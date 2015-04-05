@@ -16,6 +16,8 @@ use Symfony\Component\EventDispatcher\Event;
 /**
  * Event fired before the dynamic router generates a url for a route
  * The name, parameters and absolute properties are used by the url generator
+ *
+ * @author Ben Glassman
  * @see Symfony\Component\Routing\Generator\UrlGeneratorInterface::generate()
  */
 class RouterGenerateEvent extends Event
