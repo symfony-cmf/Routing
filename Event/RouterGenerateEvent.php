@@ -31,7 +31,9 @@ class RouterGenerateEvent extends Event
     protected $absolute;
 
     /**
-     * @param Request $request
+     * @param string $name 
+     * @param array $parameters 
+     * @param bool $absolute 
      */
     public function __construct($name, $parameters, $absolute)
     {
