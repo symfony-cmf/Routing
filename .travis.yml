@@ -34,10 +34,11 @@ matrix:
     - php: 5.6
       env: SYMFONY_VERSION=3.0.*
 
+# we install our own composer to set memory limit to illimited, because on php 5.3 the memory consumption is gigantic
 before_install:
-  - composer selfupdate
-  - composer require symfony/routing:${SYMFONY_VERSION} --no-update
-  - composer update --prefer-dist $COMPOSER_FLAGS
+  - curl -sS http://getcomposer.org/composer.phar > composer.phar
+  - php composer.phar require symfony/routing:${SYMFONY_VERSION} --no-update
+  - travis_wait php -d memory_limit=-1 composer.phar update --prefer-dist $COMPOSER_FLAGS
 
 script: phpunit --coverage-text
 
