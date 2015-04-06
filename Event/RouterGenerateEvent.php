@@ -12,53 +12,56 @@
 namespace Symfony\Cmf\Component\Routing\Event;
 
 use Symfony\Component\EventDispatcher\Event;
+use Symfony\Component\Routing\Route;
 
 /**
- * Event fired before the dynamic router generates a url for a route
- * The name, parameters and absolute properties are used by the url generator
+ * Event fired before the dynamic router generates a url for a route.
+ *
+ * The name, parameters and absolute properties have the semantics of
+ * UrlGeneratorInterface::generate()
  *
  * @author Ben Glassman
- * @see Symfony\Component\Routing\Generator\UrlGeneratorInterface::generate()
+ * @see \Symfony\Component\Routing\Generator\UrlGeneratorInterface::generate()
  */
 class RouterGenerateEvent extends Event
 {
     /**
-     * The name of the route or the Route instance
-     * 
-     * @var string|Symfony\Component\Routing\Route
+     * The name of the route or the Route instance to generate.
+     *
+     * @var string|Route
      */
     private $name;
 
     /**
-     * The parameters to use when generating the url
-     * 
+     * The parameters to use when generating the url.
+     *
      * @var array
      */
     private $parameters;
 
     /**
-     * Whether the generated url should be absolute
-     * 
-     * @var array
+     * The type of reference to be generated (one of the constants in UrlGeneratorInterface)
+     *
+     * @var bool|string
      */
-    private $absolute;
+    private $referenceType;
 
     /**
-     * @param string|Symfony\Component\Routing\Route $name 
-     * @param array $parameters 
-     * @param bool $absolute 
+     * @param string|Route $name          The route name or object
+     * @param array        $parameters    The parameters to use
+     * @param bool|string  $referenceType The type of reference to be generated
      */
-    public function __construct($name, $parameters, $absolute)
+    public function __construct($name, $parameters, $referenceType)
     {
         $this->name = $name;
         $this->parameters = $parameters;
-        $this->absolute = $absolute;
+        $this->referenceType = $referenceType;
     }
 
     /**
-     * Get route name
-     * 
-     * @return string|Symfony\Component\Routing\Route
+     * Get route name or object.
+     *
+     * @return string|Route
      */
     public function getName()
     {
@@ -66,9 +69,9 @@ class RouterGenerateEvent extends Event
     }
 
     /**
-     * Set route name
-     * 
-     * @param string|Symfony\Component\Routing\Route $name 
+     * Set route name or object.
+     *
+     * @param string|Route $name
      */
     public function setName($name)
     {
@@ -76,8 +79,8 @@ class RouterGenerateEvent extends Event
     }
 
     /**
-     * Get route parameters
-     * 
+     * Get route parameters.
+     *
      * @return array
      */
     public function getParameters()
@@ -86,9 +89,9 @@ class RouterGenerateEvent extends Event
     }
 
     /**
-     * Set the route parameters
+     * Set the route parameters.
      *
-     * @param array $parameters 
+     * @param array $parameters
      */
     public function setParameters(array $parameters)
     {
@@ -96,10 +99,10 @@ class RouterGenerateEvent extends Event
     }
 
     /**
-     * Set a route parameter
-     * 
-     * @param string $key 
-     * @param mixed $value 
+     * Set a route parameter.
+     *
+     * @param string $key
+     * @param mixed  $value
      */
     public function setParameter($key, $value)
     {
@@ -107,9 +110,9 @@ class RouterGenerateEvent extends Event
     }
 
     /**
-     * Remove a route parameter by key
-     * 
-     * @param string $key 
+     * Remove a route parameter by key.
+     *
+     * @param string $key
      */
     public function removeParameter($key)
     {
@@ -117,22 +120,22 @@ class RouterGenerateEvent extends Event
     }
 
     /**
-     * Should the generated url be absolute
-     * 
-     * @return bool
+     * The type of reference to be generated (one of the constants in UrlGeneratorInterface)
+     *
+     * @return bool|string
      */
-    public function isAbsolute()
+    public function getReferenceType()
     {
-        return $this->absolute;
+        return $this->referenceType;
     }
 
     /**
-     * Set whether the generated url should be absolute
-     * 
-     * @param bool $absolute 
+     * The type of reference to be generated (one of the constants in UrlGeneratorInterface)
+     *
+     * @param bool|string $referenceType
      */
-    public function setAbsolute($absolute)
+    public function setReferenceType($referenceType)
     {
-        $this->absolute = $absolute;
+        $this->referenceType = $referenceType;
     }
 }
