@@ -327,4 +327,48 @@ class DynamicRouterTest extends CmfUnitTestCase
 
         $this->assertEquals($routeDefaults, $router->matchRequest($this->request));
     }
+
+    public function testEventHandlerGenerate()
+    {
+        $eventDispatcher = $this->buildMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        $router = new DynamicRouter($this->context, $this->matcher, $this->generator, '', $eventDispatcher);
+
+
+        $oldname = 'old_route_name';
+        $newname = 'new_route_name';
+        $oldparameters = array('foo' => 'bar');
+        $newparameters = array('a' => 'b');
+        $oldReferenceType = false;
+        $newReferenceType = true;
+
+        $that = $this;
+        $eventDispatcher->expects($this->once())
+            ->method('dispatch')
+            ->with(Events::PRE_DYNAMIC_GENERATE, $this->callback(function ($event) use ($that, $oldname, $newname, $oldparameters, $newparameters, $oldReferenceType, $newReferenceType) {
+                $that->assertInstanceOf('Symfony\Cmf\Component\Routing\Event\RouterGenerateEvent', $event);
+                if (empty($that->seen)) {
+                    // phpunit is calling the callback twice, and because we update the event the second time fails
+                    $that->seen = true;
+                } else {
+                    return true;
+                }
+                $that->assertEquals($oldname, $event->getName());
+                $that->assertEquals($oldparameters, $event->getParameters());
+                $that->assertEquals($oldReferenceType, $event->getReferenceType());
+                $event->setName($newname);
+                $event->setParameters($newparameters);
+                $event->setReferenceType($newReferenceType);
+
+                return true;
+            }))
+        ;
+
+        $this->generator->expects($this->once())
+            ->method('generate')
+            ->with($newname, $newparameters, $newReferenceType)
+            ->will($this->returnValue('http://test'))
+        ;
+
+        $this->assertEquals('http://test', $router->generate($oldname, $oldparameters, $oldReferenceType));
+    }
 }
