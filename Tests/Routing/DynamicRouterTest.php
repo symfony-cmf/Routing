@@ -352,10 +352,10 @@ class DynamicRouterTest extends CmfUnitTestCase
                 } else {
                     return true;
                 }
-                $that->assertEquals($oldname, $event->getName());
+                $that->assertEquals($oldname, $event->getRoute());
                 $that->assertEquals($oldparameters, $event->getParameters());
                 $that->assertEquals($oldReferenceType, $event->getReferenceType());
-                $event->setName($newname);
+                $event->setRoute($newname);
                 $event->setParameters($newparameters);
                 $event->setReferenceType($newReferenceType);
 

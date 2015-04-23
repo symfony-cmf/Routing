@@ -66,7 +66,8 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
     protected $sortedEnhancers = array();
 
     /**
-     * The regexp pattern that needs to be matched before a dynamic lookup is made
+     * The regexp pattern that needs to be matched before a dynamic lookup is
+     * made
      *
      * @var string
      */
@@ -156,7 +157,7 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
      * If the generator is not able to generate the url, it must throw the
      * RouteNotFoundException as documented below.
      *
-     * @param string|Route $name          The name of the route or the Route instance
+     * @param string|Route $route         The name of the route or the Route instance
      * @param mixed        $parameters    An array of parameters
      * @param bool|string  $referenceType The type of reference to be generated (one of the constants in UrlGeneratorInterface)
      *
@@ -166,17 +167,17 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
      *
      * @api
      */
-    public function generate($name, $parameters = array(), $referenceType = false)
+    public function generate($route, $parameters = array(), $referenceType = false)
     {
         if ($this->eventDispatcher) {
-            $event = new RouterGenerateEvent($name, $parameters, $referenceType);
+            $event = new RouterGenerateEvent($route, $parameters, $referenceType);
             $this->eventDispatcher->dispatch(Events::PRE_DYNAMIC_GENERATE, $event);
-            $name = $event->getName();
+            $route = $event->getRoute();
             $parameters = $event->getParameters();
             $referenceType = $event->getReferenceType();
         }
 
-        return $this->getGenerator()->generate($name, $parameters, $referenceType);
+        return $this->getGenerator()->generate($route, $parameters, $referenceType);
     }
 
     /**
