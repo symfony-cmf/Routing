@@ -30,7 +30,7 @@ class RouterGenerateEvent extends Event
      *
      * @var string|Route
      */
-    private $name;
+    private $route;
 
     /**
      * The parameters to use when generating the url.
@@ -47,13 +47,13 @@ class RouterGenerateEvent extends Event
     private $referenceType;
 
     /**
-     * @param string|Route $name          The route name or object
+     * @param string|Route $route         The route name or object
      * @param array        $parameters    The parameters to use
      * @param bool|string  $referenceType The type of reference to be generated
      */
-    public function __construct($name, $parameters, $referenceType)
+    public function __construct($route, $parameters, $referenceType)
     {
-        $this->name = $name;
+        $this->route = $route;
         $this->parameters = $parameters;
         $this->referenceType = $referenceType;
     }
@@ -63,19 +63,19 @@ class RouterGenerateEvent extends Event
      *
      * @return string|Route
      */
-    public function getName()
+    public function getRoute()
     {
-        return $this->name;
+        return $this->route;
     }
 
     /**
      * Set route name or object.
      *
-     * @param string|Route $name
+     * @param string|Route $route
      */
-    public function setName($name)
+    public function setRoute($route)
     {
-        $this->name = $name;
+        $this->route = $route;
     }
 
     /**

@@ -66,7 +66,8 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
     protected $sortedEnhancers = array();
 
     /**
-     * The regexp pattern that needs to be matched before a dynamic lookup is made
+     * The regexp pattern that needs to be matched before a dynamic lookup is
+     * made
      *
      * @var string
      */
@@ -171,7 +172,7 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
         if ($this->eventDispatcher) {
             $event = new RouterGenerateEvent($name, $parameters, $referenceType);
             $this->eventDispatcher->dispatch(Events::PRE_DYNAMIC_GENERATE, $event);
-            $name = $event->getName();
+            $name = $event->getRoute();
             $parameters = $event->getParameters();
             $referenceType = $event->getReferenceType();
         }
