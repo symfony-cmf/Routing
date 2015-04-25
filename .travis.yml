@@ -30,8 +30,6 @@ matrix:
       env: SYMFONY_VERSION=3.0.*
   allow_failures:
     - php: 5.6
-      env: SYMFONY_VERSION=2.7.*
-    - php: 5.6
       env: SYMFONY_VERSION=3.0.*
 
 # we install our own composer to set memory limit to illimited, because on php 5.3 the memory consumption is gigantic
