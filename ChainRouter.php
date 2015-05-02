@@ -306,4 +306,13 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
 
         return $this->routeCollection;
     }
+    
+    /**
+     * @return bool
+     */
+    public function hasRouters()
+    {
+        return !empty($this->routers);
+    }
+    
 }
