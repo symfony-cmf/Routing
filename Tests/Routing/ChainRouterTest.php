@@ -57,6 +57,19 @@ class ChainRouterTest extends CmfUnitTestCase
         ), $this->router->all());
     }
 
+    public function testHasRouters()
+    {
+        $this->assertEquals(array(), $this->router->all());
+        $this->assertFalse($this->router->hasRouters());
+
+        list($low, $high) = $this->createRouterMocks();
+
+        $this->router->add($low, 10);
+        $this->router->add($high, 100);
+
+        $this->assertTrue($this->router->hasRouters());
+    }
+
     /**
      * Routers are supposed to be sorted only once.
      * This test will check that by trying to get all routers several times.
