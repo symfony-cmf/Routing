@@ -248,10 +248,10 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
         throw new RouteNotFoundException(sprintf('None of the chained routers were able to generate route: %s', $info));
     }
 
-    private function getErrorMessage($name, $router = null, $parameters = null)
+    private function getErrorMessage($name, $router = null, $parameters = array())
     {
         if ($router instanceof VersatileGeneratorInterface) {
-            $displayName = $router->getRouteDebugMessage($name, $parameters);
+            $displayName = $router->getRouteDebugMessage($name, $parameters ?: array());
         } elseif (is_object($name)) {
             $displayName = method_exists($name, '__toString')
                 ? (string) $name
