@@ -289,10 +289,8 @@ class ChainRouterTest extends CmfUnitTestCase
 
         $high
             ->expects($this->once())
-            ->method('matchRequest')
-            ->with($this->callback(function (Request $r) use ($url) {
-                return $r->getPathInfo() === $url;
-            }))
+            ->method('match')
+            ->with($url)
             ->will($this->throwException(new \Symfony\Component\Routing\Exception\ResourceNotFoundException))
         ;
         $low
@@ -306,6 +304,38 @@ class ChainRouterTest extends CmfUnitTestCase
         $this->router->add($high, 20);
 
         $result = $this->router->match($url);
+        $this->assertEquals(array('test'), $result);
+    }
+
+    /**
+     * Call matchRequest on ChainRouter that has RequestMatcher in the chain.
+     */
+    public function testMatchRequestWithRequestMatchers()
+    {
+        $url = '/test';
+        $request = Request::create('/test');
+
+        list($low) = $this->createRouterMocks();
+
+        $high = $this->getMock('Symfony\Cmf\Component\Routing\Tests\Routing\RequestMatcher');
+
+        $high
+            ->expects($this->once())
+            ->method('matchRequest')
+            ->with($request)
+            ->will($this->throwException(new \Symfony\Component\Routing\Exception\ResourceNotFoundException))
+        ;
+        $low
+            ->expects($this->once())
+            ->method('match')
+            ->with($url)
+            ->will($this->returnValue(array('test')))
+        ;
+
+        $this->router->add($low, 10);
+        $this->router->add($high, 20);
+
+        $result = $this->router->matchRequest($request);
         $this->assertEquals(array('test'), $result);
     }
 
@@ -424,6 +454,29 @@ class ChainRouterTest extends CmfUnitTestCase
     public function testMatchWithRequestMatchersNotFound()
     {
         $url = '/test';
+
+        $high = $this->getMock('Symfony\Cmf\Component\Routing\Tests\Routing\RequestMatcher');
+
+        $high
+            ->expects($this->once())
+            ->method('match')
+            ->with($url)
+            ->will($this->throwException(new \Symfony\Component\Routing\Exception\ResourceNotFoundException))
+        ;
+
+        $this->router->add($high, 20);
+
+        $this->router->match($url);
+    }
+
+    /**
+     * Call matchRequest on ChainRouter that has RequestMatcher in the chain.
+     *
+     * @expectedException \Symfony\Component\Routing\Exception\ResourceNotFoundException
+     * @expectedExceptionMessage None of the routers in the chain matched this request
+     */
+    public function testMatchRequestWithRequestMatchersNotFound()
+    {
         $request = Request::create('/test');
 
         $high = $this->getMock('Symfony\Cmf\Component\Routing\Tests\Routing\RequestMatcher');
@@ -437,7 +490,7 @@ class ChainRouterTest extends CmfUnitTestCase
 
         $this->router->add($high, 20);
 
-        $this->router->match($url);
+        $this->router->matchRequest($request);
     }
 
     /**
