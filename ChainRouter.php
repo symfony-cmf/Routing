@@ -214,6 +214,7 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
     public function generate($name, $parameters = array(), $absolute = false)
     {
         $debug = array();
+        $parameters = is_array($parameters) ? $parameters : array();
 
         foreach ($this->all() as $router) {
             // if $router does not announce it is capable of handling
@@ -248,7 +249,7 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
         throw new RouteNotFoundException(sprintf('None of the chained routers were able to generate route: %s', $info));
     }
 
-    private function getErrorMessage($name, $router = null, $parameters = null)
+    private function getErrorMessage($name, $router = null, array $parameters = array())
     {
         if ($router instanceof VersatileGeneratorInterface) {
             $displayName = $router->getRouteDebugMessage($name, $parameters);

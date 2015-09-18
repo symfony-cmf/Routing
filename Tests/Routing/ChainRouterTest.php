@@ -528,6 +528,36 @@ class ChainRouterTest extends CmfUnitTestCase
     }
 
     /**
+     * The signature of VersatileGeneratorInterface getRouteDebugMessage() requires
+     * that the parameters argument be of type array.
+     * @expectedException \Symfony\Component\Routing\Exception\RouteNotFoundException
+     */
+    public function testGenerateWithNullParameters()
+    {
+        $url = '/test';
+        $name = 'test';
+        $router = $this->getMock('Symfony\Cmf\Component\Routing\Tests\Routing\VersatileRouter');
+
+        $router
+            ->expects($this->once())
+            ->method('generate')
+            ->with($name, array(), false)
+            ->will($this->throwException(new RouteNotFoundException()))
+        ;
+        $router
+            ->expects($this->once())
+            ->method('supports')
+            ->with($name)
+            ->will($this->returnValue(true))
+        ;
+
+        $this->router->add($router);
+
+        $result = $this->router->generate($name, null);
+        $this->assertEquals($url, $result);
+    }
+
+    /**
      * @expectedException \Symfony\Component\Routing\Exception\RouteNotFoundException
      */
     public function testGenerateNotFound()
@@ -739,5 +769,9 @@ abstract class RequestMatcher implements RouterInterface, RequestMatcherInterfac
 }
 
 abstract class VersatileRouter implements VersatileGeneratorInterface, RequestMatcherInterface
+{
+}
+
+abstract class VersatileRouter implements \Symfony\Component\Routing\RouterInterface, \Symfony\Cmf\Component\Routing\ChainedRouterInterface, \Symfony\Component\Routing\Matcher\RequestMatcherInterface
 {
 }
