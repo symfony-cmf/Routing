@@ -149,24 +149,11 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
     }
 
     /**
-     * Generates a URL from the given parameters.
-     *
-     * If the generator is not able to generate the url, it must throw the
-     * RouteNotFoundException as documented below.
-     *
-     * @param string  $name       The name of the route
-     * @param mixed   $parameters An array of parameters
-     * @param Boolean $absolute   Whether to generate an absolute URL
-     *
-     * @return string The generated URL
-     *
-     * @throws RouteNotFoundException if route doesn't exist
-     *
-     * @api
+     * {@inheritDoc}
      */
-    public function generate($name, $parameters = array(), $absolute = false)
+    public function generate($name, $parameters = array(), $referenceType = self::ABSOLUTE_PATH)
     {
-        return $this->getGenerator()->generate($name, $parameters, $absolute);
+        return $this->getGenerator()->generate($name, $parameters, $referenceType);
     }
 
     /**

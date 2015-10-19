@@ -24,7 +24,7 @@ class ContentAwareGeneratorTest extends CmfUnitTestCase
     protected $provider;
 
     /**
-     * @var ContentAwareGenerator
+     * @var TestableContentAwareGenerator
      */
     protected $generator;
     protected $context;
