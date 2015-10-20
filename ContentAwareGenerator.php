@@ -65,7 +65,7 @@ class ContentAwareGenerator extends ProviderBasedGenerator
      *
      * @throws RouteNotFoundException If there is no such route in the database
      */
-    public function generate($name, $parameters = array(), $absolute = false)
+    public function generate($name, $parameters = array(), $referenceType = self::ABSOLUTE_PATH)
     {
         if ($name instanceof SymfonyRoute) {
             $route = $this->getBestLocaleRoute($name, $parameters);
@@ -82,7 +82,7 @@ class ContentAwareGenerator extends ProviderBasedGenerator
 
         $this->unsetLocaleIfNotNeeded($route, $parameters);
 
-        return parent::generate($route, $parameters, $absolute);
+        return parent::generate($route, $parameters, $referenceType);
     }
 
     /**

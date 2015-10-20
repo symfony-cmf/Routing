@@ -92,15 +92,14 @@ class DynamicRouterTest extends CmfUnitTestCase
     {
         $name = 'my_route_name';
         $parameters = array('foo' => 'bar');
-        $absolute = true;
 
         $this->generator->expects($this->once())
             ->method('generate')
-            ->with($name, $parameters, $absolute)
+            ->with($name, $parameters, DynamicRouter::ABSOLUTE_URL)
             ->will($this->returnValue('http://test'))
         ;
 
-        $url = $this->router->generate($name, $parameters, $absolute);
+        $url = $this->router->generate($name, $parameters, DynamicRouter::ABSOLUTE_URL);
         $this->assertEquals('http://test', $url);
     }
 

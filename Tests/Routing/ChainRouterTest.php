@@ -493,13 +493,13 @@ class ChainRouterTest extends CmfUnitTestCase
         $high
             ->expects($this->once())
             ->method('generate')
-            ->with($name, $parameters, false)
+            ->with($name, $parameters, RouterInterface::ABSOLUTE_PATH)
             ->will($this->throwException(new RouteNotFoundException()))
         ;
         $low
             ->expects($this->once())
             ->method('generate')
-            ->with($name, $parameters, false)
+            ->with($name, $parameters, RouterInterface::ABSOLUTE_PATH)
             ->will($this->returnValue($url))
         ;
         $lower
@@ -528,7 +528,7 @@ class ChainRouterTest extends CmfUnitTestCase
         $router
             ->expects($this->once())
             ->method('generate')
-            ->with($name, null, false)
+            ->with($name, null, RouterInterface::ABSOLUTE_PATH)
             ->will($this->throwException(new RouteNotFoundException()))
         ;
         $router
@@ -556,12 +556,12 @@ class ChainRouterTest extends CmfUnitTestCase
         $high
             ->expects($this->once())
             ->method('generate')
-            ->with($name, $parameters, false)
+            ->with($name, $parameters, RouterInterface::ABSOLUTE_PATH)
             ->will($this->throwException(new RouteNotFoundException()))
         ;
         $low->expects($this->once())
             ->method('generate')
-            ->with($name, $parameters, false)
+            ->with($name, $parameters, RouterInterface::ABSOLUTE_PATH)
             ->will($this->throwException(new RouteNotFoundException()))
         ;
         $this->router->add($low, 10);
@@ -610,7 +610,7 @@ class ChainRouterTest extends CmfUnitTestCase
         ;
         $chainedRouter->expects($this->once())
             ->method('generate')
-            ->with($name, $parameters, false)
+            ->with($name, $parameters, RouterInterface::ABSOLUTE_PATH)
             ->will($this->throwException(new RouteNotFoundException()))
         ;
         $chainedRouter->expects($this->once())
@@ -644,7 +644,7 @@ class ChainRouterTest extends CmfUnitTestCase
         $chainedRouter
             ->expects($this->once())
             ->method('generate')
-            ->with($name, $parameters, false)
+            ->with($name, $parameters, RouterInterface::ABSOLUTE_PATH)
             ->will($this->returnValue($name))
         ;
 

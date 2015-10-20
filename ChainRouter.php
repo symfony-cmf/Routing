@@ -211,7 +211,7 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
      * Loops through all registered routers and returns a router if one is found.
      * It will always return the first route generated.
      */
-    public function generate($name, $parameters = array(), $absolute = false)
+    public function generate($name, $parameters = array(), $referenceType = self::ABSOLUTE_PATH)
     {
         $debug = array();
 
@@ -228,7 +228,7 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
             }
 
             try {
-                return $router->generate($name, $parameters, $absolute);
+                return $router->generate($name, $parameters, $referenceType);
             } catch (RouteNotFoundException $e) {
                 $hint = $this->getErrorMessage($name, $router, is_array($parameters) ? $parameters : array());
                 $debug[] = $hint;
