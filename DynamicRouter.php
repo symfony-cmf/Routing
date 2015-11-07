@@ -210,10 +210,13 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
      *                                   request method is not allowed
      *
      * @deprecated Use matchRequest exclusively to avoid problems. This method will be removed in version 2.0
+     * 
      * @api
      */
     public function match($pathinfo)
     {
+        @trigger_error(__CLASS__.'::'.__METHOD__.'() is deprecated since version 1.3 and will be removed in 2.0. Use matchRequest() instead.', E_USER_DEPRECATED);
+        
         $request = Request::create($pathinfo);
         if ($this->eventDispatcher) {
             $event = new RouterMatchEvent();
