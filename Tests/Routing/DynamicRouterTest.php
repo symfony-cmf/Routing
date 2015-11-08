@@ -136,6 +136,9 @@ class DynamicRouterTest extends CmfUnitTestCase
         $this->assertSame($this->matcher, $matcher);
     }
 
+    /**
+     * @group legacy
+     */
     public function testMatchUrl()
     {
         $routeDefaults = array('foo' => 'bar');
@@ -207,6 +210,7 @@ class DynamicRouterTest extends CmfUnitTestCase
 
     /**
      * @expectedException \Symfony\Component\Routing\Exception\ResourceNotFoundException
+     * @group legacy
      */
     public function testMatchFilter()
     {
@@ -247,6 +251,7 @@ class DynamicRouterTest extends CmfUnitTestCase
 
     /**
      * @expectedException \InvalidArgumentException
+     * @group legacy
      */
     public function testMatchUrlWithRequestMatcher()
     {
@@ -282,6 +287,9 @@ class DynamicRouterTest extends CmfUnitTestCase
         $this->assertInternalType('string', $router->getRouteDebugMessage('test'));
     }
 
+    /**
+     * @group legacy
+     */
     public function testEventHandler()
     {
         $eventDispatcher = $this->buildMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
