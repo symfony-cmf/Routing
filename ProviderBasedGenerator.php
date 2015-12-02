@@ -12,6 +12,7 @@
 namespace Symfony\Cmf\Component\Routing;
 
 use Symfony\Component\Routing\Generator\UrlGenerator;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\Route as SymfonyRoute;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
@@ -46,7 +47,7 @@ class ProviderBasedGenerator extends UrlGenerator implements VersatileGeneratorI
     /**
      * {@inheritDoc}
      */
-    public function generate($name, $parameters = array(), $absolute = false)
+    public function generate($name, $parameters = array(), $absolute = UrlGeneratorInterface::ABSOLUTE_PATH)
     {
         if ($name instanceof SymfonyRoute) {
             $route = $name;

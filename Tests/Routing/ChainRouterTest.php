@@ -16,6 +16,7 @@ use Symfony\Component\HttpKernel\CacheWarmer\WarmableInterface;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\RouteCollection;
@@ -506,13 +507,13 @@ class ChainRouterTest extends CmfUnitTestCase
         $high
             ->expects($this->once())
             ->method('generate')
-            ->with($name, $parameters, false)
+            ->with($name, $parameters, UrlGeneratorInterface::ABSOLUTE_PATH)
             ->will($this->throwException(new RouteNotFoundException()))
         ;
         $low
             ->expects($this->once())
             ->method('generate')
-            ->with($name, $parameters, false)
+            ->with($name, $parameters, UrlGeneratorInterface::ABSOLUTE_PATH)
             ->will($this->returnValue($url))
         ;
         $lower
@@ -539,12 +540,12 @@ class ChainRouterTest extends CmfUnitTestCase
         $high
             ->expects($this->once())
             ->method('generate')
-            ->with($name, $parameters, false)
+            ->with($name, $parameters, UrlGeneratorInterface::ABSOLUTE_PATH)
             ->will($this->throwException(new RouteNotFoundException()))
         ;
         $low->expects($this->once())
             ->method('generate')
-            ->with($name, $parameters, false)
+            ->with($name, $parameters, UrlGeneratorInterface::ABSOLUTE_PATH)
             ->will($this->throwException(new RouteNotFoundException()))
         ;
         $this->router->add($low, 10);
@@ -593,7 +594,7 @@ class ChainRouterTest extends CmfUnitTestCase
         ;
         $chainedRouter->expects($this->once())
             ->method('generate')
-            ->with($name, $parameters, false)
+            ->with($name, $parameters, UrlGeneratorInterface::ABSOLUTE_PATH)
             ->will($this->throwException(new RouteNotFoundException()))
         ;
         $chainedRouter->expects($this->once())
@@ -627,7 +628,7 @@ class ChainRouterTest extends CmfUnitTestCase
         $chainedRouter
             ->expects($this->once())
             ->method('generate')
-            ->with($name, $parameters, false)
+            ->with($name, $parameters, UrlGeneratorInterface::ABSOLUTE_PATH)
             ->will($this->returnValue($name))
         ;
 

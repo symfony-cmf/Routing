@@ -14,6 +14,7 @@ namespace Symfony\Cmf\Component\Routing\Tests\Routing;
 use Symfony\Cmf\Component\Routing\Event\Events;
 use Symfony\Cmf\Component\Routing\Event\RouterMatchEvent;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouteCollection;
 
 use Symfony\Cmf\Component\Routing\DynamicRouter;
@@ -89,7 +90,7 @@ class DynamicRouterTest extends CmfUnitTestCase
     {
         $name = 'my_route_name';
         $parameters = array('foo' => 'bar');
-        $absolute = true;
+        $absolute = UrlGeneratorInterface::ABSOLUTE_PATH;
 
         $this->generator->expects($this->once())
             ->method('generate')
