@@ -211,7 +211,7 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
      * Loops through all registered routers and returns a router if one is found.
      * It will always return the first route generated.
      */
-    public function generate($name, $parameters = array(), $absolute = false)
+    public function generate($name, $parameters = array(), $absolute = UrlGeneratorInterface::ABSOLUTE_PATH)
     {
         $debug = array();
 
@@ -309,7 +309,7 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
 
     /**
      * Identify if any routers have been added into the chain yet
-     * 
+     *
      * @return boolean
      */
     public function hasRouters()

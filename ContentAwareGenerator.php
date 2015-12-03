@@ -12,6 +12,7 @@
 namespace Symfony\Cmf\Component\Routing;
 
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\Route as SymfonyRoute;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\RouteCollection;
@@ -65,7 +66,7 @@ class ContentAwareGenerator extends ProviderBasedGenerator
      *
      * @throws RouteNotFoundException If there is no such route in the database
      */
-    public function generate($name, $parameters = array(), $absolute = false)
+    public function generate($name, $parameters = array(), $absolute = UrlGeneratorInterface::ABSOLUTE_PATH)
     {
         if ($name instanceof SymfonyRoute) {
             $route = $this->getBestLocaleRoute($name, $parameters);
