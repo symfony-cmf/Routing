@@ -12,13 +12,9 @@
 namespace Symfony\Cmf\Component\Routing\Tests\NestedMatcher;
 
 use Symfony\Component\HttpFoundation\Request;
-
 use Symfony\Component\Routing\RouteCollection;
-use Symfony\Component\Routing\Route;
 use Symfony\Cmf\Component\Routing\NestedMatcher\UrlMatcher;
-
 use Symfony\Cmf\Component\Routing\RouteObjectInterface;
-
 use Symfony\Cmf\Component\Routing\Test\CmfUnitTestCase;
 
 class UrlMatcherTest extends CmfUnitTestCase

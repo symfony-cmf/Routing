@@ -82,7 +82,7 @@ interface RouteProviderInterface
      *                          the provider will determine what routes to return.
      *
      * @return Route[] Iterable list with the keys being the names from the
- *                     $names array.
+     *                 $names array.
      */
     public function getRoutesByNames($names);
 }

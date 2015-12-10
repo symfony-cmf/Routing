@@ -38,7 +38,8 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
     private $context;
 
     /**
-     * Array of arrays of routers grouped by priority
+     * Array of arrays of routers grouped by priority.
+     *
      * @var array
      */
     private $routers = array();
@@ -117,7 +118,7 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
 
     /**
      * Sort routers by priority.
-     * The highest priority number is the highest priority (reverse sorting)
+     * The highest priority number is the highest priority (reverse sorting).
      *
      * @return RouterInterface[]
      */
@@ -308,13 +309,12 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
     }
 
     /**
-     * Identify if any routers have been added into the chain yet
+     * Identify if any routers have been added into the chain yet.
      *
-     * @return boolean
+     * @return bool
      */
     public function hasRouters()
     {
-    	return !empty($this->routers);
+        return !empty($this->routers);
     }
-
 }

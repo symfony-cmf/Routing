@@ -13,7 +13,6 @@ namespace Symfony\Cmf\Component\Routing\NestedMatcher;
 
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
-
 use Symfony\Component\HttpFoundation\Request;
 
 /**

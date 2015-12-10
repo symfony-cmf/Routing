@@ -60,7 +60,7 @@ class Candidates implements CandidatesInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
      * Always returns true.
      */
@@ -70,7 +70,7 @@ class Candidates implements CandidatesInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
      * Does nothing.
      */
@@ -79,7 +79,7 @@ class Candidates implements CandidatesInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getCandidates(Request $request)
     {
@@ -99,7 +99,7 @@ class Candidates implements CandidatesInterface
      *
      * @param string $url The url to determine the locale from.
      *
-     * @return string|boolean The locale if $url starts with one of the allowed locales.
+     * @return string|bool The locale if $url starts with one of the allowed locales.
      */
     protected function determineLocale($url)
     {
@@ -108,7 +108,7 @@ class Candidates implements CandidatesInterface
         }
 
         $matches = array();
-        if (preg_match('#(' . implode('|', $this->locales) . ')(/|$)#', $url, $matches)) {
+        if (preg_match('#('.implode('|', $this->locales).')(/|$)#', $url, $matches)) {
             return $matches[1];
         }
 
@@ -132,7 +132,7 @@ class Candidates implements CandidatesInterface
         if ('/' !== $url) {
             // handle format extension, like .html or .json
             if (preg_match('/(.+)\.[a-z]+$/i', $url, $matches)) {
-                $candidates[] = $prefix . $url;
+                $candidates[] = $prefix.$url;
                 $url = $matches[1];
             }
 
@@ -142,7 +142,7 @@ class Candidates implements CandidatesInterface
                 if (++$count > $this->limit) {
                     return $candidates;
                 }
-                $candidates[] = $prefix . $part;
+                $candidates[] = $prefix.$part;
                 $part = substr($url, 0, $pos);
             }
         }

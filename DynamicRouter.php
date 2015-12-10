@@ -59,7 +59,7 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
     protected $enhancers = array();
 
     /**
-     * Cached sorted list of enhancers
+     * Cached sorted list of enhancers.
      *
      * @var RouteEnhancerInterface[]
      */
@@ -67,7 +67,7 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
 
     /**
      * The regexp pattern that needs to be matched before a dynamic lookup is
-     * made
+     * made.
      *
      * @var string
      */
@@ -99,7 +99,7 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
                                 RouteProviderInterface $provider = null
     ) {
         $this->context = $context;
-        if (! $matcher instanceof RequestMatcherInterface && ! $matcher instanceof UrlMatcherInterface) {
+        if (!$matcher instanceof RequestMatcherInterface && !$matcher instanceof UrlMatcherInterface) {
             throw new \InvalidArgumentException('Matcher must implement either Symfony\Component\Routing\Matcher\RequestMatcherInterface or Symfony\Component\Routing\Matcher\UrlMatcherInterface');
         }
         $this->matcher = $matcher;
@@ -112,7 +112,7 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getRouteCollection()
     {
@@ -181,9 +181,9 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
     }
 
     /**
-     * Delegate to our generator
+     * Delegate to our generator.
      *
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function supports($name)
     {
@@ -216,19 +216,19 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
     public function match($pathinfo)
     {
         @trigger_error(__METHOD__.'() is deprecated since version 1.3 and will be removed in 2.0. Use matchRequest() instead.', E_USER_DEPRECATED);
-        
+
         $request = Request::create($pathinfo);
         if ($this->eventDispatcher) {
             $event = new RouterMatchEvent();
             $this->eventDispatcher->dispatch(Events::PRE_DYNAMIC_MATCH, $event);
         }
 
-        if (! empty($this->uriFilterRegexp) && ! preg_match($this->uriFilterRegexp, $pathinfo)) {
+        if (!empty($this->uriFilterRegexp) && !preg_match($this->uriFilterRegexp, $pathinfo)) {
             throw new ResourceNotFoundException("$pathinfo does not match the '{$this->uriFilterRegexp}' pattern");
         }
 
         $matcher = $this->getMatcher();
-        if (! $matcher instanceof UrlMatcherInterface) {
+        if (!$matcher instanceof UrlMatcherInterface) {
             throw new \InvalidArgumentException('Wrong matcher type, you need to call matchRequest');
         }
 
@@ -259,8 +259,8 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
             $this->eventDispatcher->dispatch(Events::PRE_DYNAMIC_MATCH_REQUEST, $event);
         }
 
-        if (! empty($this->uriFilterRegexp)
-            && ! preg_match($this->uriFilterRegexp, $request->getPathInfo())
+        if (!empty($this->uriFilterRegexp)
+            && !preg_match($this->uriFilterRegexp, $request->getPathInfo())
         ) {
             throw new ResourceNotFoundException("{$request->getPathInfo()} does not match the '{$this->uriFilterRegexp}' pattern");
         }
@@ -276,7 +276,7 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
     }
 
     /**
-     * Apply the route enhancers to the defaults, according to priorities
+     * Apply the route enhancers to the defaults, according to priorities.
      *
      * @param array   $defaults
      * @param Request $request
@@ -372,7 +372,7 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
      * Forwards to the generator.
      */

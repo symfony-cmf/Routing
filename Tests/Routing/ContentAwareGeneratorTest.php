@@ -12,7 +12,6 @@
 namespace Symfony\Cmf\Component\Routing\Tests\Routing;
 
 use Symfony\Cmf\Component\Routing\RouteReferrersReadInterface;
-
 use Symfony\Cmf\Component\Routing\ContentAwareGenerator;
 use Symfony\Cmf\Component\Routing\Test\CmfUnitTestCase;
 
@@ -375,6 +374,7 @@ class ContentAwareGeneratorTest extends CmfUnitTestCase
 
         $this->generator->generate($this->contentDocument);
     }
+
     /**
      * Generate from a content that returns something that is not a route as route.
      *
@@ -432,7 +432,7 @@ class ContentAwareGeneratorTest extends CmfUnitTestCase
 }
 
 /**
- * Overwrite doGenerate to reduce amount of mocking needed
+ * Overwrite doGenerate to reduce amount of mocking needed.
  */
 class TestableContentAwareGenerator extends ContentAwareGenerator
 {
@@ -442,6 +442,7 @@ class TestableContentAwareGenerator extends ContentAwareGenerator
     }
 
     // expose as public
+
     public function getLocale($parameters)
     {
         return parent::getLocale($parameters);

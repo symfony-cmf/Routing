@@ -1,4 +1,14 @@
 <?php
+
+/*
+ * This file is part of the Symfony CMF package.
+ *
+ * (c) 2011-2015 Symfony CMF
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 /**
  * This file is part of the Symfony CMF package.
  *
@@ -30,13 +40,13 @@ interface PagedRouteProviderInterface extends RouteProviderInterface
      * all routes at once.
      *
      * @param int $offset
-     *   The sequence will start with that offset in the list of all routes.
+     *                    The sequence will start with that offset in the list of all routes.
      * @param int $length [optional]
-     *   The sequence will have that many routes in it. If no length is
-     *   specified all routes are returned.
+     *                    The sequence will have that many routes in it. If no length is
+     *                    specified all routes are returned.
      *
      * @return \Symfony\Component\Routing\Route[]
-     *   Routes keyed by the route name.
+     *                                            Routes keyed by the route name.
      */
     public function getRoutesPaged($offset, $length = null);
 

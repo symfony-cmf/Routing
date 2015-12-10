@@ -21,6 +21,7 @@ use Symfony\Component\Routing\Route;
  * UrlGeneratorInterface::generate()
  *
  * @author Ben Glassman
+ *
  * @see \Symfony\Component\Routing\Generator\UrlGeneratorInterface::generate()
  */
 class RouterGenerateEvent extends Event
@@ -40,7 +41,7 @@ class RouterGenerateEvent extends Event
     private $parameters;
 
     /**
-     * The type of reference to be generated (one of the constants in UrlGeneratorInterface)
+     * The type of reference to be generated (one of the constants in UrlGeneratorInterface).
      *
      * @var bool|string
      */
@@ -120,7 +121,7 @@ class RouterGenerateEvent extends Event
     }
 
     /**
-     * The type of reference to be generated (one of the constants in UrlGeneratorInterface)
+     * The type of reference to be generated (one of the constants in UrlGeneratorInterface).
      *
      * @return bool|string
      */
@@ -130,7 +131,7 @@ class RouterGenerateEvent extends Event
     }
 
     /**
-     * The type of reference to be generated (one of the constants in UrlGeneratorInterface)
+     * The type of reference to be generated (one of the constants in UrlGeneratorInterface).
      *
      * @param bool|string $referenceType
      */

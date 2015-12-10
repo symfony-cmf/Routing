@@ -41,13 +41,12 @@ class PagedRouteCollectionTest extends CmfUnitTestCase
     public function testIterator($amountRoutes, $routesLoadedInParallel, $expectedCalls = array())
     {
         $routes = array();
-        for ($i = 0; $i < $amountRoutes; $i++) {
-            $routes['test_' . $i] = new Route("/example-$i");
+        for ($i = 0; $i < $amountRoutes; ++$i) {
+            $routes['test_'.$i] = new Route("/example-$i");
         }
         $names = array_keys($routes);
 
-        foreach ($expectedCalls as $i => $range)
-        {
+        foreach ($expectedCalls as $i => $range) {
             $this->routeProvider->expects($this->at($i))
               ->method('getRoutesPaged')
               ->with($range[0], $range[1])
@@ -62,7 +61,7 @@ class PagedRouteCollectionTest extends CmfUnitTestCase
             $this->assertEquals($routes[$route_name], $route);
             // Ensure that the order did not changed.
             $this->assertEquals($route_name, $names[$counter]);
-            $counter++;
+            ++$counter;
         }
     }
 
@@ -85,6 +84,7 @@ class PagedRouteCollectionTest extends CmfUnitTestCase
         $data[] = array(41, 20, array(array(0, 20), array(20, 20), array(40, 20)));
         // why not.
         $data[] = array(42, 23, array(array(0, 23), array(23, 23)));
+
         return $data;
     }
 
@@ -106,8 +106,8 @@ class PagedRouteCollectionTest extends CmfUnitTestCase
     public function testIteratingAndRewind()
     {
         $routes = array();
-        for ($i = 0; $i < 30; $i++) {
-            $routes['test_' . $i] = new Route("/example-$i");
+        for ($i = 0; $i < 30; ++$i) {
+            $routes['test_'.$i] = new Route("/example-$i");
         }
         $this->routeProvider->expects($this->any())
             ->method('getRoutesPaged')
@@ -121,7 +121,7 @@ class PagedRouteCollectionTest extends CmfUnitTestCase
 
         // Force the iterating process.
         $routeCollection->rewind();
-        for ($i = 0; $i < 29; $i++) {
+        for ($i = 0; $i < 29; ++$i) {
             $routeCollection->next();
         }
         $routeCollection->rewind();

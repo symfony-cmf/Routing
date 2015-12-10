@@ -14,7 +14,7 @@ namespace Symfony\Cmf\Component\Routing\Enhancer;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * A route enhancer can change the values in the route data arrays
+ * A route enhancer can change the values in the route data arrays.
  *
  * This is useful to provide information to the rest of the routing system
  * that can be inferred from other parameters rather than hardcode that

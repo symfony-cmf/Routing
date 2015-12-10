@@ -69,7 +69,7 @@ class LazyRouteCollection extends RouteCollection
         try {
             return $this->provider->getRouteByName($name);
         } catch (RouteNotFoundException $e) {
-            return null;
+            return;
         }
     }
 }

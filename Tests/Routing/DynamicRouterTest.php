@@ -15,10 +15,7 @@ use Symfony\Cmf\Component\Routing\Event\Events;
 use Symfony\Cmf\Component\Routing\Event\RouterMatchEvent;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Routing\RouteCollection;
-
 use Symfony\Cmf\Component\Routing\DynamicRouter;
-
 use Symfony\Cmf\Component\Routing\Test\CmfUnitTestCase;
 
 class DynamicRouterTest extends CmfUnitTestCase
@@ -50,7 +47,7 @@ class DynamicRouterTest extends CmfUnitTestCase
     }
 
     /**
-     * rather trivial, but we want 100% coverage
+     * rather trivial, but we want 100% coverage.
      */
     public function testContext()
     {
@@ -341,7 +338,6 @@ class DynamicRouterTest extends CmfUnitTestCase
     {
         $eventDispatcher = $this->buildMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
         $router = new DynamicRouter($this->context, $this->matcher, $this->generator, '', $eventDispatcher);
-
 
         $oldname = 'old_route_name';
         $newname = 'new_route_name';

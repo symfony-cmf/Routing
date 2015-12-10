@@ -14,7 +14,6 @@ namespace Symfony\Cmf\Component\Routing\Tests\Routing;
 use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\Route;
-
 use Symfony\Cmf\Component\Routing\ProviderBasedGenerator;
 use Symfony\Cmf\Component\Routing\Test\CmfUnitTestCase;
 
@@ -35,7 +34,7 @@ class ProviderBasedGeneratorTest extends CmfUnitTestCase
         $this->provider = $this->buildMock('Symfony\Cmf\Component\Routing\RouteProviderInterface');
         $this->context = $this->buildMock('Symfony\Component\Routing\RequestContext');
 
-        $this->generator= new TestableProviderBasedGenerator($this->provider);
+        $this->generator = new TestableProviderBasedGenerator($this->provider);
     }
 
     public function testGenerateFromName()
@@ -99,11 +98,11 @@ class ProviderBasedGeneratorTest extends CmfUnitTestCase
         $this->assertContains('a:1:{s:10:"route_name";s:7:"example";}', $this->generator->getRouteDebugMessage(array('route_name' => 'example')));
     }
 
-  /**
-   * Tests the generate method with passing in a route object into generate().
-   *
-   * @expectedException \Symfony\Component\Routing\Exception\InvalidParameterException
-   */
+    /**
+     * Tests the generate method with passing in a route object into generate().
+     *
+     * @expectedException \Symfony\Component\Routing\Exception\InvalidParameterException
+     */
     public function testGenerateByRoute()
     {
         $this->generator = new ProviderBasedGenerator($this->provider);
@@ -120,12 +119,11 @@ class ProviderBasedGeneratorTest extends CmfUnitTestCase
         $this->generator->setContext($context);
 
         $this->assertSame(null, $this->generator->generate($route, array('number' => 'string')));
-
     }
 }
 
 /**
- * Overwrite doGenerate to reduce amount of mocking needed
+ * Overwrite doGenerate to reduce amount of mocking needed.
  */
 class TestableProviderBasedGenerator extends ProviderBasedGenerator
 {
@@ -144,6 +142,6 @@ class RouteObject implements RouteObjectInterface
 
     public function getContent()
     {
-        return null;
+        return;
     }
 }

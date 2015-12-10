@@ -12,7 +12,6 @@
 namespace Symfony\Cmf\Component\Routing\Tests\Routing;
 
 use Symfony\Component\Routing\Route as SymfonyRoute;
-
 use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 
 class RouteMock extends SymfonyRoute implements RouteObjectInterface
@@ -26,13 +25,13 @@ class RouteMock extends SymfonyRoute implements RouteObjectInterface
 
     public function getContent()
     {
-        return null;
+        return;
     }
 
     public function getDefaults()
     {
         $defaults = array();
-        if (! is_null($this->locale)) {
+        if (!is_null($this->locale)) {
             $defaults['_locale'] = $this->locale;
         }
 
@@ -41,8 +40,8 @@ class RouteMock extends SymfonyRoute implements RouteObjectInterface
 
     public function getRequirement($key)
     {
-        if (! $key == '_locale') {
-            throw new \Exception;
+        if (!$key == '_locale') {
+            throw new \Exception();
         }
 
         return $this->locale;
@@ -50,6 +49,6 @@ class RouteMock extends SymfonyRoute implements RouteObjectInterface
 
     public function getRouteKey()
     {
-        return null;
+        return;
     }
 }

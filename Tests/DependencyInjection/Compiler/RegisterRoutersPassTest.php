@@ -12,7 +12,6 @@
 namespace Symfony\Cmf\Routing\Tests\DependencyInjection\Compiler;
 
 use Symfony\Cmf\Component\Routing\DependencyInjection\Compiler\RegisterRoutersPass;
-
 use Symfony\Component\DependencyInjection\Reference;
 
 class RegisterRoutersPassTest extends \PHPUnit_Framework_TestCase

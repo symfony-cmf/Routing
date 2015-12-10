@@ -36,13 +36,13 @@ interface RouteObjectInterface
     const ROUTE_OBJECT = '_route_object';
 
     /**
-     * Field name for an explicit controller name to be used with this route
+     * Field name for an explicit controller name to be used with this route.
      */
     const CONTROLLER_NAME = '_controller';
 
     /**
      * Field name for an explicit template to be used with this route.
-     * i.e. CmfContentBundle:StaticContent:index.html.twig
+     * i.e. CmfContentBundle:StaticContent:index.html.twig.
      */
     const TEMPLATE_NAME = '_template';
 

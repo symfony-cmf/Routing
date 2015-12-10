@@ -24,15 +24,15 @@ use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 interface FinalMatcherInterface
 {
     /**
-    * Matches a request against a route collection and returns exactly one result.
-    *
-    * @param RouteCollection $collection The collection against which to match.
-    * @param Request $request The request to match.
-    *
-    * @return array An array of parameters
-    *
-    * @throws ResourceNotFoundException if none of the routes in $collection
-    *    matches $request
-    */
+     * Matches a request against a route collection and returns exactly one result.
+     *
+     * @param RouteCollection $collection The collection against which to match.
+     * @param Request         $request    The request to match.
+     *
+     * @return array An array of parameters
+     *
+     * @throws ResourceNotFoundException if none of the routes in $collection
+     *                                   matches $request
+     */
     public function finalMatch(RouteCollection $collection, Request $request);
 }

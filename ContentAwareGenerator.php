@@ -37,16 +37,16 @@ class ContentAwareGenerator extends ProviderBasedGenerator
 
     /**
      * The content repository used to find content by it's id
-     * This can be used to specify a parameter content_id when generating urls
+     * This can be used to specify a parameter content_id when generating urls.
      *
      * This is optional and might not be initialized.
      *
-     * @var  ContentRepositoryInterface
+     * @var ContentRepositoryInterface
      */
     protected $contentRepository;
 
     /**
-     * Set an optional content repository to find content by ids
+     * Set an optional content repository to find content by ids.
      *
      * @param ContentRepositoryInterface $contentRepository
      */
@@ -56,7 +56,7 @@ class ContentAwareGenerator extends ProviderBasedGenerator
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      *
      * @param string $name       ignored.
      * @param array  $parameters must either contain the field 'route' with a
@@ -76,7 +76,7 @@ class ContentAwareGenerator extends ProviderBasedGenerator
             $route = $this->getRouteByContent($name, $parameters);
         }
 
-        if (! $route instanceof SymfonyRoute) {
+        if (!$route instanceof SymfonyRoute) {
             $hint = is_object($route) ? get_class($route) : gettype($route);
             throw new RouteNotFoundException('Route of this document is not an instance of Symfony\Component\Routing\Route but: '.$hint);
         }
@@ -87,7 +87,7 @@ class ContentAwareGenerator extends ProviderBasedGenerator
     }
 
     /**
-     * Get the route by a string name
+     * Get the route by a string name.
      *
      * @param string $route
      * @param array  $parameters
@@ -100,7 +100,7 @@ class ContentAwareGenerator extends ProviderBasedGenerator
     {
         $route = $this->provider->getRouteByName($name);
         if (empty($route)) {
-            throw new RouteNotFoundException('No route found for name: ' . $name);
+            throw new RouteNotFoundException('No route found for name: '.$name);
         }
 
         return $this->getBestLocaleRoute($route, $parameters);
@@ -117,12 +117,12 @@ class ContentAwareGenerator extends ProviderBasedGenerator
      */
     protected function getBestLocaleRoute(SymfonyRoute $route, $parameters)
     {
-        if (! $route instanceof RouteObjectInterface) {
+        if (!$route instanceof RouteObjectInterface) {
             // this route has no content, we can't get the alternatives
             return $route;
         }
         $locale = $this->getLocale($parameters);
-        if (! $this->checkLocaleRequirement($route, $locale)) {
+        if (!$this->checkLocaleRequirement($route, $locale)) {
             $content = $route->getContent();
             if ($content instanceof RouteReferrersReadInterface) {
                 $routes = $content->getRoutes();
@@ -168,10 +168,10 @@ class ContentAwareGenerator extends ProviderBasedGenerator
         ) {
             $content = $this->contentRepository->findById($parameters['content_id']);
             if (empty($content)) {
-                throw new RouteNotFoundException('The content repository found nothing at id ' . $parameters['content_id']);
+                throw new RouteNotFoundException('The content repository found nothing at id '.$parameters['content_id']);
             }
             if (!$content instanceof RouteReferrersReadInterface) {
-                throw new RouteNotFoundException('Content repository did not return a RouteReferrersReadInterface instance for id ' . $parameters['content_id']);
+                throw new RouteNotFoundException('Content repository did not return a RouteReferrersReadInterface instance for id '.$parameters['content_id']);
             }
         } else {
             $hint = is_object($name) ? get_class($name) : gettype($name);
@@ -183,7 +183,7 @@ class ContentAwareGenerator extends ProviderBasedGenerator
             $hint = ($this->contentRepository && $this->contentRepository->getContentId($content))
                 ? $this->contentRepository->getContentId($content)
                 : get_class($content);
-            throw new RouteNotFoundException('Content document has no route: ' . $hint);
+            throw new RouteNotFoundException('Content document has no route: '.$hint);
         }
 
         unset($parameters['content_id']);
@@ -210,7 +210,7 @@ class ContentAwareGenerator extends ProviderBasedGenerator
     protected function getRouteByLocale($routes, $locale)
     {
         foreach ($routes as $route) {
-            if (! $route instanceof SymfonyRoute) {
+            if (!$route instanceof SymfonyRoute) {
                 continue;
             }
 
@@ -239,7 +239,7 @@ class ContentAwareGenerator extends ProviderBasedGenerator
     }
 
     /**
-     * Determine the locale to be used with this request
+     * Determine the locale to be used with this request.
      *
      * @param array $parameters the parameters determined by the route
      *
@@ -272,24 +272,24 @@ class ContentAwareGenerator extends ProviderBasedGenerator
     }
 
     /**
-     * We additionally support empty name and data in parameters and RouteAware content
+     * We additionally support empty name and data in parameters and RouteAware content.
      */
     public function supports($name)
     {
-        return ! $name || parent::supports($name) || $name instanceof RouteReferrersReadInterface;
+        return !$name || parent::supports($name) || $name instanceof RouteReferrersReadInterface;
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getRouteDebugMessage($name, array $parameters = array())
     {
         if (empty($name) && isset($parameters['content_id'])) {
-            return 'Content id ' . $parameters['content_id'];
+            return 'Content id '.$parameters['content_id'];
         }
 
         if ($name instanceof RouteReferrersReadInterface) {
-            return 'Route aware content ' . parent::getRouteDebugMessage($name, $parameters);
+            return 'Route aware content '.parent::getRouteDebugMessage($name, $parameters);
         }
 
         return parent::getRouteDebugMessage($name, $parameters);

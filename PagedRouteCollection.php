@@ -1,12 +1,5 @@
 <?php
-/**
- * This file is part of the Symfony CMF package.
- *
- * (c) 2011-2014 Symfony CMF
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
+
 /*
  * This file is part of the Symfony CMF package.
  *
@@ -92,7 +85,7 @@ class PagedRouteCollection implements \Iterator, \Countable
         if (false === $result) {
             $this->loadNextElements($this->current + 1);
         }
-        $this->current++;
+        ++$this->current;
     }
 
     /**
@@ -117,7 +110,7 @@ class PagedRouteCollection implements \Iterator, \Countable
     public function rewind()
     {
         $this->current = 0;
-        $this->currentRoutes = NULL;
+        $this->currentRoutes = null;
         $this->loadNextElements($this->current);
     }
 

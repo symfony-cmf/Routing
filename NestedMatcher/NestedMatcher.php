@@ -61,7 +61,7 @@ class NestedMatcher implements RequestMatcherInterface
     protected $sortedFilters = array();
 
     /**
-     * Constructs a new NestedMatcher
+     * Constructs a new NestedMatcher.
      *
      * @param RouteProviderInterface $provider The route provider this matcher
      *                                         should use
@@ -162,7 +162,7 @@ class NestedMatcher implements RequestMatcherInterface
     public function getRouteFilters()
     {
         if (empty($this->sortedFilters)) {
-           $this->sortedFilters = $this->sortFilters();
+            $this->sortedFilters = $this->sortFilters();
         }
 
         return $this->sortedFilters;
