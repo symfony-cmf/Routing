@@ -156,10 +156,14 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
     }
 
     /**
-     * Loops through all routers and tries to match the passed request or url.
+     * Loops through all routers and tries to propagate right method (match or matchRequest
+     * based on whether request is provided.
      *
-     * At least the  url must be provided, if a request is additionally provided
-     * the request takes precedence.
+     * In Symfony/Component/HttpKernel/EventListener/RouterListener.php the logic decides
+     * whether to call match() or matchRequest() according to RequestMatcherInterface.
+     * As ChainRouter always implements RequestMatcherInterface, RouterListener will always
+     * call matchRequest() even if ChainRouter wraps router without RequestMatcherInterface.
+     * Therefore we must apply similar logic to the wrapped routers.
      *
      * @param string  $url
      * @param Request $request
@@ -172,20 +176,17 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
     {
         $methodNotAllowed = null;
 
-        $requestForMatching = $request;
         foreach ($this->all() as $router) {
             try {
-                // the request/url match logic is the same as in Symfony/Component/HttpKernel/EventListener/RouterListener.php
-                // matching requests is more powerful than matching URLs only, so try that first
-                if ($router instanceof RequestMatcherInterface) {
-                    if (empty($requestForMatching)) {
-                        $requestForMatching = Request::create($url);
+                if (null !== $request) {
+                    if ($router instanceof RequestMatcherInterface) {
+                        return $router->matchRequest($request);
+                    } else {
+                        return $router->match($request->getPathInfo());
                     }
-
-                    return $router->matchRequest($requestForMatching);
+                } else {
+                    return $router->match($url);
                 }
-                // every router implements the match method
-                return $router->match($url);
             } catch (ResourceNotFoundException $e) {
                 if ($this->logger) {
                     $this->logger->debug('Router '.get_class($router).' was not able to match, message "'.$e->getMessage().'"');
