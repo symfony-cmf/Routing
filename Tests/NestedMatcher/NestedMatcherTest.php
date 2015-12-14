@@ -12,13 +12,10 @@
 namespace Symfony\Cmf\Component\Routing\Tests\NestedMatcher;
 
 use Symfony\Component\HttpFoundation\Request;
-
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
-
 use Symfony\Cmf\Component\Routing\NestedMatcher\NestedMatcher;
-
 use Symfony\Cmf\Component\Routing\Test\CmfUnitTestCase;
 
 class NestedMatcherTest extends CmfUnitTestCase
@@ -74,7 +71,7 @@ class NestedMatcherTest extends CmfUnitTestCase
     }
 
     /**
-     * Test priorities and exception handling
+     * Test priorities and exception handling.
      */
     public function testNestedMatcherPriority()
     {
@@ -135,5 +132,4 @@ class NestedMatcherTest extends CmfUnitTestCase
         $this->setExpectedException('Symfony\Component\Routing\Exception\ResourceNotFoundException');
         $matcher->matchRequest($request);
     }
-
 }

@@ -12,7 +12,6 @@
 namespace Symfony\Cmf\Component\Routing\Tests\Mapper;
 
 use Symfony\Component\HttpFoundation\Request;
-
 use Symfony\Cmf\Component\Routing\Test\CmfUnitTestCase;
 use Symfony\Cmf\Component\Routing\Enhancer\FieldMapEnhancer;
 

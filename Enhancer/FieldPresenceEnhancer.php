@@ -56,7 +56,7 @@ class FieldPresenceEnhancer implements RouteEnhancerInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function enhance(array $defaults, Request $request)
     {

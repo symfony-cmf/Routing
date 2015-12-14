@@ -12,7 +12,6 @@
 namespace Symfony\Cmf\Component\Routing\Tests\DependencyInjection\Compiler;
 
 use Symfony\Cmf\Component\Routing\DependencyInjection\Compiler\RegisterRouteEnhancersPass;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 
 class RegisterRouteEnhancersPassTest extends \PHPUnit_Framework_TestCase
@@ -22,8 +21,8 @@ class RegisterRouteEnhancersPassTest extends \PHPUnit_Framework_TestCase
         $serviceIds = array(
             'test_enhancer' => array(
                 0 => array(
-                    'id' => 'foo_enhancer'
-                )
+                    'id' => 'foo_enhancer',
+                ),
             ),
         );
 
@@ -68,7 +67,7 @@ class RegisterRouteEnhancersPassTest extends \PHPUnit_Framework_TestCase
         $pass = new RegisterRouteEnhancersPass();
         $pass->process($builder);
     }
-    
+
     protected function getContainerBuilderMock(array $functions = array())
     {
         return $this->getMock(

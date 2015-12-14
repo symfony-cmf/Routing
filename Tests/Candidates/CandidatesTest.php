@@ -17,7 +17,7 @@ use Symfony\Component\HttpFoundation\Request;
 class CandidatesTest extends \PHPUnit_Framework_Testcase
 {
     /**
-     * Everything is a candidate
+     * Everything is a candidate.
      */
     public function testIsCandidate()
     {
@@ -27,7 +27,7 @@ class CandidatesTest extends \PHPUnit_Framework_Testcase
     }
 
     /**
-     * Nothing should be called on the query builder
+     * Nothing should be called on the query builder.
      */
     public function testRestrictQuery()
     {
@@ -67,7 +67,7 @@ class CandidatesTest extends \PHPUnit_Framework_Testcase
                 '/fr',
                 '/',
                 '/path.html',
-                '/path'
+                '/path',
             ),
             $paths
         );

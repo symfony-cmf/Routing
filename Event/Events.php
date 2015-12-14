@@ -14,21 +14,21 @@ namespace Symfony\Cmf\Component\Routing\Event;
 final class Events
 {
     /**
-     * Fired before a path is matched in \Symfony\Cmf\Component\Routing\DynamicRouter#match
+     * Fired before a path is matched in \Symfony\Cmf\Component\Routing\DynamicRouter#match.
      *
      * The event object is RouterMatchEvent.
      */
     const PRE_DYNAMIC_MATCH = 'cmf_routing.pre_dynamic_match';
 
     /**
-     * Fired before a Request is matched in \Symfony\Cmf\Component\Routing\DynamicRouter#match
+     * Fired before a Request is matched in \Symfony\Cmf\Component\Routing\DynamicRouter#match.
      *
      * The event object is RouterMatchEvent.
      */
     const PRE_DYNAMIC_MATCH_REQUEST = 'cmf_routing.pre_dynamic_match_request';
 
     /**
-     * Fired before a route is generated in \Symfony\Cmf\Component\Routing\DynamicRouter#generate
+     * Fired before a route is generated in \Symfony\Cmf\Component\Routing\DynamicRouter#generate.
      *
      * The event object is RouterGenerateEvent.
      */

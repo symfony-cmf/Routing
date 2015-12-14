@@ -34,7 +34,7 @@ interface VersatileGeneratorInterface extends UrlGeneratorInterface
 
     /**
      * Convert a route identifier (name, content object etc) into a string
-     * usable for logging and other debug/error messages
+     * usable for logging and other debug/error messages.
      *
      * @param mixed $name
      * @param array $parameters which should contain a content field containing

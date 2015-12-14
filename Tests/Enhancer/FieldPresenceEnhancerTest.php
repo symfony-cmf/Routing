@@ -12,9 +12,7 @@
 namespace Symfony\Cmf\Component\Routing\Tests\Enhancer;
 
 use Symfony\Component\HttpFoundation\Request;
-
 use Symfony\Cmf\Component\Routing\Enhancer\FieldPresenceEnhancer;
-
 use Symfony\Cmf\Component\Routing\Test\CmfUnitTestCase;
 
 class FieldPresenceEnhancerTest extends CmfUnitTestCase

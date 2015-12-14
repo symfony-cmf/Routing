@@ -33,7 +33,7 @@ interface CandidatesInterface
      *
      * @param string $name
      *
-     * @return boolean
+     * @return bool
      */
     public function isCandidate($name);
 

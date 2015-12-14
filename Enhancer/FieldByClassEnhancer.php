@@ -55,7 +55,7 @@ class FieldByClassEnhancer implements RouteEnhancerInterface
      * If the source field is instance of one of the entries in the map,
      * target is set to the value of that map entry.
      *
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function enhance(array $defaults, Request $request)
     {
@@ -64,7 +64,7 @@ class FieldByClassEnhancer implements RouteEnhancerInterface
             return $defaults;
         }
 
-        if (! isset($defaults[$this->source])) {
+        if (!isset($defaults[$this->source])) {
             return $defaults;
         }
 

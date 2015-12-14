@@ -16,11 +16,10 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\Route as SymfonyRoute;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
-
 use Psr\Log\LoggerInterface;
 
 /**
- * A Generator that uses a RouteProvider rather than a RouteCollection
+ * A Generator that uses a RouteProvider rather than a RouteCollection.
  *
  * @author Larry Garfield
  */
@@ -45,7 +44,7 @@ class ProviderBasedGenerator extends UrlGenerator implements VersatileGeneratorI
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function generate($name, $parameters = array(), $absolute = UrlGeneratorInterface::ABSOLUTE_PATH)
     {
@@ -65,9 +64,9 @@ class ProviderBasedGenerator extends UrlGenerator implements VersatileGeneratorI
     }
 
     /**
-     * Support a route object and any string as route name
+     * Support a route object and any string as route name.
      *
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function supports($name)
     {
@@ -75,7 +74,7 @@ class ProviderBasedGenerator extends UrlGenerator implements VersatileGeneratorI
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getRouteDebugMessage($name, array $parameters = array())
     {
@@ -88,14 +87,13 @@ class ProviderBasedGenerator extends UrlGenerator implements VersatileGeneratorI
         }
 
         if ($name instanceof RouteObjectInterface) {
-            return 'Route with key ' . $name->getRouteKey();
+            return 'Route with key '.$name->getRouteKey();
         }
 
         if ($name instanceof SymfonyRoute) {
-            return 'Route with path ' . $name->getPath();
+            return 'Route with path '.$name->getPath();
         }
 
         return get_class($name);
     }
-
 }

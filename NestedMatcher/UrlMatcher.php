@@ -16,7 +16,6 @@ use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\Matcher\UrlMatcher as SymfonyUrlMatcher;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\RequestContext;
-
 use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 
 /**
