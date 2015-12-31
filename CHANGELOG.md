@@ -1,6 +1,9 @@
 Changelog
 =========
 
+* **2016-01-09**: When ChainRouter::match is used with a RequestMatcher, the
+  Request is now properly rebuilt from the RequestContext if that was set on
+  the ChainRouter.
 * **2014-09-29**: ChainRouter does not require a RouterInterface, as a
   RequestMatcher and UrlGenerator is fine too. Fixed chain router interface to
   not force a RouterInterface.
