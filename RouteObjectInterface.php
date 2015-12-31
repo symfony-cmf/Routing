@@ -66,12 +66,13 @@ interface RouteObjectInterface
     /**
      * Get the route key.
      *
-     * This key will be used as route name instead of the symfony core compatible
-     * route name and can contain any characters.
+     * This key will be used as route name instead of the name specified in the
+     * route collection. There are no limitations to allowed characters in the
+     * name.
      *
-     * Return null if you want to use the default key.
+     * Return null if you want to use the default name.
      *
-     * @return string the route name
+     * @return string|null the route name
      */
     public function getRouteKey();
 }
