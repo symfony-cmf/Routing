@@ -310,6 +310,49 @@ class ChainRouterTest extends CmfUnitTestCase
     }
 
     /**
+     * Call match on ChainRouter that has RequestMatcher in the chain.
+     */
+    public function testMatchWithRequestMatchersAndContext()
+    {
+        $url = '/test';
+
+        list($low) = $this->createRouterMocks();
+
+        $high = $this->getMock('Symfony\Cmf\Component\Routing\Tests\Routing\RequestMatcher');
+
+        $high
+            ->expects($this->once())
+            ->method('matchRequest')
+            ->with($this->callback(function (Request $r) use ($url) {
+                return $url === $r->getPathInfo()
+                    && 'foobar.com' === $r->getHost()
+                    && 4433 === $r->getPort()
+                    && true === $r->isSecure()
+                ;
+            }))
+            ->will($this->throwException(new \Symfony\Component\Routing\Exception\ResourceNotFoundException()))
+        ;
+        $low
+            ->expects($this->once())
+            ->method('match')
+            ->with($url)
+            ->will($this->returnValue(array('test')))
+        ;
+
+        $this->router->add($low, 10);
+        $this->router->add($high, 20);
+
+        $requestContext = new RequestContext();
+        $requestContext->setHost('foobar.com');
+        $requestContext->setScheme('https');
+        $requestContext->setHttpsPort(4433);
+        $this->router->setContext($requestContext);
+
+        $result = $this->router->match($url);
+        $this->assertEquals(array('test'), $result);
+    }
+
+    /**
      * If there is a method not allowed but another router matches, that one is used.
      */
     public function testMatchAndNotAllowed()

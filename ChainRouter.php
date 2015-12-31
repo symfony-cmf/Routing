@@ -180,11 +180,12 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
                 // matching requests is more powerful than matching URLs only, so try that first
                 if ($router instanceof RequestMatcherInterface) {
                     if (empty($requestForMatching)) {
-                        $requestForMatching = Request::create($url);
+                        $requestForMatching = $this->rebuildRequest($url);
                     }
 
                     return $router->matchRequest($requestForMatching);
                 }
+
                 // every router implements the match method
                 return $router->match($url);
             } catch (ResourceNotFoundException $e) {
@@ -247,6 +248,46 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
         }
 
         throw new RouteNotFoundException(sprintf('None of the chained routers were able to generate route: %s', $info));
+    }
+
+    /**
+     * Rebuild the request object from a URL with the help of the RequestContext.
+     *
+     * If the request context is not set, this simply returns the request object built from $uri.
+     *
+     * @param string $uri
+     *
+     * @return Request
+     */
+    private function rebuildRequest($uri)
+    {
+        if (!$this->context) {
+            return Request::create($uri);
+        }
+
+        $server = array();
+        if ($this->context->getHost()) {
+            $server['SERVER_NAME'] = $this->context->getHost();
+            $server['HTTP_HOST'] = $this->context->getHost();
+        }
+        if ('https' === $this->context->getScheme()) {
+            $server['HTTPS'] = 'on';
+            $server['SERVER_PORT'] = $this->context->getHttpsPort();
+            if (443 !== $this->context->getHttpsPort()) {
+                // this is parsed from the host by symfony request
+                // https://github.com/symfony/symfony/blob/master/src/Symfony/Component/HttpFoundation/Request.php#L971
+                $server['HTTP_HOST'] .= ':'.$this->context->getHttpsPort();
+            }
+        } else {
+            $server['SERVER_PORT'] = $this->context->getHttpPort();
+            if (80 !== $this->context->getHttpPort()) {
+                // this is parsed from the host by symfony request
+                // https://github.com/symfony/symfony/blob/master/src/Symfony/Component/HttpFoundation/Request.php#L971
+                $server['HTTP_HOST'] .= ':'.$this->context->getHttpPort();
+            }
+        }
+
+        return Request::create($uri, $this->context->getMethod(), $this->context->getParameters(), array(), array(), $server);
     }
 
     private function getErrorMessage($name, $router = null, $parameters = null)
