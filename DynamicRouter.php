@@ -167,7 +167,7 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
      *
      * @api
      */
-    public function generate($name, $parameters = array(), $referenceType = false)
+    public function generate($name, $parameters = array(), $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH)
     {
         if ($this->eventDispatcher) {
             $event = new RouterGenerateEvent($name, $parameters, $referenceType);
