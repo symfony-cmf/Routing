@@ -309,6 +309,61 @@ class ChainRouterTest extends CmfUnitTestCase
         $this->assertEquals(array('test'), $result);
     }
 
+    public function provideBaseUrl()
+    {
+        return array(
+            array(''),
+            array('/web'),
+        );
+    }
+
+    /**
+     * Call match on ChainRouter that has RequestMatcher in the chain.
+     *
+     * @dataProvider provideBaseUrl
+     */
+    public function testMatchWithRequestMatchersAndContext($baseUrl)
+    {
+        $url = '/test';
+
+        list($low) = $this->createRouterMocks();
+
+        $high = $this->getMock('Symfony\Cmf\Component\Routing\Tests\Routing\RequestMatcher');
+
+        $high
+            ->expects($this->once())
+            ->method('matchRequest')
+            ->with($this->callback(function (Request $r) use ($url, $baseUrl) {
+                return true === $r->isSecure()
+                    && 'foobar.com' === $r->getHost()
+                    && 4433 === $r->getPort()
+                    && $baseUrl === $r->getBaseUrl()
+                    && $url === $r->getPathInfo()
+                ;
+            }))
+            ->will($this->throwException(new \Symfony\Component\Routing\Exception\ResourceNotFoundException()))
+        ;
+        $low
+            ->expects($this->once())
+            ->method('match')
+            ->with($url)
+            ->will($this->returnValue(array('test')))
+        ;
+
+        $this->router->add($low, 10);
+        $this->router->add($high, 20);
+
+        $requestContext = new RequestContext();
+        $requestContext->setScheme('https');
+        $requestContext->setHost('foobar.com');
+        $requestContext->setHttpsPort(4433);
+        $requestContext->setBaseUrl($baseUrl);
+        $this->router->setContext($requestContext);
+
+        $result = $this->router->match($url);
+        $this->assertEquals(array('test'), $result);
+    }
+
     /**
      * If there is a method not allowed but another router matches, that one is used.
      */
