@@ -64,15 +64,17 @@ interface RouteObjectInterface
     public function getContent();
 
     /**
-     * Get the route key.
+     * Get the route name.
      *
-     * This key will be used as route name instead of the name specified in the
-     * route collection. There are no limitations to allowed characters in the
-     * name.
+     * Normal symfony routes do not know their name, the name is only known
+     * from the route collection. In the CMF, it is possible to use route
+     * documents outside of collections, and thus useful to have routes provide
+     * their name.
      *
-     * Return null if you want to use the default name.
+     * There are no limitations to allowed characters in the name.
      *
-     * @return string|null the route name
+     * @return string|null the route name or null to use the default name
+     *                     (e.g. from route collection if known)
      */
     public function getRouteKey();
 }
