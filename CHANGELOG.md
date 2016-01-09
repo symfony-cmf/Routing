@@ -1,6 +1,9 @@
 Changelog
 =========
 
+1.4.0-RC1
+---------
+
 * **2016-01-09**: When ChainRouter::match is used with a RequestMatcher, the
   Request is now properly rebuilt from the RequestContext if that was set on
   the ChainRouter.
@@ -8,6 +11,11 @@ Changelog
   RequestMatcher and UrlGenerator is fine too. Fixed chain router interface to
   not force a RouterInterface.
 * **2014-09-29**: Deprecated DynamicRouter::match in favor of matchRequest.
+
+1.3.0
+-----
+
+Release 1.3.0
 
 1.3.0-RC1
 ---------
