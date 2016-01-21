@@ -280,7 +280,7 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
         if ('http' === $this->context->getScheme() && 80 !== $this->context->getHttpPort()) {
             $host .= ':'.$this->context->getHttpPort();
         }
-        $uri = $this->context->getScheme().'://'.$host.$uri.$this->context->getQueryString();
+        $uri = $this->context->getScheme().'://'.$host.$uri.'?'.$this->context->getQueryString();
 
         return Request::create($uri, $this->context->getMethod(), $this->context->getParameters(), array(), array(), $server);
     }
