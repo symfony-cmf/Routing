@@ -324,7 +324,7 @@ class ChainRouterTest extends CmfUnitTestCase
      */
     public function testMatchWithRequestMatchersAndContext($baseUrl)
     {
-        $url = '/test';
+        $url = '//test';
 
         list($low) = $this->createRouterMocks();
 
