@@ -52,6 +52,11 @@ interface RouteObjectInterface
     const CONTENT_OBJECT = '_content';
 
     /**
+     * Field name for the content id of the current route, if any.
+     */
+    const CONTENT_ID = '_content_id';
+
+    /**
      * Get the content document this route entry stands for. If non-null,
      * the ControllerClassMapper uses it to identify a controller and
      * the content is passed to the controller.
