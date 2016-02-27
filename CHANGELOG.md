@@ -1,6 +1,12 @@
 Changelog
 =========
 
+1.4.0
+-----
+
+* **2016-02-27**: Added ContentRepositoryEnhancer that can look up a content by
+  ID from a content repository.
+
 1.4.0-RC1
 ---------
 

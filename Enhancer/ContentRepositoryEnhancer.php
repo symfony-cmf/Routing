@@ -16,16 +16,18 @@ use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * This enhancer sets the content to target field if the route has content id.
+ * This enhancer uses a ContentRepositoryInterface to load a content if $target
+ * is empty.
  *
- * Works with ContentRepositoryInterface that you can search the content.
+ * $source specifies the field that contains the ID to load, $target specifies
+ * the field where to put the content returned by the repository.
  *
  * @author Samusev Andrey
  */
 class ContentRepositoryEnhancer implements RouteEnhancerInterface
 {
     /**
-     * @var Repository
+     * @var ContentRepositoryInterface
      */
     private $contentRepository;
 
@@ -42,7 +44,7 @@ class ContentRepositoryEnhancer implements RouteEnhancerInterface
     /**
      * @param ContentRepositoryInterface $contentRepository repository to search for the content
      * @param string                     $target            the field name to set content
-     * @param string                     $source            the field name of the content id
+     * @param string                     $source            the field name of the request parameter that contains the id
      */
     public function __construct(
         ContentRepositoryInterface $contentRepository,
