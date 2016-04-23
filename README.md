@@ -1,6 +1,6 @@
 # Symfony CMF Routing Component
 
-[![Build Status](https://secure.travis-ci.org/symfony-cmf/Routing.png?branch=master)](http://travis-ci.org/symfony-cmf/Routing)
+[![Build Status](https://travis-ci.org/symfony-cmf/routing.svg?branch=master)](https://travis-ci.org/symfony-cmf/routing)
 [![Latest Stable Version](https://poser.pugx.org/symfony-cmf/routing/version.png)](https://packagist.org/packages/symfony-cmf/routing)
 [![Total Downloads](https://poser.pugx.org/symfony-cmf/routing/d/total.png)](https://packagist.org/packages/symfony-cmf/routing)
 
