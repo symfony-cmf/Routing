@@ -66,4 +66,99 @@ class FieldByClassEnhancerTest extends CmfUnitTestCase
         $defaults = array('foo' => 'bar');
         $this->assertEquals($defaults, $this->mapper->enhance($defaults, $this->request));
     }
+
+    /**
+     * @dataProvider getMethodDependingDefaults
+     */
+    public function testHTTPMethodDepending($mapping, $method, $expected)
+    {
+        $defaults = array(
+            '_content' => $this->document,
+        );
+        $expected['_content'] = $this->document;
+
+        $mapper = new FieldByClassEnhancer('_content', '_controller', $mapping);
+        $request = Request::create('/test', $method);
+        $this->assertEquals($expected, $mapper->enhance($defaults, $request));
+    }
+
+    public function getMethodDependingDefaults()
+    {
+        return array(
+            // old behavior should stay, even for an non-GET request
+            array(
+                array(
+                    'Symfony\Cmf\Component\Routing\Tests\Enhancer\RouteObject' => 'cmf_content.controller:indexAction'
+                ),
+                Request::METHOD_POST,
+                array(
+                    '_controller' => 'cmf_content.controller:indexAction'
+                ),
+            ),
+            array(
+                array(
+                    'Symfony\Cmf\Component\Routing\Tests\Enhancer\RouteObject' => array(
+                        array(
+                            'methods' => array('put', 'post'),
+                            'controller' => 'service:method'
+                        ),
+                    ),
+                ),
+                Request::METHOD_POST,
+                array(
+                    '_controller' => 'service:method'
+                ),
+            ),
+            array(
+                array(
+                    'Symfony\Cmf\Component\Routing\Tests\Enhancer\RouteObject' => array(
+                        array(
+                            'methods' => array('put', 'post'),
+                            'controller' => 'service:method'
+                        ),
+                    ),
+                ),
+                Request::METHOD_PUT,
+                array(
+                    '_controller' => 'service:method'
+                ),
+            ),
+            array(
+                array(
+                    'Symfony\Cmf\Component\Routing\Tests\Enhancer\RouteObject' => array(
+                        array(
+                            'methods' => array('put', 'post'),
+                            'controller' => 'service:method'
+                        ),
+                        array(
+                            'methods' => array('any'),
+                            'controller' => 'service:readMethod'
+                        ),
+                    ),
+                ),
+                Request::METHOD_PUT,
+                array(
+                    '_controller' => 'service:method'
+                ),
+            ),
+            array(
+                array(
+                    'Symfony\Cmf\Component\Routing\Tests\Enhancer\RouteObject' => array(
+                        array(
+                            'methods' => array('put', 'post'),
+                            'controller' => 'service:method'
+                        ),
+                        array(
+                            'methods' => array('any'),
+                            'controller' => 'service:readMethod'
+                        ),
+                    ),
+                ),
+                Request::METHOD_PATCH,
+                array(
+                    '_controller' => 'service:readMethod'
+                ),
+            ),
+        );
+    }
 }

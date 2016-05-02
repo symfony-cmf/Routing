@@ -40,6 +40,17 @@ class FieldByClassEnhancer implements RouteEnhancerInterface
     protected $map;
 
     /**
+     * Key that can should be used in a http method aware defaults configuration.
+     */
+    const KEY_METHODS = 'methods';
+    const KEY_CONTROLLER = 'controller';
+
+    /**
+     * Matches all http methods.
+     */
+    const METHOD_ANY = 'any';
+
+    /**
      * @param string $source the field name of the class
      * @param string $target the field name to set from the map
      * @param array  $map    the map of class names to field values
@@ -74,12 +85,38 @@ class FieldByClassEnhancer implements RouteEnhancerInterface
         foreach ($this->map as $class => $value) {
             if ($defaults[$this->source] instanceof $class) {
                 // found a matching entry in the map
-                $defaults[$this->target] = $value;
+                $defaults[$this->target] = is_array($value) ? $this->handleHTTPMethodAware($value, $request) : $value;
 
                 return $defaults;
             }
         }
 
         return $defaults;
+    }
+
+    /**
+     * Some values of an map entry can contain http method depending configuration to set i.e. the controller.
+     *
+     * @param []      $values
+     * @param Request $request
+     *
+     * @return string|array
+     */
+    private function handleHTTPMethodAware($values, Request $request)
+    {
+        foreach ($values as $value) {
+            if (!isset($value[self::KEY_METHODS]) || !isset($value[self::KEY_CONTROLLER])) {
+                continue;
+            }
+
+            if (is_array($value[self::KEY_METHODS])
+                && (in_array(strtolower($request->getMethod()), $value[self::KEY_METHODS])
+                || in_array(self::METHOD_ANY, $value[self::KEY_METHODS]))
+            ) {
+                return $value[self::KEY_CONTROLLER];
+            }
+        }
+
+        return $values;
     }
 }
