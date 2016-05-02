@@ -90,7 +90,7 @@ class FieldByClassEnhancerTest extends CmfUnitTestCase
                 array(
                     'Symfony\Cmf\Component\Routing\Tests\Enhancer\RouteObject' => 'cmf_content.controller:indexAction',
                 ),
-                Request::METHOD_POST,
+                'POST',
                 array('_controller' => 'cmf_content.controller:indexAction'),
             ),
             // one of the methods is matching
@@ -103,7 +103,7 @@ class FieldByClassEnhancerTest extends CmfUnitTestCase
                         ),
                     ),
                 ),
-                Request::METHOD_POST,
+                'POST',
                 array('_controller' => 'service:method'),
             ),
             // one of the methods is matching
@@ -116,7 +116,7 @@ class FieldByClassEnhancerTest extends CmfUnitTestCase
                         ),
                     ),
                 ),
-                Request::METHOD_PUT,
+                'PUT',
                 array('_controller' => 'service:method'),
             ),
             // any should match but put comes first
@@ -133,7 +133,7 @@ class FieldByClassEnhancerTest extends CmfUnitTestCase
                         ),
                     ),
                 ),
-                Request::METHOD_PUT,
+                'PUT',
                 array('_controller' => 'service:method'),
             ),
             // any is matching
@@ -150,7 +150,7 @@ class FieldByClassEnhancerTest extends CmfUnitTestCase
                         ),
                     ),
                 ),
-                Request::METHOD_PATCH,
+                'PATCH',
                 array('_controller' => 'service:readMethod'),
             ),
         );
