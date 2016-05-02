@@ -88,76 +88,70 @@ class FieldByClassEnhancerTest extends CmfUnitTestCase
             // old behavior should stay, even for an non-GET request
             array(
                 array(
-                    'Symfony\Cmf\Component\Routing\Tests\Enhancer\RouteObject' => 'cmf_content.controller:indexAction'
+                    'Symfony\Cmf\Component\Routing\Tests\Enhancer\RouteObject' => 'cmf_content.controller:indexAction',
                 ),
                 Request::METHOD_POST,
-                array(
-                    '_controller' => 'cmf_content.controller:indexAction'
-                ),
+                array('_controller' => 'cmf_content.controller:indexAction'),
             ),
+            // one of the methods is matching
             array(
                 array(
                     'Symfony\Cmf\Component\Routing\Tests\Enhancer\RouteObject' => array(
                         array(
                             'methods' => array('put', 'post'),
-                            'controller' => 'service:method'
+                            'controller' => 'service:method',
                         ),
                     ),
                 ),
                 Request::METHOD_POST,
-                array(
-                    '_controller' => 'service:method'
-                ),
+                array('_controller' => 'service:method'),
             ),
+            // one of the methods is matching
             array(
                 array(
                     'Symfony\Cmf\Component\Routing\Tests\Enhancer\RouteObject' => array(
                         array(
                             'methods' => array('put', 'post'),
-                            'controller' => 'service:method'
+                            'controller' => 'service:method',
                         ),
                     ),
                 ),
                 Request::METHOD_PUT,
-                array(
-                    '_controller' => 'service:method'
-                ),
+                array('_controller' => 'service:method'),
             ),
+            // any should match but put comes first
             array(
                 array(
                     'Symfony\Cmf\Component\Routing\Tests\Enhancer\RouteObject' => array(
                         array(
                             'methods' => array('put', 'post'),
-                            'controller' => 'service:method'
+                            'controller' => 'service:method',
                         ),
                         array(
                             'methods' => array('any'),
-                            'controller' => 'service:readMethod'
+                            'controller' => 'service:readMethod',
                         ),
                     ),
                 ),
                 Request::METHOD_PUT,
-                array(
-                    '_controller' => 'service:method'
-                ),
+                array('_controller' => 'service:method'),
             ),
+            // any is matching
             array(
                 array(
                     'Symfony\Cmf\Component\Routing\Tests\Enhancer\RouteObject' => array(
                         array(
                             'methods' => array('put', 'post'),
-                            'controller' => 'service:method'
+                            'controller' => 'service:method',
                         ),
                         array(
                             'methods' => array('any'),
-                            'controller' => 'service:readMethod'
+                            'controller' => 'service:readMethod',
                         ),
                     ),
                 ),
                 Request::METHOD_PATCH,
-                array(
-                    '_controller' => 'service:readMethod'
-                ),
+                array('_controller' => 'service:readMethod'),
             ),
         );
     }
