@@ -29,7 +29,7 @@ class DynamicRouterTest extends CmfUnitTestCase
     protected $context;
     public $request;
 
-    protected $url = '/foo/bar';
+    const URL = '/foo/bar';
 
     public function setUp()
     {
@@ -40,7 +40,7 @@ class DynamicRouterTest extends CmfUnitTestCase
         $this->enhancer = $this->buildMock('Symfony\Cmf\Component\Routing\Enhancer\RouteEnhancerInterface', array('enhance'));
 
         $this->context = $this->buildMock('Symfony\Component\Routing\RequestContext');
-        $this->request = Request::create($this->url);
+        $this->request = Request::create(self::URL);
 
         $this->router = new DynamicRouter($this->context, $this->matcher, $this->generator);
         $this->router->addRouteEnhancer($this->enhancer);
@@ -142,18 +142,21 @@ class DynamicRouterTest extends CmfUnitTestCase
         $routeDefaults = array('foo' => 'bar');
         $this->matcher->expects($this->once())
             ->method('match')
-            ->with($this->url)
+            ->with(self::URL)
             ->will($this->returnValue($routeDefaults))
         ;
 
         $expected = array('this' => 'that');
+        $test = $this;
         $this->enhancer->expects($this->once())
             ->method('enhance')
-            ->with($this->equalTo($routeDefaults), $this->equalTo($this->request))
+            ->with($this->equalTo($routeDefaults), $this->callback(function (Request $request) use ($test) {
+                return DynamicRouterTest::URL === $request->server->get('REQUEST_URI');
+            }))
             ->will($this->returnValue($expected))
         ;
 
-        $results = $this->router->match($this->url);
+        $results = $this->router->match(self::URL);
 
         $this->assertEquals($expected, $results);
     }
@@ -164,15 +167,17 @@ class DynamicRouterTest extends CmfUnitTestCase
 
         $this->matcher->expects($this->once())
             ->method('match')
-            ->with($this->url)
+            ->with(self::URL)
             ->will($this->returnValue($routeDefaults))
         ;
 
         $expected = array('this' => 'that');
+        $test = $this;
         $this->enhancer->expects($this->once())
             ->method('enhance')
-            // somehow request object gets confused, check on instance only
-            ->with($this->equalTo($routeDefaults), $this->isInstanceOf('Symfony\Component\HttpFoundation\Request'))
+            ->with($this->equalTo($routeDefaults), $this->callback(function (Request $request) use ($test) {
+                return DynamicRouterTest::URL === $request->server->get('REQUEST_URI');
+            }))
             ->will($this->returnValue($expected))
         ;
 
@@ -195,9 +200,12 @@ class DynamicRouterTest extends CmfUnitTestCase
         ;
 
         $expected = array('this' => 'that');
+        $test = $this;
         $this->enhancer->expects($this->once())
             ->method('enhance')
-            ->with($this->equalTo($routeDefaults), $this->equalTo($this->request))
+            ->with($this->equalTo($routeDefaults), $this->callback(function (Request $request) use ($test) {
+                return DynamicRouterTest::URL === $request->server->get('REQUEST_URI');
+            }))
             ->will($this->returnValue($expected))
         ;
 
@@ -223,7 +231,7 @@ class DynamicRouterTest extends CmfUnitTestCase
             ->method('enhance')
         ;
 
-        $router->match($this->url);
+        $router->match(self::URL);
     }
 
     /**
@@ -256,7 +264,7 @@ class DynamicRouterTest extends CmfUnitTestCase
         $matcher = $this->buildMock('Symfony\Component\Routing\Matcher\RequestMatcherInterface', array('matchRequest', 'setContext', 'getContext'));
         $router = new DynamicRouter($this->context, $matcher, $this->generator);
 
-        $router->match($this->url);
+        $router->match(self::URL);
     }
 
     /**
@@ -301,11 +309,11 @@ class DynamicRouterTest extends CmfUnitTestCase
         $routeDefaults = array('foo' => 'bar');
         $this->matcher->expects($this->once())
             ->method('match')
-            ->with($this->url)
+            ->with(self::URL)
             ->will($this->returnValue($routeDefaults))
         ;
 
-        $this->assertEquals($routeDefaults, $router->match($this->url));
+        $this->assertEquals($routeDefaults, $router->match(self::URL));
     }
 
     public function testEventHandlerRequest()
@@ -327,7 +335,7 @@ class DynamicRouterTest extends CmfUnitTestCase
         $routeDefaults = array('foo' => 'bar');
         $this->matcher->expects($this->once())
             ->method('match')
-            ->with($this->url)
+            ->with(self::URL)
             ->will($this->returnValue($routeDefaults))
         ;
 
