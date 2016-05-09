@@ -28,7 +28,7 @@ class ContentRepositoryEnhancerTest extends CmfUnitTestCase
             ->method('findById')
             ->will($this->returnValue('document'))
         ;
-        $this->mapper = new ContentRepositoryEnhancer($cRepository, 'content_repository');
+        $this->mapper = new ContentRepositoryEnhancer($cRepository);
 
         $this->request = Request::create('/test');
     }

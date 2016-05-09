@@ -30,7 +30,8 @@ class FieldByClassEnhancerTest extends CmfUnitTestCase
 
         $mapping = array('Symfony\Cmf\Component\Routing\Tests\Enhancer\RouteObject' => 'cmf_content.controller:indexAction');
 
-        $this->mapper = new FieldByClassEnhancer('_content', '_controller', $mapping, 'field_by_class');
+        $this->mapper = new FieldByClassEnhancer('_content', '_controller', 'field_by_class');
+        $this->mapper->setMapping($mapping);
 
         $this->request = Request::create('/test');
     }
@@ -65,94 +66,5 @@ class FieldByClassEnhancerTest extends CmfUnitTestCase
     {
         $defaults = array('foo' => 'bar');
         $this->assertEquals($defaults, $this->mapper->enhance($defaults, $this->request));
-    }
-
-    /**
-     * @dataProvider getMethodDependingDefaults
-     */
-    public function testHTTPMethodDepending($mapping, $method, $expected)
-    {
-        $defaults = array(
-            '_content' => $this->document,
-        );
-        $expected['_content'] = $this->document;
-
-        $mapper = new FieldByClassEnhancer('_content', '_controller', $mapping, 'field_by_class');
-        $request = Request::create('/test', $method);
-        $this->assertEquals($expected, $mapper->enhance($defaults, $request));
-    }
-
-    public function getMethodDependingDefaults()
-    {
-        return array(
-            // old behavior should stay, even for an non-GET request
-            array(
-                array(
-                    'Symfony\Cmf\Component\Routing\Tests\Enhancer\RouteObject' => 'cmf_content.controller:indexAction',
-                ),
-                'POST',
-                array('_controller' => 'cmf_content.controller:indexAction'),
-            ),
-            // one of the methods is matching
-            array(
-                array(
-                    'Symfony\Cmf\Component\Routing\Tests\Enhancer\RouteObject' => array(
-                        array(
-                            'methods' => array('put', 'post'),
-                            'controller' => 'service:method',
-                        ),
-                    ),
-                ),
-                'POST',
-                array('_controller' => 'service:method'),
-            ),
-            // one of the methods is matching
-            array(
-                array(
-                    'Symfony\Cmf\Component\Routing\Tests\Enhancer\RouteObject' => array(
-                        array(
-                            'methods' => array('put', 'post'),
-                            'controller' => 'service:method',
-                        ),
-                    ),
-                ),
-                'PUT',
-                array('_controller' => 'service:method'),
-            ),
-            // any should match but put comes first
-            array(
-                array(
-                    'Symfony\Cmf\Component\Routing\Tests\Enhancer\RouteObject' => array(
-                        array(
-                            'methods' => array('put', 'post'),
-                            'controller' => 'service:method',
-                        ),
-                        array(
-                            'methods' => array('any'),
-                            'controller' => 'service:readMethod',
-                        ),
-                    ),
-                ),
-                'PUT',
-                array('_controller' => 'service:method'),
-            ),
-            // any is matching
-            array(
-                array(
-                    'Symfony\Cmf\Component\Routing\Tests\Enhancer\RouteObject' => array(
-                        array(
-                            'methods' => array('put', 'post'),
-                            'controller' => 'service:method',
-                        ),
-                        array(
-                            'methods' => array('any'),
-                            'controller' => 'service:readMethod',
-                        ),
-                    ),
-                ),
-                'PATCH',
-                array('_controller' => 'service:readMethod'),
-            ),
-        );
     }
 }

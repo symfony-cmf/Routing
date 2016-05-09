@@ -19,7 +19,7 @@ use Symfony\Component\HttpFoundation\Request;
  *
  * @author David Buchmann
  */
-class FieldMapEnhancer implements RouteEnhancerInterface
+class FieldMapEnhancer implements RouteEnhancerInterface, WithMapping
 {
     /**
      * @var string field for key in hashmap lookup
@@ -32,7 +32,7 @@ class FieldMapEnhancer implements RouteEnhancerInterface
     /**
      * @var array containing the mapping between the source field value and target field value
      */
-    protected $hashmap;
+    protected $mapping;
     
     /**
      * @var string
@@ -42,14 +42,12 @@ class FieldMapEnhancer implements RouteEnhancerInterface
     /**
      * @param string $source the field to read
      * @param string $target the field to write the result of the lookup into
-     * @param array $hashmap for looking up value from source and get value for target
      * @param string $name
      */
-    public function __construct($source, $target, array $hashmap, $name)
+    public function __construct($source, $target, $name)
     {
         $this->source = $source;
         $this->target = $target;
-        $this->hashmap = $hashmap;
         $this->name = $name;
     }
 
@@ -66,11 +64,11 @@ class FieldMapEnhancer implements RouteEnhancerInterface
         if (!isset($defaults[$this->source])) {
             return $defaults;
         }
-        if (!isset($this->hashmap[$defaults[$this->source]])) {
+        if (!isset($this->mapping[$defaults[$this->source]])) {
             return $defaults;
         }
 
-        $defaults[$this->target] = $this->hashmap[$defaults[$this->source]];
+        $defaults[$this->target] = $this->mapping[$defaults[$this->source]];
 
         return $defaults;
     }
@@ -81,5 +79,15 @@ class FieldMapEnhancer implements RouteEnhancerInterface
     public function isName($name)
     {
         return $this->name = $name;
+    }
+
+    /**
+     * An enhancer that needs special parameters to work with.
+     *
+     * @param $mapping
+     */
+    public function setMapping($mapping)
+    {
+        $this->mapping = $mapping;
     }
 }

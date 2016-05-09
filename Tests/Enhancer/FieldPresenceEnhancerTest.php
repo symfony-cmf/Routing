@@ -25,7 +25,8 @@ class FieldPresenceEnhancerTest extends CmfUnitTestCase
 
     public function setUp()
     {
-        $this->mapper = new FieldPresenceEnhancer('_template', '_controller', 'cmf_content.controller:indexAction', 'field_presence');
+        $this->mapper = new FieldPresenceEnhancer('_template', '_controller', 'field_presence');
+        $this->mapper->setMapping('cmf_content.controller:indexAction');
 
         $this->request = Request::create('/test');
     }
@@ -57,7 +58,8 @@ class FieldPresenceEnhancerTest extends CmfUnitTestCase
 
     public function testHasNoSource()
     {
-        $this->mapper = new FieldPresenceEnhancer(null, '_controller', 'cmf_content.controller:indexAction', 'field_presence');
+        $this->mapper = new FieldPresenceEnhancer(null, '_controller', 'field_presence');
+        $this->mapper->setMapping('cmf_content.controller:indexAction');
 
         $defaults = array('foo' => 'bar');
         $expected = array(

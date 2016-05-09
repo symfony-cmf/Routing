@@ -28,6 +28,22 @@ class ConditionalEnhancer implements RouteEnhancerInterface
      */
     private $mapping;
 
+    /**
+     * @var Request
+     */
+    private $request;
+
+    /**
+     * Key that can should be used in a http method aware defaults configuration.
+     */
+    const KEY_METHODS = 'methods';
+    const KEY_VALUE = 'value';
+
+    /**
+     * Matches all http methods.
+     */
+    const METHOD_ANY = 'any';
+
     public function __construct(array $mapping)
     {
         $this->mapping = $mapping;
@@ -38,8 +54,9 @@ class ConditionalEnhancer implements RouteEnhancerInterface
      */
     public function enhance(array $defaults, Request $request)
     {
+        $this->request = $request;
         foreach ($this->getRouteEnhancers() as $enhancer) {
-            $defaults = $enhancer->enhance($defaults, $request);
+            $defaults = $enhancer->enhance($defaults, $this->request);
         }
 
         return $defaults;
@@ -95,15 +112,28 @@ class ConditionalEnhancer implements RouteEnhancerInterface
         $sortedEnhancers = array();
         krsort($this->enhancers);
 
-        foreach ($this->mapping as $name => $mapping) {
-            foreach ($this->enhancers as $enhancers) {
-                $sortedEnhancers = array_merge($sortedEnhancers, array_filter(
-                    $enhancers,
-                    function (RouteEnhancerInterface $enhancer) use ($name) {
-                        return $enhancer->isName($name);
+        $mapping = $this->mapping;
+        foreach ($this->enhancers as $enhancers) {
+            $map = array_map(
+                function (RouteEnhancerInterface $enhancer) use ($mapping) {
+                    foreach ($mapping as $name => $map) {
+                        if ($enhancer instanceof WithMapping && $enhancer->isName($name)) {
+                            $enhancer->setMapping($this->transformMethodAwareMapping($map));
+
+                            return $enhancer;
+                        }
                     }
-                ));
-            }
+
+                    return $enhancer instanceof WithMapping ? null : $enhancer;
+                },
+                $enhancers
+            );
+            $sortedEnhancers = array_merge($sortedEnhancers, array_filter($map, function ($enhancer) {
+                return null !== $enhancer;
+            }));
+        }
+        foreach ($this->mapping as $name => $mapping) {
+
         }
 
         return $sortedEnhancers;
@@ -113,7 +143,27 @@ class ConditionalEnhancer implements RouteEnhancerInterface
      * {@inheritdoc}
      */
     public function isName($name)
-    {&
+    {
         return false;
+    }
+
+    private function transformMethodAwareMapping($mappings)
+    {
+        $transformed = array();
+        foreach ($mappings as $mapping) {
+            if (!is_array($mapping) || !isset($mapping[self::KEY_METHODS])|| !isset($mapping[self::KEY_VALUE])) {
+                $transformed[] = $mapping;
+                continue;
+            }
+
+            if (is_array($mapping[self::KEY_METHODS])
+                && (in_array(strtolower($this->request->getMethod()), $mapping[self::KEY_METHODS])
+                    || in_array(self::METHOD_ANY, $mapping[self::KEY_METHODS]))
+            ) {
+                $transformed[] = $mapping[self::KEY_VALUE];
+            }
+        }
+
+        return $transformed;
     }
 }

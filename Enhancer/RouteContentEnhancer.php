@@ -28,27 +28,20 @@ class RouteContentEnhancer implements RouteEnhancerInterface
      * @var string field for the route class
      */
     protected $routefield;
-
     /**
      * @var string field to write hashmap lookup result into
      */
     protected $target;
 
     /**
-     * @var string
-     */
-    private $name;
-
-    /**
      * @param string $routefield the field name of the route class
-     * @param string $target the field name to set from the map
-     * @param string $name
+     * @param string $target     the field name to set from the map
+     * @param array  $hashmap    the map of class names to field values
      */
-    public function __construct($routefield, $target, $name)
+    public function __construct($routefield, $target)
     {
         $this->routefield = $routefield;
         $this->target = $target;
-        $this->name = $name;
     }
 
     /**
@@ -81,13 +74,5 @@ class RouteContentEnhancer implements RouteEnhancerInterface
         $defaults[$this->target] = $content;
 
         return $defaults;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isName($name)
-    {
-        return $this->name = $name;
     }
 }
