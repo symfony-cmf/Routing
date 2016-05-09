@@ -30,7 +30,7 @@ class RegisterRouteEnhancersPassTest extends \PHPUnit_Framework_TestCase
         $definition = new Definition('router');
         $builder->expects($this->at(0))
             ->method('hasDefinition')
-            ->with('cmf_routing.dynamic_router')
+            ->with('cmf_routing.conditional_enhancer')
             ->will($this->returnValue(true))
         ;
         $builder->expects($this->any())
@@ -39,7 +39,7 @@ class RegisterRouteEnhancersPassTest extends \PHPUnit_Framework_TestCase
         ;
         $builder->expects($this->any())
             ->method('getDefinition')
-            ->with('cmf_routing.dynamic_router')
+            ->with('cmf_routing.conditional_enhancer')
             ->will($this->returnValue($definition))
         ;
 
@@ -60,7 +60,7 @@ class RegisterRouteEnhancersPassTest extends \PHPUnit_Framework_TestCase
         $builder = $this->getContainerBuilderMock();
         $builder->expects($this->once())
             ->method('hasDefinition')
-            ->with('cmf_routing.dynamic_router')
+            ->with('cmf_routing.conditional_enhancer')
             ->will($this->returnValue(false))
         ;
 

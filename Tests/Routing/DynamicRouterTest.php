@@ -42,8 +42,7 @@ class DynamicRouterTest extends CmfUnitTestCase
         $this->context = $this->buildMock('Symfony\Component\Routing\RequestContext');
         $this->request = Request::create(self::URL);
 
-        $this->router = new DynamicRouter($this->context, $this->matcher, $this->generator);
-        $this->router->addRouteEnhancer($this->enhancer);
+        $this->router = new DynamicRouter($this->context, $this->matcher, $this->generator, $this->enhancer);
     }
 
     /**
@@ -64,7 +63,7 @@ class DynamicRouterTest extends CmfUnitTestCase
     public function testRouteCollectionLazy()
     {
         $provider = $this->getMock('Symfony\Cmf\Component\Routing\RouteProviderInterface');
-        $router = new DynamicRouter($this->context, $this->matcher, $this->generator, '', null, $provider);
+        $router = new DynamicRouter($this->context, $this->matcher, $this->generator, $this->enhancer, '', null, $provider);
 
         $collection = $router->getRouteCollection();
         $this->assertInstanceOf('Symfony\Cmf\Component\Routing\LazyRouteCollection', $collection);
@@ -114,7 +113,7 @@ class DynamicRouterTest extends CmfUnitTestCase
     public function testSupportsNonversatile()
     {
         $generator = $this->buildMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface', array('generate', 'setContext', 'getContext'));
-        $router = new DynamicRouter($this->context, $this->matcher, $generator);
+        $router = new DynamicRouter($this->context, $this->matcher, $generator, $this->enhancer);
         $this->assertInternalType('string', $router->getRouteDebugMessage('test'));
 
         $this->assertTrue($router->supports('some string'));
@@ -191,7 +190,7 @@ class DynamicRouterTest extends CmfUnitTestCase
         $routeDefaults = array('foo' => 'bar');
 
         $matcher = $this->buildMock('Symfony\Component\Routing\Matcher\RequestMatcherInterface', array('matchRequest', 'setContext', 'getContext'));
-        $router = new DynamicRouter($this->context, $matcher, $this->generator);
+        $router = new DynamicRouter($this->context, $matcher, $this->generator, $this->enhancer);
 
         $matcher->expects($this->once())
             ->method('matchRequest')
@@ -209,8 +208,6 @@ class DynamicRouterTest extends CmfUnitTestCase
             ->will($this->returnValue($expected))
         ;
 
-        $router->addRouteEnhancer($this->enhancer);
-
         $this->assertEquals($expected, $router->matchRequest($this->request));
     }
 
@@ -220,8 +217,7 @@ class DynamicRouterTest extends CmfUnitTestCase
      */
     public function testMatchFilter()
     {
-        $router = new DynamicRouter($this->context, $this->matcher, $this->generator, '#/different/prefix.*#');
-        $router->addRouteEnhancer($this->enhancer);
+        $router = new DynamicRouter($this->context, $this->matcher, $this->generator, $this->enhancer, '#/different/prefix.*#');
 
         $this->matcher->expects($this->never())
             ->method('match')
@@ -241,8 +237,7 @@ class DynamicRouterTest extends CmfUnitTestCase
     {
         $matcher = $this->buildMock('Symfony\Component\Routing\Matcher\RequestMatcherInterface', array('matchRequest', 'setContext', 'getContext'));
 
-        $router = new DynamicRouter($this->context, $matcher, $this->generator, '#/different/prefix.*#');
-        $router->addRouteEnhancer($this->enhancer);
+        $router = new DynamicRouter($this->context, $matcher, $this->generator, $this->enhancer, '#/different/prefix.*#');
 
         $matcher->expects($this->never())
             ->method('matchRequest')
@@ -262,7 +257,7 @@ class DynamicRouterTest extends CmfUnitTestCase
     public function testMatchUrlWithRequestMatcher()
     {
         $matcher = $this->buildMock('Symfony\Component\Routing\Matcher\RequestMatcherInterface', array('matchRequest', 'setContext', 'getContext'));
-        $router = new DynamicRouter($this->context, $matcher, $this->generator);
+        $router = new DynamicRouter($this->context, $matcher, $this->generator, $this->enhancer);
 
         $router->match(self::URL);
     }
@@ -272,7 +267,7 @@ class DynamicRouterTest extends CmfUnitTestCase
      */
     public function testInvalidMatcher()
     {
-        new DynamicRouter($this->context, $this, $this->generator);
+        new DynamicRouter($this->context, $this, $this->generator, $this->enhancer);
     }
 
     public function testRouteDebugMessage()
@@ -289,7 +284,7 @@ class DynamicRouterTest extends CmfUnitTestCase
     public function testRouteDebugMessageNonversatile()
     {
         $generator = $this->buildMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface', array('generate', 'setContext', 'getContext'));
-        $router = new DynamicRouter($this->context, $this->matcher, $generator);
+        $router = new DynamicRouter($this->context, $this->matcher, $generator, $this->enhancer);
         $this->assertInternalType('string', $router->getRouteDebugMessage('test'));
     }
 
@@ -299,7 +294,7 @@ class DynamicRouterTest extends CmfUnitTestCase
     public function testEventHandler()
     {
         $eventDispatcher = $this->buildMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
-        $router = new DynamicRouter($this->context, $this->matcher, $this->generator, '', $eventDispatcher);
+        $router = new DynamicRouter($this->context, $this->matcher, $this->generator, $this->enhancer, '', $eventDispatcher);
 
         $eventDispatcher->expects($this->once())
             ->method('dispatch')
@@ -312,6 +307,10 @@ class DynamicRouterTest extends CmfUnitTestCase
             ->with(self::URL)
             ->will($this->returnValue($routeDefaults))
         ;
+        $this->enhancer->expects($this->once())
+            ->method('enhance')
+            ->with($this->equalTo($routeDefaults))
+            ->will($this->returnValue($routeDefaults));
 
         $this->assertEquals($routeDefaults, $router->match(self::URL));
     }
@@ -319,7 +318,7 @@ class DynamicRouterTest extends CmfUnitTestCase
     public function testEventHandlerRequest()
     {
         $eventDispatcher = $this->buildMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
-        $router = new DynamicRouter($this->context, $this->matcher, $this->generator, '', $eventDispatcher);
+        $router = new DynamicRouter($this->context, $this->matcher, $this->generator, $this->enhancer, '', $eventDispatcher);
 
         $that = $this;
         $eventDispatcher->expects($this->once())
@@ -338,6 +337,10 @@ class DynamicRouterTest extends CmfUnitTestCase
             ->with(self::URL)
             ->will($this->returnValue($routeDefaults))
         ;
+        $this->enhancer->expects($this->once())
+            ->method('enhance')
+            ->with($this->equalTo($routeDefaults))
+            ->will($this->returnValue($routeDefaults));
 
         $this->assertEquals($routeDefaults, $router->matchRequest($this->request));
     }
@@ -345,7 +348,7 @@ class DynamicRouterTest extends CmfUnitTestCase
     public function testEventHandlerGenerate()
     {
         $eventDispatcher = $this->buildMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
-        $router = new DynamicRouter($this->context, $this->matcher, $this->generator, '', $eventDispatcher);
+        $router = new DynamicRouter($this->context, $this->matcher, $this->generator, $this->enhancer, '', $eventDispatcher);
 
         $oldname = 'old_route_name';
         $newname = 'new_route_name';
