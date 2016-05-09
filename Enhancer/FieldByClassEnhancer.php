@@ -51,15 +51,22 @@ class FieldByClassEnhancer implements RouteEnhancerInterface
     const METHOD_ANY = 'any';
 
     /**
+     * @var
+     */
+    private $name;
+
+    /**
      * @param string $source the field name of the class
      * @param string $target the field name to set from the map
-     * @param array  $map    the map of class names to field values
+     * @param array $map the map of class names to field values
+     * @param string $name
      */
-    public function __construct($source, $target, $map)
+    public function __construct($source, $target, $map, $name)
     {
         $this->source = $source;
         $this->target = $target;
         $this->map = $map;
+        $this->name = $name;
     }
 
     /**
@@ -118,5 +125,13 @@ class FieldByClassEnhancer implements RouteEnhancerInterface
         }
 
         return $values;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isName($name)
+    {
+        return $this->name = $name;
     }
 }

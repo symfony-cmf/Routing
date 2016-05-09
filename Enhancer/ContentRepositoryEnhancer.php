@@ -40,20 +40,28 @@ class ContentRepositoryEnhancer implements RouteEnhancerInterface
      * @var string
      */
     private $source;
+    
+    /**
+     * @var
+     */
+    private $name;
 
     /**
      * @param ContentRepositoryInterface $contentRepository repository to search for the content
-     * @param string                     $target            the field name to set content
-     * @param string                     $source            the field name of the request parameter that contains the id
+     * @param string $name
+     * @param string $target the field name to set content
+     * @param string $source the field name of the request parameter that contains the id
      */
     public function __construct(
         ContentRepositoryInterface $contentRepository,
+        $name,
         $target = RouteObjectInterface::CONTENT_OBJECT,
         $source = RouteObjectInterface::CONTENT_ID
     ) {
         $this->contentRepository = $contentRepository;
         $this->target = $target;
         $this->source = $source;
+        $this->name = $name;
     }
 
     /**
@@ -66,5 +74,13 @@ class ContentRepositoryEnhancer implements RouteEnhancerInterface
         }
 
         return $defaults;
+    }
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function isName($name)
+    {
+        return $this->name = $name;
     }
 }

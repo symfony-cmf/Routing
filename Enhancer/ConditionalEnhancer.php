@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 class ConditionalEnhancer implements RouteEnhancerInterface
 {
     /**
-     * @var RouteEnhancerInterface[]
+     * @var RouteEnhancerInterface[][]
      */
     protected $enhancers = array();
 
@@ -20,7 +20,19 @@ class ConditionalEnhancer implements RouteEnhancerInterface
      * @var RouteEnhancerInterface[]
      */
     protected $sortedEnhancers = array();
-    
+
+    /**
+     * The complete and available mapping separated by its name as the key.
+     *
+     * @var array
+     */
+    private $mapping;
+
+    public function __construct(array $mapping)
+    {
+        $this->mapping = $mapping;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -65,7 +77,7 @@ class ConditionalEnhancer implements RouteEnhancerInterface
     public function getRouteEnhancers()
     {
         if (empty($this->sortedEnhancers)) {
-            $this->sortedEnhancers = $this->sortRouteEnhancers();
+            $this->sortedEnhancers = $this->sortAndWarmEnhancers();
         }
 
         return $this->sortedEnhancers;
@@ -78,15 +90,30 @@ class ConditionalEnhancer implements RouteEnhancerInterface
      *
      * @return RouteEnhancerInterface[] the sorted enhancers
      */
-    protected function sortRouteEnhancers()
+    protected function sortAndWarmEnhancers()
     {
         $sortedEnhancers = array();
         krsort($this->enhancers);
 
-        foreach ($this->enhancers as $enhancers) {
-            $sortedEnhancers = array_merge($sortedEnhancers, $enhancers);
+        foreach ($this->mapping as $name => $mapping) {
+            foreach ($this->enhancers as $enhancers) {
+                $sortedEnhancers = array_merge($sortedEnhancers, array_filter(
+                    $enhancers,
+                    function (RouteEnhancerInterface $enhancer) use ($name) {
+                        return $enhancer->isName($name);
+                    }
+                ));
+            }
         }
 
         return $sortedEnhancers;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isName($name)
+    {&
+        return false;
     }
 }

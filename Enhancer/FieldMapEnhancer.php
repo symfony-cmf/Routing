@@ -33,17 +33,24 @@ class FieldMapEnhancer implements RouteEnhancerInterface
      * @var array containing the mapping between the source field value and target field value
      */
     protected $hashmap;
+    
+    /**
+     * @var string
+     */
+    private $name;
 
     /**
-     * @param string $source  the field to read
-     * @param string $target  the field to write the result of the lookup into
-     * @param array  $hashmap for looking up value from source and get value for target
+     * @param string $source the field to read
+     * @param string $target the field to write the result of the lookup into
+     * @param array $hashmap for looking up value from source and get value for target
+     * @param string $name
      */
-    public function __construct($source, $target, array $hashmap)
+    public function __construct($source, $target, array $hashmap, $name)
     {
         $this->source = $source;
         $this->target = $target;
         $this->hashmap = $hashmap;
+        $this->name = $name;
     }
 
     /**
@@ -66,5 +73,13 @@ class FieldMapEnhancer implements RouteEnhancerInterface
         $defaults[$this->target] = $this->hashmap[$defaults[$this->source]];
 
         return $defaults;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isName($name)
+    {
+        return $this->name = $name;
     }
 }

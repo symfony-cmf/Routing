@@ -30,8 +30,7 @@ class RouteContentEnhancerTest extends CmfUnitTestCase
         $this->document = $this->buildMock('Symfony\Cmf\Component\Routing\Tests\Enhancer\RouteObject',
                                             array('getContent', 'getRouteDefaults', 'getUrl'));
 
-        $this->mapper = new RouteContentEnhancer(RouteObjectInterface::ROUTE_OBJECT, '_content');
-
+        $this->mapper = new RouteContentEnhancer(RouteObjectInterface::ROUTE_OBJECT, '_content', 'route_content');
         $this->request = Request::create('/test');
     }
 

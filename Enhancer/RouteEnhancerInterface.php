@@ -34,4 +34,13 @@ interface RouteEnhancerInterface
      *               $defaults but may add or remove values.
      */
     public function enhance(array $defaults, Request $request);
+
+    /**
+     * Decider whether a enhancer got that name or not.
+     *
+     * @param string $name
+     *
+     * @return bool
+     */
+    public function isName($name);
 }
