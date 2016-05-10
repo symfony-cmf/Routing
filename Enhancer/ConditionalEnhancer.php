@@ -113,12 +113,13 @@ class ConditionalEnhancer implements RouteEnhancerInterface
         krsort($this->enhancers);
 
         $mapping = $this->mapping;
+        $request = $this->request;
         foreach ($this->enhancers as $enhancers) {
             $map = array_map(
-                function (RouteEnhancerInterface $enhancer) use ($mapping) {
+                function (RouteEnhancerInterface $enhancer) use ($mapping, $request) {
                     foreach ($mapping as $name => $map) {
                         if ($enhancer instanceof WithMapping && $enhancer->isName($name)) {
-                            $enhancer->setMapping($this->transformMethodAwareMapping($map));
+                            $enhancer->setMapping(ConditionalEnhancer::transformMethodAwareMapping($map, $request));
 
                             return $enhancer;
                         }
@@ -147,7 +148,7 @@ class ConditionalEnhancer implements RouteEnhancerInterface
         return false;
     }
 
-    private function transformMethodAwareMapping($mappings)
+    public static function transformMethodAwareMapping($mappings, Request $request)
     {
         $transformed = array();
         foreach ($mappings as $mapping) {
@@ -157,7 +158,7 @@ class ConditionalEnhancer implements RouteEnhancerInterface
             }
 
             if (is_array($mapping[self::KEY_METHODS])
-                && (in_array(strtolower($this->request->getMethod()), $mapping[self::KEY_METHODS])
+                && (in_array(strtolower($request->getMethod()), $mapping[self::KEY_METHODS])
                     || in_array(self::METHOD_ANY, $mapping[self::KEY_METHODS]))
             ) {
                 $transformed[] = $mapping[self::KEY_VALUE];
