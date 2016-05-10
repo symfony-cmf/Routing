@@ -19,7 +19,7 @@ use Symfony\Component\HttpFoundation\Request;
  *
  * @author David Buchmann
  */
-class FieldPresenceEnhancer implements RouteEnhancerInterface
+class FieldPresenceEnhancer implements RouteEnhancerInterface, WithMapping
 {
     /**
      * Field name for the source field that must exist. If null, the target
@@ -42,17 +42,22 @@ class FieldPresenceEnhancer implements RouteEnhancerInterface
      * @var string
      */
     private $value;
+    
+    /**
+     * @var string
+     */
+    private $name;
 
     /**
      * @param null|string $source the field name of the class, null to disable the check
-     * @param string      $target the field name to set from the map
-     * @param string      $value  value to set target field to if source field exists
+     * @param string $target the field name to set from the map
+     * @param string $name
      */
-    public function __construct($source, $target, $value)
+    public function __construct($source, $target, $name)
     {
         $this->source = $source;
         $this->target = $target;
-        $this->value = $value;
+        $this->name = $name;
     }
 
     /**
@@ -72,5 +77,23 @@ class FieldPresenceEnhancer implements RouteEnhancerInterface
         $defaults[$this->target] = $this->value;
 
         return $defaults;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isName($name)
+    {
+        return $this->name = $name;
+    }
+
+    /**
+     * An enhancer that needs special parameters to work with.
+     *
+     * @param $mapping
+     */
+    public function setMapping($mapping)
+    {
+        $this->value = $mapping;
     }
 }

@@ -24,7 +24,7 @@ use Symfony\Component\HttpFoundation\Request;
  *
  * @author David Buchmann
  */
-class FieldByClassEnhancer implements RouteEnhancerInterface
+class FieldByClassEnhancer implements RouteEnhancerInterface, WithMapping
 {
     /**
      * @var string field for the source class
@@ -37,18 +37,23 @@ class FieldByClassEnhancer implements RouteEnhancerInterface
     /**
      * @var array containing the mapping between a class name and the target value
      */
-    protected $map;
+    protected $mapping;
+
+    /**
+     * @var
+     */
+    private $name;
 
     /**
      * @param string $source the field name of the class
      * @param string $target the field name to set from the map
-     * @param array  $map    the map of class names to field values
+     * @param string $name
      */
-    public function __construct($source, $target, $map)
+    public function __construct($source, $target, $name)
     {
         $this->source = $source;
         $this->target = $target;
-        $this->map = $map;
+        $this->name = $name;
     }
 
     /**
@@ -71,7 +76,7 @@ class FieldByClassEnhancer implements RouteEnhancerInterface
         // we need to loop over the array and do instanceof in case the content
         // class extends the specified class
         // i.e. phpcr-odm generates proxy class for the content.
-        foreach ($this->map as $class => $value) {
+        foreach ($this->mapping as $class => $value) {
             if ($defaults[$this->source] instanceof $class) {
                 // found a matching entry in the map
                 $defaults[$this->target] = $value;
@@ -81,5 +86,21 @@ class FieldByClassEnhancer implements RouteEnhancerInterface
         }
 
         return $defaults;
+    }
+    
+    /**
+     * {@inheritdoc}
+     */
+    public function isName($name)
+    {
+        return $this->name = $name;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setMapping($mapping)
+    {
+        $this->mapping = $mapping;
     }
 }

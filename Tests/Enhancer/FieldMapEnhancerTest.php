@@ -32,7 +32,8 @@ class FieldMapEnhancerTest extends CmfUnitTestCase
         $this->request = Request::create('/test');
         $mapping = array('static_pages' => 'cmf_content.controller:indexAction');
 
-        $this->enhancer = new FieldMapEnhancer('type', '_controller', $mapping);
+        $this->enhancer = new FieldMapEnhancer('type', '_controller', 'field_map');
+        $this->enhancer->setMapping($mapping);
     }
 
     public function testFieldFoundInMapping()

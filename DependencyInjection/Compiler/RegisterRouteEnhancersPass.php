@@ -27,23 +27,23 @@ class RegisterRouteEnhancersPass implements CompilerPassInterface
     /**
      * @var string
      */
-    protected $dynamicRouterService;
+    protected $conditionalEnhancer;
 
     protected $enhancerTag;
 
-    public function __construct($dynamicRouterService = 'cmf_routing.dynamic_router', $enhancerTag = 'dynamic_router_route_enhancer')
+    public function __construct($conditionalEnhancer = 'cmf_routing.conditional_enhancer', $enhancerTag = 'dynamic_router_route_enhancer')
     {
-        $this->dynamicRouterService = $dynamicRouterService;
+        $this->conditionalEnhancer = $conditionalEnhancer;
         $this->enhancerTag = $enhancerTag;
     }
 
     public function process(ContainerBuilder $container)
     {
-        if (!$container->hasDefinition($this->dynamicRouterService)) {
+        if (!$container->hasDefinition($this->conditionalEnhancer)) {
             return;
         }
 
-        $router = $container->getDefinition($this->dynamicRouterService);
+        $router = $container->getDefinition($this->conditionalEnhancer);
 
         foreach ($container->findTaggedServiceIds($this->enhancerTag) as $id => $attributes) {
             $priority = isset($attributes[0]['priority']) ? $attributes[0]['priority'] : 0;
