@@ -1,6 +1,9 @@
 Changelog
 =========
 
+* **2016-05-11**: Added a ConditionalEnhancer that accepts pairs of request matcher
+  and enhancer to be called if the request matcher matches the request.
+
 1.4.0
 -----
 
