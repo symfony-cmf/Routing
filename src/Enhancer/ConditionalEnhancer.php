@@ -69,6 +69,11 @@ class ConditionalEnhancer implements RouteEnhancerInterface
         return $defaults;
     }
 
+    /**
+     * Creates a sorted list of enhancer map pairs. It is ordered by the position, which should be the key.
+     *
+     * @return array
+     */
     public function getEnhancerMap()
     {
         if (count($this->enhancerMap) === 0 || count($this->sortedEnhancerMap) > 0) {
@@ -90,12 +95,12 @@ class ConditionalEnhancer implements RouteEnhancerInterface
     /**
      * To create and add an enhancer map entry.
      *
-     * @param string        $className FQCN of the enhancer.
-     * @param string        $source    Source value for the enhancer
-     * @param string        $target    Target value for the enhancer
-     * @param []|string     $map       Map values for the enhancer
-     * @param []            $methods   List of methods the enhancer is restricted on.
-     * @param int           $position  To order the enhancer calls
+     * @param string    $className FQCN of the enhancer.
+     * @param string    $source    Source value for the enhancer
+     * @param string    $target    Target value for the enhancer
+     * @param []|string $map       Map values for the enhancer
+     * @param []        $methods   List of methods the enhancer is restricted on.
+     * @param int       $position  To order the enhancer calls
      */
     public function createAndAddMapEntry($className, $source, $target, $map, $methods = null, $position = 0)
     {
@@ -109,11 +114,11 @@ class ConditionalEnhancer implements RouteEnhancerInterface
     /**
      * To create an enhancer map entry.
      *
-     * @param string        $className FQCN of the enhancer.
-     * @param string        $source    Source value for the enhancer
-     * @param string        $target    Target value for the enhancer
-     * @param []|string     $map       Map values for the enhancer
-     * @param []            $methods   List of methods the enhancer is restricted on.
+     * @param string    $className FQCN of the enhancer.
+     * @param string    $source    Source value for the enhancer
+     * @param string    $target    Target value for the enhancer
+     * @param []|string $map       Map values for the enhancer
+     * @param []        $methods   List of methods the enhancer is restricted on.
      *
      * @return array
      */
