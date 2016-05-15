@@ -117,7 +117,7 @@ class ConditionalEnhancerTest extends CmfUnitTestCase
             '\Symfony\Cmf\Component\Routing\Enhancer\FieldByClassEnhancer',
             '_content',
             '_controller',
-            ['\Symfony\Cmf\Component\Testing\Document\Content' => 'service:indexAction'],
+            array('\Symfony\Cmf\Component\Testing\Document\Content' => 'service:indexAction'),
             array('put'),
             1
         );
@@ -125,7 +125,7 @@ class ConditionalEnhancerTest extends CmfUnitTestCase
             '\Symfony\Cmf\Component\Routing\Enhancer\FieldByClassEnhancer',
             '_content',
             '_controller',
-            ['\Symfony\Cmf\Component\Testing\Document\Content' => 'service:putAction'],
+            array('\Symfony\Cmf\Component\Testing\Document\Content' => 'service:putAction'),
             array('put'),
             2
         );
