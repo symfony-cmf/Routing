@@ -12,8 +12,11 @@
 namespace Symfony\Cmf\Component\Routing\Tests\Mapper;
 
 use Symfony\Cmf\Component\Routing\Enhancer\ConditionalEnhancer;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Cmf\Component\Routing\Enhancer\FieldByClassEnhancer;
 use Symfony\Cmf\Component\Routing\Test\CmfUnitTestCase;
+use Symfony\Cmf\Component\Testing\Document\Content;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestMatcher;
 
 class ConditionalEnhancerTest extends CmfUnitTestCase
 {
@@ -88,5 +91,52 @@ class ConditionalEnhancerTest extends CmfUnitTestCase
         ));
 
         $this->assertEquals($defaults, $enhancer->enhance($defaults, $this->request));
+    }
+
+    public function testCreatorMethod()
+    {
+        $actual = ConditionalEnhancer::createMapEntry(
+            '\Symfony\Cmf\Component\Routing\Enhancer\FieldByClassEnhancer',
+            'source',
+            'target',
+            array('foo' => 'ba'),
+            array('put', 'post')
+        );
+        $expected = array(
+            'matcher' => new RequestMatcher(null, null, array('put', 'post')),
+            'enhancer' => new FieldByClassEnhancer('source', 'target', array('foo' => 'ba')),
+        );
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function testCreateAndAddWithPosition()
+    {
+        $conditionalEnhancer = new ConditionalEnhancer();
+        $conditionalEnhancer->createAndAddMapEntry(
+            '\Symfony\Cmf\Component\Routing\Enhancer\FieldByClassEnhancer',
+            '_content',
+            '_controller',
+            array('\Symfony\Cmf\Component\Testing\Document\Content' => 'service:indexAction'),
+            array('put'),
+            1
+        );
+        $conditionalEnhancer->createAndAddMapEntry(
+            '\Symfony\Cmf\Component\Routing\Enhancer\FieldByClassEnhancer',
+            '_content',
+            '_controller',
+            array('\Symfony\Cmf\Component\Testing\Document\Content' => 'service:putAction'),
+            array('put'),
+            2
+        );
+        $request = Request::create(null, 'PUT');
+        $defaults = array('_content' => new Content());
+        $actualDefaults = $conditionalEnhancer->enhance($defaults, $request);
+        $expectedDefaults = array(
+            '_content' => new Content(),
+            '_controller' => 'service:indexAction',
+        );
+
+        $this->assertEquals($expectedDefaults, $actualDefaults);
     }
 }
