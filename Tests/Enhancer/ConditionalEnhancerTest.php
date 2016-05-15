@@ -96,7 +96,7 @@ class ConditionalEnhancerTest extends CmfUnitTestCase
     public function testCreatorMethod()
     {
         $actual = ConditionalEnhancer::createMapEntry(
-            FieldByClassEnhancer::class,
+            '\Symfony\Cmf\Component\Routing\Enhancer\FieldByClassEnhancer',
             'source',
             'target',
             array('foo' => 'ba'),
@@ -114,7 +114,7 @@ class ConditionalEnhancerTest extends CmfUnitTestCase
     {
         $conditionalEnhancer = new ConditionalEnhancer();
         $conditionalEnhancer->createAndAddMapEntry(
-            FieldByClassEnhancer::class,
+            '\Symfony\Cmf\Component\Routing\Enhancer\FieldByClassEnhancer',
             '_content',
             '_controller',
             ['\Symfony\Cmf\Component\Testing\Document\Content' => 'service:indexAction'],
@@ -122,7 +122,7 @@ class ConditionalEnhancerTest extends CmfUnitTestCase
             1
         );
         $conditionalEnhancer->createAndAddMapEntry(
-            FieldByClassEnhancer::class,
+            '\Symfony\Cmf\Component\Routing\Enhancer\FieldByClassEnhancer',
             '_content',
             '_controller',
             ['\Symfony\Cmf\Component\Testing\Document\Content' => 'service:putAction'],
