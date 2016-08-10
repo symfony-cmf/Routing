@@ -28,12 +28,12 @@ interface RouteObjectInterface
     /**
      * Field name that will hold the route name that was matched.
      */
-    const ROUTE_NAME = '_route';
+    const ROUTE_NAME = '_route_name';
 
     /**
      * Field name of the route object that was matched.
      */
-    const ROUTE_OBJECT = '_route_object';
+    const ROUTE_OBJECT = '_route';
 
     /**
      * Field name for an explicit controller name to be used with this route.
