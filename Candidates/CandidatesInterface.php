@@ -41,7 +41,7 @@ interface CandidatesInterface
      * Provide a best effort query restriction to limit a query to only find
      * routes that are supported.
      *
-     * @param object $queryBuilder A query builder suited for the storage backend.
+     * @param object $queryBuilder A query builder suited for the storage backend
      */
     public function restrictQuery($queryBuilder);
 }

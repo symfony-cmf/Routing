@@ -41,17 +41,17 @@ interface RouteProviderInterface
      * very large route sets to be filtered down to likely candidates, which
      * may then be filtered in memory more completely.
      *
-     * @param Request $request A request against which to match.
+     * @param Request $request A request against which to match
      *
      * @return RouteCollection with all Routes that could potentially match
-     *                         $request. Empty collection if nothing can match.
+     *                         $request. Empty collection if nothing can match
      */
     public function getRouteCollectionForRequest(Request $request);
 
     /**
      * Find the route using the provided route name.
      *
-     * @param string $name The route name to fetch.
+     * @param string $name The route name to fetch
      *
      * @return Route
      *
@@ -79,10 +79,10 @@ interface RouteProviderInterface
      * DynamicRouter::getRouteCollection() call.
      *
      * @param array|null $names The list of names to retrieve, In case of null,
-     *                          the provider will determine what routes to return.
+     *                          the provider will determine what routes to return
      *
      * @return Route[] Iterable list with the keys being the names from the
-     *                 $names array.
+     *                 $names array
      */
     public function getRoutesByNames($names);
 }

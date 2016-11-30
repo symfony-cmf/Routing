@@ -26,8 +26,8 @@ interface FinalMatcherInterface
     /**
      * Matches a request against a route collection and returns exactly one result.
      *
-     * @param RouteCollection $collection The collection against which to match.
-     * @param Request         $request    The request to match.
+     * @param RouteCollection $collection The collection against which to match
+     * @param Request         $request    The request to match
      *
      * @return array An array of parameters
      *

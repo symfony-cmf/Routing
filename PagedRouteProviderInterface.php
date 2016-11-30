@@ -40,13 +40,13 @@ interface PagedRouteProviderInterface extends RouteProviderInterface
      * all routes at once.
      *
      * @param int $offset
-     *                    The sequence will start with that offset in the list of all routes.
+     *                    The sequence will start with that offset in the list of all routes
      * @param int $length [optional]
      *                    The sequence will have that many routes in it. If no length is
-     *                    specified all routes are returned.
+     *                    specified all routes are returned
      *
      * @return \Symfony\Component\Routing\Route[]
-     *                                            Routes keyed by the route name.
+     *                                            Routes keyed by the route name
      */
     public function getRoutesPaged($offset, $length = null);
 

@@ -58,11 +58,11 @@ class ContentAwareGenerator extends ProviderBasedGenerator
     /**
      * {@inheritdoc}
      *
-     * @param string $name       ignored.
+     * @param string $name       ignored
      * @param array  $parameters must either contain the field 'route' with a
      *                           RouteObjectInterface or the field 'content_id'
      *                           with the id of a document implementing
-     *                           RouteReferrersReadInterface.
+     *                           RouteReferrersReadInterface
      *
      * @throws RouteNotFoundException If there is no such route in the database
      */
@@ -228,7 +228,7 @@ class ContentAwareGenerator extends ProviderBasedGenerator
      *
      * @return bool true if there is either no $locale, no _locale requirement
      *              on the route or if the requirement and the passed $locale
-     *              match.
+     *              match
      */
     private function checkLocaleRequirement(SymfonyRoute $route, $locale)
     {
@@ -245,7 +245,7 @@ class ContentAwareGenerator extends ProviderBasedGenerator
      *
      * @return string the locale following of the parameters or any other
      *                information the router has available. defaultLocale if no
-     *                other locale can be determined.
+     *                other locale can be determined
      */
     protected function getLocale($parameters)
     {
@@ -300,9 +300,9 @@ class ContentAwareGenerator extends ProviderBasedGenerator
      * and it is the default locale, remove it from the parameters so that we
      * do not get an unneeded ?_locale= query string.
      *
-     * @param SymfonyRoute $route      The route being generated.
+     * @param SymfonyRoute $route      The route being generated
      * @param array        $parameters The parameters used, will be modified to
-     *                                 remove the _locale field if needed.
+     *                                 remove the _locale field if needed
      */
     protected function unsetLocaleIfNotNeeded(SymfonyRoute $route, array &$parameters)
     {
