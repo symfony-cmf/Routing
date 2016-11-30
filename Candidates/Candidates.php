@@ -40,8 +40,8 @@ class Candidates implements CandidatesInterface
     protected $limit;
 
     /**
-     * @param array $locales The locales to support.
-     * @param int   $limit   A limit to apply to the candidates generated.
+     * @param array $locales The locales to support
+     * @param int   $limit   A limit to apply to the candidates generated
      */
     public function __construct(array $locales = array(), $limit = 20)
     {
@@ -52,7 +52,7 @@ class Candidates implements CandidatesInterface
     /**
      * Set the locales to support by this strategy.
      *
-     * @param array $locales The locales to support.
+     * @param array $locales The locales to support
      */
     public function setLocales(array $locales)
     {
@@ -97,9 +97,9 @@ class Candidates implements CandidatesInterface
     /**
      * Determine the locale of this URL.
      *
-     * @param string $url The url to determine the locale from.
+     * @param string $url The url to determine the locale from
      *
-     * @return string|bool The locale if $url starts with one of the allowed locales.
+     * @return string|bool The locale if $url starts with one of the allowed locales
      */
     protected function determineLocale($url)
     {
@@ -120,11 +120,11 @@ class Candidates implements CandidatesInterface
      *
      * $prefix is prepended to every candidate generated.
      *
-     * @param string $url    The URL to split.
-     * @param string $prefix A prefix to prepend to every pattern.
+     * @param string $url    The URL to split
+     * @param string $prefix A prefix to prepend to every pattern
      *
      * @return array Paths that could represent routes that match $url and are
-     *               child of $prefix.
+     *               child of $prefix
      */
     protected function getCandidatesFor($url, $prefix = '')
     {

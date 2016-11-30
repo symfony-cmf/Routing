@@ -167,7 +167,7 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
      *
      * @return array An array of parameters
      *
-     * @throws ResourceNotFoundException If no router matched.
+     * @throws ResourceNotFoundException If no router matched
      */
     private function doMatch($pathinfo, Request $request = null)
     {

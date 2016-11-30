@@ -55,7 +55,7 @@ class PagedRouteCollection implements \Iterator, \Countable
     /**
      * Loads the next routes into the elements array.
      *
-     * @param int $offset The offset used in the db query.
+     * @param int $offset The offset used in the db query
      */
     protected function loadNextElements($offset)
     {

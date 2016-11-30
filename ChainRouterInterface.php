@@ -25,7 +25,7 @@ interface ChainRouterInterface extends RouterInterface, RequestMatcherInterface
      * Add a Router to the index.
      *
      * @param RouterInterface $router   The router instance. Instead of RouterInterface, may also
-     *                                  be RequestMatcherInterface and UrlGeneratorInterface.
+     *                                  be RequestMatcherInterface and UrlGeneratorInterface
      * @param int             $priority The priority
      */
     public function add($router, $priority = 0);
@@ -33,7 +33,7 @@ interface ChainRouterInterface extends RouterInterface, RequestMatcherInterface
     /**
      * Sorts the routers and flattens them.
      *
-     * @return RouterInterface[] or RequestMatcherInterface and UrlGeneratorInterface.
+     * @return RouterInterface[] or RequestMatcherInterface and UrlGeneratorInterface
      */
     public function all();
 }

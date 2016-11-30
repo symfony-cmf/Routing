@@ -83,7 +83,7 @@ class NestedMatcher implements RequestMatcherInterface
     /**
      * Sets the route provider for the matching plan.
      *
-     * @param RouteProviderInterface $provider A source of routes.
+     * @param RouteProviderInterface $provider A source of routes
      *
      * @return NestedMatcher this object to have a fluent interface
      */
@@ -102,7 +102,7 @@ class NestedMatcher implements RequestMatcherInterface
      * @param RouteFilterInterface $filter
      * @param int                  $priority (optional) The priority of the
      *                                       filter. Higher number filters will
-     *                                       be used first. Defaults to 0.
+     *                                       be used first. Defaults to 0
      *
      * @return NestedMatcher this object to have a fluent interface
      */
@@ -122,7 +122,7 @@ class NestedMatcher implements RequestMatcherInterface
      * Sets the final matcher for the matching plan.
      *
      * @param FinalMatcherInterface $final The final matcher that will have to
-     *                                     pick the route that will be used.
+     *                                     pick the route that will be used
      *
      * @return NestedMatcher this object to have a fluent interface
      */

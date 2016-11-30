@@ -30,7 +30,7 @@ interface ContentRepositoryInterface
      *
      * @param string $id id of the content object
      *
-     * @return object A content that matches this id.
+     * @return object A content that matches this id
      */
     public function findById($id);
 

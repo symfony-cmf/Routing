@@ -29,12 +29,12 @@ class ConditionalEnhancer implements RouteEnhancerInterface
      *
      * The enhancer has to implement RouteEnhancerInterface.
      *
-     * @var array Ordered list of 'matcher', 'enhancer' pairs.
+     * @var array Ordered list of 'matcher', 'enhancer' pairs
      */
     private $enhancerMap;
 
     /**
-     * @param array $enhancerMap Ordered list of 'matcher', 'enhancer' pairs.
+     * @param array $enhancerMap Ordered list of 'matcher', 'enhancer' pairs
      */
     public function __construct(array $enhancerMap)
     {
