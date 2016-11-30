@@ -1,7 +1,7 @@
 {
     "name": "symfony-cmf/routing",
     "type": "library",
-    "description": "Extends the Symfony2 routing component for dynamic routes and chaining several routers",
+    "description": "Extends the Symfony routing component for dynamic routes and chaining several routers",
     "keywords": ["routing", "database"],
     "homepage": "http://cmf.symfony.com",
     "license": "MIT",
@@ -29,12 +29,13 @@
     },
     "autoload": {
         "psr-4": {
-            "Symfony\\Cmf\\Component\\Routing\\": ""
+            "Symfony\\Cmf\\Component\\Routing\\": "src/",
+            "Symfony\\Cmf\\Component\\Routing\\Tests\\": "tests/"
         }
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.4-dev"
+            "dev-master": "2.0-dev"
         }
     }
 }

@@ -1,6 +1,11 @@
 Changelog
 =========
 
+2 (unreleased)
+--------------
+
+* **2016-11-30**: Changed file structure to have all php code in src/
+
 * **2016-05-11**: Added a ConditionalEnhancer that accepts pairs of request matcher
   and enhancer to be called if the request matcher matches the request.
 

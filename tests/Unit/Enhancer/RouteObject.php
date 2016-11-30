@@ -22,6 +22,5 @@ abstract class RouteObject extends Route implements RouteObjectInterface
 {
     public function getRouteKey()
     {
-        return;
     }
 }
