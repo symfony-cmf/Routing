@@ -98,7 +98,7 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
      */
     public function all()
     {
-        if (empty($this->sortedRouters)) {
+        if (0 === count($this->sortedRouters)) {
             $this->sortedRouters = $this->sortRouters();
 
             // setContext() is done here instead of in add() to avoid fatal errors when clearing and warming up caches
@@ -124,14 +124,9 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
      */
     protected function sortRouters()
     {
-        $sortedRouters = array();
         krsort($this->routers);
 
-        foreach ($this->routers as $routers) {
-            $sortedRouters = array_merge($sortedRouters, $routers);
-        }
-
-        return $sortedRouters;
+        return call_user_func_array('array_merge', $this->routers);
     }
 
     /**
@@ -179,7 +174,7 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
                 // the request/url match logic is the same as in Symfony/Component/HttpKernel/EventListener/RouterListener.php
                 // matching requests is more powerful than matching URLs only, so try that first
                 if ($router instanceof RequestMatcherInterface) {
-                    if (empty($requestForMatching)) {
+                    if (null === $requestForMatching) {
                         $requestForMatching = $this->rebuildRequest($pathinfo);
                     }
 
@@ -351,6 +346,6 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
      */
     public function hasRouters()
     {
-        return !empty($this->routers);
+        return 0 < count($this->routers);
     }
 }

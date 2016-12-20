@@ -60,12 +60,11 @@ class FieldPresenceEnhancer implements RouteEnhancerInterface
      */
     public function enhance(array $defaults, Request $request)
     {
-        if (isset($defaults[$this->target])) {
-            // no need to do anything
+        if (array_key_exists($this->target, $defaults)) {
             return $defaults;
         }
 
-        if (null !== $this->source && !isset($defaults[$this->source])) {
+        if (null !== $this->source && !array_key_exists($this->source, $defaults)) {
             return $defaults;
         }
 

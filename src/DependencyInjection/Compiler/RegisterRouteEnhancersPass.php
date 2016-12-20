@@ -25,11 +25,14 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 class RegisterRouteEnhancersPass implements CompilerPassInterface
 {
     /**
-     * @var string
+     * @var string Service name of the dynamic router
      */
-    protected $dynamicRouterService;
+    private $dynamicRouterService;
 
-    protected $enhancerTag;
+    /**
+     * @var string Name of the tag
+     */
+    private $enhancerTag;
 
     public function __construct($dynamicRouterService = 'cmf_routing.dynamic_router', $enhancerTag = 'dynamic_router_route_enhancer')
     {
@@ -37,6 +40,9 @@ class RegisterRouteEnhancersPass implements CompilerPassInterface
         $this->enhancerTag = $enhancerTag;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function process(ContainerBuilder $container)
     {
         if (!$container->hasDefinition($this->dynamicRouterService)) {

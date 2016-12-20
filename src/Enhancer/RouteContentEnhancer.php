@@ -52,12 +52,12 @@ class RouteContentEnhancer implements RouteEnhancerInterface
      */
     public function enhance(array $defaults, Request $request)
     {
-        if (isset($defaults[$this->target])) {
+        if (array_key_exists($this->target, $defaults)) {
             // no need to do anything
             return $defaults;
         }
 
-        if (!isset($defaults[$this->routefield])
+        if (!array_key_exists($this->routefield, $defaults)
             || !$defaults[$this->routefield] instanceof RouteObjectInterface
         ) {
             // we can't determine the content

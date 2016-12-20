@@ -53,13 +53,10 @@ class FieldMapEnhancer implements RouteEnhancerInterface
      */
     public function enhance(array $defaults, Request $request)
     {
-        if (isset($defaults[$this->target])) {
-            return $defaults;
-        }
-        if (!isset($defaults[$this->source])) {
-            return $defaults;
-        }
-        if (!isset($this->hashmap[$defaults[$this->source]])) {
+        if (array_key_exists($this->target, $defaults)
+            || !array_key_exists($this->source, $defaults)
+            || !array_key_exists($defaults[$this->source], $this->hashmap)
+        ) {
             return $defaults;
         }
 

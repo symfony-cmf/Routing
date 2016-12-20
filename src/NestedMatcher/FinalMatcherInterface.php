@@ -12,8 +12,9 @@
 namespace Symfony\Cmf\Component\Routing\NestedMatcher;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\RouteCollection;
+use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
+use Symfony\Component\Routing\RouteCollection;
 
 /**
  * A FinalMatcher returns only one route from a collection of candidate routes.
@@ -33,6 +34,7 @@ interface FinalMatcherInterface
      *
      * @throws ResourceNotFoundException if none of the routes in $collection
      *                                   matches $request
+     * @throws MethodNotAllowedException If the resource was found but the request method is not allowed
      */
     public function finalMatch(RouteCollection $collection, Request $request);
 }

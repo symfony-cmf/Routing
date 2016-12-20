@@ -149,9 +149,7 @@ class NestedMatcher implements RequestMatcherInterface
             $collection = $filter->filter($collection, $request);
         }
 
-        $attributes = $this->finalMatcher->finalMatch($collection, $request);
-
-        return $attributes;
+        return $this->finalMatcher->finalMatch($collection, $request);
     }
 
     /**
@@ -161,7 +159,7 @@ class NestedMatcher implements RequestMatcherInterface
      */
     public function getRouteFilters()
     {
-        if (empty($this->sortedFilters)) {
+        if (0 === count($this->sortedFilters)) {
             $this->sortedFilters = $this->sortFilters();
         }
 
@@ -177,13 +175,8 @@ class NestedMatcher implements RequestMatcherInterface
      */
     protected function sortFilters()
     {
-        $sortedFilters = array();
         krsort($this->filters);
 
-        foreach ($this->filters as $filters) {
-            $sortedFilters = array_merge($sortedFilters, $filters);
-        }
-
-        return $sortedFilters;
+        return call_user_func_array('array_merge', $this->filters);
     }
 }

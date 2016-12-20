@@ -105,8 +105,6 @@ class ChainRouteCollection extends RouteCollection
                 return $route;
             }
         }
-
-        return;
     }
 
     /**
@@ -243,12 +241,11 @@ class ChainRouteCollection extends RouteCollection
      */
     public function getResources()
     {
-        $resources = array();
-        foreach ($this->routeCollections as $routeCollection) {
-            $resources = array_merge($resources, $routeCollection->getResources());
-        }
+        $resources = array_map(function (RouteCollection $routeCollection) {
+            return $routeCollection->getResources();
+        }, $this->routeCollections);
 
-        return array_unique($resources);
+        return array_unique(call_user_func_array('array_merge', $resources));
     }
 
     /**
