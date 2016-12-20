@@ -59,12 +59,9 @@ class FieldByClassEnhancer implements RouteEnhancerInterface
      */
     public function enhance(array $defaults, Request $request)
     {
-        if (isset($defaults[$this->target])) {
-            // no need to do anything
-            return $defaults;
-        }
-
-        if (!isset($defaults[$this->source])) {
+        if (array_key_exists($this->target, $defaults)
+            || !array_key_exists($this->source, $defaults)
+        ) {
             return $defaults;
         }
 
