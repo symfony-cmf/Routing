@@ -13,20 +13,18 @@ cache:
   directories:
     - $HOME/.composer/cache/files
 
-env: SYMFONY_VERSION=2.8.*
+env: SYMFONY_VERSION=3.2.*
 
 matrix:
   include:
-    - php: 5.6
-      env: DEPS=dev
+    - php: 7.1
+      env: SYMFONY_VERSION=3.3.* DEPS=dev
     - php: 5.5
-      env: COMPOSER_FLAGS="--prefer-lowest"
-    - php: 5.6
-      env: SYMFONY_VERSION=2.3.*
+      env: SYMFONY_VERSION=2.8.* COMPOSER_FLAGS="--prefer-lowest"
     - php: 5.6
       env: SYMFONY_VERSION=2.7.*
     - php: 5.6
-      env: SYMFONY_VERSION=3.0.*
+      env: SYMFONY_VERSION=3.1.*
   finish_fast: true
 
 before_install:
