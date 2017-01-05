@@ -33,7 +33,7 @@ class DynamicRouterTest extends CmfUnitTestCase
 
     public function setUp()
     {
-        $this->routeDocument = $this->buildMock('Symfony\Cmf\Component\Routing\Tests\Routing\RouteMock', array('getDefaults'));
+        $this->routeDocument = $this->buildMock('Symfony\Cmf\Component\Routing\Tests\Unit\Routing\RouteMock', array('getDefaults'));
 
         $this->matcher = $this->buildMock('Symfony\Component\Routing\Matcher\UrlMatcherInterface');
         $this->generator = $this->buildMock('Symfony\Cmf\Component\Routing\VersatileGeneratorInterface', array('supports', 'generate', 'setContext', 'getContext', 'getRouteDebugMessage'));

@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Symfony\Cmf\Component\Routing\Tests\Enhancer;
+namespace Symfony\Cmf\Component\Routing\Tests\Unit\Enhancer;
 
 use Symfony\Cmf\Component\Routing\Enhancer\ContentRepositoryEnhancer;
 use Symfony\Cmf\Component\Routing\RouteObjectInterface;

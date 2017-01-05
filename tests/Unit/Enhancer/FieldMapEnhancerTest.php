@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Symfony\Cmf\Component\Routing\Tests\Mapper;
+namespace Symfony\Cmf\Component\Routing\Tests\Unit\Mapper;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Cmf\Component\Routing\Test\CmfUnitTestCase;

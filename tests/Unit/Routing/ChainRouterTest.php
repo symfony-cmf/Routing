@@ -698,10 +698,6 @@ class ChainRouterTest extends CmfUnitTestCase
         $dir = 'test_dir';
         list($low) = $this->createRouterMocks();
 
-        $low
-            ->expects($this->never())
-            ->method('warmUp')
-        ;
         $high = $this->getMock('Symfony\Cmf\Component\Routing\Tests\Routing\WarmableRouterMock');
         $high
             ->expects($this->once())

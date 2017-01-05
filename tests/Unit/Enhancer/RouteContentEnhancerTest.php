@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Symfony\Cmf\Component\Routing\Tests\Enhancer;
+namespace Symfony\Cmf\Component\Routing\Tests\Unit\Enhancer;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Cmf\Component\Routing\Enhancer\RouteContentEnhancer;
@@ -27,7 +27,7 @@ class RouteContentEnhancerTest extends CmfUnitTestCase
 
     public function setUp()
     {
-        $this->document = $this->buildMock('Symfony\Cmf\Component\Routing\Tests\Enhancer\RouteObject',
+        $this->document = $this->buildMock('Symfony\Cmf\Component\Routing\Tests\Unit\Enhancer\RouteObject',
                                             array('getContent', 'getRouteDefaults', 'getUrl'));
 
         $this->mapper = new RouteContentEnhancer(RouteObjectInterface::ROUTE_OBJECT, '_content');

@@ -350,6 +350,10 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
     {
         krsort($this->enhancers);
 
+        if (0 === count($this->enhancers)) {
+            return array();
+        }
+
         return call_user_func_array('array_merge', $this->enhancers);
     }
 

@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Symfony\Cmf\Routing\Tests\DependencyInjection\Compiler;
+namespace Symfony\Cmf\Routing\Tests\Unit\DependencyInjection\Compiler;
 
 use Symfony\Cmf\Component\Routing\DependencyInjection\Compiler\RegisterRoutersPass;
 use Symfony\Component\DependencyInjection\Reference;

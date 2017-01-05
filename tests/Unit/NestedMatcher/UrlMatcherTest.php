@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Symfony\Cmf\Component\Routing\Tests\NestedMatcher;
+namespace Symfony\Cmf\Component\Routing\Tests\Unit\NestedMatcher;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\RouteCollection;
@@ -29,7 +29,7 @@ class UrlMatcherTest extends CmfUnitTestCase
 
     public function setUp()
     {
-        $this->routeDocument = $this->buildMock('Symfony\Cmf\Component\Routing\Tests\Routing\RouteMock', array('getDefaults', 'getRouteKey', 'compile'));
+        $this->routeDocument = $this->buildMock('Symfony\Cmf\Component\Routing\Tests\Unit\Routing\RouteMock', array('getDefaults', 'getRouteKey', 'compile'));
         $this->routeCompiled = $this->buildMock('Symfony\Component\Routing\CompiledRoute');
 
         $this->context = $this->buildMock('Symfony\Component\Routing\RequestContext');
@@ -111,9 +111,6 @@ class UrlMatcherTest extends CmfUnitTestCase
         $this->routeDocument->expects($this->atLeastOnce())
             ->method('compile')
             ->will($this->returnValue($this->routeCompiled))
-        ;
-        $this->routeDocument->expects($this->never())
-            ->method('getRouteKey')
         ;
         $this->routeDocument->expects($this->atLeastOnce())
             ->method('getDefaults')
