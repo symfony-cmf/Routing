@@ -11,19 +11,19 @@
 
 namespace Symfony\Cmf\Component\Routing\Tests\Unit\Enhancer;
 
+use Symfony\Cmf\Component\Routing\ContentRepositoryInterface;
 use Symfony\Cmf\Component\Routing\Enhancer\ContentRepositoryEnhancer;
 use Symfony\Cmf\Component\Routing\RouteObjectInterface;
-use Symfony\Cmf\Component\Routing\Test\CmfUnitTestCase;
 use Symfony\Component\HttpFoundation\Request;
 
-class ContentRepositoryEnhancerTest extends CmfUnitTestCase
+class ContentRepositoryEnhancerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * {@inheritdoc}
      */
     public function setUp()
     {
-        $cRepository = $this->getMock('\Symfony\Cmf\Component\Routing\ContentRepositoryInterface');
+        $cRepository = $this->createMock(ContentRepositoryInterface::class);
         $cRepository
             ->method('findById')
             ->will($this->returnValue('document'))
@@ -46,35 +46,35 @@ class ContentRepositoryEnhancerTest extends CmfUnitTestCase
      */
     public function dataEnhancer()
     {
-        return array(
-            'empty' => array(array(), array()),
-            'with content_id' => array(
-                array(
+        return [
+            'empty' => [[], []],
+            'with content_id' => [
+                [
                     RouteObjectInterface::CONTENT_ID => 'Simple:1',
-                ),
-                array(
+                ],
+                [
                     RouteObjectInterface::CONTENT_ID => 'Simple:1',
                     RouteObjectInterface::CONTENT_OBJECT => 'document',
-                ),
-            ),
-            'with content_id and content' => array(
-                array(
+                ],
+            ],
+            'with content_id and content' => [
+                [
                     RouteObjectInterface::CONTENT_ID => 'Simple:1',
                     RouteObjectInterface::CONTENT_OBJECT => 'exist object',
-                ),
-                array(
+                ],
+                [
                     RouteObjectInterface::CONTENT_ID => 'Simple:1',
                     RouteObjectInterface::CONTENT_OBJECT => 'exist object',
-                ),
-            ),
-            'with content' => array(
-                array(
+                ],
+            ],
+            'with content' => [
+                [
                     RouteObjectInterface::CONTENT_OBJECT => 'exist object',
-                ),
-                array(
+                ],
+                [
                     RouteObjectInterface::CONTENT_OBJECT => 'exist object',
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 }

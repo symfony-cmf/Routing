@@ -13,9 +13,8 @@ namespace Symfony\Cmf\Component\Routing\Tests\Unit\Enhancer;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Cmf\Component\Routing\Enhancer\FieldPresenceEnhancer;
-use Symfony\Cmf\Component\Routing\Test\CmfUnitTestCase;
 
-class FieldPresenceEnhancerTest extends CmfUnitTestCase
+class FieldPresenceEnhancerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var FieldPresenceEnhancer
@@ -32,26 +31,26 @@ class FieldPresenceEnhancerTest extends CmfUnitTestCase
 
     public function testHasTemplate()
     {
-        $defaults = array('_template' => 'Bundle:Topic:template.html.twig');
-        $expected = array(
+        $defaults = ['_template' => 'Bundle:Topic:template.html.twig'];
+        $expected = [
             '_template' => 'Bundle:Topic:template.html.twig',
             '_controller' => 'cmf_content.controller:indexAction',
-        );
+        ];
         $this->assertEquals($expected, $this->mapper->enhance($defaults, $this->request));
     }
 
     public function testFieldAlreadyThere()
     {
-        $defaults = array(
+        $defaults = [
             '_template' => 'Bundle:Topic:template.html.twig',
             '_controller' => 'custom.controller:indexAction',
-        );
+        ];
         $this->assertEquals($defaults, $this->mapper->enhance($defaults, $this->request));
     }
 
     public function testHasNoSourceValue()
     {
-        $defaults = array('foo' => 'bar');
+        $defaults = ['foo' => 'bar'];
         $this->assertEquals($defaults, $this->mapper->enhance($defaults, $this->request));
     }
 
@@ -59,11 +58,11 @@ class FieldPresenceEnhancerTest extends CmfUnitTestCase
     {
         $this->mapper = new FieldPresenceEnhancer(null, '_controller', 'cmf_content.controller:indexAction');
 
-        $defaults = array('foo' => 'bar');
-        $expected = array(
+        $defaults = ['foo' => 'bar'];
+        $expected = [
             'foo' => 'bar',
             '_controller' => 'cmf_content.controller:indexAction',
-        );
+        ];
         $this->assertEquals($expected, $this->mapper->enhance($defaults, $this->request));
     }
 }

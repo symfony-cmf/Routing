@@ -11,7 +11,6 @@
 
 namespace Symfony\Cmf\Component\Routing;
 
-use Symfony\Cmf\Component\Routing\Test\CmfUnitTestCase;
 use Symfony\Component\Routing\Route;
 
 /**
@@ -19,7 +18,7 @@ use Symfony\Component\Routing\Route;
  *
  * @group cmf/routing
  */
-class PagedRouteCollectionTest extends CmfUnitTestCase
+class PagedRouteCollectionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Contains a mocked route provider.
@@ -30,7 +29,7 @@ class PagedRouteCollectionTest extends CmfUnitTestCase
 
     protected function setUp()
     {
-        $this->routeProvider = $this->getMock('Symfony\Cmf\Component\Routing\PagedRouteProviderInterface');
+        $this->routeProvider = $this->createMock(PagedRouteProviderInterface::class);
     }
 
     /**
@@ -38,9 +37,9 @@ class PagedRouteCollectionTest extends CmfUnitTestCase
      *
      * @dataProvider providerIterator
      */
-    public function testIterator($amountRoutes, $routesLoadedInParallel, $expectedCalls = array())
+    public function testIterator($amountRoutes, $routesLoadedInParallel, $expectedCalls = [])
     {
-        $routes = array();
+        $routes = [];
         for ($i = 0; $i < $amountRoutes; ++$i) {
             $routes['test_'.$i] = new Route("/example-$i");
         }
@@ -70,20 +69,20 @@ class PagedRouteCollectionTest extends CmfUnitTestCase
      */
     public function providerIterator()
     {
-        $data = array();
+        $data = [];
         // Non total routes.
-        $data[] = array(0, 20, array(array(0, 20)));
+        $data[] = [0, 20, [[0, 20]]];
         // Less total routes than loaded in parallel.
-        $data[] = array(10, 20, array(array(0, 20)));
+        $data[] = [10, 20, [[0, 20]]];
         // Exact the same amount of routes then loaded in parallel.
-        $data[] = array(20, 20, array(array(0, 20), array(20, 20)));
+        $data[] = [20, 20, [[0, 20], [20, 20]]];
         // Less than twice the amount.
-        $data[] = array(39, 20, array(array(0, 20), array(20, 20)));
+        $data[] = [39, 20, [[0, 20], [20, 20]]];
         // More total routes than loaded in parallel.
-        $data[] = array(40, 20, array(array(0, 20), array(20, 20), array(40, 20)));
-        $data[] = array(41, 20, array(array(0, 20), array(20, 20), array(40, 20)));
+        $data[] = [40, 20, [[0, 20], [20, 20], [40, 20]]];
+        $data[] = [41, 20, [[0, 20], [20, 20], [40, 20]]];
         // why not.
-        $data[] = array(42, 23, array(array(0, 23), array(23, 23)));
+        $data[] = [42, 23, [[0, 23], [23, 23]]];
 
         return $data;
     }
@@ -105,17 +104,17 @@ class PagedRouteCollectionTest extends CmfUnitTestCase
      */
     public function testIteratingAndRewind()
     {
-        $routes = array();
+        $routes = [];
         for ($i = 0; $i < 30; ++$i) {
             $routes['test_'.$i] = new Route("/example-$i");
         }
         $this->routeProvider->expects($this->any())
             ->method('getRoutesPaged')
-            ->will($this->returnValueMap(array(
-                array(0, 10, array_slice($routes, 0, 10)),
-                array(10, 10, array_slice($routes, 9, 10)),
-                array(20, 10, array()),
-            )));
+            ->will($this->returnValueMap([
+                [0, 10, array_slice($routes, 0, 10)],
+                [10, 10, array_slice($routes, 9, 10)],
+                [20, 10, []],
+            ]));
 
         $routeCollection = new PagedRouteCollection($this->routeProvider, 10);
 

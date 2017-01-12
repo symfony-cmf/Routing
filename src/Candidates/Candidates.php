@@ -43,7 +43,7 @@ class Candidates implements CandidatesInterface
      * @param array $locales The locales to support
      * @param int   $limit   A limit to apply to the candidates generated
      */
-    public function __construct(array $locales = array(), $limit = 20)
+    public function __construct(array $locales = [], $limit = 20)
     {
         $this->setLocales($locales);
         $this->limit = $limit;
@@ -107,7 +107,7 @@ class Candidates implements CandidatesInterface
             return false;
         }
 
-        $matches = array();
+        $matches = [];
         if (preg_match('#('.implode('|', $this->locales).')(/|$)#', $url, $matches)) {
             return $matches[1];
         }
@@ -128,7 +128,7 @@ class Candidates implements CandidatesInterface
      */
     protected function getCandidatesFor($url, $prefix = '')
     {
-        $candidates = array();
+        $candidates = [];
         if ('/' !== $url) {
             // handle format extension, like .html or .json
             if (preg_match('/(.+)\.[a-z]+$/i', $url, $matches)) {

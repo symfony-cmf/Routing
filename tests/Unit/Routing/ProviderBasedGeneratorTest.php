@@ -15,9 +15,10 @@ use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\Route;
 use Symfony\Cmf\Component\Routing\ProviderBasedGenerator;
-use Symfony\Cmf\Component\Routing\Test\CmfUnitTestCase;
+use Symfony\Cmf\Component\Routing\RouteProviderInterface;
+use Symfony\Component\Routing\CompiledRoute;
 
-class ProviderBasedGeneratorTest extends CmfUnitTestCase
+class ProviderBasedGeneratorTest extends \PHPUnit_Framework_TestCase
 {
     protected $routeDocument;
     protected $routeCompiled;
@@ -29,10 +30,10 @@ class ProviderBasedGeneratorTest extends CmfUnitTestCase
 
     public function setUp()
     {
-        $this->routeDocument = $this->buildMock('Symfony\Component\Routing\Route', array('getDefaults', 'compile'));
-        $this->routeCompiled = $this->buildMock('Symfony\Component\Routing\CompiledRoute');
-        $this->provider = $this->buildMock('Symfony\Cmf\Component\Routing\RouteProviderInterface');
-        $this->context = $this->buildMock('Symfony\Component\Routing\RequestContext');
+        $this->routeDocument = $this->createMock(Route::class, ['getDefaults', 'compile']);
+        $this->routeCompiled = $this->createMock(CompiledRoute::class);
+        $this->provider = $this->createMock(RouteProviderInterface::class);
+        $this->context = $this->createMock(RequestContext::class);
 
         $this->generator = new TestableProviderBasedGenerator($this->provider);
     }
@@ -95,7 +96,7 @@ class ProviderBasedGeneratorTest extends CmfUnitTestCase
         $this->assertContains('/some/key', $this->generator->getRouteDebugMessage(new RouteObject()));
         $this->assertContains('/de/test', $this->generator->getRouteDebugMessage(new Route('/de/test')));
         $this->assertContains('/some/route', $this->generator->getRouteDebugMessage('/some/route'));
-        $this->assertContains('a:1:{s:10:"route_name";s:7:"example";}', $this->generator->getRouteDebugMessage(array('route_name' => 'example')));
+        $this->assertContains('a:1:{s:10:"route_name";s:7:"example";}', $this->generator->getRouteDebugMessage(['route_name' => 'example']));
     }
 
     /**
@@ -118,7 +119,7 @@ class ProviderBasedGeneratorTest extends CmfUnitTestCase
         $context = new RequestContext();
         $this->generator->setContext($context);
 
-        $this->assertSame(null, $this->generator->generate($route, array('number' => 'string')));
+        $this->assertSame(null, $this->generator->generate($route, ['number' => 'string']));
     }
 }
 
@@ -127,7 +128,7 @@ class ProviderBasedGeneratorTest extends CmfUnitTestCase
  */
 class TestableProviderBasedGenerator extends ProviderBasedGenerator
 {
-    protected function doGenerate($variables, $defaults, $requirements, $tokens, $parameters, $name, $referenceType, $hostTokens, array $requiredSchemes = array())
+    protected function doGenerate($variables, $defaults, $requirements, $tokens, $parameters, $name, $referenceType, $hostTokens, array $requiredSchemes = [])
     {
         return 'result_url';
     }

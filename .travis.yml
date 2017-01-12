@@ -1,10 +1,7 @@
 language: php
 
 php:
-  - 5.5
-  - 5.6
   - 7.0
-  - 7.1
   - hhvm
 
 sudo: false
@@ -13,17 +10,21 @@ cache:
   directories:
     - $HOME/.composer/cache/files
 
-env: SYMFONY_VERSION=3.2.*
+env:
+  matrix:
+    - SYMFONY_VERSION=3.2.*
+  global:
+    - SYMFONY_PHPUNIT_DIR=.phpunit
+    - SYMFONY_PHPUNIT_REMOVE="symfony/yaml"
+    - SYMFONY_PHPUNIT_VERSION=5.6
 
 matrix:
   include:
     - php: 7.1
       env: SYMFONY_VERSION=3.3.* DEPS=dev
-    - php: 5.5
+    - php: 5.6
       env: SYMFONY_VERSION=2.8.* COMPOSER_FLAGS="--prefer-lowest"
-    - php: 5.6
-      env: SYMFONY_VERSION=2.7.*
-    - php: 5.6
+    - php: 7.1
       env: SYMFONY_VERSION=3.1.*
   finish_fast: true
 
@@ -36,7 +37,7 @@ before_install:
 
 install: composer update --prefer-dist $COMPOSER_FLAGS
 
-script: phpunit
+script: vendor/bin/simple-phpunit
 
 notifications:
   irc: "irc.freenode.org#symfony-cmf"

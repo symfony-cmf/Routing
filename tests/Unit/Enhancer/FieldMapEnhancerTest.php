@@ -12,10 +12,9 @@
 namespace Symfony\Cmf\Component\Routing\Tests\Unit\Mapper;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Cmf\Component\Routing\Test\CmfUnitTestCase;
 use Symfony\Cmf\Component\Routing\Enhancer\FieldMapEnhancer;
 
-class FieldMapEnhancerTest extends CmfUnitTestCase
+class FieldMapEnhancerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Request
@@ -30,39 +29,39 @@ class FieldMapEnhancerTest extends CmfUnitTestCase
     public function setUp()
     {
         $this->request = Request::create('/test');
-        $mapping = array('static_pages' => 'cmf_content.controller:indexAction');
+        $mapping = ['static_pages' => 'cmf_content.controller:indexAction'];
 
         $this->enhancer = new FieldMapEnhancer('type', '_controller', $mapping);
     }
 
     public function testFieldFoundInMapping()
     {
-        $defaults = array('type' => 'static_pages');
-        $expected = array(
+        $defaults = ['type' => 'static_pages'];
+        $expected = [
             'type' => 'static_pages',
             '_controller' => 'cmf_content.controller:indexAction',
-        );
+        ];
         $this->assertEquals($expected, $this->enhancer->enhance($defaults, $this->request));
     }
 
     public function testFieldAlreadyThere()
     {
-        $defaults = array(
+        $defaults = [
             'type' => 'static_pages',
             '_controller' => 'custom.controller:indexAction',
-        );
+        ];
         $this->assertEquals($defaults, $this->enhancer->enhance($defaults, $this->request));
     }
 
     public function testNoType()
     {
-        $defaults = array();
-        $this->assertEquals(array(), $this->enhancer->enhance($defaults, $this->request));
+        $defaults = [];
+        $this->assertEquals([], $this->enhancer->enhance($defaults, $this->request));
     }
 
     public function testNotFoundInMapping()
     {
-        $defaults = array('type' => 'unknown_route');
+        $defaults = ['type' => 'unknown_route'];
         $this->assertEquals($defaults, $this->enhancer->enhance($defaults, $this->request));
     }
 }

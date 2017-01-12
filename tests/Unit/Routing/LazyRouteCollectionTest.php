@@ -11,7 +11,6 @@
 
 namespace Symfony\Cmf\Component\Routing;
 
-use Symfony\Cmf\Component\Routing\Test\CmfUnitTestCase;
 use Symfony\Component\Routing\Route;
 
 /**
@@ -19,18 +18,18 @@ use Symfony\Component\Routing\Route;
  *
  * @group cmf/routing
  */
-class LazyRouteCollectionTest extends CmfUnitTestCase
+class LazyRouteCollectionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Tests the iterator without a paged route provider.
      */
     public function testGetIterator()
     {
-        $routeProvider = $this->getMock('Symfony\Cmf\Component\Routing\RouteProviderInterface');
-        $testRoutes = array(
+        $routeProvider = $this->createMock(RouteProviderInterface::class);
+        $testRoutes = [
           'route_1' => new Route('/route-1'),
           'route_2"' => new Route('/route-2'),
-        );
+        ];
         $routeProvider->expects($this->exactly(2))
             ->method('getRoutesByNames')
             ->with(null)

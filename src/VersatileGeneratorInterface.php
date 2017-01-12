@@ -42,5 +42,5 @@ interface VersatileGeneratorInterface extends UrlGeneratorInterface
      *
      * @return string
      */
-    public function getRouteDebugMessage($name, array $parameters = array());
+    public function getRouteDebugMessage($name, array $parameters = []);
 }

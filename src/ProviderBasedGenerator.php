@@ -45,7 +45,7 @@ class ProviderBasedGenerator extends UrlGenerator implements VersatileGeneratorI
     /**
      * {@inheritdoc}
      */
-    public function generate($name, $parameters = array(), $referenceType = self::ABSOLUTE_PATH)
+    public function generate($name, $parameters = [], $referenceType = self::ABSOLUTE_PATH)
     {
         if ($name instanceof SymfonyRoute) {
             $route = $name;
@@ -75,7 +75,7 @@ class ProviderBasedGenerator extends UrlGenerator implements VersatileGeneratorI
     /**
      * {@inheritdoc}
      */
-    public function getRouteDebugMessage($name, array $parameters = array())
+    public function getRouteDebugMessage($name, array $parameters = [])
     {
         if (is_scalar($name)) {
             return $name;
