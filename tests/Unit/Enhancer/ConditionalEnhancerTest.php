@@ -13,10 +13,11 @@ namespace Symfony\Cmf\Component\Routing\Tests\Mapper;
 
 use Symfony\Cmf\Component\Routing\Enhancer\ConditionalEnhancer;
 use Symfony\Cmf\Component\Routing\Enhancer\FieldByClassEnhancer;
-use Symfony\Cmf\Component\Routing\Test\CmfUnitTestCase;
-use Symfony\Cmf\Component\Testing\Document\Content;
+use Symfony\Cmf\Component\Routing\Enhancer\RouteEnhancerInterface;
+use Symfony\Cmf\Component\Routing\Tests\Resources\Document\Content;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestMatcher;
+use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 
 class ConditionalEnhancerTest extends \PHPUnit_Framework_TestCase
 {
@@ -95,16 +96,16 @@ class ConditionalEnhancerTest extends \PHPUnit_Framework_TestCase
     public function testCreatorMethod()
     {
         $actual = ConditionalEnhancer::createMapEntry(
-            '\Symfony\Cmf\Component\Routing\Enhancer\FieldByClassEnhancer',
+            FieldByClassEnhancer::class,
             'source',
             'target',
-            array('foo' => 'ba'),
-            array('put', 'post')
+            ['foo' => 'ba'],
+            ['put', 'post']
         );
-        $expected = array(
-            'matcher' => new RequestMatcher(null, null, array('put', 'post')),
-            'enhancer' => new FieldByClassEnhancer('source', 'target', array('foo' => 'ba')),
-        );
+        $expected = [
+            'matcher' => new RequestMatcher(null, null, ['put', 'post']),
+            'enhancer' => new FieldByClassEnhancer('source', 'target', ['foo' => 'ba']),
+        ];
 
         $this->assertEquals($expected, $actual);
     }
@@ -113,28 +114,28 @@ class ConditionalEnhancerTest extends \PHPUnit_Framework_TestCase
     {
         $conditionalEnhancer = new ConditionalEnhancer();
         $conditionalEnhancer->createAndAddMapEntry(
-            '\Symfony\Cmf\Component\Routing\Enhancer\FieldByClassEnhancer',
+            FieldByClassEnhancer::class,
             '_content',
             '_controller',
-            array('\Symfony\Cmf\Component\Testing\Document\Content' => 'service:indexAction'),
-            array('put'),
+            [Content::class => 'service:indexAction'],
+            ['put'],
             1
         );
         $conditionalEnhancer->createAndAddMapEntry(
-            '\Symfony\Cmf\Component\Routing\Enhancer\FieldByClassEnhancer',
+            FieldByClassEnhancer::class,
             '_content',
             '_controller',
-            array('\Symfony\Cmf\Component\Testing\Document\Content' => 'service:putAction'),
-            array('put'),
+            [Content::class => 'service:putAction'],
+            ['put'],
             2
         );
         $request = Request::create(null, 'PUT');
-        $defaults = array('_content' => new Content());
+        $defaults = ['_content' => new Content()];
         $actualDefaults = $conditionalEnhancer->enhance($defaults, $request);
-        $expectedDefaults = array(
+        $expectedDefaults = [
             '_content' => new Content(),
             '_controller' => 'service:indexAction',
-        );
+        ];
 
         $this->assertEquals($expectedDefaults, $actualDefaults);
     }

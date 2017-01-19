@@ -13,6 +13,7 @@ namespace Symfony\Cmf\Component\Routing\Enhancer;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestMatcher;
+use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 
 /**
  * This enhancer uses a HttpFoundation request matcher to decide which enhancer
@@ -61,7 +62,9 @@ class ConditionalEnhancer implements RouteEnhancerInterface
     public function enhance(array $defaults, Request $request)
     {
         foreach ($this->getEnhancerMap() as $pair) {
-            if ($pair[self::MAP_KEY_MATCHER]->matches($request)) {
+            if (($pair[self::MAP_KEY_MATCHER] instanceof RequestMatcherInterface
+                    && $pair[self::MAP_KEY_MATCHER]->matchRequest($request)
+                ) || $pair[self::MAP_KEY_MATCHER]->matches($request)) {
                 return $pair[self::MAP_KEY_ENHANCER]->enhance($defaults, $request);
             }
         }
