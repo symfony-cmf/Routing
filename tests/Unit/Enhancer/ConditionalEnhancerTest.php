@@ -12,10 +12,11 @@
 namespace Symfony\Cmf\Component\Routing\Tests\Unit\Mapper;
 
 use Symfony\Cmf\Component\Routing\Enhancer\ConditionalEnhancer;
+use Symfony\Cmf\Component\Routing\Enhancer\RouteEnhancerInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Cmf\Component\Routing\Test\CmfUnitTestCase;
+use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 
-class ConditionalEnhancerTest extends CmfUnitTestCase
+class ConditionalEnhancerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Request
@@ -29,63 +30,62 @@ class ConditionalEnhancerTest extends CmfUnitTestCase
 
     public function testSecondMatch()
     {
-        $defaults = array('foo' => 'bar');
-        $expected = array('matcher' => 'found');
+        $defaults = ['foo' => 'bar'];
+        $expected = ['matcher' => 'found'];
 
-        $enhancer1 = $this->buildMock('\Symfony\Cmf\Component\Routing\Enhancer\RouteEnhancerInterface');
+        $enhancer1 = $this->createMock(RouteEnhancerInterface::class);
         $enhancer1->expects($this->never())
             ->method('enhance');
-        $matcher1 = $this->buildMock('\Symfony\Component\HttpFoundation\RequestMatcherInterface');
+        $matcher1 = $this->createMock(RequestMatcherInterface::class);
         $matcher1->expects($this->once())
             ->method('matches')
             ->with($this->request)
             ->will($this->returnValue(false));
 
-        $enhancer2 = $this->buildMock('\Symfony\Cmf\Component\Routing\Enhancer\RouteEnhancerInterface');
+        $enhancer2 = $this->createMock(RouteEnhancerInterface::class);
         $enhancer2->expects($this->once())
             ->method('enhance')
             ->with($defaults, $this->request)
             ->will($this->returnValue($expected));
-        $matcher2 = $this->buildMock('\Symfony\Component\HttpFoundation\RequestMatcherInterface');
+        $matcher2 = $this->createMock(RequestMatcherInterface::class);
         $matcher2->expects($this->once())
             ->method('matches')
             ->with($this->request)
             ->will($this->returnValue(true));
 
-        $enhancer = new ConditionalEnhancer(array(
-           array(
-               'matcher' => $matcher1,
-               'enhancer' => $enhancer1,
-           ),
-            array(
+        $enhancer = new ConditionalEnhancer([
+            [
+                'matcher' => $matcher1,
+                'enhancer' => $enhancer1,
+            ],
+            [
                 'matcher' => $matcher2,
                 'enhancer' => $enhancer2,
-            ),
-        ));
+            ],
+        ]);
 
         $this->assertEquals($expected, $enhancer->enhance($defaults, $this->request));
     }
 
     public function testNoMatch()
     {
-        $defaults = array('foo' => 'bar');
-        $expected = array('matcher' => 'found');
+        $defaults = ['foo' => 'bar'];
 
-        $enhancer1 = $this->buildMock('\Symfony\Cmf\Component\Routing\Enhancer\RouteEnhancerInterface');
+        $enhancer1 = $this->createMock(RouteEnhancerInterface::class);
         $enhancer1->expects($this->never())
             ->method('enhance');
-        $matcher1 = $this->buildMock('\Symfony\Component\HttpFoundation\RequestMatcherInterface');
+        $matcher1 = $this->createMock(RequestMatcherInterface::class);
         $matcher1->expects($this->once())
             ->method('matches')
             ->with($this->request)
             ->will($this->returnValue(false));
 
-        $enhancer = new ConditionalEnhancer(array(
-            array(
+        $enhancer = new ConditionalEnhancer([
+            [
                 'matcher' => $matcher1,
                 'enhancer' => $enhancer1,
-            ),
-        ));
+            ],
+        ]);
 
         $this->assertEquals($defaults, $enhancer->enhance($defaults, $this->request));
     }

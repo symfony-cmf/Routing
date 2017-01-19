@@ -12,6 +12,8 @@
 namespace Symfony\Cmf\Routing\Tests\Unit\DependencyInjection\Compiler;
 
 use Symfony\Cmf\Component\Routing\DependencyInjection\Compiler\RegisterRoutersPass;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 
 class RegisterRoutersPassTest extends \PHPUnit_Framework_TestCase
@@ -21,15 +23,12 @@ class RegisterRoutersPassTest extends \PHPUnit_Framework_TestCase
      */
     public function testValidRouters($name, $priority = null)
     {
-        if (!method_exists($this, 'callback')) {
-            $this->markTestSkipped('PHPUnit version too old for this test');
-        }
-        $services = array();
-        $services[$name] = array(0 => array('priority' => $priority));
+        $services = [];
+        $services[$name] = [0 => ['priority' => $priority]];
 
         $priority = $priority ?: 0;
 
-        $definition = $this->getMock('Symfony\Component\DependencyInjection\Definition');
+        $definition = $this->createMock(Definition::class);
         $definition->expects($this->atLeastOnce())
             ->method('addMethodCall')
             ->with($this->equalTo('add'), $this->callback(function ($arg) use ($name, $priority) {
@@ -44,7 +43,7 @@ class RegisterRoutersPassTest extends \PHPUnit_Framework_TestCase
                 return true;
             }));
 
-        $builder = $this->getMock('Symfony\Component\DependencyInjection\ContainerBuilder', array('hasDefinition', 'findTaggedServiceIds', 'getDefinition'));
+        $builder = $this->createMock(ContainerBuilder::class);
         $builder->expects($this->any())
             ->method('hasDefinition')
             ->with('cmf_routing.router')
@@ -64,11 +63,11 @@ class RegisterRoutersPassTest extends \PHPUnit_Framework_TestCase
 
     public function getValidRoutersData()
     {
-        return array(
-            array('my_router'),
-            array('my_primary_router', 99),
-            array('my_router', 0),
-        );
+        return [
+            ['my_router'],
+            ['my_primary_router', 99],
+            ['my_router', 0],
+        ];
     }
 
     /**
@@ -77,7 +76,7 @@ class RegisterRoutersPassTest extends \PHPUnit_Framework_TestCase
      */
     public function testNoChainRouter()
     {
-        $builder = $this->getMock('Symfony\Component\DependencyInjection\ContainerBuilder', array('hasDefinition', 'findTaggedServiceIds', 'getDefinition'));
+        $builder = $this->createMock(ContainerBuilder::class);
         $builder->expects($this->once())
             ->method('hasDefinition')
             ->with('cmf_routing.router')

@@ -14,7 +14,7 @@ namespace Symfony\Cmf\Component\Routing\Tests\Unit\Candidates;
 use Symfony\Cmf\Component\Routing\Candidates\Candidates;
 use Symfony\Component\HttpFoundation\Request;
 
-class CandidatesTest extends \PHPUnit_Framework_Testcase
+class CandidatesTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Everything is a candidate.
@@ -43,32 +43,32 @@ class CandidatesTest extends \PHPUnit_Framework_Testcase
         $paths = $candidates->getCandidates($request);
 
         $this->assertEquals(
-            array(
+            [
                 '/my/path.html',
                 '/my/path',
                 '/my',
                 '/',
-            ),
+            ],
             $paths
         );
     }
 
     public function testGetCandidatesLocales()
     {
-        $candidates = new Candidates(array('de', 'fr'));
+        $candidates = new Candidates(['de', 'fr']);
 
         $request = Request::create('/fr/path.html');
         $paths = $candidates->getCandidates($request);
 
         $this->assertEquals(
-            array(
+            [
                 '/fr/path.html',
                 '/fr/path',
                 '/fr',
                 '/',
                 '/path.html',
                 '/path',
-            ),
+            ],
             $paths
         );
 
@@ -76,29 +76,29 @@ class CandidatesTest extends \PHPUnit_Framework_Testcase
         $paths = $candidates->getCandidates($request);
 
         $this->assertEquals(
-            array(
+            [
                 '/it/path.html',
                 '/it/path',
                 '/it',
                 '/',
-            ),
+            ],
             $paths
         );
     }
 
     public function testGetCandidatesLimit()
     {
-        $candidates = new Candidates(array(), 1);
+        $candidates = new Candidates([], 1);
 
         $request = Request::create('/my/path/is/deep.html');
 
         $paths = $candidates->getCandidates($request);
 
         $this->assertEquals(
-            array(
+            [
                 '/my/path/is/deep.html',
                 '/my/path/is/deep',
-            ),
+            ],
             $paths
         );
     }

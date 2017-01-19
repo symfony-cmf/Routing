@@ -12,21 +12,22 @@
 namespace Symfony\Cmf\Component\Routing\Tests\Unit\DependencyInjection\Compiler;
 
 use Symfony\Cmf\Component\Routing\DependencyInjection\Compiler\RegisterRouteEnhancersPass;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 
 class RegisterRouteEnhancersPassTest extends \PHPUnit_Framework_TestCase
 {
     public function testRouteEnhancerPass()
     {
-        $serviceIds = array(
-            'test_enhancer' => array(
-                0 => array(
+        $serviceIds = [
+            'test_enhancer' => [
+                0 => [
                     'id' => 'foo_enhancer',
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
 
-        $builder = $this->getContainerBuilderMock();
+        $builder = $this->createMock(ContainerBuilder::class);
         $definition = new Definition('router');
         $builder->expects($this->at(0))
             ->method('hasDefinition')
@@ -57,7 +58,7 @@ class RegisterRouteEnhancersPassTest extends \PHPUnit_Framework_TestCase
      */
     public function testNoDynamicRouter()
     {
-        $builder = $this->getContainerBuilderMock();
+        $builder = $this->createMock(ContainerBuilder::class);
         $builder->expects($this->once())
             ->method('hasDefinition')
             ->with('cmf_routing.dynamic_router')
@@ -66,13 +67,5 @@ class RegisterRouteEnhancersPassTest extends \PHPUnit_Framework_TestCase
 
         $pass = new RegisterRouteEnhancersPass();
         $pass->process($builder);
-    }
-
-    protected function getContainerBuilderMock(array $functions = array())
-    {
-        return $this->getMock(
-            'Symfony\Component\DependencyInjection\ContainerBuilder',
-            array_merge(array('hasDefinition', 'findTaggedServiceIds', 'getDefinition'), $functions)
-        );
     }
 }

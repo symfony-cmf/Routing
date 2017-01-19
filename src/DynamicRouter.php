@@ -56,14 +56,14 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
     /**
      * @var RouteEnhancerInterface[][]
      */
-    protected $enhancers = array();
+    protected $enhancers = [];
 
     /**
      * Cached sorted list of enhancers.
      *
      * @var RouteEnhancerInterface[]
      */
-    protected $sortedEnhancers = array();
+    protected $sortedEnhancers = [];
 
     /**
      * The regexp pattern that needs to be matched before a dynamic lookup is
@@ -176,7 +176,7 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
      *
      * @api
      */
-    public function generate($name, $parameters = array(), $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH)
+    public function generate($name, $parameters = [], $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH)
     {
         if ($this->eventDispatcher) {
             $event = new RouterGenerateEvent($name, $parameters, $referenceType);
@@ -316,11 +316,11 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
     public function addRouteEnhancer(RouteEnhancerInterface $enhancer, $priority = 0)
     {
         if (empty($this->enhancers[$priority])) {
-            $this->enhancers[$priority] = array();
+            $this->enhancers[$priority] = [];
         }
 
         $this->enhancers[$priority][] = $enhancer;
-        $this->sortedEnhancers = array();
+        $this->sortedEnhancers = [];
 
         return $this;
     }
@@ -351,7 +351,7 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
         krsort($this->enhancers);
 
         if (0 === count($this->enhancers)) {
-            return array();
+            return [];
         }
 
         return call_user_func_array('array_merge', $this->enhancers);
@@ -386,7 +386,7 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
      *
      * Forwards to the generator.
      */
-    public function getRouteDebugMessage($name, array $parameters = array())
+    public function getRouteDebugMessage($name, array $parameters = [])
     {
         if ($this->generator instanceof VersatileGeneratorInterface) {
             return $this->generator->getRouteDebugMessage($name, $parameters);

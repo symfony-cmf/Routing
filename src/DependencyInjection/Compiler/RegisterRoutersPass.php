@@ -48,7 +48,7 @@ class RegisterRoutersPass implements CompilerPassInterface
         foreach ($container->findTaggedServiceIds($this->routerTag) as $id => $attributes) {
             $priority = isset($attributes[0]['priority']) ? $attributes[0]['priority'] : 0;
 
-            $definition->addMethodCall('add', array(new Reference($id), $priority));
+            $definition->addMethodCall('add', [new Reference($id), $priority]);
         }
     }
 }

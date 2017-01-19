@@ -42,7 +42,7 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
      *
      * @var array
      */
-    private $routers = array();
+    private $routers = [];
 
     /**
      * @var RouterInterface[] Array of routers, sorted by priority
@@ -86,11 +86,11 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
             throw new \InvalidArgumentException(sprintf('%s is not a valid router.', get_class($router)));
         }
         if (empty($this->routers[$priority])) {
-            $this->routers[$priority] = array();
+            $this->routers[$priority] = [];
         }
 
         $this->routers[$priority][] = $router;
-        $this->sortedRouters = array();
+        $this->sortedRouters = [];
     }
 
     /**
@@ -127,7 +127,7 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
         krsort($this->routers);
 
         if (0 === count($this->routers)) {
-            return array();
+            return [];
         }
 
         return call_user_func_array('array_merge', $this->routers);
@@ -212,9 +212,9 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
      * Loops through all registered routers and returns a router if one is found.
      * It will always return the first route generated.
      */
-    public function generate($name, $parameters = array(), $absolute = UrlGeneratorInterface::ABSOLUTE_PATH)
+    public function generate($name, $parameters = [], $absolute = UrlGeneratorInterface::ABSOLUTE_PATH)
     {
-        $debug = array();
+        $debug = [];
 
         foreach ($this->all() as $router) {
             // if $router does not announce it is capable of handling
@@ -266,7 +266,7 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
 
         $uri = $pathinfo;
 
-        $server = array();
+        $server = [];
         if ($this->context->getBaseUrl()) {
             $uri = $this->context->getBaseUrl().$pathinfo;
             $server['SCRIPT_FILENAME'] = $this->context->getBaseUrl();
@@ -281,7 +281,7 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
         }
         $uri = $this->context->getScheme().'://'.$host.$uri.'?'.$this->context->getQueryString();
 
-        return Request::create($uri, $this->context->getMethod(), $this->context->getParameters(), array(), array(), $server);
+        return Request::create($uri, $this->context->getMethod(), $this->context->getParameters(), [], [], $server);
     }
 
     private function getErrorMessage($name, $router = null, $parameters = null)

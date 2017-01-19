@@ -51,14 +51,14 @@ class NestedMatcher implements RequestMatcherInterface
      *
      * @var RouteFilterInterface[]
      */
-    protected $filters = array();
+    protected $filters = [];
 
     /**
      * Array of RouteFilterInterface objects, sorted.
      *
      * @var RouteFilterInterface[]
      */
-    protected $sortedFilters = array();
+    protected $sortedFilters = [];
 
     /**
      * Constructs a new NestedMatcher.
@@ -109,11 +109,11 @@ class NestedMatcher implements RequestMatcherInterface
     public function addRouteFilter(RouteFilterInterface $filter, $priority = 0)
     {
         if (empty($this->filters[$priority])) {
-            $this->filters[$priority] = array();
+            $this->filters[$priority] = [];
         }
 
         $this->filters[$priority][] = $filter;
-        $this->sortedFilters = array();
+        $this->sortedFilters = [];
 
         return $this;
     }
