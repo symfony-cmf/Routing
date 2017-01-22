@@ -12,9 +12,9 @@
 namespace Symfony\Cmf\Component\Routing;
 
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\Route as SymfonyRoute;
-use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\RouteCollection;
 
 /**

@@ -11,8 +11,8 @@
 
 namespace Symfony\Cmf\Component\Routing\Tests\Unit\Routing;
 
-use Symfony\Component\Routing\Route as SymfonyRoute;
 use Symfony\Cmf\Component\Routing\RouteObjectInterface;
+use Symfony\Component\Routing\Route as SymfonyRoute;
 
 class RouteMock extends SymfonyRoute implements RouteObjectInterface
 {

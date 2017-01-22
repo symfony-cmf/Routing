@@ -12,13 +12,13 @@
 namespace Symfony\Cmf\Component\Routing\Tests\Unit\NestedMatcher;
 
 use Symfony\Cmf\Component\Routing\NestedMatcher\FinalMatcherInterface;
+use Symfony\Cmf\Component\Routing\NestedMatcher\NestedMatcher;
 use Symfony\Cmf\Component\Routing\NestedMatcher\RouteFilterInterface;
 use Symfony\Cmf\Component\Routing\RouteProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\RouteCollection;
-use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
-use Symfony\Cmf\Component\Routing\NestedMatcher\NestedMatcher;
+use Symfony\Component\Routing\Route;
+use Symfony\Component\Routing\RouteCollection;
 
 class NestedMatcherTest extends \PHPUnit_Framework_TestCase
 {

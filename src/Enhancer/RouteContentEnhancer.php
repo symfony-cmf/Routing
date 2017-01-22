@@ -11,8 +11,8 @@
 
 namespace Symfony\Cmf\Component\Routing\Enhancer;
 
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Cmf\Component\Routing\RouteObjectInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * This enhancer sets the content to target field if the route provides content.

@@ -11,9 +11,9 @@
 
 namespace Symfony\Cmf\Component\Routing\DependencyInjection\Compiler;
 
+use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 
 /**
  * Compiler pass to register routers to the ChainRouter.

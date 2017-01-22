@@ -11,9 +11,9 @@
 
 namespace Symfony\Cmf\Component\Routing\Tests\Unit\Enhancer;
 
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Cmf\Component\Routing\Enhancer\RouteContentEnhancer;
 use Symfony\Cmf\Component\Routing\RouteObjectInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Route;
 
 class RouteContentEnhancerTest extends \PHPUnit_Framework_TestCase

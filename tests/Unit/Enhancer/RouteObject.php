@@ -11,8 +11,8 @@
 
 namespace Symfony\Cmf\Component\Routing\Tests\Unit\Enhancer;
 
-use Symfony\Component\Routing\Route;
 use Symfony\Cmf\Component\Routing\RouteObjectInterface;
+use Symfony\Component\Routing\Route;
 
 /**
  * Empty abstract class to be able to mock an object that both extends Route
