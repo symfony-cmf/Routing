@@ -11,8 +11,10 @@
 
 namespace Symfony\Cmf\Component\Routing\Tests\Routing;
 
+use Symfony\Cmf\Component\Routing\DynamicRouter;
 use Symfony\Cmf\Component\Routing\Enhancer\RouteEnhancerInterface;
 use Symfony\Cmf\Component\Routing\Event\Events;
+use Symfony\Cmf\Component\Routing\Event\RouterGenerateEvent;
 use Symfony\Cmf\Component\Routing\Event\RouterMatchEvent;
 use Symfony\Cmf\Component\Routing\LazyRouteCollection;
 use Symfony\Cmf\Component\Routing\RouteProviderInterface;
@@ -21,12 +23,10 @@ use Symfony\Cmf\Component\Routing\VersatileGeneratorInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Cmf\Component\Routing\DynamicRouter;
 use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 use Symfony\Component\Routing\Matcher\UrlMatcherInterface;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\RouteCollection;
-use Symfony\Cmf\Component\Routing\Event\RouterGenerateEvent;
 
 class DynamicRouterTest extends \PHPUnit_Framework_TestCase
 {

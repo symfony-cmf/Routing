@@ -11,13 +11,13 @@
 
 namespace Symfony\Cmf\Component\Routing\Tests\Routing;
 
+use Symfony\Cmf\Component\Routing\ContentAwareGenerator;
+use Symfony\Cmf\Component\Routing\ContentRepositoryInterface;
 use Symfony\Cmf\Component\Routing\RouteProviderInterface;
 use Symfony\Cmf\Component\Routing\RouteReferrersReadInterface;
-use Symfony\Cmf\Component\Routing\ContentAwareGenerator;
 use Symfony\Cmf\Component\Routing\Tests\Unit\Routing\RouteMock;
 use Symfony\Component\Routing\CompiledRoute;
 use Symfony\Component\Routing\RequestContext;
-use Symfony\Cmf\Component\Routing\ContentRepositoryInterface;
 use Symfony\Component\Routing\Route;
 
 class ContentAwareGeneratorTest extends \PHPUnit_Framework_TestCase

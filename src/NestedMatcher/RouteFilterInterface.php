@@ -11,9 +11,9 @@
 
 namespace Symfony\Cmf\Component\Routing\NestedMatcher;
 
-use Symfony\Component\Routing\RouteCollection;
-use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Exception\ResourceNotFoundException;
+use Symfony\Component\Routing\RouteCollection;
 
 /**
  * A RouteFilter takes a RouteCollection and returns a filtered subset.

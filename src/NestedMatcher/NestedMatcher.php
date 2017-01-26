@@ -11,10 +11,10 @@
 
 namespace Symfony\Cmf\Component\Routing\NestedMatcher;
 
+use Symfony\Cmf\Component\Routing\RouteProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
-use Symfony\Cmf\Component\Routing\RouteProviderInterface;
 
 /**
  * A more flexible approach to matching. The route collection to match against

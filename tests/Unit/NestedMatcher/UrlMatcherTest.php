@@ -11,14 +11,14 @@
 
 namespace Symfony\Cmf\Component\Routing\Tests\Unit\NestedMatcher;
 
+use Symfony\Cmf\Component\Routing\NestedMatcher\UrlMatcher;
+use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 use Symfony\Cmf\Component\Routing\Tests\Unit\Routing\RouteMock;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\CompiledRoute;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
-use Symfony\Cmf\Component\Routing\NestedMatcher\UrlMatcher;
-use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 
 class UrlMatcherTest extends \PHPUnit_Framework_TestCase
 {

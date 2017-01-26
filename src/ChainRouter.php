@@ -11,18 +11,18 @@
 
 namespace Symfony\Cmf\Component\Routing;
 
-use Symfony\Component\Routing\RouterInterface;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\CacheWarmer\WarmableInterface;
+use Symfony\Component\Routing\Exception\MethodNotAllowedException;
+use Symfony\Component\Routing\Exception\ResourceNotFoundException;
+use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\RequestContextAwareInterface;
-use Symfony\Component\Routing\Exception\ResourceNotFoundException;
-use Symfony\Component\Routing\Exception\RouteNotFoundException;
-use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Routing\RouteCollection;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\CacheWarmer\WarmableInterface;
-use Psr\Log\LoggerInterface;
+use Symfony\Component\Routing\RouterInterface;
 
 /**
  * The ChainRouter allows to combine several routers to try in a defined order.
