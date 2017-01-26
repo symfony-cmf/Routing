@@ -12,7 +12,9 @@
 namespace Symfony\Cmf\Component\Routing\Tests\Routing;
 
 use Psr\Log\LoggerInterface;
+use Symfony\Cmf\Component\Routing\ChainRouter;
 use Symfony\Cmf\Component\Routing\VersatileGeneratorInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\CacheWarmer\WarmableInterface;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
@@ -20,11 +22,9 @@ use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 use Symfony\Component\Routing\RequestContext;
-use Symfony\Component\Routing\RouteCollection;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Cmf\Component\Routing\ChainRouter;
-use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Routing\Route;
+use Symfony\Component\Routing\RouteCollection;
+use Symfony\Component\Routing\RouterInterface;
 
 class ChainRouterTest extends \PHPUnit_Framework_TestCase
 {

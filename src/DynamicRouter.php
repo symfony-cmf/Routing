@@ -11,23 +11,23 @@
 
 namespace Symfony\Cmf\Component\Routing;
 
+use Symfony\Cmf\Component\Routing\Enhancer\RouteEnhancerInterface;
+use Symfony\Cmf\Component\Routing\Event\Events;
+use Symfony\Cmf\Component\Routing\Event\RouterGenerateEvent;
+use Symfony\Cmf\Component\Routing\Event\RouterMatchEvent;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\RequestContext;
-use Symfony\Component\Routing\Route;
-use Symfony\Component\Routing\RouteCollection;
-use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Routing\Exception\MethodNotAllowedException;
+use Symfony\Component\Routing\Exception\ResourceNotFoundException;
+use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 use Symfony\Component\Routing\Matcher\UrlMatcherInterface;
+use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\RequestContextAwareInterface;
-use Symfony\Component\Routing\Exception\RouteNotFoundException;
-use Symfony\Component\Routing\Exception\ResourceNotFoundException;
-use Symfony\Component\Routing\Exception\MethodNotAllowedException;
-use Symfony\Cmf\Component\Routing\Enhancer\RouteEnhancerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Cmf\Component\Routing\Event\Events;
-use Symfony\Cmf\Component\Routing\Event\RouterMatchEvent;
-use Symfony\Cmf\Component\Routing\Event\RouterGenerateEvent;
+use Symfony\Component\Routing\Route;
+use Symfony\Component\Routing\RouteCollection;
+use Symfony\Component\Routing\RouterInterface;
 
 /**
  * A flexible router accepting matcher and generator through injection and

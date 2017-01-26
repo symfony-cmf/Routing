@@ -11,8 +11,8 @@
 
 namespace Symfony\Cmf\Component\Routing;
 
-use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
+use Symfony\Component\Routing\RouterInterface;
 
 /**
  * Interface for a router that proxies routing to other routers.

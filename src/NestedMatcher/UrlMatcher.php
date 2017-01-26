@@ -11,12 +11,12 @@
 
 namespace Symfony\Cmf\Component\Routing\NestedMatcher;
 
+use Symfony\Cmf\Component\Routing\RouteObjectInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Matcher\UrlMatcher as SymfonyUrlMatcher;
+use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
-use Symfony\Component\Routing\Matcher\UrlMatcher as SymfonyUrlMatcher;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\RequestContext;
-use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 
 /**
  * Extended UrlMatcher to provide an additional interface and enhanced features.

@@ -11,12 +11,12 @@
 
 namespace Symfony\Cmf\Component\Routing\Tests\Routing;
 
-use Symfony\Cmf\Component\Routing\RouteObjectInterface;
-use Symfony\Component\Routing\RequestContext;
-use Symfony\Component\Routing\Route;
 use Symfony\Cmf\Component\Routing\ProviderBasedGenerator;
+use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 use Symfony\Cmf\Component\Routing\RouteProviderInterface;
 use Symfony\Component\Routing\CompiledRoute;
+use Symfony\Component\Routing\RequestContext;
+use Symfony\Component\Routing\Route;
 
 class ProviderBasedGeneratorTest extends \PHPUnit_Framework_TestCase
 {
