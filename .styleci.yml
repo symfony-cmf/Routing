@@ -1,7 +1,7 @@
 preset: symfony
 
 enabled:
-  - ordered_use
+  - alpha_ordered_imports
   - short_array_syntax
   
 disabled: [single_line_class_definition]
