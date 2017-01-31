@@ -175,6 +175,10 @@ class NestedMatcher implements RequestMatcherInterface
      */
     protected function sortFilters()
     {
+        if (0 === count($this->filters)) {
+            return [];
+        }
+
         krsort($this->filters);
 
         return call_user_func_array('array_merge', $this->filters);
