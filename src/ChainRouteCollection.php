@@ -241,6 +241,10 @@ class ChainRouteCollection extends RouteCollection
      */
     public function getResources()
     {
+        if (0 === count($this->routeCollections)) {
+            return [];
+        }
+
         $resources = array_map(function (RouteCollection $routeCollection) {
             return $routeCollection->getResources();
         }, $this->routeCollections);

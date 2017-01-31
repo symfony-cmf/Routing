@@ -124,11 +124,11 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
      */
     protected function sortRouters()
     {
-        krsort($this->routers);
-
         if (0 === count($this->routers)) {
             return [];
         }
+
+        krsort($this->routers);
 
         return call_user_func_array('array_merge', $this->routers);
     }

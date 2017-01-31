@@ -348,11 +348,11 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
      */
     protected function sortRouteEnhancers()
     {
-        krsort($this->enhancers);
-
         if (0 === count($this->enhancers)) {
             return [];
         }
+
+        krsort($this->enhancers);
 
         return call_user_func_array('array_merge', $this->enhancers);
     }
