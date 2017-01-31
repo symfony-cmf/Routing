@@ -11,7 +11,7 @@
 
 namespace Symfony\Cmf\Component\Routing;
 
-use Symfony\Cmf\Component\Routing\Enhancer\RouteEnhancerInterface;
+use Symfony\Cmf\Component\Routing\Enhancer\RouteEnhancerTrait;
 use Symfony\Cmf\Component\Routing\Event\Events;
 use Symfony\Cmf\Component\Routing\Event\RouterGenerateEvent;
 use Symfony\Cmf\Component\Routing\Event\RouterMatchEvent;
@@ -38,6 +38,8 @@ use Symfony\Component\Routing\RouterInterface;
  */
 class DynamicRouter implements RouterInterface, RequestMatcherInterface, ChainedRouterInterface
 {
+    use RouteEnhancerTrait;
+
     /**
      * @var RequestMatcherInterface|UrlMatcherInterface
      */
@@ -52,18 +54,6 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
      * @var EventDispatcherInterface
      */
     protected $eventDispatcher;
-
-    /**
-     * @var RouteEnhancerInterface[][]
-     */
-    protected $enhancers = [];
-
-    /**
-     * Cached sorted list of enhancers.
-     *
-     * @var RouteEnhancerInterface[]
-     */
-    protected $sortedEnhancers = [];
 
     /**
      * The regexp pattern that needs to be matched before a dynamic lookup is
@@ -282,79 +272,6 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
         }
 
         return $this->applyRouteEnhancers($defaults, $request);
-    }
-
-    /**
-     * Apply the route enhancers to the defaults, according to priorities.
-     *
-     * @param array   $defaults
-     * @param Request $request
-     *
-     * @return array
-     */
-    protected function applyRouteEnhancers($defaults, Request $request)
-    {
-        foreach ($this->getRouteEnhancers() as $enhancer) {
-            $defaults = $enhancer->enhance($defaults, $request);
-        }
-
-        return $defaults;
-    }
-
-    /**
-     * Add route enhancers to the router to let them generate information on
-     * matched routes.
-     *
-     * The order of the enhancers is determined by the priority, the higher the
-     * value, the earlier the enhancer is run.
-     *
-     * @param RouteEnhancerInterface $enhancer
-     * @param int                    $priority
-     *
-     * @return self
-     */
-    public function addRouteEnhancer(RouteEnhancerInterface $enhancer, $priority = 0)
-    {
-        if (empty($this->enhancers[$priority])) {
-            $this->enhancers[$priority] = [];
-        }
-
-        $this->enhancers[$priority][] = $enhancer;
-        $this->sortedEnhancers = [];
-
-        return $this;
-    }
-
-    /**
-     * Sorts the enhancers and flattens them.
-     *
-     * @return RouteEnhancerInterface[] the enhancers ordered by priority
-     */
-    public function getRouteEnhancers()
-    {
-        if (0 === count($this->sortedEnhancers)) {
-            $this->sortedEnhancers = $this->sortRouteEnhancers();
-        }
-
-        return $this->sortedEnhancers;
-    }
-
-    /**
-     * Sort enhancers by priority.
-     *
-     * The highest priority number is the highest priority (reverse sorting).
-     *
-     * @return RouteEnhancerInterface[] the sorted enhancers
-     */
-    protected function sortRouteEnhancers()
-    {
-        if (0 === count($this->enhancers)) {
-            return [];
-        }
-
-        krsort($this->enhancers);
-
-        return call_user_func_array('array_merge', $this->enhancers);
     }
 
     /**
