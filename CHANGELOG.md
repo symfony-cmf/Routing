@@ -1,6 +1,12 @@
 Changelog
 =========
 
+2.0.0-RC2
+---------
+
+ * **2016-01-31**: Fixed bug during ordening of routes, routers, enhancers and
+   filters.
+
 2.0.0-RC1
 ---------
 
