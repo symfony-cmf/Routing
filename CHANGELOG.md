@@ -1,7 +1,15 @@
 Changelog
 =========
 
+2.0.0-RC3
+---------
+
  * **2017-01-31**: Split out enhancer code from DynamicRouter into RouteEnhancerTrait for reusability.
+
+2.0.0-RC2
+---------
+
+Released.
 
 2.0.0-RC1
 ---------
