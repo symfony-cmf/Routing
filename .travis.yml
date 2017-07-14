@@ -2,7 +2,6 @@ language: php
 
 php:
   - 7.0
-  - hhvm
 
 sudo: false
 
@@ -26,6 +25,8 @@ matrix:
       env: SYMFONY_VERSION=2.8.* COMPOSER_FLAGS="--prefer-lowest"
     - php: 7.1
       env: SYMFONY_VERSION=3.1.*
+    - php: hhvm
+      dist: trusty
   finish_fast: true
 
 before_install:
