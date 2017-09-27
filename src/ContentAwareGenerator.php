@@ -78,6 +78,7 @@ class ContentAwareGenerator extends ProviderBasedGenerator
 
         if (!$route instanceof SymfonyRoute) {
             $hint = is_object($route) ? get_class($route) : gettype($route);
+
             throw new RouteNotFoundException('Route of this document is not an instance of Symfony\Component\Routing\Route but: '.$hint);
         }
 
@@ -176,6 +177,7 @@ class ContentAwareGenerator extends ProviderBasedGenerator
             }
         } else {
             $hint = is_object($name) ? get_class($name) : gettype($name);
+
             throw new RouteNotFoundException("The route name argument '$hint' is not RouteReferrersReadInterface instance and there is no 'content_id' parameter");
         }
 
@@ -184,6 +186,7 @@ class ContentAwareGenerator extends ProviderBasedGenerator
             $hint = ($this->contentRepository && $this->contentRepository->getContentId($content))
                 ? $this->contentRepository->getContentId($content)
                 : get_class($content);
+
             throw new RouteNotFoundException('Content document has no route: '.$hint);
         }
 

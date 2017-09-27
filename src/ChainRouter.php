@@ -203,6 +203,7 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
         $info = $request
             ? "this request\n$request"
             : "url '$pathinfo'";
+
         throw $methodNotAllowed ?: new ResourceNotFoundException("None of the routers in the chain matched $info");
     }
 
