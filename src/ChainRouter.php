@@ -47,7 +47,7 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
     /**
      * @var RouterInterface[] Array of routers, sorted by priority
      */
-    private $sortedRouters;
+    private $sortedRouters = [];
 
     /**
      * @var RouteCollection
