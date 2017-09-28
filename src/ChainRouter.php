@@ -98,7 +98,7 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
      */
     public function all()
     {
-        if (0 === count($this->sortedRouters)) {
+        if (null === $this->sortedRouters || 0 === count($this->sortedRouters)) {
             $this->sortedRouters = $this->sortRouters();
 
             // setContext() is done here instead of in add() to avoid fatal errors when clearing and warming up caches
