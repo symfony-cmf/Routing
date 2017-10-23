@@ -1,8 +1,19 @@
-# Symfony CMF Routing Component
+# Symfony CMF Routing
 
-[![Build Status](https://travis-ci.org/symfony-cmf/routing.svg?branch=master)](https://travis-ci.org/symfony-cmf/routing)
-[![Latest Stable Version](https://poser.pugx.org/symfony-cmf/routing/version.png)](https://packagist.org/packages/symfony-cmf/routing)
-[![Total Downloads](https://poser.pugx.org/symfony-cmf/routing/d/total.png)](https://packagist.org/packages/symfony-cmf/routing)
+[![Latest Stable Version](https://poser.pugx.org/symfony-cmf/routing/v/stable)](https://packagist.org/packages/symfony-cmf/routing)
+[![Latest Unstable Version](https://poser.pugx.org/symfony-cmf/routing/v/unstable)](https://packagist.org/packages/symfony-cmf/routing)
+[![License](https://poser.pugx.org/symfony-cmf/routing/license)](https://packagist.org/packages/symfony-cmf/routing)
+
+[![Total Downloads](https://poser.pugx.org/symfony-cmf/routing/downloads)](https://packagist.org/packages/symfony-cmf/routing)
+[![Monthly Downloads](https://poser.pugx.org/symfony-cmf/routing/d/monthly)](https://packagist.org/packages/symfony-cmf/routing)
+[![Daily Downloads](https://poser.pugx.org/symfony-cmf/routing/d/daily)](https://packagist.org/packages/symfony-cmf/routing)
+
+Branch | Travis | Coveralls |
+------ | ------ | --------- |
+master | [![Build Status][travis_unstable_badge]][travis_unstable_link] | [![Coverage Status][coveralls_unstable_badge]][coveralls_unstable_link] |
+
+This bundle is part of the [Symfony Content Management Framework (CMF)](http://cmf.symfony.com/) and licensed
+under the [MIT License](LICENSE).
 
 The Symfony CMF Routing component extends the Symfony routing component with additional features:
 
@@ -17,28 +28,27 @@ For the best integration into the Symfony full stack framework, it is
 recommended to use the [RoutingBundle](https://github.com/symfony-cmf/RoutingBundle)
 when building Symfony full stack applications.
 
-This library is provided by the [Symfony Content Management Framework (CMF) project](http://cmf.symfony.com/)
-and licensed under the [MIT License](LICENSE).
-
 
 ## Requirements
 
-* PHP 5.6 / 7
-* The Symfony Routing component (2.8 - 3.\*)
+* PHP 5.6 / 7.0 / 7.1
+* Symfony 
 * See also the `require` section of [composer.json](composer.json)
-
 
 ## Documentation
 
 For the install guide and reference, see:
 
-* [Routing component documentation](http://symfony.com/doc/master/cmf/components/routing/index.html)
+* [symfony-cmf/routing Documentation](http://symfony.com/doc/master/cmf/components/routing/index.html)
 
 See also:
 
 * [All Symfony CMF documentation](http://symfony.com/doc/master/cmf/index.html) - complete Symfony CMF reference
 * [Symfony CMF Website](http://cmf.symfony.com/) - introduction, live demo, support and community links
 
+## Support
+
+For general support and questions, please use [StackOverflow](http://stackoverflow.com/questions/tagged/symfony-cmf).
 
 ## Contributing
 
@@ -46,9 +56,27 @@ Pull requests are welcome. Please see our
 [CONTRIBUTING](https://github.com/symfony-cmf/symfony-cmf/blob/master/CONTRIBUTING.md)
 guide.
 
-Unit and/or functional tests exist for this component. See the
+Unit and/or functional tests exist for this bundle. See the
 [Testing documentation](http://symfony.com/doc/master/cmf/components/testing.html)
 for a guide to running the tests.
 
 Thanks to
-[everyone who has contributed](https://github.com/symfony-cmf/Routing/contributors) already.
+[everyone who has contributed](contributors) already.
+
+## License
+
+This package is available under the [MIT license](src/Resources/meta/LICENSE).
+
+[travis_legacy_badge]: https://travis-ci.org/symfony-cmf/Routing.svg?branch=master
+[travis_legacy_link]: https://travis-ci.org/symfony-cmf/Routing
+[travis_stable_badge]: https://travis-ci.org/symfony-cmf/Routing.svg?branch=master
+[travis_stable_link]: https://travis-ci.org/symfony-cmf/Routing
+[travis_unstable_badge]: https://travis-ci.org/symfony-cmf/Routing.svg?branch=master
+[travis_unstable_link]: https://travis-ci.org/symfony-cmf/Routing
+
+[coveralls_legacy_badge]: https://coveralls.io/repos/github/symfony-cmf/Routing/badge.svg?branch=master
+[coveralls_legacy_link]: https://coveralls.io/github/symfony-cmf/Routing?branch=master
+[coveralls_stable_badge]: https://coveralls.io/repos/github/symfony-cmf/Routing/badge.svg?branch=master
+[coveralls_stable_link]: https://coveralls.io/github/symfony-cmf/Routing?branch=master
+[coveralls_unstable_badge]: https://coveralls.io/repos/github/symfony-cmf/Routing/badge.svg?branch=master
+[coveralls_unstable_link]: https://coveralls.io/github/symfony-cmf/Routing?branch=master
