@@ -15,8 +15,7 @@
         "php": "^5.6.0|^7.0",
         "symfony/routing": "^2.8|^3.0",
         "symfony/http-kernel": "^2.8|^3.0",
-        "psr/log": "^1.0",
-        "symfony-cmf/testing": "^2.1@dev"
+        "psr/log": "^1.0"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^3.2",
