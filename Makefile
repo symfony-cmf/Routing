@@ -13,17 +13,20 @@
 # file that was distributed with this source code.                         #
 ############################################################################
 
+TESTING_SCRIPTS_DIR=vendor/symfony-cmf/testing/bin
+CONSOLE=${TESTING_SCRIPTS_DIR}/console
+VERSION=dev-master
+ifdef BRANCH
+	VERSION=dev-${BRANCH}
+endif
+PACKAGE=symfony-cmf/routing
 
-preset: symfony
+list:
+	@echo 'test:                    will run all tests'
+	@echo 'unit_tests:               will run unit tests only'
 
-enabled:
-  - combine_consecutive_unsets
-  - short_array_syntax
-  - newline_after_open_tag
-  - no_php4_constructor
-  - no_useless_else
-  - ordered_use
-  - strict
-  - php_unit_construct
 
-disabled: [single_line_class_definition]
+
+include ${TESTING_SCRIPTS_DIR}/make/unit_tests.mk
+
+test: unit_tests

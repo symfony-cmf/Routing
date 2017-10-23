@@ -119,7 +119,7 @@ class ProviderBasedGeneratorTest extends \PHPUnit_Framework_TestCase
         $context = new RequestContext();
         $this->generator->setContext($context);
 
-        $this->assertSame(null, $this->generator->generate($route, ['number' => 'string']));
+        $this->assertNull($this->generator->generate($route, ['number' => 'string']));
     }
 }
 

@@ -18,12 +18,12 @@
         "psr/log": "^1.0"
     },
     "require-dev": {
-        "symfony-cmf/testing": "^2.0",
         "symfony/phpunit-bridge": "^3.2",
         "symfony/dependency-injection": "^2.8|^3.0",
         "symfony/config": "^2.8|^3.0",
         "symfony/event-dispatcher": "^2.8|^3.0",
-        "friendsofsymfony/jsrouting-bundle": "^1.1"
+        "friendsofsymfony/jsrouting-bundle": "^1.1",
+        "symfony-cmf/testing": "^2.1@dev"
     },
     "suggest": {
         "symfony/event-dispatcher": "DynamicRouter can optionally trigger an event at the start of matching. Minimal version (~2.1)"
@@ -36,7 +36,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.0-dev"
+            "dev-master": "2.1-dev"
         }
     }
 }
