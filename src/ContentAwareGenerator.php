@@ -315,7 +315,7 @@ class ContentAwareGenerator extends ProviderBasedGenerator
         $locale = $this->getLocale($parameters);
         if (null !== $locale
             && preg_match('/'.$route->getRequirement('_locale').'/', $locale)
-            && $locale == $route->getDefault('_locale')
+            && $locale === $route->getDefault('_locale')
         ) {
             $compiledRoute = $route->compile();
             if (!in_array('_locale', $compiledRoute->getVariables())) {
