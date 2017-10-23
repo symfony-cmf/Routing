@@ -63,8 +63,6 @@ before_install:
 
 install: travis_wait composer update --prefer-dist $COMPOSER_FLAGS
 
-before_script: vendor/symfony-cmf/testing/bin/travis/phpcr_odm_doctrine_dbal.sh
-
 script:
   - if [ "${TEST_INSTALLATION}" == true ]; then make test_installation; else make test; fi
 
