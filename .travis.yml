@@ -45,7 +45,6 @@ matrix:
     - php: 7.0
       env: SYMFONY_VERSION=3.2.*
 
-    - env: TEST_INSTALLATION=true
   fast_finish: true
   allow_failures:
     - php: 7.1
