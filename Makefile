@@ -29,4 +29,5 @@ list:
 
 include ${TESTING_SCRIPTS_DIR}/make/unit_tests.mk
 
+.PHONY: test
 test: unit_tests
