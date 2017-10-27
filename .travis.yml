@@ -28,7 +28,7 @@ cache:
 env:
   matrix: SYMFONY_VERSION=^3.4@dev
   global:
-    - SYMFONY_DEPRECATIONS_HELPER=48
+    - SYMFONY_DEPRECATIONS_HELPER=24
     - SYMFONY_PHPUNIT_DIR=.phpunit SYMFONY_PHPUNIT_REMOVE="symfony/yaml"
     - SYMFONY_PHPUNIT_VERSION=5.7
     - TEST_INSTALLATION=false
@@ -36,7 +36,7 @@ env:
 matrix:
   include:
     - php: 7.1
-      env: SYMFONY_VERSION=^3.4@dev
+      env: DEPS=dev SYMFONY_VERSION=^3.4@dev
     - php: 7.1
       env: DEPS=dev SYMFONY_VERSION=3.3.*
     - php: 5.6
