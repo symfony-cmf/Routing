@@ -13,14 +13,17 @@
 # file that was distributed with this source code.                         #
 ############################################################################
 
+ifeq ("symfony-cmf/routing", "symfony-cmf/testing")
+TESTING_SCRIPTS_DIR=bin
+else
 TESTING_SCRIPTS_DIR=vendor/symfony-cmf/testing/bin
+endif
 CONSOLE=${TESTING_SCRIPTS_DIR}/console
 VERSION=dev-master
 ifdef BRANCH
 	VERSION=dev-${BRANCH}
 endif
 PACKAGE=symfony-cmf/routing
-
 list:
 	@echo 'test:                    will run all tests'
 	@echo 'unit_tests:               will run unit tests only'
@@ -29,4 +32,5 @@ list:
 
 include ${TESTING_SCRIPTS_DIR}/make/unit_tests.mk
 
+.PHONY: test
 test: unit_tests
