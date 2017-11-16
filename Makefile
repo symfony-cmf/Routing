@@ -20,7 +20,6 @@ ifdef BRANCH
 	VERSION=dev-${BRANCH}
 endif
 PACKAGE=symfony-cmf/routing
-
 list:
 	@echo 'test:                    will run all tests'
 	@echo 'unit_tests:               will run unit tests only'
@@ -29,4 +28,5 @@ list:
 
 include ${TESTING_SCRIPTS_DIR}/make/unit_tests.mk
 
+.PHONY: test
 test: unit_tests
