@@ -40,7 +40,7 @@ class RouteMock extends SymfonyRoute implements RouteObjectInterface
 
     public function getRequirement($key)
     {
-        if ($key !== '_locale') {
+        if ('_locale' !== $key) {
             throw new \Exception();
         }
 
