@@ -2,7 +2,10 @@
     "name": "symfony-cmf/routing",
     "type": "library",
     "description": "Extends the Symfony routing component for dynamic routes and chaining several routers",
-    "keywords": ["routing", "database"],
+    "keywords": [
+        "routing",
+        "database"
+    ],
     "homepage": "http://cmf.symfony.com",
     "license": "MIT",
     "authors": [
@@ -12,7 +15,7 @@
         }
     ],
     "require": {
-        "php": "^7.1",
+        "php": "^7.0",
         "symfony/routing": "^2.8|^3.0",
         "symfony/http-kernel": "^2.8|^3.0",
         "psr/log": "^1.0"
@@ -29,16 +32,20 @@
         "symfony/event-dispatcher": "DynamicRouter can optionally trigger an event at the start of matching. Minimal version (~2.1)"
     },
     "autoload": {
-        "psr-4": { "Symfony\\Cmf\\Component\\Routing\\": "src/" }
+        "psr-4": {
+            "Symfony\\Cmf\\Component\\Routing\\": "src/"
+        }
     },
     "autoload-dev": {
-        "psr-4": { "Symfony\\Cmf\\Component\\Routing\\Tests\\": "tests/" }
+        "psr-4": {
+            "Symfony\\Cmf\\Component\\Routing\\Tests\\": "tests/"
+        }
     },
     "extra": {
         "branch-alias": {
             "dev-master": "2.1-dev"
         }
     },
-    "minimum-stability":"dev",
+    "minimum-stability": "dev",
     "prefer-stable": true
 }
