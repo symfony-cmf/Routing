@@ -45,7 +45,5 @@
         "branch-alias": {
             "dev-master": "2.1-dev"
         }
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true
+    }
 }

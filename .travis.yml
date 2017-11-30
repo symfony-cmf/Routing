@@ -26,7 +26,7 @@ cache:
     - $HOME/.composer/cache/files
 
 env:
-  matrix: SYMFONY_VERSION=^4.0
+  matrix: SYMFONY_VERSION=4.0.*
   global:
     - SYMFONY_DEPRECATIONS_HELPER=0
     - SYMFONY_PHPUNIT_DIR=.phpunit SYMFONY_PHPUNIT_REMOVE="symfony/yaml"
@@ -36,13 +36,13 @@ env:
 matrix:
   include:
     - php: 7.1
-      env: DEPS=dev SYMFONY_VERSION=^4.0
+      env: DEPS=dev SYMFONY_VERSION=4.0.*
     - php: 7.1
       env: COMPOSER_FLAGS="--prefer-lowest" SYMFONY_VERSION=2.8.* SYMFONY_DEPRECATIONS_HELPER=weak
     - php: 7.1
       env: SYMFONY_VERSION=3.3.*
     - php: 7.1
-      env: SYMFONY_VERSION=^3.4
+      env: SYMFONY_VERSION=3.4.*
 
   fast_finish: true
   allow_failures:
