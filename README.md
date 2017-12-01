@@ -67,16 +67,16 @@ Thanks to
 
 This package is available under the [MIT license](src/Resources/meta/LICENSE).
 
-[travis_legacy_badge]: https://travis-ci.org/Routing.svg?branch=master
+[travis_legacy_badge]: https://travis-ci.org/symfony-cmf/routing.svg?branch=master
 [travis_legacy_link]: https://travis-ci.org/symfony-cmf/routing
-[travis_stable_badge]: https://travis-ci.org/Routing.svg?branch=master
+[travis_stable_badge]: https://travis-ci.org/symfony-cmf/routing.svg?branch=master
 [travis_stable_link]: https://travis-ci.org/symfony-cmf/routing
-[travis_unstable_badge]: https://travis-ci.org/Routing.svg?branch=master
+[travis_unstable_badge]: https://travis-ci.org/symfony-cmf/routing.svg?branch=master
 [travis_unstable_link]: https://travis-ci.org/symfony-cmf/routing
 
-[coveralls_legacy_badge]: https://coveralls.io/repos/github/Routing/badge.svg?branch=master
-[coveralls_legacy_link]: https://coveralls.io/github/Routing?branch=master
-[coveralls_stable_badge]: https://coveralls.io/repos/github/Routing/badge.svg?branch=master
-[coveralls_stable_link]: https://coveralls.io/github/Routing?branch=master
-[coveralls_unstable_badge]: https://coveralls.io/repos/github/Routing/badge.svg?branch=master
-[coveralls_unstable_link]: https://coveralls.io/github/Routing?branch=master
+[coveralls_legacy_badge]: https://coveralls.io/repos/github/symfony-cmf/routing/badge.svg?branch=master
+[coveralls_legacy_link]: https://coveralls.io/github/symfony-cmf/routing?branch=master
+[coveralls_stable_badge]: https://coveralls.io/repos/github/symfony-cmf/routing/badge.svg?branch=master
+[coveralls_stable_link]: https://coveralls.io/github/symfony-cmf/routing?branch=master
+[coveralls_unstable_badge]: https://coveralls.io/repos/github/symfony-cmf/routing/badge.svg?branch=master
+[coveralls_unstable_link]: https://coveralls.io/github/symfony-cmf/routing?branch=master
