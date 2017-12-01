@@ -25,7 +25,7 @@
         "symfony/dependency-injection": "^2.8 || ^3.3 || ^4.0",
         "symfony/config": "^2.8 || ^3.3 || ^4.0",
         "symfony/event-dispatcher": "^2.8 || ^3.3 || ^4.0",
-        "friendsofsymfony/jsrouting-bundle": "^1.1",
+        "friendsofsymfony/jsrouting-bundle": "^1.1 || ^ 2.0",
         "symfony-cmf/testing": "^2.1@dev"
     },
     "suggest": {
