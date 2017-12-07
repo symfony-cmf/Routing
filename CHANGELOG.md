@@ -1,7 +1,15 @@
 Changelog
 =========
 
+2.1.0 (unreleased)
+------------------
+
 * **2017-10-23**: Dropped php hhvm support
+
+2.0.3
+-----
+
+Fixed edge case in error reporting in ChainRouter.
 
 2.0.0
 -----
