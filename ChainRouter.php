@@ -288,7 +288,8 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
     private function getErrorMessage($name, $router = null, $parameters = null)
     {
         if ($router instanceof VersatileGeneratorInterface) {
-            $displayName = $router->getRouteDebugMessage($name, $parameters);
+            // the $parameters are not forced to be array, but versatile generator does typehint it
+            $displayName = $router->getRouteDebugMessage($name, is_array($parameters) ? $parameters : array());
         } elseif (is_object($name)) {
             $displayName = method_exists($name, '__toString')
                 ? (string) $name
