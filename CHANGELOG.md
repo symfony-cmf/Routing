@@ -1,6 +1,11 @@
 Changelog
 =========
 
+2.0.3
+-----
+
+Fixed edge case in error reporting in ChainRouter.
+
 2.0.0
 -----
 
