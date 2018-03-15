@@ -4,7 +4,8 @@ Changelog
 2.1.0 (unreleased)
 ------------------
 
-* **2017-10-23**: Dropped php hhvm support
+* ChainRouter now returns a new RequestContext if none has been set, to be closer in behaviour to the Symfony router.
+* Dropped php hhvm support
 
 2.0.3
 -----
