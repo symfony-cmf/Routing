@@ -64,7 +64,8 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
      */
     public function __construct(LoggerInterface $logger = null)
     {
-        $this->logger = $logger;
+        $this->logger = $logger;      
+        $this->context = new RequestContext();
     }
 
     /**
