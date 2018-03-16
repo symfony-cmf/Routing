@@ -28,6 +28,7 @@ class RouteContentEnhancer implements RouteEnhancerInterface
      * @var string field for the route class
      */
     protected $routefield;
+
     /**
      * @var string field to write hashmap lookup result into
      */

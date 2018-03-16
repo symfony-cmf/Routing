@@ -32,6 +32,7 @@ class ChainRouterTest extends \PHPUnit_Framework_TestCase
      * @var ChainRouter
      */
     private $router;
+
     /**
      * @var RequestContext|\PHPUnit_Framework_MockObject_MockObject
      */

@@ -25,10 +25,12 @@ class FieldMapEnhancer implements RouteEnhancerInterface
      * @var string field for key in hashmap lookup
      */
     protected $source;
+
     /**
      * @var string field to write hashmap lookup result into
      */
     protected $target;
+
     /**
      * @var array containing the mapping between the source field value and target field value
      */

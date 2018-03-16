@@ -22,7 +22,9 @@ class RouteContentEnhancerTest extends \PHPUnit_Framework_TestCase
      * @var RouteContentEnhancer
      */
     private $mapper;
+
     private $document;
+
     private $request;
 
     public function setUp()

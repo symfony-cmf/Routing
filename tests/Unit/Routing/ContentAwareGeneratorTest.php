@@ -28,13 +28,16 @@ class ContentAwareGeneratorTest extends \PHPUnit_Framework_TestCase
      * @var RouteMock
      */
     private $routeDocument;
+
     private $routeCompiled;
+
     private $provider;
 
     /**
      * @var ContentAwareGenerator
      */
     private $generator;
+
     private $context;
 
     public function setUp()

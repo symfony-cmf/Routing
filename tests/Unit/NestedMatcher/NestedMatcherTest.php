@@ -23,8 +23,11 @@ use Symfony\Component\Routing\RouteCollection;
 class NestedMatcherTest extends \PHPUnit_Framework_TestCase
 {
     private $provider;
+
     private $routeFilter1;
+
     private $routeFilter2;
+
     private $finalMatcher;
 
     public function setUp()

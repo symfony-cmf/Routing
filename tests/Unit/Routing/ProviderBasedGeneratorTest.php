@@ -21,11 +21,14 @@ use Symfony\Component\Routing\Route;
 class ProviderBasedGeneratorTest extends \PHPUnit_Framework_TestCase
 {
     protected $routeDocument;
+
     protected $routeCompiled;
+
     protected $provider;
 
     /** @var ProviderBasedGenerator */
     protected $generator;
+
     protected $context;
 
     public function setUp()
