@@ -31,12 +31,18 @@ use Symfony\Component\Routing\RouteCollection;
 class DynamicRouterTest extends \PHPUnit_Framework_TestCase
 {
     protected $routeDocument;
+
     protected $matcher;
+
     protected $generator;
+
     protected $enhancer;
+
     /** @var DynamicRouter */
     protected $router;
+
     protected $context;
+
     public $request;
 
     const URL = '/foo/bar';

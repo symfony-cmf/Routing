@@ -30,10 +30,12 @@ class FieldByClassEnhancer implements RouteEnhancerInterface
      * @var string field for the source class
      */
     protected $source;
+
     /**
      * @var string field to write hashmap lookup result into
      */
     protected $target;
+
     /**
      * @var array containing the mapping between a class name and the target value
      */

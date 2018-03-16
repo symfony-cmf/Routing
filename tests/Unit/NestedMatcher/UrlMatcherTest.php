@@ -23,9 +23,13 @@ use Symfony\Component\Routing\RouteCollection;
 class UrlMatcherTest extends \PHPUnit_Framework_TestCase
 {
     protected $routeDocument;
+
     protected $routeCompiled;
+
     protected $matcher;
+
     protected $context;
+
     protected $request;
 
     protected $url = '/foo/bar';

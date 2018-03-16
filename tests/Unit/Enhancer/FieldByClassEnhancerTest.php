@@ -17,10 +17,12 @@ use Symfony\Component\HttpFoundation\Request;
 class FieldByClassEnhancerTest extends \PHPUnit_Framework_TestCase
 {
     private $request;
+
     /**
      * @var FieldByClassEnhancer
      */
     private $mapper;
+
     private $document;
 
     public function setUp()

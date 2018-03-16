@@ -20,6 +20,7 @@ class FieldPresenceEnhancerTest extends \PHPUnit_Framework_TestCase
      * @var FieldPresenceEnhancer
      */
     private $mapper;
+
     private $request;
 
     public function setUp()
