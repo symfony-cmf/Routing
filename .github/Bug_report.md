@@ -9,8 +9,6 @@ about: Report errors and problems
     See https://symfony.com/doc/current/contributing/code_of_conduct/index.html
 -->
 
-**Symfony version(s) affected**: x.y.z
-
 **Description**  
 <!-- A clear and concise description of the problem. -->
 

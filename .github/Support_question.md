@@ -1,16 +1,15 @@
 ---
 name: Support Question
-about: Questions about using Symfony and its components
+about: Questions about using Symfony CMF and its components
 
 ---
 
-<!--
-    The Symfony Code of Conduct applies to all the activity on this repository.
-    See https://symfony.com/doc/current/contributing/code_of_conduct/index.html
--->
+**Description**
+<!-- A clear and concise description of the problem. -->
 
-We use GitHub issues only to discuss about Symfony bugs and new features. For
-this kind of questions about using Symfony or third-party bundles, please use
-any of the support alternatives shown in https://symfony.com/support
+**How to reproduce (optional)**
+<!-- Optional: Only if you have something to reproduce. Code and/or config needed to reproduce the problem.  -->
 
-Thanks!
+**Possible Solution**  
+<!-- Optional: only if you have suggestions to solve it -->
+
