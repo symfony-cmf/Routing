@@ -33,19 +33,19 @@ use Symfony\Component\Routing\RouterInterface;
 class ChainRouter implements ChainRouterInterface, WarmableInterface
 {
     /**
-     * @var RequestContext
+     * @var RequestContext|null
      */
     private $context;
 
     /**
      * Array of arrays of routers grouped by priority.
      *
-     * @var array
+     * @var RouterInterface[][] Priority => RouterInterface[]
      */
     private $routers = [];
 
     /**
-     * @var RouterInterface[] Array of routers, sorted by priority
+     * @var RouterInterface[] List of routers, sorted by priority
      */
     private $sortedRouters = [];
 
@@ -72,6 +72,10 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
      */
     public function getContext()
     {
+        if (!$this->context) {
+            $this->context = new RequestContext();
+        }
+
         return $this->context;
     }
 
@@ -103,11 +107,10 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
 
             // setContext() is done here instead of in add() to avoid fatal errors when clearing and warming up caches
             // See https://github.com/symfony-cmf/Routing/pull/18
-            $context = $this->getContext();
-            if (null !== $context) {
+            if (null !== $this->context) {
                 foreach ($this->sortedRouters as $router) {
                     if ($router instanceof RequestContextAwareInterface) {
-                        $router->setContext($context);
+                        $router->setContext($this->context);
                     }
                 }
             }
@@ -253,7 +256,7 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
     /**
      * Rebuild the request object from a URL with the help of the RequestContext.
      *
-     * If the request context is not set, this simply returns the request object built from $uri.
+     * If the request context is not set, this returns the request object built from $pathinfo.
      *
      * @param string $pathinfo
      *
@@ -261,28 +264,26 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
      */
     private function rebuildRequest($pathinfo)
     {
-        if (!$this->context) {
-            return Request::create('http://localhost'.$pathinfo);
-        }
+        $context = $this->getContext();
 
         $uri = $pathinfo;
 
         $server = [];
-        if ($this->context->getBaseUrl()) {
-            $uri = $this->context->getBaseUrl().$pathinfo;
-            $server['SCRIPT_FILENAME'] = $this->context->getBaseUrl();
-            $server['PHP_SELF'] = $this->context->getBaseUrl();
+        if ($context->getBaseUrl()) {
+            $uri = $context->getBaseUrl().$pathinfo;
+            $server['SCRIPT_FILENAME'] = $context->getBaseUrl();
+            $server['PHP_SELF'] = $context->getBaseUrl();
         }
-        $host = $this->context->getHost() ?: 'localhost';
-        if ('https' === $this->context->getScheme() && 443 !== $this->context->getHttpsPort()) {
-            $host .= ':'.$this->context->getHttpsPort();
+        $host = $context->getHost() ?: 'localhost';
+        if ('https' === $context->getScheme() && 443 !== $context->getHttpsPort()) {
+            $host .= ':'.$context->getHttpsPort();
         }
-        if ('http' === $this->context->getScheme() && 80 !== $this->context->getHttpPort()) {
-            $host .= ':'.$this->context->getHttpPort();
+        if ('http' === $context->getScheme() && 80 !== $context->getHttpPort()) {
+            $host .= ':'.$context->getHttpPort();
         }
-        $uri = $this->context->getScheme().'://'.$host.$uri.'?'.$this->context->getQueryString();
+        $uri = $context->getScheme().'://'.$host.$uri.'?'.$context->getQueryString();
 
-        return Request::create($uri, $this->context->getMethod(), $this->context->getParameters(), [], [], $server);
+        return Request::create($uri, $context->getMethod(), $context->getParameters(), [], [], $server);
     }
 
     private function getErrorMessage($name, $router = null, $parameters = null)
