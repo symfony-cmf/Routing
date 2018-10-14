@@ -11,12 +11,13 @@
 
 namespace Symfony\Cmf\Component\Routing\Tests\Unit\Enhancer;
 
+use PHPUnit\Framework\TestCase;
 use Symfony\Cmf\Component\Routing\ContentRepositoryInterface;
 use Symfony\Cmf\Component\Routing\Enhancer\ContentRepositoryEnhancer;
 use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-class ContentRepositoryEnhancerTest extends \PHPUnit_Framework_TestCase
+class ContentRepositoryEnhancerTest extends TestCase
 {
     /**
      * {@inheritdoc}

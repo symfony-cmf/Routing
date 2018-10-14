@@ -11,10 +11,11 @@
 
 namespace Symfony\Cmf\Component\Routing\Tests\Unit\Candidates;
 
+use PHPUnit\Framework\TestCase;
 use Symfony\Cmf\Component\Routing\Candidates\Candidates;
 use Symfony\Component\HttpFoundation\Request;
 
-class CandidatesTest extends \PHPUnit_Framework_TestCase
+class CandidatesTest extends TestCase
 {
     /**
      * Everything is a candidate.

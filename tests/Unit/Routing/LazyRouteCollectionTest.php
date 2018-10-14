@@ -11,6 +11,7 @@
 
 namespace Symfony\Cmf\Component\Routing;
 
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Routing\Route;
 
 /**
@@ -18,7 +19,7 @@ use Symfony\Component\Routing\Route;
  *
  * @group cmf/routing
  */
-class LazyRouteCollectionTest extends \PHPUnit_Framework_TestCase
+class LazyRouteCollectionTest extends TestCase
 {
     /**
      * Tests the iterator without a paged route provider.

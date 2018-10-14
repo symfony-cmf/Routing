@@ -11,6 +11,7 @@
 
 namespace Symfony\Cmf\Component\Routing\Tests\Routing;
 
+use PHPUnit\Framework\TestCase;
 use Symfony\Cmf\Component\Routing\DynamicRouter;
 use Symfony\Cmf\Component\Routing\Enhancer\RouteEnhancerInterface;
 use Symfony\Cmf\Component\Routing\Event\Events;
@@ -28,7 +29,7 @@ use Symfony\Component\Routing\Matcher\UrlMatcherInterface;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\RouteCollection;
 
-class DynamicRouterTest extends \PHPUnit_Framework_TestCase
+class DynamicRouterTest extends TestCase
 {
     protected $routeDocument;
 

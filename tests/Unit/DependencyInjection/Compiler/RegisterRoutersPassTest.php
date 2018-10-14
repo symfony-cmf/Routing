@@ -11,12 +11,13 @@
 
 namespace Symfony\Cmf\Routing\Tests\Unit\DependencyInjection\Compiler;
 
+use PHPUnit\Framework\TestCase;
 use Symfony\Cmf\Component\Routing\DependencyInjection\Compiler\RegisterRoutersPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 
-class RegisterRoutersPassTest extends \PHPUnit_Framework_TestCase
+class RegisterRoutersPassTest extends TestCase
 {
     /**
      * @dataProvider getValidRoutersData
