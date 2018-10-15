@@ -11,10 +11,11 @@
 
 namespace Symfony\Cmf\Component\Routing\Tests\Unit\Enhancer;
 
+use PHPUnit\Framework\TestCase;
 use Symfony\Cmf\Component\Routing\Enhancer\FieldByClassEnhancer;
 use Symfony\Component\HttpFoundation\Request;
 
-class FieldByClassEnhancerTest extends \PHPUnit_Framework_TestCase
+class FieldByClassEnhancerTest extends TestCase
 {
     private $request;
 

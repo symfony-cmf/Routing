@@ -11,6 +11,7 @@
 
 namespace Symfony\Cmf\Component\Routing\Tests\Routing;
 
+use PHPUnit\Framework\TestCase;
 use Symfony\Cmf\Component\Routing\ContentAwareGenerator;
 use Symfony\Cmf\Component\Routing\ContentRepositoryInterface;
 use Symfony\Cmf\Component\Routing\RouteProviderInterface;
@@ -20,7 +21,7 @@ use Symfony\Component\Routing\CompiledRoute;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\Route;
 
-class ContentAwareGeneratorTest extends \PHPUnit_Framework_TestCase
+class ContentAwareGeneratorTest extends TestCase
 {
     private $contentDocument;
 

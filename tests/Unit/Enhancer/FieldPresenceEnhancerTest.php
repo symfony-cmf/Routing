@@ -11,10 +11,11 @@
 
 namespace Symfony\Cmf\Component\Routing\Tests\Unit\Enhancer;
 
+use PHPUnit\Framework\TestCase;
 use Symfony\Cmf\Component\Routing\Enhancer\FieldPresenceEnhancer;
 use Symfony\Component\HttpFoundation\Request;
 
-class FieldPresenceEnhancerTest extends \PHPUnit_Framework_TestCase
+class FieldPresenceEnhancerTest extends TestCase
 {
     /**
      * @var FieldPresenceEnhancer

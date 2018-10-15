@@ -11,6 +11,7 @@
 
 namespace Symfony\Cmf\Component\Routing\Tests\Routing;
 
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Cmf\Component\Routing\ChainRouter;
 use Symfony\Cmf\Component\Routing\VersatileGeneratorInterface;
@@ -26,7 +27,7 @@ use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\RouterInterface;
 
-class ChainRouterTest extends \PHPUnit_Framework_TestCase
+class ChainRouterTest extends TestCase
 {
     /**
      * @var ChainRouter

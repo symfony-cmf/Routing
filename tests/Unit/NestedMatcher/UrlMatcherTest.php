@@ -11,6 +11,7 @@
 
 namespace Symfony\Cmf\Component\Routing\Tests\Unit\NestedMatcher;
 
+use PHPUnit\Framework\TestCase;
 use Symfony\Cmf\Component\Routing\NestedMatcher\UrlMatcher;
 use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 use Symfony\Cmf\Component\Routing\Tests\Unit\Routing\RouteMock;
@@ -20,7 +21,7 @@ use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 
-class UrlMatcherTest extends \PHPUnit_Framework_TestCase
+class UrlMatcherTest extends TestCase
 {
     protected $routeDocument;
 

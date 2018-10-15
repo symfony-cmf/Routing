@@ -11,10 +11,11 @@
 
 namespace Symfony\Cmf\Component\Routing\Tests\Unit\Mapper;
 
+use PHPUnit\Framework\TestCase;
 use Symfony\Cmf\Component\Routing\Enhancer\FieldMapEnhancer;
 use Symfony\Component\HttpFoundation\Request;
 
-class FieldMapEnhancerTest extends \PHPUnit_Framework_TestCase
+class FieldMapEnhancerTest extends TestCase
 {
     /**
      * @var Request

@@ -11,11 +11,12 @@
 
 namespace Symfony\Cmf\Component\Routing\Tests\Unit\DependencyInjection\Compiler;
 
+use PHPUnit\Framework\TestCase;
 use Symfony\Cmf\Component\Routing\DependencyInjection\Compiler\RegisterRouteEnhancersPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 
-class RegisterRouteEnhancersPassTest extends \PHPUnit_Framework_TestCase
+class RegisterRouteEnhancersPassTest extends TestCase
 {
     public function testRouteEnhancerPass()
     {

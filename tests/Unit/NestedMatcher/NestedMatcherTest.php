@@ -11,6 +11,7 @@
 
 namespace Symfony\Cmf\Component\Routing\Tests\Unit\NestedMatcher;
 
+use PHPUnit\Framework\TestCase;
 use Symfony\Cmf\Component\Routing\NestedMatcher\FinalMatcherInterface;
 use Symfony\Cmf\Component\Routing\NestedMatcher\NestedMatcher;
 use Symfony\Cmf\Component\Routing\NestedMatcher\RouteFilterInterface;
@@ -20,7 +21,7 @@ use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 
-class NestedMatcherTest extends \PHPUnit_Framework_TestCase
+class NestedMatcherTest extends TestCase
 {
     private $provider;
 
