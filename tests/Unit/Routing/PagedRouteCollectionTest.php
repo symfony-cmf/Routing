@@ -11,6 +11,7 @@
 
 namespace Symfony\Cmf\Component\Routing;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Routing\Route;
 
@@ -24,9 +25,9 @@ class PagedRouteCollectionTest extends TestCase
     /**
      * Contains a mocked route provider.
      *
-     * @var \Symfony\Cmf\Component\Routing\PagedRouteProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var PagedRouteProviderInterface|MockObject
      */
-    protected $routeProvider;
+    private $routeProvider;
 
     protected function setUp()
     {

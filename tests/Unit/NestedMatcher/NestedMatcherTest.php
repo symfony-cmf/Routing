@@ -135,7 +135,7 @@ class NestedMatcherTest extends TestCase
 
         $matcher = new NestedMatcher($this->provider, $this->finalMatcher);
 
-        $this->setExpectedException(ResourceNotFoundException::class);
+        $this->expectException(ResourceNotFoundException::class);
         $matcher->matchRequest($request);
     }
 }
