@@ -68,10 +68,10 @@ Thanks to
 
 This package is available under the [MIT license](src/Resources/meta/LICENSE).
 
-[travis_stable_badge]: https://travis-ci.org/symfony-cmf/routing.svg?branch=2.x
-[travis_unstable_badge]: https://travis-ci.org/symfony-cmf/routing.svg?branch=master
+[travis_stable_badge]: https://travis-ci.org/symfony-cmf/Routing.svg?branch=2.x
+[travis_unstable_badge]: https://travis-ci.org/symfony-cmf/Routing.svg?branch=master
 
-[travis_link]: https://travis-ci.org/symfony-cmf/routing
+[travis_link]: https://travis-ci.org/symfony-cmf/Routing
 
 [coveralls_stable_badge]: https://coveralls.io/repos/github/symfony-cmf/routing/badge.svg?branch=2.x
 [coveralls_stable_link]: https://coveralls.io/github/symfony-cmf/routing?branch=2.x
