@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony CMF package.
  *
@@ -78,6 +80,8 @@ class ProviderBasedGeneratorTest extends TestCase
 
     public function testGenerateNotFound()
     {
+        $this->expectException(RouteNotFoundException::class);
+
         $name = 'foo/bar';
 
         $this->provider->expects($this->once())
@@ -123,6 +127,8 @@ class ProviderBasedGeneratorTest extends TestCase
      */
     public function testGenerateByRoute()
     {
+        $this->expectException(InvalidParameterException::class);
+
         $this->generator = new ProviderBasedGenerator($this->provider);
 
         // Setup a route with a numeric parameter, but pass in a string, so it
@@ -161,6 +167,5 @@ class RouteObject implements RouteObjectInterface
 
     public function getContent()
     {
-        return;
     }
 }

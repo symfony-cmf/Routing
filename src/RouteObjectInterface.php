@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony CMF package.
  *
@@ -28,33 +30,33 @@ interface RouteObjectInterface
     /**
      * Field name that will hold the route name that was matched.
      */
-    const ROUTE_NAME = '_route';
+    public const ROUTE_NAME = '_route';
 
     /**
      * Field name of the route object that was matched.
      */
-    const ROUTE_OBJECT = '_route_object';
+    public const ROUTE_OBJECT = '_route_object';
 
     /**
      * Field name for an explicit controller name to be used with this route.
      */
-    const CONTROLLER_NAME = '_controller';
+    public const CONTROLLER_NAME = '_controller';
 
     /**
      * Field name for an explicit template to be used with this route.
      * i.e. CmfContentBundle:StaticContent:index.html.twig.
      */
-    const TEMPLATE_NAME = '_template';
+    public const TEMPLATE_NAME = '_template';
 
     /**
      * Field name for the content of the current route, if any.
      */
-    const CONTENT_OBJECT = '_content';
+    public const CONTENT_OBJECT = '_content';
 
     /**
      * Field name for the content id of the current route, if any.
      */
-    const CONTENT_ID = '_content_id';
+    public const CONTENT_ID = '_content_id';
 
     /**
      * Get the content document this route entry stands for. If non-null,

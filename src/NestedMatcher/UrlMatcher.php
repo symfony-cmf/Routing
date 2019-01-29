@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony CMF package.
  *
@@ -45,7 +47,7 @@ class UrlMatcher extends SymfonyUrlMatcher implements FinalMatcherInterface
      */
     protected function getAttributes(Route $route, $name, array $attributes)
     {
-        if ($route instanceof RouteObjectInterface && is_string($route->getRouteKey())) {
+        if ($route instanceof RouteObjectInterface && \is_string($route->getRouteKey())) {
             $name = $route->getRouteKey();
         }
         $attributes[RouteObjectInterface::ROUTE_NAME] = $name;

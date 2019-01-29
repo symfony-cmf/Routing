@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony CMF package.
  *
@@ -64,14 +66,14 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
     protected $uriFilterRegexp;
 
     /**
-     * @var RouteProviderInterface
-     */
-    private $provider;
-
-    /**
      * @var RequestContext
      */
     protected $context;
+
+    /**
+     * @var RouteProviderInterface
+     */
+    private $provider;
 
     /**
      * @var RouteCollection
@@ -160,9 +162,9 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
      * @param mixed        $parameters    An array of parameters
      * @param bool|string  $referenceType The type of reference to be generated (one of the constants in UrlGeneratorInterface)
      *
-     * @return string The generated URL
-     *
      * @throws RouteNotFoundException if route doesn't exist
+     *
+     * @return string The generated URL
      *
      * @api
      */
@@ -190,7 +192,7 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
             return $this->generator->supports($name);
         }
 
-        return is_string($name);
+        return \is_string($name);
     }
 
     /**
@@ -202,11 +204,11 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
      * @param string $pathinfo The path info to be parsed (raw format, i.e. not
      *                         urldecoded)
      *
-     * @return array An array of parameters
-     *
      * @throws ResourceNotFoundException If the resource could not be found
      * @throws MethodNotAllowedException If the resource was found but the
      *                                   request method is not allowed
+     *
+     * @return array An array of parameters
      *
      * @deprecated Use matchRequest exclusively to avoid problems. This method will be removed in version 2.0
      *
@@ -245,11 +247,11 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
      *
      * @param Request $request The request to match
      *
-     * @return array An array of parameters
-     *
      * @throws ResourceNotFoundException If no matching resource could be found
      * @throws MethodNotAllowedException If a matching resource was found but
      *                                   the request method is not allowed
+     *
+     * @return array An array of parameters
      */
     public function matchRequest(Request $request)
     {

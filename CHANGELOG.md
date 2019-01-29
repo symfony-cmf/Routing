@@ -1,6 +1,14 @@
 Changelog
 =========
 
+2.2.0 (unreleased)
+------------------
+
+* Symfony 4.2 compatability, Symfony 4.3 tested but allowed to fail for now
+* Drop Symfony 2.8 support
+* Switch to php-cs-fixer for style checks
+* Upgrade to PHPUnit 7
+
 2.1.0
 -----
 

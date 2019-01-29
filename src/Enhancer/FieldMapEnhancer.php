@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony CMF package.
  *
@@ -55,9 +57,9 @@ class FieldMapEnhancer implements RouteEnhancerInterface
      */
     public function enhance(array $defaults, Request $request)
     {
-        if (array_key_exists($this->target, $defaults)
-            || !array_key_exists($this->source, $defaults)
-            || !array_key_exists($defaults[$this->source], $this->hashmap)
+        if (\array_key_exists($this->target, $defaults)
+            || !\array_key_exists($this->source, $defaults)
+            || !\array_key_exists($defaults[$this->source], $this->hashmap)
         ) {
             return $defaults;
         }

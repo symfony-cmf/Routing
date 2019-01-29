@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony CMF package.
  *
@@ -61,8 +63,8 @@ class FieldByClassEnhancer implements RouteEnhancerInterface
      */
     public function enhance(array $defaults, Request $request)
     {
-        if (array_key_exists($this->target, $defaults)
-            || !array_key_exists($this->source, $defaults)
+        if (\array_key_exists($this->target, $defaults)
+            || !\array_key_exists($this->source, $defaults)
         ) {
             return $defaults;
         }

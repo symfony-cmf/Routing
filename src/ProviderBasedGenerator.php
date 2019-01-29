@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony CMF package.
  *
@@ -69,7 +71,7 @@ class ProviderBasedGenerator extends UrlGenerator implements VersatileGeneratorI
      */
     public function supports($name)
     {
-        return is_string($name) || $name instanceof SymfonyRoute;
+        return \is_string($name) || $name instanceof SymfonyRoute;
     }
 
     /**
@@ -81,7 +83,7 @@ class ProviderBasedGenerator extends UrlGenerator implements VersatileGeneratorI
             return $name;
         }
 
-        if (is_array($name)) {
+        if (\is_array($name)) {
             return serialize($name);
         }
 
@@ -93,6 +95,6 @@ class ProviderBasedGenerator extends UrlGenerator implements VersatileGeneratorI
             return 'Route with path '.$name->getPath();
         }
 
-        return get_class($name);
+        return \get_class($name);
     }
 }

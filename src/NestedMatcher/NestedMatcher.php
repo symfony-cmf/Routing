@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony CMF package.
  *
@@ -139,7 +141,7 @@ class NestedMatcher implements RequestMatcherInterface
     public function matchRequest(Request $request)
     {
         $collection = $this->routeProvider->getRouteCollectionForRequest($request);
-        if (!count($collection)) {
+        if (!\count($collection)) {
             throw new ResourceNotFoundException();
         }
 
@@ -159,7 +161,7 @@ class NestedMatcher implements RequestMatcherInterface
      */
     public function getRouteFilters()
     {
-        if (0 === count($this->sortedFilters)) {
+        if (0 === \count($this->sortedFilters)) {
             $this->sortedFilters = $this->sortFilters();
         }
 
@@ -175,12 +177,12 @@ class NestedMatcher implements RequestMatcherInterface
      */
     protected function sortFilters()
     {
-        if (0 === count($this->filters)) {
+        if (0 === \count($this->filters)) {
             return [];
         }
 
         krsort($this->filters);
 
-        return call_user_func_array('array_merge', $this->filters);
+        return \call_user_func_array('array_merge', $this->filters);
     }
 }

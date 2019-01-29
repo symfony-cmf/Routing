@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony CMF package.
  *
@@ -431,6 +433,8 @@ class ChainRouterTest extends TestCase
 
     public function testMatchNotFound()
     {
+        $this->expectException(ResourceNotFoundException::class);
+
         $url = '/test';
         list($low, $high) = $this->createRouterMocks();
 
@@ -455,6 +459,8 @@ class ChainRouterTest extends TestCase
 
     public function testMatchRequestNotFound()
     {
+        $this->expectException(ResourceNotFoundException::class);
+
         $url = '/test';
         list($low, $high) = $this->createRouterMocks();
 
@@ -482,6 +488,9 @@ class ChainRouterTest extends TestCase
      */
     public function testMatchWithRequestMatchersNotFound()
     {
+        $this->expectException(ResourceNotFoundException::class);
+        $this->expectExceptionMessage('None of the routers in the chain matched url \'/test\'');
+
         $url = '/test';
         $request = Request::create('/test');
 
@@ -506,6 +515,8 @@ class ChainRouterTest extends TestCase
      */
     public function testMatchMethodNotAllowed()
     {
+        $this->expectException(MethodNotAllowedException::class);
+
         $url = '/test';
         list($low, $high) = $this->createRouterMocks();
 
@@ -533,6 +544,8 @@ class ChainRouterTest extends TestCase
      */
     public function testMatchRequestMethodNotAllowed()
     {
+        $this->expectException(MethodNotAllowedException::class);
+
         $url = '/test';
         list($low, $high) = $this->createRouterMocks();
 
@@ -588,6 +601,8 @@ class ChainRouterTest extends TestCase
 
     public function testGenerateNotFound()
     {
+        $this->expectException(RouteNotFoundException::class);
+
         $name = 'test';
         $parameters = ['test' => 'value'];
         list($low, $high) = $this->createRouterMocks();
@@ -615,6 +630,8 @@ class ChainRouterTest extends TestCase
      */
     public function testGenerateObjectNotFound()
     {
+        $this->expectException(RouteNotFoundException::class);
+
         $name = new \stdClass();
         $parameters = ['test' => 'value'];
 
@@ -636,6 +653,8 @@ class ChainRouterTest extends TestCase
      */
     public function testGenerateObjectNotFoundVersatile()
     {
+        $this->expectException(RouteNotFoundException::class);
+
         $name = new \stdClass();
         $parameters = ['test' => 'value'];
 
@@ -746,6 +765,8 @@ class ChainRouterTest extends TestCase
 
     public function testSupport()
     {
+        $this->expectException(RouteNotFoundException::class);
+
         $router = $this->createMock(VersatileRouter::class);
         $router
             ->expects($this->once())

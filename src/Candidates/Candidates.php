@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony CMF package.
  *
@@ -88,7 +90,7 @@ class Candidates implements CandidatesInterface
 
         $locale = $this->determineLocale($url);
         if ($locale) {
-            $candidates = array_unique(array_merge($candidates, $this->getCandidatesFor(substr($url, strlen($locale) + 1))));
+            $candidates = array_unique(array_merge($candidates, $this->getCandidatesFor(substr($url, \strlen($locale) + 1))));
         }
 
         return $candidates;
@@ -103,7 +105,7 @@ class Candidates implements CandidatesInterface
      */
     protected function determineLocale($url)
     {
-        if (!count($this->locales)) {
+        if (!\count($this->locales)) {
             return false;
         }
 

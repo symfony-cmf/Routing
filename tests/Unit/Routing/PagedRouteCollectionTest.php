@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony CMF package.
  *
@@ -51,7 +53,7 @@ class PagedRouteCollectionTest extends TestCase
             $this->routeProvider->expects($this->at($i))
               ->method('getRoutesPaged')
               ->with($range[0], $range[1])
-              ->will($this->returnValue(array_slice($routes, $range[0], $range[1])));
+              ->will($this->returnValue(\array_slice($routes, $range[0], $range[1])));
         }
 
         $route_collection = new PagedRouteCollection($this->routeProvider, $routesLoadedInParallel);
@@ -113,8 +115,8 @@ class PagedRouteCollectionTest extends TestCase
         $this->routeProvider->expects($this->any())
             ->method('getRoutesPaged')
             ->will($this->returnValueMap([
-                [0, 10, array_slice($routes, 0, 10)],
-                [10, 10, array_slice($routes, 9, 10)],
+                [0, 10, \array_slice($routes, 0, 10)],
+                [10, 10, \array_slice($routes, 9, 10)],
                 [20, 10, []],
             ]));
 

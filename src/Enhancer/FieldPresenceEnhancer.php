@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony CMF package.
  *
@@ -44,7 +46,7 @@ class FieldPresenceEnhancer implements RouteEnhancerInterface
     private $value;
 
     /**
-     * @param null|string $source the field name of the class, null to disable the check
+     * @param string|null $source the field name of the class, null to disable the check
      * @param string      $target the field name to set from the map
      * @param string      $value  value to set target field to if source field exists
      */
@@ -60,11 +62,11 @@ class FieldPresenceEnhancer implements RouteEnhancerInterface
      */
     public function enhance(array $defaults, Request $request)
     {
-        if (array_key_exists($this->target, $defaults)) {
+        if (\array_key_exists($this->target, $defaults)) {
             return $defaults;
         }
 
-        if (null !== $this->source && !array_key_exists($this->source, $defaults)) {
+        if (null !== $this->source && !\array_key_exists($this->source, $defaults)) {
             return $defaults;
         }
 

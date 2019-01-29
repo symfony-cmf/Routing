@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony CMF package.
  *
@@ -30,11 +32,11 @@ interface FinalMatcherInterface
      * @param RouteCollection $collection The collection against which to match
      * @param Request         $request    The request to match
      *
-     * @return array An array of parameters
-     *
      * @throws ResourceNotFoundException if none of the routes in $collection
      *                                   matches $request
      * @throws MethodNotAllowedException If the resource was found but the request method is not allowed
+     *
+     * @return array An array of parameters
      */
     public function finalMatch(RouteCollection $collection, Request $request);
 }

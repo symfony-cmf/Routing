@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony CMF package.
  *
@@ -46,7 +48,7 @@ class RegisterRoutersPass implements CompilerPassInterface
         $definition = $container->getDefinition($this->chainRouterService);
 
         foreach ($container->findTaggedServiceIds($this->routerTag) as $id => $attributes) {
-            $priority = isset($attributes[0]['priority']) ? $attributes[0]['priority'] : 0;
+            $priority = $attributes[0]['priority'] ?? 0;
 
             $definition->addMethodCall('add', [new Reference($id), $priority]);
         }

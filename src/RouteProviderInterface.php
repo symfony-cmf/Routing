@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony CMF package.
  *
@@ -53,10 +55,10 @@ interface RouteProviderInterface
      *
      * @param string $name The route name to fetch
      *
-     * @return Route
-     *
      * @throws RouteNotFoundException If there is no route with that name in
      *                                this repository
+     *
+     * @return Route
      */
     public function getRouteByName($name);
 

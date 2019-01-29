@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony CMF package.
  *
@@ -241,7 +243,7 @@ class ChainRouteCollection extends RouteCollection
      */
     public function getResources()
     {
-        if (0 === count($this->routeCollections)) {
+        if (0 === \count($this->routeCollections)) {
             return [];
         }
 
@@ -249,7 +251,7 @@ class ChainRouteCollection extends RouteCollection
             return $routeCollection->getResources();
         }, $this->routeCollections);
 
-        return array_unique(call_user_func_array('array_merge', $resources));
+        return array_unique(\call_user_func_array('array_merge', $resources));
     }
 
     /**

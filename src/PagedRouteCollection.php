@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony CMF package.
  *
@@ -50,22 +52,6 @@ class PagedRouteCollection implements \Iterator, \Countable
     {
         $this->provider = $pagedRouteProvider;
         $this->routesBatchSize = $routesBatchSize;
-    }
-
-    /**
-     * Loads the next routes into the elements array.
-     *
-     * @param int $offset The offset used in the db query
-     */
-    protected function loadNextElements($offset)
-    {
-        // If the last batch was smaller than the batch size, this means there
-        // are no more routes available.
-        if (isset($this->currentRoutes) && count($this->currentRoutes) < $this->routesBatchSize) {
-            $this->currentRoutes = [];
-        } else {
-            $this->currentRoutes = $this->provider->getRoutesPaged($offset, $this->routesBatchSize);
-        }
     }
 
     /**
@@ -122,5 +108,21 @@ class PagedRouteCollection implements \Iterator, \Countable
     public function count()
     {
         return $this->provider->getRoutesCount();
+    }
+
+    /**
+     * Loads the next routes into the elements array.
+     *
+     * @param int $offset The offset used in the db query
+     */
+    protected function loadNextElements($offset)
+    {
+        // If the last batch was smaller than the batch size, this means there
+        // are no more routes available.
+        if (isset($this->currentRoutes) && \count($this->currentRoutes) < $this->routesBatchSize) {
+            $this->currentRoutes = [];
+        } else {
+            $this->currentRoutes = $this->provider->getRoutesPaged($offset, $this->routesBatchSize);
+        }
     }
 }

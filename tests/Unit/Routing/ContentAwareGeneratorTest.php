@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony CMF package.
  *
@@ -266,6 +268,8 @@ class ContentAwareGeneratorTest extends TestCase
 
     public function testGenerateRoutenameMultilangNotFound()
     {
+        $this->expectException(RouteNotFoundException::class);
+
         $name = 'foo/bar';
 
         $this->provider->expects($this->once())
@@ -348,6 +352,8 @@ class ContentAwareGeneratorTest extends TestCase
      */
     public function testGenerateNoContentRepository()
     {
+        $this->expectException(RouteNotFoundException::class);
+
         $this->provider->expects($this->never())
             ->method('getRouteByName')
         ;
@@ -361,6 +367,8 @@ class ContentAwareGeneratorTest extends TestCase
      */
     public function testGenerateNoContentFoundInRepository()
     {
+        $this->expectException(RouteNotFoundException::class);
+
         $this->provider->expects($this->never())
             ->method('getRouteByName')
         ;
@@ -382,6 +390,8 @@ class ContentAwareGeneratorTest extends TestCase
      */
     public function testGenerateWrongContentClassInRepository()
     {
+        $this->expectException(RouteNotFoundException::class);
+
         $this->provider->expects($this->never())
             ->method('getRouteByName')
         ;
@@ -403,6 +413,8 @@ class ContentAwareGeneratorTest extends TestCase
      */
     public function testGenerateNoRoutes()
     {
+        $this->expectException(RouteNotFoundException::class);
+
         $this->contentDocument->expects($this->once())
             ->method('getRoutes')
             ->will($this->returnValue([]));
@@ -416,6 +428,8 @@ class ContentAwareGeneratorTest extends TestCase
      */
     public function testGenerateInvalidRoute()
     {
+        $this->expectException(RouteNotFoundException::class);
+
         $this->contentDocument->expects($this->once())
             ->method('getRoutes')
             ->will($this->returnValue([$this]));
@@ -471,16 +485,16 @@ class ContentAwareGeneratorTest extends TestCase
  */
 class TestableContentAwareGenerator extends ContentAwareGenerator
 {
-    protected function doGenerate($variables, $defaults, $requirements, $tokens, $parameters, $name, $referenceType, $hostTokens, array $requiredSchemes = [])
-    {
-        return 'result_url';
-    }
-
     // expose as public
 
     public function getLocale($parameters)
     {
         return parent::getLocale($parameters);
+    }
+
+    protected function doGenerate($variables, $defaults, $requirements, $tokens, $parameters, $name, $referenceType, $hostTokens, array $requiredSchemes = [])
+    {
+        return 'result_url';
     }
 }
 

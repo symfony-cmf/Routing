@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony CMF package.
  *
@@ -33,6 +35,8 @@ use Symfony\Component\Routing\RouteCollection;
 
 class DynamicRouterTest extends TestCase
 {
+    public const URL = '/foo/bar';
+
     /**
      * @var RouteMock|MockObject
      */
@@ -67,8 +71,6 @@ class DynamicRouterTest extends TestCase
      * @var Request
      */
     private $request;
-
-    const URL = '/foo/bar';
 
     public function setUp()
     {
@@ -190,7 +192,7 @@ class DynamicRouterTest extends TestCase
         $this->enhancer->expects($this->once())
             ->method('enhance')
             ->with($this->equalTo($routeDefaults), $this->callback(function (Request $request) use ($test) {
-                return DynamicRouterTest::URL === $request->server->get('REQUEST_URI');
+                return self::URL === $request->server->get('REQUEST_URI');
             }))
             ->will($this->returnValue($expected))
         ;
@@ -215,7 +217,7 @@ class DynamicRouterTest extends TestCase
         $this->enhancer->expects($this->once())
             ->method('enhance')
             ->with($this->equalTo($routeDefaults), $this->callback(function (Request $request) use ($test) {
-                return DynamicRouterTest::URL === $request->server->get('REQUEST_URI');
+                return self::URL === $request->server->get('REQUEST_URI');
             }))
             ->will($this->returnValue($expected))
         ;
@@ -243,7 +245,7 @@ class DynamicRouterTest extends TestCase
         $this->enhancer->expects($this->once())
             ->method('enhance')
             ->with($this->equalTo($routeDefaults), $this->callback(function (Request $request) use ($test) {
-                return DynamicRouterTest::URL === $request->server->get('REQUEST_URI');
+                return self::URL === $request->server->get('REQUEST_URI');
             }))
             ->will($this->returnValue($expected))
         ;
@@ -258,6 +260,8 @@ class DynamicRouterTest extends TestCase
      */
     public function testMatchFilter()
     {
+        $this->expectException(ResourceNotFoundException::class);
+
         $router = new DynamicRouter($this->context, $this->matcher, $this->generator, '#/different/prefix.*#');
         $router->addRouteEnhancer($this->enhancer);
 
@@ -275,6 +279,8 @@ class DynamicRouterTest extends TestCase
 
     public function testMatchRequestFilter()
     {
+        $this->expectException(ResourceNotFoundException::class);
+
         $matcher = $this->createMock(RequestMatcherInterface::class);
 
         $router = new DynamicRouter($this->context, $matcher, $this->generator, '#/different/prefix.*#');
@@ -297,6 +303,8 @@ class DynamicRouterTest extends TestCase
      */
     public function testMatchUrlWithRequestMatcher()
     {
+        $this->expectException(\InvalidArgumentException::class);
+
         $matcher = $this->createMock(RequestMatcherInterface::class);
         $router = new DynamicRouter($this->context, $matcher, $this->generator);
 

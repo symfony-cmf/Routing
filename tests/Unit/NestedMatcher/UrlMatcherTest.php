@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony CMF package.
  *
@@ -83,7 +85,7 @@ class UrlMatcherTest extends TestCase
         ;
         $this->routeCompiled->expects($this->atLeastOnce())
             ->method('getRegex')
-            ->will($this->returnValue('#'.str_replace('/', '\/', $this->url).'$#sD'))
+            ->will($this->returnValue('#^'.str_replace('', '\/', $this->url).'$#sD'))
         ;
         $this->routeDocument->expects($this->atLeastOnce())
             ->method('compile')
@@ -132,7 +134,7 @@ class UrlMatcherTest extends TestCase
         ;
         $this->routeCompiled->expects($this->atLeastOnce())
             ->method('getRegex')
-            ->will($this->returnValue('#'.str_replace('/', '\/', $this->url).'$#sD'))
+            ->will($this->returnValue('#^'.str_replace('/', '\/', $this->url).'$#sD'))
         ;
         $this->routeDocument = $this->createMock(Route::class);
         $this->routeDocument->expects($this->atLeastOnce())

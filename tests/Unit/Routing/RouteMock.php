@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony CMF package.
  *
@@ -25,7 +27,6 @@ class RouteMock extends SymfonyRoute implements RouteObjectInterface
 
     public function getContent()
     {
-        return;
     }
 
     public function getDefaults()
@@ -49,6 +50,5 @@ class RouteMock extends SymfonyRoute implements RouteObjectInterface
 
     public function getRouteKey()
     {
-        return;
     }
 }

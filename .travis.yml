@@ -7,7 +7,7 @@
 ############################################################################
 # This file is part of the Symfony CMF package.                            #
 #                                                                          #
-# (c) 2011-2017 Symfony CMF                                                #
+# (c) Symfony CMF                                                #
 #                                                                          #
 # For the full copyright and license information, please view the LICENSE  #
 # file that was distributed with this source code.                         #
@@ -17,7 +17,8 @@ language: php
 
 php:
   - 7.1
-
+  - 7.2
+  - 7.3
 sudo: false
 
 cache:
@@ -26,29 +27,30 @@ cache:
     - $HOME/.composer/cache/files
 
 env:
-  matrix: SYMFONY_VERSION=4.0.*
+  matrix: SYMFONY_VERSION=4.2.*
   global:
     - SYMFONY_DEPRECATIONS_HELPER="/.*each.*/"
     - SYMFONY_PHPUNIT_DIR=.phpunit SYMFONY_PHPUNIT_REMOVE="symfony/yaml"
-    - SYMFONY_PHPUNIT_VERSION=6
-    - TEST_INSTALLATION=false
+    - SYMFONY_PHPUNIT_VERSION=7
+    - PHPUNIT_VERSION=7
+    - TARGET=test
 
 matrix:
   include:
-    - php: 7.2
+    - env: TARGET=lint
+    - php: 7.3
+      env: STABILITY="dev" SYMFONY_VERSION=4.3.*
+    - php: 7.3
       env: SYMFONY_VERSION=4.2.*
+    - php: 7.1
+      env: COMPOSER_FLAGS="--prefer-lowest" SYMFONY_VERSION=3.4.* SYMFONY_DEPRECATIONS_HELPER="/.*each.*/"
+
     - php: 7.2
       env: SYMFONY_VERSION=4.1.*
-    - php: 7.2
-      env: SYMFONY_VERSION=4.0.*
-    - php: 7.1
-      env: COMPOSER_FLAGS="--prefer-lowest" SYMFONY_VERSION=2.8.* SYMFONY_DEPRECATIONS_HELPER=weak
-    - php: 7.2
-      env: SYMFONY_VERSION=3.3.*
-    - php: 7.2
-      env: SYMFONY_VERSION=3.4.*
   fast_finish: true
   allow_failures:
+    - php: 7.3
+      env: STABILITY="dev" SYMFONY_VERSION=4.3.*
 
 before_install:
   - phpenv config-rm xdebug.ini || true
@@ -58,9 +60,13 @@ before_install:
   - if [ "$SYMFONY_VERSION" != "" ]; then composer require symfony/symfony:${SYMFONY_VERSION} --no-update; fi
   - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
 
-install: travis_wait composer update --prefer-dist $COMPOSER_FLAGS
-script:
-  - if [ "${TEST_INSTALLATION}" == true ]; then make test_installation; else make test; fi
+install:
+  - if [ -x .travis/install_${TARGET}.sh ]; then .travis/install_${TARGET}.sh; fi;
+
+script: make $TARGET
+
+after_success:
+  - if [ -x .travis/after_success_${TARGET}.sh ]; then .travis/after_success_${TARGET}.sh; fi;
 
 notifications:
   irc: "irc.freenode.org#symfony-cmf"

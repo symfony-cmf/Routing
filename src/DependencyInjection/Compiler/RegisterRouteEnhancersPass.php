@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony CMF package.
  *
@@ -52,7 +54,7 @@ class RegisterRouteEnhancersPass implements CompilerPassInterface
         $router = $container->getDefinition($this->dynamicRouterService);
 
         foreach ($container->findTaggedServiceIds($this->enhancerTag) as $id => $attributes) {
-            $priority = isset($attributes[0]['priority']) ? $attributes[0]['priority'] : 0;
+            $priority = $attributes[0]['priority'] ?? 0;
             $router->addMethodCall('addRouteEnhancer', [new Reference($id), $priority]);
         }
     }

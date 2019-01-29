@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony CMF package.
  *
@@ -34,13 +36,13 @@ interface RouteFilterInterface
      * @param RouteCollection $collection The collection against which to match
      * @param Request         $request    A Request object against which to match
      *
-     * @return RouteCollection A non-empty RouteCollection of matched routes
-     *
      * @throws ResourceNotFoundException if none of the routes in $collection
      *                                   matches $request. This is a performance
      *                                   optimization to not continue the match
      *                                   process when a match will no longer be
      *                                   possible
+     *
+     * @return RouteCollection A non-empty RouteCollection of matched routes
      */
     public function filter(RouteCollection $collection, Request $request);
 }

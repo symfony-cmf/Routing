@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony CMF package.
  *
@@ -35,23 +37,6 @@ trait RouteEnhancerTrait
     private $sortedEnhancers = [];
 
     /**
-     * Apply the route enhancers to the defaults, according to priorities.
-     *
-     * @param array   $defaults
-     * @param Request $request
-     *
-     * @return array
-     */
-    protected function applyRouteEnhancers($defaults, Request $request)
-    {
-        foreach ($this->getRouteEnhancers() as $enhancer) {
-            $defaults = $enhancer->enhance($defaults, $request);
-        }
-
-        return $defaults;
-    }
-
-    /**
      * Add route enhancers to the router to let them generate information on
      * matched routes.
      *
@@ -82,11 +67,28 @@ trait RouteEnhancerTrait
      */
     public function getRouteEnhancers()
     {
-        if (0 === count($this->sortedEnhancers)) {
+        if (0 === \count($this->sortedEnhancers)) {
             $this->sortedEnhancers = $this->sortRouteEnhancers();
         }
 
         return $this->sortedEnhancers;
+    }
+
+    /**
+     * Apply the route enhancers to the defaults, according to priorities.
+     *
+     * @param array   $defaults
+     * @param Request $request
+     *
+     * @return array
+     */
+    protected function applyRouteEnhancers($defaults, Request $request)
+    {
+        foreach ($this->getRouteEnhancers() as $enhancer) {
+            $defaults = $enhancer->enhance($defaults, $request);
+        }
+
+        return $defaults;
     }
 
     /**
@@ -98,12 +100,12 @@ trait RouteEnhancerTrait
      */
     private function sortRouteEnhancers()
     {
-        if (0 === count($this->enhancers)) {
+        if (0 === \count($this->enhancers)) {
             return [];
         }
 
         krsort($this->enhancers);
 
-        return call_user_func_array('array_merge', $this->enhancers);
+        return \call_user_func_array('array_merge', $this->enhancers);
     }
 }

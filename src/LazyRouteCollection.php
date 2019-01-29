@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony CMF package.
  *
@@ -44,7 +46,7 @@ class LazyRouteCollection extends RouteCollection
      */
     public function count()
     {
-        return count($this->all());
+        return \count($this->all());
     }
 
     /**

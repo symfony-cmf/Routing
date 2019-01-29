@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Symfony CMF package.
  *
@@ -53,12 +55,12 @@ class RouteContentEnhancer implements RouteEnhancerInterface
      */
     public function enhance(array $defaults, Request $request)
     {
-        if (array_key_exists($this->target, $defaults)) {
+        if (\array_key_exists($this->target, $defaults)) {
             // no need to do anything
             return $defaults;
         }
 
-        if (!array_key_exists($this->routefield, $defaults)
+        if (!\array_key_exists($this->routefield, $defaults)
             || !$defaults[$this->routefield] instanceof RouteObjectInterface
         ) {
             // we can't determine the content
