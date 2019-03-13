@@ -3,7 +3,7 @@
 /*
  * This file is part of the Symfony CMF package.
  *
- * (c) 2011-2017 Symfony CMF
+ * (c) Symfony CMF
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,6 +11,7 @@
 
 namespace Symfony\Cmf\Component\Routing\Tests\Routing;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Cmf\Component\Routing\ChainRouter;
@@ -35,7 +36,7 @@ class ChainRouterTest extends TestCase
     private $router;
 
     /**
-     * @var RequestContext|\PHPUnit_Framework_MockObject_MockObject
+     * @var RequestContext|MockObject
      */
     private $context;
 
@@ -84,7 +85,7 @@ class ChainRouterTest extends TestCase
     {
         list($low, $medium, $high) = $this->createRouterMocks();
         // We're using a mock here and not $this->router because we need to ensure that the sorting operation is done only once.
-        /** @var $router ChainRouter|\PHPUnit_Framework_MockObject_MockObject */
+        /** @var $router ChainRouter|MockObject */
         $router = $this->getMockBuilder(ChainRouter::class)
             ->disableOriginalConstructor()
             ->setMethods(['sortRouters'])
@@ -121,7 +122,7 @@ class ChainRouterTest extends TestCase
         list($low, $medium, $high) = $this->createRouterMocks();
         $highest = clone $high;
         // We're using a mock here and not $this->router because we need to ensure that the sorting operation is done only once.
-        /** @var $router ChainRouter|\PHPUnit_Framework_MockObject_MockObject */
+        /** @var $router ChainRouter|MockObject */
         $router = $this->getMockBuilder(ChainRouter::class)
             ->disableOriginalConstructor()
             ->setMethods(['sortRouters'])
@@ -302,7 +303,7 @@ class ChainRouterTest extends TestCase
             ->with($this->callback(function (Request $r) use ($url) {
                 return $r->getPathInfo() === $url;
             }))
-            ->will($this->throwException(new \Symfony\Component\Routing\Exception\ResourceNotFoundException()))
+            ->will($this->throwException(new ResourceNotFoundException()))
         ;
         $low
             ->expects($this->once())
@@ -413,7 +414,7 @@ class ChainRouterTest extends TestCase
             ->expects($this->once())
             ->method('match')
             ->with($url)
-            ->will($this->throwException(new \Symfony\Component\Routing\Exception\MethodNotAllowedException([])))
+            ->will($this->throwException(new MethodNotAllowedException([])))
         ;
         $low
             ->expects($this->once())
@@ -428,9 +429,6 @@ class ChainRouterTest extends TestCase
         $this->assertEquals(['test'], $result);
     }
 
-    /**
-     * @expectedException \Symfony\Component\Routing\Exception\ResourceNotFoundException
-     */
     public function testMatchNotFound()
     {
         $url = '/test';
@@ -451,12 +449,10 @@ class ChainRouterTest extends TestCase
         $this->router->add($low, 10);
         $this->router->add($high, 100);
 
+        $this->expectException(ResourceNotFoundException::class);
         $this->router->match('/test');
     }
 
-    /**
-     * @expectedException \Symfony\Component\Routing\Exception\ResourceNotFoundException
-     */
     public function testMatchRequestNotFound()
     {
         $url = '/test';
@@ -477,14 +473,12 @@ class ChainRouterTest extends TestCase
         $this->router->add($low, 10);
         $this->router->add($high, 100);
 
+        $this->expectException(ResourceNotFoundException::class);
         $this->router->matchRequest(Request::create('/test'));
     }
 
     /**
      * Call match on ChainRouter that has RequestMatcher in the chain.
-     *
-     * @expectedException \Symfony\Component\Routing\Exception\ResourceNotFoundException
-     * @expectedExceptionMessage None of the routers in the chain matched url '/test'
      */
     public function testMatchWithRequestMatchersNotFound()
     {
@@ -502,13 +496,13 @@ class ChainRouterTest extends TestCase
 
         $this->router->add($high, 20);
 
+        $this->expectException(ResourceNotFoundException::class);
+        $this->expectExceptionMessage('None of the routers in the chain matched url \'/test\'');
         $this->router->match($url);
     }
 
     /**
      * If any of the routers throws a not allowed exception and no other matches, we need to see this.
-     *
-     * @expectedException \Symfony\Component\Routing\Exception\MethodNotAllowedException
      */
     public function testMatchMethodNotAllowed()
     {
@@ -530,13 +524,12 @@ class ChainRouterTest extends TestCase
         $this->router->add($low, 10);
         $this->router->add($high, 100);
 
+        $this->expectException(MethodNotAllowedException::class);
         $this->router->match('/test');
     }
 
     /**
      * If any of the routers throws a not allowed exception and no other matches, we need to see this.
-     *
-     * @expectedException \Symfony\Component\Routing\Exception\MethodNotAllowedException
      */
     public function testMatchRequestMethodNotAllowed()
     {
@@ -558,6 +551,7 @@ class ChainRouterTest extends TestCase
         $this->router->add($low, 10);
         $this->router->add($high, 100);
 
+        $this->expectException(MethodNotAllowedException::class);
         $this->router->matchRequest(Request::create('/test'));
     }
 
@@ -592,9 +586,6 @@ class ChainRouterTest extends TestCase
         $this->assertEquals($url, $result);
     }
 
-    /**
-     * @expectedException \Symfony\Component\Routing\Exception\RouteNotFoundException
-     */
     public function testGenerateNotFound()
     {
         $name = 'test';
@@ -615,13 +606,12 @@ class ChainRouterTest extends TestCase
         $this->router->add($low, 10);
         $this->router->add($high, 100);
 
+        $this->expectException(RouteNotFoundException::class);
         $this->router->generate($name, $parameters);
     }
 
     /**
      * Route is an object but no versatile generator around to do the debug message.
-     *
-     * @expectedException \Symfony\Component\Routing\Exception\RouteNotFoundException
      */
     public function testGenerateObjectNotFound()
     {
@@ -637,13 +627,12 @@ class ChainRouterTest extends TestCase
 
         $this->router->add($defaultRouter, 200);
 
+        $this->expectException(RouteNotFoundException::class);
         $this->router->generate($name, $parameters);
     }
 
     /**
      * A versatile router will generate the debug message.
-     *
-     * @expectedException \Symfony\Component\Routing\Exception\RouteNotFoundException
      */
     public function testGenerateObjectNotFoundVersatile()
     {
@@ -669,6 +658,7 @@ class ChainRouterTest extends TestCase
 
         $this->router->add($chainedRouter, 10);
 
+        $this->expectException(RouteNotFoundException::class);
         $this->router->generate($name, $parameters);
     }
 
@@ -754,9 +744,6 @@ class ChainRouterTest extends TestCase
         $this->assertEquals(['high', 'low'], $names);
     }
 
-    /**
-     * @expectedException \Symfony\Component\Routing\Exception\RouteNotFoundException
-     */
     public function testSupport()
     {
         $router = $this->createMock(VersatileRouter::class);
@@ -774,11 +761,12 @@ class ChainRouterTest extends TestCase
 
         $this->router->add($router);
 
+        $this->expectException(RouteNotFoundException::class);
         $this->router->generate('foobar');
     }
 
     /**
-     * @return RouterInterface[]|\PHPUnit_Framework_MockObject_MockObject[]
+     * @return RouterInterface[]|MockObject[]
      */
     protected function createRouterMocks()
     {

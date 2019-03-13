@@ -10,7 +10,6 @@
 
 Version/Branch | Travis | Coveralls |
 ------ | ------ | --------- |
-2.1.0   | [![Build Status][travis_stable_badge]][travis_link]     | [![Coverage Status][coveralls_stable_badge]][coveralls_stable_link]     |
 master | [![Build Status][travis_unstable_badge]][travis_link] | [![Coverage Status][coveralls_unstable_badge]][coveralls_unstable_link] |
 
 This package is part of the [Symfony Content Management Framework (CMF)](http://cmf.symfony.com/) and licensed
@@ -68,12 +67,9 @@ Thanks to
 
 This package is available under the [MIT license](src/Resources/meta/LICENSE).
 
-[travis_stable_badge]: https://travis-ci.org/symfony-cmf/Routing.svg?branch=2.x
 [travis_unstable_badge]: https://travis-ci.org/symfony-cmf/Routing.svg?branch=master
 
 [travis_link]: https://travis-ci.org/symfony-cmf/Routing
 
-[coveralls_stable_badge]: https://coveralls.io/repos/github/symfony-cmf/routing/badge.svg?branch=2.x
-[coveralls_stable_link]: https://coveralls.io/github/symfony-cmf/routing?branch=2.x
 [coveralls_unstable_badge]: https://coveralls.io/repos/github/symfony-cmf/routing/badge.svg?branch=master
 [coveralls_unstable_link]: https://coveralls.io/github/symfony-cmf/routing?branch=master

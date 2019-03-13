@@ -3,7 +3,7 @@
 /*
  * This file is part of the Symfony CMF package.
  *
- * (c) 2011-2017 Symfony CMF
+ * (c) Symfony CMF
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,6 +11,7 @@
 
 namespace Symfony\Cmf\Component\Routing\Tests\Routing;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Cmf\Component\Routing\ContentAwareGenerator;
 use Symfony\Cmf\Component\Routing\ContentRepositoryInterface;
@@ -18,27 +19,40 @@ use Symfony\Cmf\Component\Routing\RouteProviderInterface;
 use Symfony\Cmf\Component\Routing\RouteReferrersReadInterface;
 use Symfony\Cmf\Component\Routing\Tests\Unit\Routing\RouteMock;
 use Symfony\Component\Routing\CompiledRoute;
+use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\Route;
 
 class ContentAwareGeneratorTest extends TestCase
 {
+    /**
+     * @var RouteReferrersReadInterface|MockObject
+     */
     private $contentDocument;
 
     /**
-     * @var RouteMock
+     * @var RouteMock|MockObject
      */
     private $routeDocument;
 
+    /**
+     * @var CompiledRoute|MockObject
+     */
     private $routeCompiled;
 
+    /**
+     * @var RouteProviderInterface|MockObject
+     */
     private $provider;
 
     /**
-     * @var ContentAwareGenerator
+     * @var TestableContentAwareGenerator
      */
     private $generator;
 
+    /**
+     * @var RequestContext|MockObject
+     */
     private $context;
 
     public function setUp()
@@ -250,9 +264,6 @@ class ContentAwareGeneratorTest extends TestCase
         $this->assertEquals('result_url', $this->generator->generate($name, ['_locale' => 'de']));
     }
 
-    /**
-     * @expectedException \Symfony\Component\Routing\Exception\RouteNotFoundException
-     */
     public function testGenerateRoutenameMultilangNotFound()
     {
         $name = 'foo/bar';
@@ -263,6 +274,7 @@ class ContentAwareGeneratorTest extends TestCase
             ->will($this->returnValue(null))
         ;
 
+        $this->expectException(RouteNotFoundException::class);
         $this->generator->generate($name, ['_locale' => 'de']);
     }
 
@@ -315,28 +327,24 @@ class ContentAwareGeneratorTest extends TestCase
 
     /**
      * Generate without any information.
-     *
-     * @expectedException \Symfony\Component\Routing\Exception\RouteNotFoundException
      */
     public function testGenerateNoContent()
     {
+        $this->expectException(RouteNotFoundException::class);
         $this->generator->generate('', []);
     }
 
     /**
      * Generate with an object that is neither a route nor route aware.
-     *
-     * @expectedException \Symfony\Component\Routing\Exception\RouteNotFoundException
      */
     public function testGenerateInvalidContent()
     {
+        $this->expectException(RouteNotFoundException::class);
         $this->generator->generate($this);
     }
 
     /**
      * Generate with a content_id but there is no content repository.
-     *
-     * @expectedException \Symfony\Component\Routing\Exception\RouteNotFoundException
      */
     public function testGenerateNoContentRepository()
     {
@@ -344,13 +352,12 @@ class ContentAwareGeneratorTest extends TestCase
             ->method('getRouteByName')
         ;
 
+        $this->expectException(RouteNotFoundException::class);
         $this->generator->generate('', ['content_id' => '/content/id']);
     }
 
     /**
      * Generate with content_id but the content is not found.
-     *
-     * @expectedException \Symfony\Component\Routing\Exception\RouteNotFoundException
      */
     public function testGenerateNoContentFoundInRepository()
     {
@@ -366,13 +373,12 @@ class ContentAwareGeneratorTest extends TestCase
         ;
         $this->generator->setContentRepository($contentRepository);
 
+        $this->expectException(RouteNotFoundException::class);
         $this->generator->generate('', ['content_id' => '/content/id']);
     }
 
     /**
      * Generate with content_id but the object at id is not route aware.
-     *
-     * @expectedException \Symfony\Component\Routing\Exception\RouteNotFoundException
      */
     public function testGenerateWrongContentClassInRepository()
     {
@@ -388,13 +394,12 @@ class ContentAwareGeneratorTest extends TestCase
         ;
         $this->generator->setContentRepository($contentRepository);
 
+        $this->expectException(RouteNotFoundException::class);
         $this->generator->generate('', ['content_id' => '/content/id']);
     }
 
     /**
      * Generate from a content that has no routes associated.
-     *
-     * @expectedException \Symfony\Component\Routing\Exception\RouteNotFoundException
      */
     public function testGenerateNoRoutes()
     {
@@ -402,13 +407,12 @@ class ContentAwareGeneratorTest extends TestCase
             ->method('getRoutes')
             ->will($this->returnValue([]));
 
+        $this->expectException(RouteNotFoundException::class);
         $this->generator->generate($this->contentDocument);
     }
 
     /**
      * Generate from a content that returns something that is not a route as route.
-     *
-     * @expectedException \Symfony\Component\Routing\Exception\RouteNotFoundException
      */
     public function testGenerateInvalidRoute()
     {
@@ -416,6 +420,7 @@ class ContentAwareGeneratorTest extends TestCase
             ->method('getRoutes')
             ->will($this->returnValue([$this]));
 
+        $this->expectException(RouteNotFoundException::class);
         $this->generator->generate($this->contentDocument);
     }
 

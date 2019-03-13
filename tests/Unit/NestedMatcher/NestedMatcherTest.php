@@ -3,7 +3,7 @@
 /*
  * This file is part of the Symfony CMF package.
  *
- * (c) 2011-2017 Symfony CMF
+ * (c) Symfony CMF
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -135,7 +135,7 @@ class NestedMatcherTest extends TestCase
 
         $matcher = new NestedMatcher($this->provider, $this->finalMatcher);
 
-        $this->setExpectedException(ResourceNotFoundException::class);
+        $this->expectException(ResourceNotFoundException::class);
         $matcher->matchRequest($request);
     }
 }

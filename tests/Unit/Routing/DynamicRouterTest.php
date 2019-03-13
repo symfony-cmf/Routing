@@ -3,7 +3,7 @@
 /*
  * This file is part of the Symfony CMF package.
  *
- * (c) 2011-2017 Symfony CMF
+ * (c) Symfony CMF
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -11,6 +11,7 @@
 
 namespace Symfony\Cmf\Component\Routing\Tests\Routing;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Cmf\Component\Routing\DynamicRouter;
 use Symfony\Cmf\Component\Routing\Enhancer\RouteEnhancerInterface;
@@ -23,6 +24,7 @@ use Symfony\Cmf\Component\Routing\Tests\Unit\Routing\RouteMock;
 use Symfony\Cmf\Component\Routing\VersatileGeneratorInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 use Symfony\Component\Routing\Matcher\UrlMatcherInterface;
@@ -31,20 +33,40 @@ use Symfony\Component\Routing\RouteCollection;
 
 class DynamicRouterTest extends TestCase
 {
-    protected $routeDocument;
+    /**
+     * @var RouteMock|MockObject
+     */
+    private $routeDocument;
 
-    protected $matcher;
+    /**
+     * @var UrlMatcherInterface|MockObject
+     */
+    private $matcher;
 
-    protected $generator;
+    /**
+     * @var VersatileGeneratorInterface|MockObject
+     */
+    private $generator;
 
-    protected $enhancer;
+    /**
+     * @var RouteEnhancerInterface|MockObject
+     */
+    private $enhancer;
 
-    /** @var DynamicRouter */
-    protected $router;
+    /**
+     * @var DynamicRouter
+     */
+    private $router;
 
-    protected $context;
+    /**
+     * @var RequestContext|MockObject
+     */
+    private $context;
 
-    public $request;
+    /**
+     * @var Request
+     */
+    private $request;
 
     const URL = '/foo/bar';
 
@@ -54,7 +76,7 @@ class DynamicRouterTest extends TestCase
 
         $this->matcher = $this->createMock(UrlMatcherInterface::class);
         $this->generator = $this->createMock(VersatileGeneratorInterface::class);
-        $this->enhancer = $this->createMock(RouteEnhancerInterface::class, ['enhance']);
+        $this->enhancer = $this->createMock(RouteEnhancerInterface::class);
 
         $this->context = $this->createMock(RequestContext::class);
         $this->request = Request::create(self::URL);
@@ -232,7 +254,6 @@ class DynamicRouterTest extends TestCase
     }
 
     /**
-     * @expectedException \Symfony\Component\Routing\Exception\ResourceNotFoundException
      * @group legacy
      */
     public function testMatchFilter()
@@ -248,12 +269,10 @@ class DynamicRouterTest extends TestCase
             ->method('enhance')
         ;
 
+        $this->expectException(ResourceNotFoundException::class);
         $router->match(self::URL);
     }
 
-    /**
-     * @expectedException \Symfony\Component\Routing\Exception\ResourceNotFoundException
-     */
     public function testMatchRequestFilter()
     {
         $matcher = $this->createMock(RequestMatcherInterface::class);
@@ -269,11 +288,11 @@ class DynamicRouterTest extends TestCase
             ->method('enhance')
         ;
 
+        $this->expectException(ResourceNotFoundException::class);
         $router->matchRequest($this->request);
     }
 
     /**
-     * @expectedException \InvalidArgumentException
      * @group legacy
      */
     public function testMatchUrlWithRequestMatcher()
@@ -281,14 +300,13 @@ class DynamicRouterTest extends TestCase
         $matcher = $this->createMock(RequestMatcherInterface::class);
         $router = new DynamicRouter($this->context, $matcher, $this->generator);
 
+        $this->expectException(\InvalidArgumentException::class);
         $router->match(self::URL);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testInvalidMatcher()
     {
+        $this->expectException(\InvalidArgumentException::class);
         new DynamicRouter($this->context, $this, $this->generator);
     }
 
