@@ -14,7 +14,9 @@ namespace Symfony\Cmf\Component\Routing;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\CacheWarmer\WarmableInterface;
+use Symfony\Component\Routing\Exception\InvalidParameterException;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
+use Symfony\Component\Routing\Exception\MissingMandatoryParametersException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -211,10 +213,34 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
      * Loops through all registered routers and returns a router if one is found.
-     * It will always return the first route generated.
+     * It will always return the first route generated, based on the given parameters.
+     *
+     * Parameters that reference placeholders in the route pattern will substitute them in the
+     * path or host. Extra params are added as query string to the URL.
+     *
+     * When the passed reference type cannot be generated for the route because it requires a different
+     * host or scheme than the current one, the method will return a more comprehensive reference
+     * that includes the required params. For example, when you call this method with $referenceType = ABSOLUTE_PATH
+     * but the route requires the https scheme whereas the current scheme is http, it will instead return an
+     * ABSOLUTE_URL with the https scheme and the current host. This makes sure the generated URL matches
+     * the route in any case.
+     *
+     * If there is no route with the given name, the generator must throw the RouteNotFoundException.
+     *
+     * The special parameter _fragment will be used as the document fragment suffixed to the final URL.
+     *
+     * @param mixed $name       the name of the route or something identifying a route that can be used by any of
+     *                          the chained routers
+     * @param mixed $parameters An array of parameters
+     * @param int   $absolute   The type of reference to be generated (one of the constants)
+     *
+     * @return string The generated URL
+     *
+     * @throws RouteNotFoundException              If the named route doesn't exist
+     * @throws MissingMandatoryParametersException When some parameters are missing that are mandatory for the route
+     * @throws InvalidParameterException           When a parameter value for a placeholder is not correct because
+     *                                             it does not match the requirement
      */
     public function generate($name, $parameters = [], $absolute = UrlGeneratorInterface::ABSOLUTE_PATH)
     {
