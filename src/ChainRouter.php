@@ -232,7 +232,7 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
      *
      * @param mixed $name       the name of the route or something identifying a route that can be used by any of
      *                          the chained routers
-     * @param mixed $parameters An array of parameters
+     * @param array $parameters An array of parameters
      * @param int   $absolute   The type of reference to be generated (one of the constants)
      *
      * @return string The generated URL
