@@ -25,7 +25,7 @@
         "symfony/dependency-injection": "^3.4 || ^4.3",
         "symfony/config": "^3.4 || ^4.3",
         "symfony/event-dispatcher": "^3.4 || ^4.3",
-        "symfony-cmf/testing": "^2.1.0"
+        "symfony-cmf/testing": "^3@dev"
     },
     "suggest": {
         "symfony/event-dispatcher": "DynamicRouter can optionally trigger an event at the start of matching. Minimal version (^3.4 || ^4.3)"
