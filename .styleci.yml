@@ -26,4 +26,6 @@ enabled:
   - strict
   - php_unit_construct
 
-disabled: [single_line_class_definition]
+disabled:
+  - single_line_class_definition
+  - single_line_throw
