@@ -7,7 +7,7 @@
 ############################################################################
 # This file is part of the Symfony CMF package.                            #
 #                                                                          #
-# (c) 2011-2017 Symfony CMF                                                #
+# (c) Symfony CMF                                                          #
 #                                                                          #
 # For the full copyright and license information, please view the LICENSE  #
 # file that was distributed with this source code.                         #
@@ -17,50 +17,42 @@ language: php
 
 php:
   - 7.1
+  - 7.2
+  - 7.3
 
 sudo: false
 
 cache:
   directories:
     - .phpunit
-    - $HOME/.composer/cache/files
+    - $HOME/.composer/cache
 
 env:
   matrix: SYMFONY_VERSION=4.0.*
   global:
-    - SYMFONY_DEPRECATIONS_HELPER="/.*each.*/"
-    - SYMFONY_PHPUNIT_DIR=.phpunit SYMFONY_PHPUNIT_REMOVE="symfony/yaml"
     - SYMFONY_PHPUNIT_VERSION=6
-    - TEST_INSTALLATION=false
+    - COMPOSER_MEMORY_LIMIT=-1
+    - SYMFONY_DEPRECATIONS_HELPER="max[self]=0"
 
 matrix:
   include:
-    - php: 7.2
-      env: SYMFONY_VERSION=4.2.*
-    - php: 7.2
-      env: SYMFONY_VERSION=4.1.*
-    - php: 7.2
-      env: SYMFONY_VERSION=4.0.*
     - php: 7.1
-      env: COMPOSER_FLAGS="--prefer-lowest" SYMFONY_VERSION=2.8.* SYMFONY_DEPRECATIONS_HELPER=weak
-    - php: 7.2
-      env: SYMFONY_VERSION=3.3.*
-    - php: 7.2
-      env: SYMFONY_VERSION=3.4.*
+      env: COMPOSER_FLAGS="--prefer-lowest" SYMFONY_REQUIRE=3.4.* SYMFONY_DEPRECATIONS_HELPER=weak
+    - php: 7.4
+      env: SYMFONY_REQUIRE=4.3.*
+    - php: 7.4
+      env: SYMFONY_REQUIRE=4.4.*
   fast_finish: true
   allow_failures:
 
 before_install:
   - phpenv config-rm xdebug.ini || true
-  - composer self-update
-  - composer validate --no-check-all --ansi
-  - if ! [ -z "$STABILITY" ]; then composer config minimum-stability ${STABILITY}; composer config prefer-stable true; fi;
-  - if [ "$SYMFONY_VERSION" != "" ]; then composer require symfony/symfony:${SYMFONY_VERSION} --no-update; fi
-  - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
+  - composer global require --no-progress --no-scripts --no-plugins symfony/flex
 
-install: travis_wait composer update --prefer-dist $COMPOSER_FLAGS
+install: travis_wait composer update -n --prefer-stable --prefer-dist $COMPOSER_FLAGS
 script:
-  - if [ "${TEST_INSTALLATION}" == true ]; then make test_installation; else make test; fi
+  - composer validate --no-check-all --ansi
+  - make test
 
 notifications:
   irc: "irc.freenode.org#symfony-cmf"
