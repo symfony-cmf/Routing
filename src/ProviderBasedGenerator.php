@@ -93,6 +93,10 @@ class ProviderBasedGenerator extends UrlGenerator implements VersatileGeneratorI
             return 'Route with path '.$name->getPath();
         }
 
-        return get_class($name);
+        if (is_object($name)) {
+            return get_class($name);
+        }
+
+        return 'Null route';
     }
 }
