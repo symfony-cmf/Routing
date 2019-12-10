@@ -1,6 +1,11 @@
 Changelog
 =========
 
+2.1.1
+-----
+
+* Fix warning about `get_class` on `null` in PHP > 7.2
+
 2.1.0
 -----
 
