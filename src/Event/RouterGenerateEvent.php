@@ -11,7 +11,6 @@
 
 namespace Symfony\Cmf\Component\Routing\Event;
 
-use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\Routing\Route;
 
 /**
@@ -24,7 +23,7 @@ use Symfony\Component\Routing\Route;
  *
  * @see \Symfony\Component\Routing\Generator\UrlGeneratorInterface::generate()
  */
-class RouterGenerateEvent extends Event
+class RouterGenerateEvent extends BcEvent
 {
     /**
      * The name of the route or the Route instance to generate.

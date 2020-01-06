@@ -11,10 +11,9 @@
 
 namespace Symfony\Cmf\Component\Routing\Event;
 
-use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\HttpFoundation\Request;
 
-class RouterMatchEvent extends Event
+class RouterMatchEvent extends BcEvent
 {
     /**
      * @var Request
