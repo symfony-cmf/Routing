@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the Symfony CMF package.
+ *
+ * (c) Symfony CMF
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Symfony\Cmf\Component\Routing;
 
 use Symfony\Cmf\Component\Routing\Event\Events;
@@ -12,7 +21,7 @@ $generateMethod = $refl->getMethod('generate');
 $methodParameters = $generateMethod->getParameters();
 /** @var \ReflectionParameter $nameParameter */
 $nameParameter = array_shift($methodParameters);
-if ($nameParameter && $nameParameter->hasType() && $nameParameter->getType() === 'string') {
+if ($nameParameter && $nameParameter->hasType() && 'string' === $nameParameter->getType()) {
     /**
      * @internal
      */
@@ -61,7 +70,6 @@ if ($nameParameter && $nameParameter->hasType() && $nameParameter->getType() ===
                     // Old EventDispatcher signature
                     $this->eventDispatcher->dispatch($eventName, $event);
                 }
-
 
                 $name = $event->getRoute();
                 $parameters = $event->getParameters();

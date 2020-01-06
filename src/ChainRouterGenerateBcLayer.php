@@ -1,5 +1,14 @@
 <?php
 
+/*
+ * This file is part of the Symfony CMF package.
+ *
+ * (c) Symfony CMF
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Symfony\Cmf\Component\Routing;
 
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
@@ -10,15 +19,13 @@ $generateMethod = $refl->getMethod('generate');
 $methodParameters = $generateMethod->getParameters();
 /** @var \ReflectionParameter $nameParameter */
 $nameParameter = array_shift($methodParameters);
-if ($nameParameter && $nameParameter->hasType() && $nameParameter->getType() === 'string') {
+if ($nameParameter && $nameParameter->hasType() && 'string' === $nameParameter->getType()) {
     /**
      * @internal
      */
     class ChainRouterGenerateBcLayer
     {
         /**
-         * {@inheritdoc}
-         *
          * Loops through all registered routers and returns a router if one is found.
          * It will always return the first route generated.
          */
@@ -86,8 +93,6 @@ if ($nameParameter && $nameParameter->hasType() && $nameParameter->getType() ===
     class ChainRouterGenerateBcLayer
     {
         /**
-         * {@inheritdoc}
-         *
          * Loops through all registered routers and returns a router if one is found.
          * It will always return the first route generated.
          */
