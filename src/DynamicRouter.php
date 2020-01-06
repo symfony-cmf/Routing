@@ -194,8 +194,17 @@ class DynamicRouter extends DynamicRouterGenerateBcLayer implements RouterInterf
 
         $request = Request::create($pathinfo);
         if ($this->eventDispatcher) {
+            $eventName = Events::PRE_DYNAMIC_MATCH;
             $event = new RouterMatchEvent();
-            $this->eventDispatcher->dispatch(Events::PRE_DYNAMIC_MATCH, $event);
+
+            // LegacyEventDispatcherProxy exists in Symfony >= 4.3
+            if (class_exists(LegacyEventDispatcherProxy::class)) {
+                // New Symfony 4.3 EventDispatcher signature
+                $this->eventDispatcher->dispatch($event, $eventName);
+            } else {
+                // Old EventDispatcher signature
+                $this->eventDispatcher->dispatch($eventName, $event);
+            }
         }
 
         if (!empty($this->uriFilterRegexp) && !preg_match($this->uriFilterRegexp, $pathinfo)) {
@@ -230,8 +239,17 @@ class DynamicRouter extends DynamicRouterGenerateBcLayer implements RouterInterf
     public function matchRequest(Request $request)
     {
         if ($this->eventDispatcher) {
+            $eventName = Events::PRE_DYNAMIC_MATCH_REQUEST;
             $event = new RouterMatchEvent($request);
-            $this->eventDispatcher->dispatch(Events::PRE_DYNAMIC_MATCH_REQUEST, $event);
+
+            // LegacyEventDispatcherProxy exists in Symfony >= 4.3
+            if (class_exists(LegacyEventDispatcherProxy::class)) {
+                // New Symfony 4.3 EventDispatcher signature
+                $this->eventDispatcher->dispatch($event, $eventName);
+            } else {
+                // Old EventDispatcher signature
+                $this->eventDispatcher->dispatch($eventName, $event);
+            }
         }
 
         if ($this->uriFilterRegexp

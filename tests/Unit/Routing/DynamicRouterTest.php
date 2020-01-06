@@ -23,6 +23,7 @@ use Symfony\Cmf\Component\Routing\RouteProviderInterface;
 use Symfony\Cmf\Component\Routing\Tests\Unit\Routing\RouteMock;
 use Symfony\Cmf\Component\Routing\VersatileGeneratorInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\LegacyEventDispatcherProxy;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -336,9 +337,15 @@ class DynamicRouterTest extends TestCase
         $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $router = new DynamicRouter($this->context, $this->matcher, $this->generator, '', $eventDispatcher);
 
+        $dispatchParams = [Events::PRE_DYNAMIC_MATCH, $this->equalTo(new RouterMatchEvent())];
+        if (class_exists(LegacyEventDispatcherProxy::class)) {
+            // New Symfony 4.3 EventDispatcher signature
+            $dispatchParams = [$this->equalTo(new RouterMatchEvent()), Events::PRE_DYNAMIC_MATCH];
+        }
+
         $eventDispatcher->expects($this->once())
             ->method('dispatch')
-            ->with(Events::PRE_DYNAMIC_MATCH, $this->equalTo(new RouterMatchEvent()))
+            ->with(...$dispatchParams)
         ;
 
         $routeDefaults = ['foo' => 'bar'];
@@ -356,15 +363,23 @@ class DynamicRouterTest extends TestCase
         $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $router = new DynamicRouter($this->context, $this->matcher, $this->generator, '', $eventDispatcher);
 
-        $that = $this;
+        $eventName = Events::PRE_DYNAMIC_MATCH_REQUEST;
+        $eventCallback = $this->callback(function ($event) {
+            $this->assertInstanceOf(RouterMatchEvent::class, $event);
+            $this->assertEquals($this->request, $event->getRequest());
+
+            return true;
+        });
+
+        $dispatchParams = [$eventName, $eventCallback];
+        if (class_exists(LegacyEventDispatcherProxy::class)) {
+            // New Symfony 4.3 EventDispatcher signature
+            $dispatchParams = [$eventCallback, $eventName];
+        }
+
         $eventDispatcher->expects($this->once())
             ->method('dispatch')
-            ->with(Events::PRE_DYNAMIC_MATCH_REQUEST, $this->callback(function ($event) use ($that) {
-                $that->assertInstanceOf(RouterMatchEvent::class, $event);
-                $that->assertEquals($that->request, $event->getRequest());
-
-                return true;
-            }))
+            ->with(...$dispatchParams)
         ;
 
         $routeDefaults = ['foo' => 'bar'];
@@ -389,26 +404,34 @@ class DynamicRouterTest extends TestCase
         $oldReferenceType = false;
         $newReferenceType = true;
 
-        $that = $this;
+        $eventName = Events::PRE_DYNAMIC_GENERATE;
+        $eventCallback = $this->callback(function ($event) use ($oldname, $newname, $oldparameters, $newparameters, $oldReferenceType, $newReferenceType) {
+            $this->assertInstanceOf(RouterGenerateEvent::class, $event);
+            if (empty($this->seen)) {
+                // phpunit is calling the callback twice, and because we update the event the second time fails
+                $this->seen = true;
+            } else {
+                return true;
+            }
+            $this->assertEquals($oldname, $event->getRoute());
+            $this->assertEquals($oldparameters, $event->getParameters());
+            $this->assertEquals($oldReferenceType, $event->getReferenceType());
+            $event->setRoute($newname);
+            $event->setParameters($newparameters);
+            $event->setReferenceType($newReferenceType);
+
+            return true;
+        });
+
+        $dispatchParams = [$eventName, $eventCallback];
+        if (class_exists(LegacyEventDispatcherProxy::class)) {
+            // New Symfony 4.3 EventDispatcher signature
+            $dispatchParams = [$eventCallback, $eventName];
+        }
+
         $eventDispatcher->expects($this->once())
             ->method('dispatch')
-            ->with(Events::PRE_DYNAMIC_GENERATE, $this->callback(function ($event) use ($that, $oldname, $newname, $oldparameters, $newparameters, $oldReferenceType, $newReferenceType) {
-                $that->assertInstanceOf(RouterGenerateEvent::class, $event);
-                if (empty($that->seen)) {
-                    // phpunit is calling the callback twice, and because we update the event the second time fails
-                    $that->seen = true;
-                } else {
-                    return true;
-                }
-                $that->assertEquals($oldname, $event->getRoute());
-                $that->assertEquals($oldparameters, $event->getParameters());
-                $that->assertEquals($oldReferenceType, $event->getReferenceType());
-                $event->setRoute($newname);
-                $event->setParameters($newparameters);
-                $event->setReferenceType($newReferenceType);
-
-                return true;
-            }))
+            ->with(...$dispatchParams)
         ;
 
         $this->generator->expects($this->once())
