@@ -290,7 +290,8 @@ class DynamicRouter extends DynamicRouterGenerateBcLayer implements RouterInterf
         return "Route '$name' not found";
     }
 
-    private function doDispatch($eventName, $event) {
+    private function doDispatch($eventName, $event)
+    {
         // LegacyEventDispatcherProxy exists in Symfony >= 4.3
         if (class_exists(LegacyEventDispatcherProxy::class)) {
             // New Symfony 4.3 EventDispatcher signature

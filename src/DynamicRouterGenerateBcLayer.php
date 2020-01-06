@@ -55,8 +55,10 @@ if ($nameParameter && $nameParameter->hasType() && 'string' === $nameParameter->
 /**
  * @internal
  */
-abstract class DynamicRouterBaseBcLayer {
-    protected function doGenerate($name, $parameters, $referenceType) {
+abstract class DynamicRouterBaseBcLayer
+{
+    protected function doGenerate($name, $parameters, $referenceType)
+    {
         if ($this->eventDispatcher) {
             $routeParam = $name;
             if (array_key_exists('_cmf_route', $parameters) && is_object($parameters['_cmf_route'])) {

@@ -61,7 +61,8 @@ if ($nameParameter && $nameParameter->hasType() && 'string' === $nameParameter->
 /**
  * @internal
  */
-abstract class ChainRouterBaseBcLayer {
+abstract class ChainRouterBaseBcLayer
+{
     protected function doGenerate($name, $parameters, $absolute)
     {
         $debug = [];
