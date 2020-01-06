@@ -650,6 +650,9 @@ class ChainRouterTest extends TestCase
         $name = new \stdClass();
         $parameters = ['test' => 'value'];
 
+        $expectedName = '';
+        $expectedParameters = ['test' => 'value', '_cmf_route' => new \stdClass()];
+
         $chainedRouter = $this->createMock(VersatileRouter::class);
         $chainedRouter
             ->expects($this->once())
@@ -658,12 +661,12 @@ class ChainRouterTest extends TestCase
         ;
         $chainedRouter->expects($this->once())
             ->method('generate')
-            ->with($name, $parameters, UrlGeneratorInterface::ABSOLUTE_PATH)
+            ->with($expectedName, $expectedParameters, UrlGeneratorInterface::ABSOLUTE_PATH)
             ->will($this->throwException(new RouteNotFoundException()))
         ;
         $chainedRouter->expects($this->once())
             ->method('getRouteDebugMessage')
-            ->with($name, $parameters)
+            ->with($expectedName, $expectedParameters)
             ->will($this->returnValue('message'))
         ;
 
@@ -686,6 +689,9 @@ class ChainRouterTest extends TestCase
         $name = new \stdClass();
         $parameters = ['test' => 'value'];
 
+        $expectedName = '';
+        $expectedParameters = ['test' => 'value', '_cmf_route' => new \stdClass()];
+
         $defaultRouter = $this->createMock(RouterInterface::class);
         $chainedRouter = $this->createMock(VersatileRouter::class);
 
@@ -701,7 +707,7 @@ class ChainRouterTest extends TestCase
         $chainedRouter
             ->expects($this->once())
             ->method('generate')
-            ->with($name, $parameters, UrlGeneratorInterface::ABSOLUTE_PATH)
+            ->with($expectedName, $expectedParameters, UrlGeneratorInterface::ABSOLUTE_PATH)
             ->will($this->returnValue($name))
         ;
 
