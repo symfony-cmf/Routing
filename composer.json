@@ -16,15 +16,16 @@
     ],
     "require": {
         "php": "^7.1",
-        "symfony/routing": "^3.4 || ^4.3",
-        "symfony/http-kernel": "^3.4 || ^4.3",
+        "symfony/routing": "^3.4.22 || ^4.1 || ^5.0",
+        "symfony/http-kernel": "^3.4.22 || ^4.1 || ^5.0",
         "psr/log": "^1.0"
     },
     "require-dev": {
         "symfony/phpunit-bridge": "^4.2.2",
-        "symfony/dependency-injection": "^3.4 || ^4.3",
-        "symfony/config": "^3.4 || ^4.3",
-        "symfony/event-dispatcher": "^3.4 || ^4.3",
+        "symfony/dependency-injection": "^3.4.22 || ^4.1 || ^5.0",
+        "symfony/config": "^3.4.22 || ^4.1 || ^5.0",
+        "symfony/event-dispatcher": "^3.4.22 || ^4.1 || ^5.0",
+        "symfony/browser-kit": "^3.4.22 || ^4.1 || ^5.0",
         "symfony-cmf/testing": "^3@dev"
     },
     "suggest": {
