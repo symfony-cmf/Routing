@@ -47,7 +47,9 @@ class ProviderBasedGenerator extends UrlGenerator implements VersatileGeneratorI
      */
     public function generate($name, $parameters = [], $referenceType = self::ABSOLUTE_PATH)
     {
-        if ($name instanceof SymfonyRoute) {
+        if ($name === '' && array_key_exists('_cmf_route', $parameters) && $parameters['_cmf_route'] instanceof SymfonyRoute) {
+            $route = $parameters['_cmf_route'];
+        } elseif ($name instanceof SymfonyRoute) {
             $route = $name;
         } elseif (null === $route = $this->provider->getRouteByName($name)) {
             throw new RouteNotFoundException(sprintf('Route "%s" does not exist.', $name));

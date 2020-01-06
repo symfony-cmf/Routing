@@ -68,7 +68,9 @@ class ContentAwareGenerator extends ProviderBasedGenerator
      */
     public function generate($name, $parameters = [], $absolute = UrlGeneratorInterface::ABSOLUTE_PATH)
     {
-        if ($name instanceof SymfonyRoute) {
+        if (array_key_exists('_cmf_route', $parameters) && $parameters['_cmf_route'] instanceof SymfonyRoute) {
+            $route = $this->getBestLocaleRoute($parameters['_cmf_route'], $parameters);
+        } elseif ($name instanceof SymfonyRoute) {
             $route = $this->getBestLocaleRoute($name, $parameters);
         } elseif (is_string($name) && $name) {
             $route = $this->getRouteByName($name, $parameters);

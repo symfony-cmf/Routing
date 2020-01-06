@@ -22,6 +22,7 @@ use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\Loader\ObjectRouteLoader;
 use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\Route;
@@ -642,7 +643,7 @@ class ChainRouterTest extends TestCase
      */
     public function testGenerateObjectNotFoundVersatile()
     {
-        if (!class_exists(Symfony\Component\Routing\Loader\ObjectRouteLoader::class)) {
+        if (!class_exists(ObjectRouteLoader::class)) {
             $this->markTestSkipped('Skip this test on >= sf5');
         }
 
@@ -678,7 +679,7 @@ class ChainRouterTest extends TestCase
      */
     public function testGenerateObjectName()
     {
-        if (!class_exists(Symfony\Component\Routing\Loader\ObjectRouteLoader::class)) {
+        if (!class_exists(ObjectRouteLoader::class)) {
             $this->markTestSkipped('Skip this test on >= sf5');
         }
 
@@ -709,6 +710,34 @@ class ChainRouterTest extends TestCase
 
         $result = $this->router->generate($name, $parameters);
         $this->assertEquals($name, $result);
+    }
+
+    public function testGenerateWithObjectNameInParametersNotFoundVersatile()
+    {
+        $name = '';
+        $parameters = ['test' => 'value', '_cmf_route' => new \stdClass()];
+
+        $chainedRouter = $this->createMock(VersatileRouter::class);
+        $chainedRouter
+            ->expects($this->once())
+            ->method('supports')
+            ->will($this->returnValue(true))
+        ;
+        $chainedRouter->expects($this->once())
+            ->method('generate')
+            ->with($name, $parameters, UrlGeneratorInterface::ABSOLUTE_PATH)
+            ->will($this->throwException(new RouteNotFoundException()))
+        ;
+        $chainedRouter->expects($this->once())
+            ->method('getRouteDebugMessage')
+            ->with($name, $parameters)
+            ->will($this->returnValue('message'))
+        ;
+
+        $this->router->add($chainedRouter, 10);
+
+        $this->expectException(RouteNotFoundException::class);
+        $this->router->generate($name, $parameters);
     }
 
     public function testGenerateWithObjectNameInParameters()

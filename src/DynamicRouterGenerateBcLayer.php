@@ -25,58 +25,61 @@ if ($nameParameter && $nameParameter->hasType() && 'string' === $nameParameter->
     /**
      * @internal
      */
-    class DynamicRouterGenerateBcLayer
+    class DynamicRouterGenerateBcLayer extends DynamicRouterBaseBcLayer
     {
         public function generate(string $name, $parameters = [], $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH)
         {
-            if ($this->eventDispatcher) {
-                $eventName = Events::PRE_DYNAMIC_GENERATE;
-                $event = new RouterGenerateEvent($name, $parameters, $referenceType);
-
-                // LegacyEventDispatcherProxy exists in Symfony >= 4.3
-                if (class_exists(LegacyEventDispatcherProxy::class)) {
-                    // New Symfony 4.3 EventDispatcher signature
-                    $this->eventDispatcher->dispatch($event, $eventName);
-                } else {
-                    // Old EventDispatcher signature
-                    $this->eventDispatcher->dispatch($eventName, $event);
-                }
-
-                $name = $event->getRoute();
-                $parameters = $event->getParameters();
-                $referenceType = $event->getReferenceType();
-            }
-
-            return $this->getGenerator()->generate($name, $parameters, $referenceType);
+            return $this->doGenerate($name, $parameters, $referenceType);
         }
     }
 } else {
     /**
      * @internal
      */
-    class DynamicRouterGenerateBcLayer
+    class DynamicRouterGenerateBcLayer extends DynamicRouterBaseBcLayer
     {
         public function generate($name, $parameters = [], $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH)
         {
-            if ($this->eventDispatcher) {
-                $eventName = Events::PRE_DYNAMIC_GENERATE;
-                $event = new RouterGenerateEvent($name, $parameters, $referenceType);
+            if (!is_string($name)) {
+                @trigger_error('Passing an object as the route name is deprecated in symfony-cmf/Routing v2.2 and will not work in Symfony 5.0. Pass an empty route name and the object as "_cmf_route" parameter in the parameters array.', E_USER_DEPRECATED);
 
-                // LegacyEventDispatcherProxy exists in Symfony >= 4.3
-                if (class_exists(LegacyEventDispatcherProxy::class)) {
-                    // New Symfony 4.3 EventDispatcher signature
-                    $this->eventDispatcher->dispatch($event, $eventName);
-                } else {
-                    // Old EventDispatcher signature
-                    $this->eventDispatcher->dispatch($eventName, $event);
-                }
-
-                $name = $event->getRoute();
-                $parameters = $event->getParameters();
-                $referenceType = $event->getReferenceType();
+                $parameters['_cmf_route'] = $name;
+                $name = '';
             }
 
-            return $this->getGenerator()->generate($name, $parameters, $referenceType);
+            return $this->doGenerate($name, $parameters, $referenceType);
         }
+    }
+}
+
+/**
+ * @internal
+ */
+abstract class DynamicRouterBaseBcLayer {
+    protected function doGenerate($name, $parameters, $referenceType) {
+        if ($this->eventDispatcher) {
+            $routeParam = $name;
+            if (array_key_exists('_cmf_route', $parameters) && is_object($parameters['_cmf_route'])) {
+                $routeParam = $parameters['_cmf_route'];
+            }
+
+            $eventName = Events::PRE_DYNAMIC_GENERATE;
+            $event = new RouterGenerateEvent($routeParam, $parameters, $referenceType);
+
+            // LegacyEventDispatcherProxy exists in Symfony >= 4.3
+            if (class_exists(LegacyEventDispatcherProxy::class)) {
+                // New Symfony 4.3 EventDispatcher signature
+                $this->eventDispatcher->dispatch($event, $eventName);
+            } else {
+                // Old EventDispatcher signature
+                $this->eventDispatcher->dispatch($eventName, $event);
+            }
+
+            $name = $event->getRoute();
+            $parameters = $event->getParameters();
+            $referenceType = $event->getReferenceType();
+        }
+
+        return $this->getGenerator()->generate($name, $parameters, $referenceType);
     }
 }

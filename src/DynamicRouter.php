@@ -195,14 +195,7 @@ class DynamicRouter extends DynamicRouterGenerateBcLayer implements RouterInterf
             $eventName = Events::PRE_DYNAMIC_MATCH;
             $event = new RouterMatchEvent();
 
-            // LegacyEventDispatcherProxy exists in Symfony >= 4.3
-            if (class_exists(LegacyEventDispatcherProxy::class)) {
-                // New Symfony 4.3 EventDispatcher signature
-                $this->eventDispatcher->dispatch($event, $eventName);
-            } else {
-                // Old EventDispatcher signature
-                $this->eventDispatcher->dispatch($eventName, $event);
-            }
+            $this->doDispatch($eventName, $event);
         }
 
         if (!empty($this->uriFilterRegexp) && !preg_match($this->uriFilterRegexp, $pathinfo)) {
@@ -240,14 +233,7 @@ class DynamicRouter extends DynamicRouterGenerateBcLayer implements RouterInterf
             $eventName = Events::PRE_DYNAMIC_MATCH_REQUEST;
             $event = new RouterMatchEvent($request);
 
-            // LegacyEventDispatcherProxy exists in Symfony >= 4.3
-            if (class_exists(LegacyEventDispatcherProxy::class)) {
-                // New Symfony 4.3 EventDispatcher signature
-                $this->eventDispatcher->dispatch($event, $eventName);
-            } else {
-                // Old EventDispatcher signature
-                $this->eventDispatcher->dispatch($eventName, $event);
-            }
+            $this->doDispatch($eventName, $event);
         }
 
         if ($this->uriFilterRegexp
@@ -302,5 +288,16 @@ class DynamicRouter extends DynamicRouterGenerateBcLayer implements RouterInterf
         }
 
         return "Route '$name' not found";
+    }
+
+    private function doDispatch($eventName, $event) {
+        // LegacyEventDispatcherProxy exists in Symfony >= 4.3
+        if (class_exists(LegacyEventDispatcherProxy::class)) {
+            // New Symfony 4.3 EventDispatcher signature
+            $this->eventDispatcher->dispatch($event, $eventName);
+        } else {
+            // Old EventDispatcher signature
+            $this->eventDispatcher->dispatch($eventName, $event);
+        }
     }
 }
