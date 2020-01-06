@@ -37,7 +37,7 @@ use Symfony\Component\Routing\RouterInterface;
  * @author Larry Garfield
  * @author David Buchmann
  */
-class DynamicRouter implements RouterInterface, RequestMatcherInterface, ChainedRouterInterface
+class DynamicRouter extends DynamicRouterGenerateBcLayer implements RouterInterface, RequestMatcherInterface, ChainedRouterInterface
 {
     use RouteEnhancerTrait;
 
@@ -153,35 +153,6 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
         $this->generator->setContext($this->getContext());
 
         return $this->generator;
-    }
-
-    /**
-     * Generates a URL from the given parameters.
-     *
-     * If the generator is not able to generate the url, it must throw the
-     * RouteNotFoundException as documented below.
-     *
-     * @param string|Route $name          The name of the route or the Route instance
-     * @param mixed        $parameters    An array of parameters
-     * @param bool|string  $referenceType The type of reference to be generated (one of the constants in UrlGeneratorInterface)
-     *
-     * @return string The generated URL
-     *
-     * @throws RouteNotFoundException if route doesn't exist
-     *
-     * @api
-     */
-    public function generate($name, $parameters = [], $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH)
-    {
-        if ($this->eventDispatcher) {
-            $event = new RouterGenerateEvent($name, $parameters, $referenceType);
-            $this->eventDispatcher->dispatch(Events::PRE_DYNAMIC_GENERATE, $event);
-            $name = $event->getRoute();
-            $parameters = $event->getParameters();
-            $referenceType = $event->getReferenceType();
-        }
-
-        return $this->getGenerator()->generate($name, $parameters, $referenceType);
     }
 
     /**

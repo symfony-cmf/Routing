@@ -30,7 +30,7 @@ use Symfony\Component\Routing\RouterInterface;
  * @author Henrik Bjornskov <henrik@bjrnskov.dk>
  * @author Magnus Nordlander <magnus@e-butik.se>
  */
-class ChainRouter implements ChainRouterInterface, WarmableInterface
+class ChainRouter extends ChainRouterGenerateBcLayer implements ChainRouterInterface, WarmableInterface
 {
     /**
      * @var RequestContext|null
@@ -211,49 +211,6 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * Loops through all registered routers and returns a router if one is found.
-     * It will always return the first route generated.
-     */
-    public function generate($name, $parameters = [], $absolute = UrlGeneratorInterface::ABSOLUTE_PATH)
-    {
-        $debug = [];
-
-        foreach ($this->all() as $router) {
-            // if $router does not announce it is capable of handling
-            // non-string routes and $name is not a string, continue
-            if ($name && !is_string($name) && !$router instanceof VersatileGeneratorInterface) {
-                continue;
-            }
-
-            // If $router is versatile and doesn't support this route name, continue
-            if ($router instanceof VersatileGeneratorInterface && !$router->supports($name)) {
-                continue;
-            }
-
-            try {
-                return $router->generate($name, $parameters, $absolute);
-            } catch (RouteNotFoundException $e) {
-                $hint = $this->getErrorMessage($name, $router, $parameters);
-                $debug[] = $hint;
-                if ($this->logger) {
-                    $this->logger->debug('Router '.get_class($router)." was unable to generate route. Reason: '$hint': ".$e->getMessage());
-                }
-            }
-        }
-
-        if ($debug) {
-            $debug = array_unique($debug);
-            $info = implode(', ', $debug);
-        } else {
-            $info = $this->getErrorMessage($name);
-        }
-
-        throw new RouteNotFoundException(sprintf('None of the chained routers were able to generate route: %s', $info));
-    }
-
-    /**
      * Rebuild the request object from a URL with the help of the RequestContext.
      *
      * If the request context is not set, this returns the request object built from $pathinfo.
@@ -284,26 +241,6 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
         $uri = $context->getScheme().'://'.$host.$uri.'?'.$context->getQueryString();
 
         return Request::create($uri, $context->getMethod(), $context->getParameters(), [], [], $server);
-    }
-
-    private function getErrorMessage($name, $router = null, $parameters = null)
-    {
-        if ($router instanceof VersatileGeneratorInterface) {
-            // the $parameters are not forced to be array, but versatile generator does typehint it
-            if (!is_array($parameters)) {
-                $parameters = [];
-            }
-            $displayName = $router->getRouteDebugMessage($name, $parameters);
-        } elseif (is_object($name)) {
-            $displayName = method_exists($name, '__toString')
-                ? (string) $name
-                : get_class($name)
-            ;
-        } else {
-            $displayName = (string) $name;
-        }
-
-        return "Route '$displayName' not found";
     }
 
     /**

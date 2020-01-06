@@ -612,6 +612,9 @@ class ChainRouterTest extends TestCase
 
     /**
      * Route is an object but no versatile generator around to do the debug message.
+     *
+     * @group legacy
+     * @expectedDeprecation Passing an object as the route name is deprecated in symfony-cmf/Routing v2.2 and will not work in Symfony 5.0. Pass an empty route name and the object as "_cmf_route" parameter in the parameters array.
      */
     public function testGenerateObjectNotFound()
     {
@@ -633,9 +636,16 @@ class ChainRouterTest extends TestCase
 
     /**
      * A versatile router will generate the debug message.
+     *
+     * @group legacy
+     * @expectedDeprecation Passing an object as the route name is deprecated in symfony-cmf/Routing v2.2 and will not work in Symfony 5.0. Pass an empty route name and the object as "_cmf_route" parameter in the parameters array.
      */
     public function testGenerateObjectNotFoundVersatile()
     {
+        if (!class_exists(Symfony\Component\Routing\Loader\ObjectRouteLoader::class)) {
+            $this->markTestSkipped('Skip this test on >= sf5');
+        }
+
         $name = new \stdClass();
         $parameters = ['test' => 'value'];
 
@@ -662,10 +672,49 @@ class ChainRouterTest extends TestCase
         $this->router->generate($name, $parameters);
     }
 
+    /**
+     * @group legacy
+     * @expectedDeprecation Passing an object as the route name is deprecated in symfony-cmf/Routing v2.2 and will not work in Symfony 5.0. Pass an empty route name and the object as "_cmf_route" parameter in the parameters array.
+     */
     public function testGenerateObjectName()
     {
+        if (!class_exists(Symfony\Component\Routing\Loader\ObjectRouteLoader::class)) {
+            $this->markTestSkipped('Skip this test on >= sf5');
+        }
+
         $name = new \stdClass();
         $parameters = ['test' => 'value'];
+
+        $defaultRouter = $this->createMock(RouterInterface::class);
+        $chainedRouter = $this->createMock(VersatileRouter::class);
+
+        $defaultRouter
+            ->expects($this->never())
+            ->method('generate')
+        ;
+        $chainedRouter
+            ->expects($this->once())
+            ->method('supports')
+            ->will($this->returnValue(true))
+        ;
+        $chainedRouter
+            ->expects($this->once())
+            ->method('generate')
+            ->with($name, $parameters, UrlGeneratorInterface::ABSOLUTE_PATH)
+            ->will($this->returnValue($name))
+        ;
+
+        $this->router->add($defaultRouter, 200);
+        $this->router->add($chainedRouter, 100);
+
+        $result = $this->router->generate($name, $parameters);
+        $this->assertEquals($name, $result);
+    }
+
+    public function testGenerateWithObjectNameInParameters()
+    {
+        $name = '';
+        $parameters = ['test' => 'value', '_cmf_route' => new \stdClass()];
 
         $defaultRouter = $this->createMock(RouterInterface::class);
         $chainedRouter = $this->createMock(VersatileRouter::class);
