@@ -35,7 +35,7 @@ use Symfony\Component\Routing\RouterInterface;
  * @author Larry Garfield
  * @author David Buchmann
  */
-class DynamicRouter extends DynamicRouterGenerateBcLayer implements RouterInterface, RequestMatcherInterface, ChainedRouterInterface
+class DynamicRouter extends DynamicRouterBcLayer implements RouterInterface, RequestMatcherInterface, ChainedRouterInterface
 {
     use RouteEnhancerTrait;
 

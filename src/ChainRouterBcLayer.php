@@ -23,7 +23,7 @@ if ($nameParameter && $nameParameter->hasType() && 'string' === $nameParameter->
     /**
      * @internal
      */
-    class ChainRouterGenerateBcLayer extends ChainRouterBaseBcLayer
+    class ChainRouterBcLayer extends ChainRouterBaseBcLayer
     {
         /**
          * Loops through all registered routers and returns a router if one is found.
@@ -38,7 +38,7 @@ if ($nameParameter && $nameParameter->hasType() && 'string' === $nameParameter->
     /**
      * @internal
      */
-    class ChainRouterGenerateBcLayer extends ChainRouterBaseBcLayer
+    class ChainRouterBcLayer extends ChainRouterBaseBcLayer
     {
         /**
          * Loops through all registered routers and returns a router if one is found.

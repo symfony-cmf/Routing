@@ -25,7 +25,7 @@ if ($nameParameter && $nameParameter->hasType() && 'string' === $nameParameter->
     /**
      * @internal
      */
-    class DynamicRouterGenerateBcLayer extends DynamicRouterBaseBcLayer
+    class DynamicRouterBcLayer extends DynamicRouterBaseBcLayer
     {
         public function generate(string $name, $parameters = [], $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH)
         {
@@ -36,7 +36,7 @@ if ($nameParameter && $nameParameter->hasType() && 'string' === $nameParameter->
     /**
      * @internal
      */
-    class DynamicRouterGenerateBcLayer extends DynamicRouterBaseBcLayer
+    class DynamicRouterBcLayer extends DynamicRouterBaseBcLayer
     {
         public function generate($name, $parameters = [], $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH)
         {

@@ -29,7 +29,7 @@ use Symfony\Component\Routing\RouterInterface;
  * @author Henrik Bjornskov <henrik@bjrnskov.dk>
  * @author Magnus Nordlander <magnus@e-butik.se>
  */
-class ChainRouter extends ChainRouterGenerateBcLayer implements ChainRouterInterface, WarmableInterface
+class ChainRouter extends ChainRouterBcLayer implements ChainRouterInterface, WarmableInterface
 {
     /**
      * @var RequestContext|null
