@@ -165,10 +165,10 @@ class ContentAwareGenerator extends ProviderBasedGenerator
      */
     protected function getRouteByContent($name, &$parameters)
     {
-        if (array_key_exists('_cmf_route', $parameters) && $parameters['_cmf_route'] instanceof RouteReferrersReadInterface) {
-            $content = $parameters['_cmf_route'];
-        } elseif ($name instanceof RouteReferrersReadInterface) {
+        if ($name instanceof RouteReferrersReadInterface) {
             $content = $name;
+        } elseif (array_key_exists('_cmf_route', $parameters) && $parameters['_cmf_route'] instanceof RouteReferrersReadInterface) {
+            $content = $parameters['_cmf_route'];
         } elseif (array_key_exists('content_id', $parameters)
             && null !== $this->contentRepository
         ) {
