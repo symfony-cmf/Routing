@@ -41,10 +41,12 @@ if ($nameParameter && $nameParameter->hasType() && 'string' === $nameParameter->
         public function generate($name, $parameters = [], $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH)
         {
             if (!is_string($name)) {
-                @trigger_error('Passing an object as the route name is deprecated in symfony-cmf/Routing v2.2 and will not work in Symfony 5.0. Pass an empty route name and the object as "_cmf_route" parameter in the parameters array.', E_USER_DEPRECATED);
+                @trigger_error(sprintf('Passing an object as the route name is deprecated in symfony-cmf/Routing v2.2 and will not work in Symfony 5.0. Pass an empty route name and the object as "%s" parameter in the parameters array.', RouteObjectInterface::ROUTE_OBJECT), E_USER_DEPRECATED);
 
-                $parameters['_cmf_route'] = $name;
-                $name = '';
+                if (!isset($parameters[RouteObjectInterface::ROUTE_OBJECT])) {
+                    $parameters['_cmf_route'] = $name;
+                    $name = '';
+                }
             }
 
             return $this->doGenerate($name, $parameters, $referenceType);
@@ -61,8 +63,8 @@ abstract class DynamicRouterBaseBcLayer
     {
         if ($this->eventDispatcher) {
             $routeParam = $name;
-            if (array_key_exists('_cmf_route', $parameters) && is_object($parameters['_cmf_route'])) {
-                $routeParam = $parameters['_cmf_route'];
+            if (array_key_exists(RouteObjectInterface::ROUTE_OBJECT, $parameters) && is_object($parameters[RouteObjectInterface::ROUTE_OBJECT])) {
+                $routeParam = $parameters[RouteObjectInterface::ROUTE_OBJECT];
             }
 
             $event = new RouterGenerateEvent($routeParam, $parameters, $referenceType);

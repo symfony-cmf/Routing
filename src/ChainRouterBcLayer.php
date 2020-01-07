@@ -47,9 +47,9 @@ if ($nameParameter && $nameParameter->hasType() && 'string' === $nameParameter->
         public function generate($name, $parameters = [], $absolute = UrlGeneratorInterface::ABSOLUTE_PATH)
         {
             if (!is_string($name)) {
-                @trigger_error('Passing an object as the route name is deprecated in symfony-cmf/Routing v2.2 and will not work in Symfony 5.0. Pass an empty route name and the object as "_cmf_route" parameter in the parameters array.', E_USER_DEPRECATED);
+                @trigger_error(sprintf('Passing an object as the route name is deprecated in symfony-cmf/Routing v2.2 and will not work in Symfony 5.0. Pass an empty route name and the object as "%s" parameter in the parameters array.', RouteObjectInterface::ROUTE_OBJECT), E_USER_DEPRECATED);
 
-                $parameters['_cmf_route'] = $name;
+                $parameters[RouteObjectInterface::ROUTE_OBJECT] = $name;
                 $name = '';
             }
 
@@ -70,13 +70,13 @@ abstract class ChainRouterBaseBcLayer
         foreach ($this->all() as $router) {
             // if $router does not announce it is capable of handling
             // non-string routes and $name is not a string, continue
-            if (array_key_exists('_cmf_route', $parameters) && is_object($parameters['_cmf_route']) && !$router instanceof VersatileGeneratorInterface) {
+            if (array_key_exists(RouteObjectInterface::ROUTE_OBJECT, $parameters) && is_object($parameters[RouteObjectInterface::ROUTE_OBJECT]) && !$router instanceof VersatileGeneratorInterface) {
                 continue;
             }
 
             $routeName = $name;
-            if (array_key_exists('_cmf_route', $parameters) && is_object($parameters['_cmf_route'])) {
-                $routeName = $parameters['_cmf_route'];
+            if (array_key_exists(RouteObjectInterface::ROUTE_OBJECT, $parameters) && is_object($parameters[RouteObjectInterface::ROUTE_OBJECT])) {
+                $routeName = $parameters[RouteObjectInterface::ROUTE_OBJECT];
             }
 
             // If $router is versatile and doesn't support this route name, continue

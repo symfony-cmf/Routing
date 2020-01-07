@@ -615,7 +615,7 @@ class ChainRouterTest extends TestCase
      * Route is an object but no versatile generator around to do the debug message.
      *
      * @group legacy
-     * @expectedDeprecation Passing an object as the route name is deprecated in symfony-cmf/Routing v2.2 and will not work in Symfony 5.0. Pass an empty route name and the object as "_cmf_route" parameter in the parameters array.
+     * @expectedDeprecation Passing an object as the route name is deprecated in symfony-cmf/Routing v2.2 and will not work in Symfony 5.0. Pass an empty route name and the object as "_route_object" parameter in the parameters array.
      */
     public function testGenerateObjectNotFound()
     {
@@ -639,7 +639,7 @@ class ChainRouterTest extends TestCase
      * A versatile router will generate the debug message.
      *
      * @group legacy
-     * @expectedDeprecation Passing an object as the route name is deprecated in symfony-cmf/Routing v2.2 and will not work in Symfony 5.0. Pass an empty route name and the object as "_cmf_route" parameter in the parameters array.
+     * @expectedDeprecation Passing an object as the route name is deprecated in symfony-cmf/Routing v2.2 and will not work in Symfony 5.0. Pass an empty route name and the object as "_route_object" parameter in the parameters array.
      */
     public function testGenerateObjectNotFoundVersatile()
     {
@@ -651,7 +651,7 @@ class ChainRouterTest extends TestCase
         $parameters = ['test' => 'value'];
 
         $expectedName = '';
-        $expectedParameters = ['test' => 'value', '_cmf_route' => new \stdClass()];
+        $expectedParameters = ['test' => 'value', '_route_object' => new \stdClass()];
 
         $chainedRouter = $this->createMock(VersatileRouter::class);
         $chainedRouter
@@ -678,7 +678,7 @@ class ChainRouterTest extends TestCase
 
     /**
      * @group legacy
-     * @expectedDeprecation Passing an object as the route name is deprecated in symfony-cmf/Routing v2.2 and will not work in Symfony 5.0. Pass an empty route name and the object as "_cmf_route" parameter in the parameters array.
+     * @expectedDeprecation Passing an object as the route name is deprecated in symfony-cmf/Routing v2.2 and will not work in Symfony 5.0. Pass an empty route name and the object as "_route_object" parameter in the parameters array.
      */
     public function testGenerateObjectName()
     {
@@ -690,7 +690,7 @@ class ChainRouterTest extends TestCase
         $parameters = ['test' => 'value'];
 
         $expectedName = '';
-        $expectedParameters = ['test' => 'value', '_cmf_route' => new \stdClass()];
+        $expectedParameters = ['test' => 'value', '_route_object' => new \stdClass()];
 
         $defaultRouter = $this->createMock(RouterInterface::class);
         $chainedRouter = $this->createMock(VersatileRouter::class);
@@ -721,7 +721,7 @@ class ChainRouterTest extends TestCase
     public function testGenerateWithObjectNameInParametersNotFoundVersatile()
     {
         $name = '';
-        $parameters = ['test' => 'value', '_cmf_route' => new \stdClass()];
+        $parameters = ['test' => 'value', '_route_object' => new \stdClass()];
 
         $chainedRouter = $this->createMock(VersatileRouter::class);
         $chainedRouter
@@ -749,7 +749,7 @@ class ChainRouterTest extends TestCase
     public function testGenerateWithObjectNameInParameters()
     {
         $name = '';
-        $parameters = ['test' => 'value', '_cmf_route' => new \stdClass()];
+        $parameters = ['test' => 'value', '_route_object' => new \stdClass()];
 
         $defaultRouter = $this->createMock(RouterInterface::class);
         $chainedRouter = $this->createMock(VersatileRouter::class);

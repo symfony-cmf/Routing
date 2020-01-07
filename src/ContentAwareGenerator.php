@@ -68,8 +68,8 @@ class ContentAwareGenerator extends ProviderBasedGenerator
      */
     public function generate($name, $parameters = [], $absolute = UrlGeneratorInterface::ABSOLUTE_PATH)
     {
-        if (array_key_exists('_cmf_route', $parameters) && $parameters['_cmf_route'] instanceof SymfonyRoute) {
-            $route = $this->getBestLocaleRoute($parameters['_cmf_route'], $parameters);
+        if (array_key_exists(RouteObjectInterface::ROUTE_OBJECT, $parameters) && $parameters[RouteObjectInterface::ROUTE_OBJECT] instanceof SymfonyRoute) {
+            $route = $this->getBestLocaleRoute($parameters[RouteObjectInterface::ROUTE_OBJECT], $parameters);
         } elseif ($name instanceof SymfonyRoute) {
             $route = $this->getBestLocaleRoute($name, $parameters);
         } elseif (is_string($name) && $name) {
@@ -167,8 +167,8 @@ class ContentAwareGenerator extends ProviderBasedGenerator
     {
         if ($name instanceof RouteReferrersReadInterface) {
             $content = $name;
-        } elseif (array_key_exists('_cmf_route', $parameters) && $parameters['_cmf_route'] instanceof RouteReferrersReadInterface) {
-            $content = $parameters['_cmf_route'];
+        } elseif (array_key_exists(RouteObjectInterface::ROUTE_OBJECT, $parameters) && $parameters[RouteObjectInterface::ROUTE_OBJECT] instanceof RouteReferrersReadInterface) {
+            $content = $parameters[RouteObjectInterface::ROUTE_OBJECT];
         } elseif (array_key_exists('content_id', $parameters)
             && null !== $this->contentRepository
         ) {
