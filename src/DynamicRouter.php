@@ -192,10 +192,7 @@ class DynamicRouter extends DynamicRouterGenerateBcLayer implements RouterInterf
 
         $request = Request::create($pathinfo);
         if ($this->eventDispatcher) {
-            $eventName = Events::PRE_DYNAMIC_MATCH;
-            $event = new RouterMatchEvent();
-
-            $this->doDispatch($eventName, $event);
+            $this->doDispatch(Events::PRE_DYNAMIC_MATCH, new RouterMatchEvent());
         }
 
         if (!empty($this->uriFilterRegexp) && !preg_match($this->uriFilterRegexp, $pathinfo)) {
@@ -230,10 +227,7 @@ class DynamicRouter extends DynamicRouterGenerateBcLayer implements RouterInterf
     public function matchRequest(Request $request)
     {
         if ($this->eventDispatcher) {
-            $eventName = Events::PRE_DYNAMIC_MATCH_REQUEST;
-            $event = new RouterMatchEvent($request);
-
-            $this->doDispatch($eventName, $event);
+            $this->doDispatch(Events::PRE_DYNAMIC_MATCH_REQUEST, new RouterMatchEvent($request));
         }
 
         if ($this->uriFilterRegexp
