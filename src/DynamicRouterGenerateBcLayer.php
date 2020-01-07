@@ -65,17 +65,8 @@ abstract class DynamicRouterBaseBcLayer
                 $routeParam = $parameters['_cmf_route'];
             }
 
-            $eventName = Events::PRE_DYNAMIC_GENERATE;
             $event = new RouterGenerateEvent($routeParam, $parameters, $referenceType);
-
-            // LegacyEventDispatcherProxy exists in Symfony >= 4.3
-            if (class_exists(LegacyEventDispatcherProxy::class)) {
-                // New Symfony 4.3 EventDispatcher signature
-                $this->eventDispatcher->dispatch($event, $eventName);
-            } else {
-                // Old EventDispatcher signature
-                $this->eventDispatcher->dispatch($eventName, $event);
-            }
+            $this->doDispatch(Events::PRE_DYNAMIC_GENERATE, $event);
 
             $name = $event->getRoute();
             $parameters = $event->getParameters();
@@ -83,5 +74,17 @@ abstract class DynamicRouterBaseBcLayer
         }
 
         return $this->getGenerator()->generate($name, $parameters, $referenceType);
+    }
+
+    protected function doDispatch($eventName, $event)
+    {
+        // LegacyEventDispatcherProxy exists in Symfony >= 4.3
+        if (class_exists(LegacyEventDispatcherProxy::class)) {
+            // New Symfony 4.3 EventDispatcher signature
+            $this->eventDispatcher->dispatch($event, $eventName);
+        } else {
+            // Old EventDispatcher signature
+            $this->eventDispatcher->dispatch($eventName, $event);
+        }
     }
 }
