@@ -1,5 +1,5 @@
 {
-    "name": "symfony-cmf/routing",
+    "name": "vrbata/symfony-cmf-routing",
     "type": "library",
     "description": "Extends the Symfony routing component for dynamic routes and chaining several routers",
     "keywords": [
