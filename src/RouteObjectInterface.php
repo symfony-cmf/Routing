@@ -57,6 +57,11 @@ interface RouteObjectInterface
     const CONTENT_ID = '_content_id';
 
     /**
+     * Routename used when passing a route object to the generator.
+     */
+    const OBJECT_BASED_ROUTE_NAME = 'cmf_routing_object';
+
+    /**
      * Get the content document this route entry stands for. If non-null,
      * the ControllerClassMapper uses it to identify a controller and
      * the content is passed to the controller.

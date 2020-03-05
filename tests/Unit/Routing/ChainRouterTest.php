@@ -15,6 +15,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Cmf\Component\Routing\ChainRouter;
+use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 use Symfony\Cmf\Component\Routing\VersatileGeneratorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\CacheWarmer\WarmableInterface;
@@ -51,7 +52,7 @@ class ChainRouterTest extends TestCase
     {
         $this->assertEquals([], $this->router->all());
 
-        list($low, $high) = $this->createRouterMocks();
+        [$low, $high] = $this->createRouterMocks();
 
         $this->router->add($low, 10);
         $this->router->add($high, 100);
@@ -67,7 +68,7 @@ class ChainRouterTest extends TestCase
         $this->assertEquals([], $this->router->all());
         $this->assertFalse($this->router->hasRouters());
 
-        list($low, $high) = $this->createRouterMocks();
+        [$low, $high] = $this->createRouterMocks();
 
         $this->router->add($low, 10);
         $this->router->add($high, 100);
@@ -84,7 +85,7 @@ class ChainRouterTest extends TestCase
      */
     public function testSortRouters()
     {
-        list($low, $medium, $high) = $this->createRouterMocks();
+        [$low, $medium, $high] = $this->createRouterMocks();
         // We're using a mock here and not $this->router because we need to ensure that the sorting operation is done only once.
         /** @var $router ChainRouter|MockObject */
         $router = $this->getMockBuilder(ChainRouter::class)
@@ -120,7 +121,7 @@ class ChainRouterTest extends TestCase
      */
     public function testReSortRouters()
     {
-        list($low, $medium, $high) = $this->createRouterMocks();
+        [$low, $medium, $high] = $this->createRouterMocks();
         $highest = clone $high;
         // We're using a mock here and not $this->router because we need to ensure that the sorting operation is done only once.
         /** @var $router ChainRouter|MockObject */
@@ -163,7 +164,7 @@ class ChainRouterTest extends TestCase
      */
     public function testContext()
     {
-        list($low, $high) = $this->createRouterMocks();
+        [$low, $high] = $this->createRouterMocks();
 
         $low
             ->expects($this->once())
@@ -189,7 +190,7 @@ class ChainRouterTest extends TestCase
      */
     public function testContextOrder()
     {
-        list($low, $high) = $this->createRouterMocks();
+        [$low, $high] = $this->createRouterMocks();
 
         $low
             ->expects($this->once())
@@ -219,7 +220,7 @@ class ChainRouterTest extends TestCase
     public function testMatch()
     {
         $url = '/test';
-        list($lower, $low, $high) = $this->createRouterMocks();
+        [$lower, $low, $high] = $this->createRouterMocks();
 
         $high
             ->expects($this->once())
@@ -250,7 +251,7 @@ class ChainRouterTest extends TestCase
     public function testMatchRequest()
     {
         $url = '/test';
-        list($lower, $low, $high) = $this->createRouterMocks();
+        [$lower, $low, $high] = $this->createRouterMocks();
 
         $highest = $this->createMock(RequestMatcher::class);
 
@@ -294,7 +295,7 @@ class ChainRouterTest extends TestCase
     {
         $url = '/test';
 
-        list($low) = $this->createRouterMocks();
+        [$low] = $this->createRouterMocks();
 
         $high = $this->createMock(RequestMatcher::class);
 
@@ -337,7 +338,7 @@ class ChainRouterTest extends TestCase
     {
         $url = '//test';
 
-        list($low) = $this->createRouterMocks();
+        [$low] = $this->createRouterMocks();
 
         $high = $this->createMock(RequestMatcher::class);
 
@@ -381,7 +382,7 @@ class ChainRouterTest extends TestCase
     public function testMatchAndNotAllowed()
     {
         $url = '/test';
-        list($low, $high) = $this->createRouterMocks();
+        [$low, $high] = $this->createRouterMocks();
 
         $high
             ->expects($this->once())
@@ -409,7 +410,7 @@ class ChainRouterTest extends TestCase
     public function testMatchRequestAndNotAllowed()
     {
         $url = '/test';
-        list($low, $high) = $this->createRouterMocks();
+        [$low, $high] = $this->createRouterMocks();
 
         $high
             ->expects($this->once())
@@ -433,7 +434,7 @@ class ChainRouterTest extends TestCase
     public function testMatchNotFound()
     {
         $url = '/test';
-        list($low, $high) = $this->createRouterMocks();
+        [$low, $high] = $this->createRouterMocks();
 
         $high
             ->expects($this->once())
@@ -457,7 +458,7 @@ class ChainRouterTest extends TestCase
     public function testMatchRequestNotFound()
     {
         $url = '/test';
-        list($low, $high) = $this->createRouterMocks();
+        [$low, $high] = $this->createRouterMocks();
 
         $high
             ->expects($this->once())
@@ -508,7 +509,7 @@ class ChainRouterTest extends TestCase
     public function testMatchMethodNotAllowed()
     {
         $url = '/test';
-        list($low, $high) = $this->createRouterMocks();
+        [$low, $high] = $this->createRouterMocks();
 
         $high
             ->expects($this->once())
@@ -535,7 +536,7 @@ class ChainRouterTest extends TestCase
     public function testMatchRequestMethodNotAllowed()
     {
         $url = '/test';
-        list($low, $high) = $this->createRouterMocks();
+        [$low, $high] = $this->createRouterMocks();
 
         $high
             ->expects($this->once())
@@ -561,7 +562,7 @@ class ChainRouterTest extends TestCase
         $url = '/test';
         $name = 'test';
         $parameters = ['test' => 'value'];
-        list($lower, $low, $high) = $this->createRouterMocks();
+        [$lower, $low, $high] = $this->createRouterMocks();
 
         $high
             ->expects($this->once())
@@ -591,7 +592,7 @@ class ChainRouterTest extends TestCase
     {
         $name = 'test';
         $parameters = ['test' => 'value'];
-        list($low, $high) = $this->createRouterMocks();
+        [$low, $high] = $this->createRouterMocks();
 
         $high
             ->expects($this->once())
@@ -615,7 +616,7 @@ class ChainRouterTest extends TestCase
      * Route is an object but no versatile generator around to do the debug message.
      *
      * @group legacy
-     * @expectedDeprecation Passing an object as the route name is deprecated in symfony-cmf/Routing v2.2 and will not work in Symfony 5.0. Pass an empty route name and the object as "_route_object" parameter in the parameters array.
+     * @expectedDeprecation Passing an object as the route name is deprecated in symfony-cmf/Routing v2.2 and will not work in Symfony 5.0. Pass the `RouteObjectInterface::OBJECT_BASED_ROUTE_NAME` constant as the route name and the object as "_route_object" parameter in the parameters array.
      */
     public function testGenerateObjectNotFound()
     {
@@ -639,7 +640,7 @@ class ChainRouterTest extends TestCase
      * A versatile router will generate the debug message.
      *
      * @group legacy
-     * @expectedDeprecation Passing an object as the route name is deprecated in symfony-cmf/Routing v2.2 and will not work in Symfony 5.0. Pass an empty route name and the object as "_route_object" parameter in the parameters array.
+     * @expectedDeprecation Passing an object as the route name is deprecated in symfony-cmf/Routing v2.2 and will not work in Symfony 5.0. Pass the `RouteObjectInterface::OBJECT_BASED_ROUTE_NAME` constant as the route name and the object as "_route_object" parameter in the parameters array.
      */
     public function testGenerateObjectNotFoundVersatile()
     {
@@ -650,7 +651,7 @@ class ChainRouterTest extends TestCase
         $name = new \stdClass();
         $parameters = ['test' => 'value'];
 
-        $expectedName = '';
+        $expectedName = RouteObjectInterface::OBJECT_BASED_ROUTE_NAME;
         $expectedParameters = ['test' => 'value', '_route_object' => new \stdClass()];
 
         $chainedRouter = $this->createMock(VersatileRouter::class);
@@ -678,7 +679,7 @@ class ChainRouterTest extends TestCase
 
     /**
      * @group legacy
-     * @expectedDeprecation Passing an object as the route name is deprecated in symfony-cmf/Routing v2.2 and will not work in Symfony 5.0. Pass an empty route name and the object as "_route_object" parameter in the parameters array.
+     * @expectedDeprecation Passing an object as the route name is deprecated in symfony-cmf/Routing v2.2 and will not work in Symfony 5.0. Pass the `RouteObjectInterface::OBJECT_BASED_ROUTE_NAME` constant as the route name and the object as "_route_object" parameter in the parameters array.
      */
     public function testGenerateObjectName()
     {
@@ -689,7 +690,7 @@ class ChainRouterTest extends TestCase
         $name = new \stdClass();
         $parameters = ['test' => 'value'];
 
-        $expectedName = '';
+        $expectedName = RouteObjectInterface::OBJECT_BASED_ROUTE_NAME;
         $expectedParameters = ['test' => 'value', '_route_object' => new \stdClass()];
 
         $defaultRouter = $this->createMock(RouterInterface::class);
@@ -720,7 +721,7 @@ class ChainRouterTest extends TestCase
 
     public function testGenerateWithObjectNameInParametersNotFoundVersatile()
     {
-        $name = '';
+        $name = RouteObjectInterface::OBJECT_BASED_ROUTE_NAME;
         $parameters = ['test' => 'value', '_route_object' => new \stdClass()];
 
         $chainedRouter = $this->createMock(VersatileRouter::class);
@@ -748,7 +749,7 @@ class ChainRouterTest extends TestCase
 
     public function testGenerateWithObjectNameInParameters()
     {
-        $name = '';
+        $name = RouteObjectInterface::OBJECT_BASED_ROUTE_NAME;
         $parameters = ['test' => 'value', '_route_object' => new \stdClass()];
 
         $defaultRouter = $this->createMock(RouterInterface::class);
@@ -780,7 +781,7 @@ class ChainRouterTest extends TestCase
     public function testWarmup()
     {
         $dir = 'test_dir';
-        list($low) = $this->createRouterMocks();
+        [$low] = $this->createRouterMocks();
 
         $high = $this->createMock(WarmableRouterMock::class);
         $high
@@ -797,7 +798,7 @@ class ChainRouterTest extends TestCase
 
     public function testRouteCollection()
     {
-        list($low, $high) = $this->createRouterMocks();
+        [$low, $high] = $this->createRouterMocks();
         $lowcol = new RouteCollection();
         $lowcol->add('low', $this->createMock(Route::class));
         $highcol = new RouteCollection();

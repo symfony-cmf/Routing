@@ -47,10 +47,10 @@ if ($nameParameter && $nameParameter->hasType() && 'string' === $nameParameter->
         public function generate($name, $parameters = [], $absolute = UrlGeneratorInterface::ABSOLUTE_PATH)
         {
             if (!is_string($name)) {
-                @trigger_error(sprintf('Passing an object as the route name is deprecated in symfony-cmf/Routing v2.2 and will not work in Symfony 5.0. Pass an empty route name and the object as "%s" parameter in the parameters array.', RouteObjectInterface::ROUTE_OBJECT), E_USER_DEPRECATED);
+                @trigger_error(sprintf('Passing an object as the route name is deprecated in symfony-cmf/Routing v2.2 and will not work in Symfony 5.0. Pass the `RouteObjectInterface::OBJECT_BASED_ROUTE_NAME` constant as the route name and the object as "%s" parameter in the parameters array.', RouteObjectInterface::ROUTE_OBJECT), E_USER_DEPRECATED);
 
                 $parameters[RouteObjectInterface::ROUTE_OBJECT] = $name;
-                $name = '';
+                $name = RouteObjectInterface::OBJECT_BASED_ROUTE_NAME;
             }
 
             return $this->doGenerate($name, $parameters, $absolute);
