@@ -87,12 +87,13 @@ class DynamicRouter extends DynamicRouterBcLayer implements RouterInterface, Req
      *
      * @throws \InvalidArgumentException If the matcher is not a request or url matcher
      */
-    public function __construct(RequestContext $context,
-                                $matcher,
-                                UrlGeneratorInterface $generator,
-                                $uriFilterRegexp = '',
-                                EventDispatcherInterface $eventDispatcher = null,
-                                RouteProviderInterface $provider = null
+    public function __construct(
+        RequestContext $context,
+        $matcher,
+        UrlGeneratorInterface $generator,
+        $uriFilterRegexp = '',
+        EventDispatcherInterface $eventDispatcher = null,
+        RouteProviderInterface $provider = null
     ) {
         $this->context = $context;
         if (!$matcher instanceof RequestMatcherInterface && !$matcher instanceof UrlMatcherInterface) {

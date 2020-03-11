@@ -70,7 +70,7 @@ class ContentAwareGenerator extends ProviderBasedGenerator
     {
         if ($name instanceof SymfonyRoute) {
             $route = $this->getBestLocaleRoute($name, $parameters);
-        } elseif (array_key_exists(RouteObjectInterface::ROUTE_OBJECT, $parameters) && $parameters[RouteObjectInterface::ROUTE_OBJECT] instanceof SymfonyRoute) {
+        } elseif (RouteObjectInterface::OBJECT_BASED_ROUTE_NAME === $name && array_key_exists(RouteObjectInterface::ROUTE_OBJECT, $parameters) && $parameters[RouteObjectInterface::ROUTE_OBJECT] instanceof SymfonyRoute) {
             $route = $this->getBestLocaleRoute($parameters[RouteObjectInterface::ROUTE_OBJECT], $parameters);
         } elseif (is_string($name) && $name) {
             $route = $this->getRouteByName($name, $parameters);
@@ -167,7 +167,7 @@ class ContentAwareGenerator extends ProviderBasedGenerator
     {
         if ($name instanceof RouteReferrersReadInterface) {
             $content = $name;
-        } elseif (array_key_exists(RouteObjectInterface::ROUTE_OBJECT, $parameters) && $parameters[RouteObjectInterface::ROUTE_OBJECT] instanceof RouteReferrersReadInterface) {
+        } elseif (RouteObjectInterface::OBJECT_BASED_ROUTE_NAME === $name && array_key_exists(RouteObjectInterface::ROUTE_OBJECT, $parameters) && $parameters[RouteObjectInterface::ROUTE_OBJECT] instanceof RouteReferrersReadInterface) {
             $content = $parameters[RouteObjectInterface::ROUTE_OBJECT];
         } elseif (array_key_exists('content_id', $parameters)
             && null !== $this->contentRepository

@@ -14,12 +14,9 @@ namespace Symfony\Cmf\Component\Routing;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-$refl = new \ReflectionClass(UrlGeneratorInterface::class);
-$generateMethod = $refl->getMethod('generate');
-$methodParameters = $generateMethod->getParameters();
-/** @var \ReflectionParameter $nameParameter */
-$nameParameter = array_shift($methodParameters);
-if ($nameParameter && $nameParameter->hasType() && 'string' === $nameParameter->getType()) {
+$urlGeneratorParameters = (new \ReflectionClass(UrlGeneratorInterface::class))->getMethod('generate')->getParameters();
+$urlGeneratorNameParameter = array_shift($urlGeneratorParameters);
+if ($urlGeneratorNameParameter && $urlGeneratorNameParameter->hasType() && 'string' === $urlGeneratorNameParameter->getType()) {
     /**
      * @internal
      */
@@ -75,7 +72,7 @@ abstract class ChainRouterBaseBcLayer
             }
 
             $routeName = $name;
-            if (array_key_exists(RouteObjectInterface::ROUTE_OBJECT, $parameters) && is_object($parameters[RouteObjectInterface::ROUTE_OBJECT])) {
+            if (RouteObjectInterface::OBJECT_BASED_ROUTE_NAME === $name && array_key_exists(RouteObjectInterface::ROUTE_OBJECT, $parameters) && is_object($parameters[RouteObjectInterface::ROUTE_OBJECT])) {
                 $routeName = $parameters[RouteObjectInterface::ROUTE_OBJECT];
             }
 

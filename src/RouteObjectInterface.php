@@ -57,7 +57,7 @@ interface RouteObjectInterface
     const CONTENT_ID = '_content_id';
 
     /**
-     * Routename used when passing a route object to the generator.
+     * Route name used when passing a route object to the generator in $parameters[RouteObjectInterface::ROUTE_OBJECT].
      */
     const OBJECT_BASED_ROUTE_NAME = 'cmf_routing_object';
 

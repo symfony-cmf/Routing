@@ -16,12 +16,9 @@ use Symfony\Cmf\Component\Routing\Event\RouterGenerateEvent;
 use Symfony\Component\EventDispatcher\LegacyEventDispatcherProxy;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-$refl = new \ReflectionClass(UrlGeneratorInterface::class);
-$generateMethod = $refl->getMethod('generate');
-$methodParameters = $generateMethod->getParameters();
-/** @var \ReflectionParameter $nameParameter */
-$nameParameter = array_shift($methodParameters);
-if ($nameParameter && $nameParameter->hasType() && 'string' === $nameParameter->getType()) {
+$urlGeneratorParameters = (new \ReflectionClass(UrlGeneratorInterface::class))->getMethod('generate')->getParameters();
+$urlGeneratorNameParameter = array_shift($urlGeneratorParameters);
+if ($urlGeneratorNameParameter && $urlGeneratorNameParameter->hasType() && 'string' === $urlGeneratorNameParameter->getType()) {
     /**
      * @internal
      */
@@ -42,11 +39,6 @@ if ($nameParameter && $nameParameter->hasType() && 'string' === $nameParameter->
         {
             if (!is_string($name)) {
                 @trigger_error(sprintf('Passing an object as the route name is deprecated in symfony-cmf/Routing v2.2 and will not work in Symfony 5.0. Pass the `RouteObjectInterface::OBJECT_BASED_ROUTE_NAME` constant as the route name and the object as "%s" parameter in the parameters array.', RouteObjectInterface::ROUTE_OBJECT), E_USER_DEPRECATED);
-
-                if (!isset($parameters[RouteObjectInterface::ROUTE_OBJECT])) {
-                    $parameters['_cmf_route'] = $name;
-                    $name = RouteObjectInterface::OBJECT_BASED_ROUTE_NAME;
-                }
             }
 
             return $this->doGenerate($name, $parameters, $referenceType);
@@ -63,7 +55,7 @@ abstract class DynamicRouterBaseBcLayer
     {
         if ($this->eventDispatcher) {
             $routeParam = $name;
-            if (array_key_exists(RouteObjectInterface::ROUTE_OBJECT, $parameters) && is_object($parameters[RouteObjectInterface::ROUTE_OBJECT])) {
+            if (RouteObjectInterface::OBJECT_BASED_ROUTE_NAME === $name && array_key_exists(RouteObjectInterface::ROUTE_OBJECT, $parameters) && is_object($parameters[RouteObjectInterface::ROUTE_OBJECT])) {
                 $routeParam = $parameters[RouteObjectInterface::ROUTE_OBJECT];
             }
 
