@@ -11,6 +11,7 @@
 
 namespace Symfony\Cmf\Component\Routing\Event;
 
+use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 use Symfony\Component\Routing\Route;
 
 /**
@@ -53,6 +54,10 @@ class RouterGenerateEvent extends BcEvent
      */
     public function __construct($route, $parameters, $referenceType)
     {
+        if (is_object($route)) {
+            @trigger_error(sprintf('Passing an object as the route name is deprecated in symfony-cmf/Routing v2.2 and will not work in Symfony 5.0. Pass the `RouteObjectInterface::OBJECT_BASED_ROUTE_NAME` constant as the route name and the route object as "%s" parameter in the parameters array.', RouteObjectInterface::ROUTE_OBJECT), E_USER_DEPRECATED);
+        }
+
         $this->route = $route;
         $this->parameters = $parameters;
         $this->referenceType = $referenceType;
@@ -75,6 +80,10 @@ class RouterGenerateEvent extends BcEvent
      */
     public function setRoute($route)
     {
+        if (is_object($route)) {
+            @trigger_error(sprintf('Passing an object as the route name is deprecated in symfony-cmf/Routing v2.2 and will not work in Symfony 5.0. Pass the `RouteObjectInterface::OBJECT_BASED_ROUTE_NAME` constant as the route name and the route object as "%s" parameter in the parameters array.', RouteObjectInterface::ROUTE_OBJECT), E_USER_DEPRECATED);
+        }
+
         $this->route = $route;
     }
 

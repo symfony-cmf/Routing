@@ -27,6 +27,7 @@ use Symfony\Component\EventDispatcher\LegacyEventDispatcherProxy;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\Loader\ObjectRouteLoader;
 use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 use Symfony\Component\Routing\Matcher\UrlMatcherInterface;
 use Symfony\Component\Routing\RequestContext;
@@ -399,6 +400,65 @@ class DynamicRouterTest extends TestCase
 
         $oldname = 'old_route_name';
         $newname = 'new_route_name';
+        $oldparameters = ['foo' => 'bar'];
+        $newparameters = ['a' => 'b'];
+        $oldReferenceType = false;
+        $newReferenceType = true;
+
+        $eventName = Events::PRE_DYNAMIC_GENERATE;
+        $eventCallback = $this->callback(function ($event) use ($oldname, $newname, $oldparameters, $newparameters, $oldReferenceType, $newReferenceType) {
+            $this->assertInstanceOf(RouterGenerateEvent::class, $event);
+            if (empty($this->seen)) {
+                // phpunit is calling the callback twice, and because we update the event the second time fails
+                $this->seen = true;
+            } else {
+                return true;
+            }
+            $this->assertEquals($oldname, $event->getRoute());
+            $this->assertEquals($oldparameters, $event->getParameters());
+            $this->assertEquals($oldReferenceType, $event->getReferenceType());
+            $event->setRoute($newname);
+            $event->setParameters($newparameters);
+            $event->setReferenceType($newReferenceType);
+
+            return true;
+        });
+
+        $dispatchParams = [$eventName, $eventCallback];
+        if (class_exists(LegacyEventDispatcherProxy::class)) {
+            // New Symfony 4.3 EventDispatcher signature
+            $dispatchParams = [$eventCallback, $eventName];
+        }
+
+        $eventDispatcher->expects($this->once())
+            ->method('dispatch')
+            ->with(...$dispatchParams)
+        ;
+
+        $this->generator->expects($this->once())
+            ->method('generate')
+            ->with($newname, $newparameters, $newReferenceType)
+            ->will($this->returnValue('http://test'))
+        ;
+
+        $this->assertEquals('http://test', $router->generate($oldname, $oldparameters, $oldReferenceType));
+    }
+
+    /**
+     * @group legacy
+     * @expectedDeprecation Passing an object as the route name is deprecated in symfony-cmf/Routing v2.2 and will not work in Symfony 5.0. Pass the `RouteObjectInterface::OBJECT_BASED_ROUTE_NAME` constant as the route name and the route object as "_route_object" parameter in the parameters array.
+     */
+    public function testDeprecatedEventHandlerGenerate()
+    {
+        if (!class_exists(ObjectRouteLoader::class)) {
+            $this->markTestSkipped('Skip this test on >= sf5');
+        }
+
+        $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+        $router = new DynamicRouter($this->context, $this->matcher, $this->generator, '', $eventDispatcher);
+
+        $oldname = 'old_route_name';
+        $newname = new \stdClass();
         $oldparameters = ['foo' => 'bar'];
         $newparameters = ['a' => 'b'];
         $oldReferenceType = false;
