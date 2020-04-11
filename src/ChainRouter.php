@@ -218,6 +218,10 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
      */
     public function generate($name, $parameters = [], $absolute = UrlGeneratorInterface::ABSOLUTE_PATH)
     {
+        if (is_object($name)) {
+            @trigger_error(sprintf('Passing an object as the route name is deprecated in symfony-cmf/Routing v2.3 and will not work in Symfony 5.0. Pass the `RouteObjectInterface::OBJECT_BASED_ROUTE_NAME` constant as the route name and the object as "%s" parameter in the parameters array.', RouteObjectInterface::ROUTE_OBJECT), E_USER_DEPRECATED);
+        }
+
         $debug = [];
 
         foreach ($this->all() as $router) {
@@ -227,8 +231,19 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
                 continue;
             }
 
+            // if $router does not announce it is capable of handling
+            // non-string routes and the ROUTE_OBJECT is set in the parameters array, continue
+            if (array_key_exists(RouteObjectInterface::ROUTE_OBJECT, $parameters) && is_object($parameters[RouteObjectInterface::ROUTE_OBJECT]) && !$router instanceof VersatileGeneratorInterface) {
+                continue;
+            }
+
+            $routeName = $name;
+            if (RouteObjectInterface::OBJECT_BASED_ROUTE_NAME === $name && array_key_exists(RouteObjectInterface::ROUTE_OBJECT, $parameters) && is_object($parameters[RouteObjectInterface::ROUTE_OBJECT])) {
+                $routeName = $parameters[RouteObjectInterface::ROUTE_OBJECT];
+            }
+
             // If $router is versatile and doesn't support this route name, continue
-            if ($router instanceof VersatileGeneratorInterface && !$router->supports($name)) {
+            if ($router instanceof VersatileGeneratorInterface && !$router->supports($routeName)) {
                 continue;
             }
 
