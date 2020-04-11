@@ -11,7 +11,7 @@
 
 namespace Symfony\Cmf\Component\Routing\Event;
 
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 use Symfony\Component\Routing\Route;
 
 /**

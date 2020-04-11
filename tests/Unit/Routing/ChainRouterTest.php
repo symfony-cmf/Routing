@@ -22,6 +22,7 @@ use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\Loader\ObjectRouteLoader;
 use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\Route;
@@ -612,9 +613,16 @@ class ChainRouterTest extends TestCase
 
     /**
      * Route is an object but no versatile generator around to do the debug message.
+     *
+     * @group legacy
+     * @expectedDeprecation Passing an object as the route name is deprecated in symfony-cmf/Routing v2.3 and will not work in Symfony 5.0. Pass the `RouteObjectInterface::OBJECT_BASED_ROUTE_NAME` constant as the route name and the object as "_route_object" parameter in the parameters array.
      */
     public function testGenerateObjectNotFound()
     {
+        if (!class_exists(ObjectRouteLoader::class)) {
+            $this->markTestSkipped('Skip this test on >= sf5. This will throw a \TypeError.');
+        }
+
         $name = new \stdClass();
         $parameters = ['test' => 'value'];
 
@@ -633,9 +641,16 @@ class ChainRouterTest extends TestCase
 
     /**
      * A versatile router will generate the debug message.
+     *
+     * @group legacy
+     * @expectedDeprecation Passing an object as the route name is deprecated in symfony-cmf/Routing v2.3 and will not work in Symfony 5.0. Pass the `RouteObjectInterface::OBJECT_BASED_ROUTE_NAME` constant as the route name and the object as "_route_object" parameter in the parameters array.
      */
     public function testGenerateObjectNotFoundVersatile()
     {
+        if (!class_exists(ObjectRouteLoader::class)) {
+            $this->markTestSkipped('Skip this test on >= sf5. This will throw a \TypeError.');
+        }
+
         $name = new \stdClass();
         $parameters = ['test' => 'value'];
 
@@ -662,8 +677,16 @@ class ChainRouterTest extends TestCase
         $this->router->generate($name, $parameters);
     }
 
+    /**
+     * @group legacy
+     * @expectedDeprecation Passing an object as the route name is deprecated in symfony-cmf/Routing v2.3 and will not work in Symfony 5.0. Pass the `RouteObjectInterface::OBJECT_BASED_ROUTE_NAME` constant as the route name and the object as "_route_object" parameter in the parameters array.
+     */
     public function testGenerateObjectName()
     {
+        if (!class_exists(ObjectRouteLoader::class)) {
+            $this->markTestSkipped('Skip this test on >= sf5. This will throw a \TypeError.');
+        }
+
         $name = new \stdClass();
         $parameters = ['test' => 'value'];
 
