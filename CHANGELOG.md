@@ -1,6 +1,27 @@
 Changelog
 =========
 
+2.3.0
+-----
+
+* Dropped support for PHP 7.1 and Symfony 3.4 and 4.3.
+* Added support for Symfony 5.
+* Deprecated passing a route object (or anything else that is not a string) as
+  the `$name` parameter in the `generate` method of the ChainRouter and the
+  DynamicRouter. Symfony 5 enforces the `$name` parameter to be a string with
+  static type declaration.
+  The future proof way to generate a route from an object is to use the route
+  name `RouteObjectInterface::OBJECT_BASED_ROUTE_NAME` (`cmf_routing_object`)
+  and pass the route object in the parameters with key
+  `RouteObjectInterface::ROUTE_OBJECT` (`_route_object`).
+* The VersatileGeneratorInterface is deprecated as it was used to avoid errors
+  with routers not supporting objects in `$name`.
+
+2.2.0
+-----
+
+* Avoid Symfony 4.3 event dispatcher deprecation warnings.
+
 2.1.1
 -----
 
@@ -36,7 +57,7 @@ Released.
 ---------
 
  * **2016-11-30**: Changed file structure to have all php code in src/
- 
+
 1.4.0
 -----
 
