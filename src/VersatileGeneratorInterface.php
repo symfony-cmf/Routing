@@ -16,6 +16,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 /**
  * This generator is able to handle more than string route names as symfony
  * core supports them.
+ *
+ * @deprecated The "Symfony\Cmf\Component\Routing\VersatileGeneratorInterface" is deprecated in symfony-cmf/Routing v2.3 and will be removed in symfony-cmf/Routing v3.O. Use the "_route_object" parameter instead to handle route objects
  */
 interface VersatileGeneratorInterface extends UrlGeneratorInterface
 {
