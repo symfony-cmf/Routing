@@ -392,8 +392,9 @@ class ChainRouterTest extends TestCase
             ->expects($this->once())
             ->method('match')
             ->with($url)
-            ->will($this->returnValue(['test']
-    ))
+            ->will($this->returnValue(
+                ['test']
+            ))
         ;
         $this->router->add($low, 10);
         $this->router->add($high, 100);
