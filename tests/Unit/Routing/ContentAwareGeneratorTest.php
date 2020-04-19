@@ -15,6 +15,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Cmf\Component\Routing\ContentAwareGenerator;
 use Symfony\Cmf\Component\Routing\ContentRepositoryInterface;
+use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 use Symfony\Cmf\Component\Routing\RouteProviderInterface;
 use Symfony\Cmf\Component\Routing\RouteReferrersReadInterface;
 use Symfony\Cmf\Component\Routing\Tests\Unit\Routing\RouteMock;
@@ -85,6 +86,19 @@ class ContentAwareGeneratorTest extends TestCase
         ;
 
         $this->assertEquals('result_url', $this->generator->generate($this->contentDocument));
+    }
+
+    public function testGenerateFromContentInParameters()
+    {
+        $this->provider->expects($this->never())
+            ->method('getRouteByName')
+        ;
+        $this->routeDocument->expects($this->once())
+            ->method('compile')
+            ->willReturn($this->routeCompiled)
+        ;
+
+        $this->assertEquals('result_url', $this->generator->generate(RouteObjectInterface::OBJECT_BASED_ROUTE_NAME, [RouteObjectInterface::ROUTE_OBJECT => $this->routeDocument]));
     }
 
     public function testGenerateFromContentId()
