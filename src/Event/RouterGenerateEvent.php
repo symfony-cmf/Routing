@@ -11,8 +11,8 @@
 
 namespace Symfony\Cmf\Component\Routing\Event;
 
-use Symfony\Contracts\EventDispatcher\Event;
 use Symfony\Component\Routing\Route;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * Event fired before the dynamic router generates a url for a route.
