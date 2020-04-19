@@ -1,6 +1,14 @@
 Changelog
 =========
 
+2.3.0
+-----
+
+* Dropped support for PHP 7.1 and symfony 3.4 and 4.3.
+* Added support for symfony 5.
+* Deprecated passing a route object as the $name parameter in the generate method of the ChainRouter and the DynamicRouter.
+* The VersatileGeneratorInterface is deprecated.
+
 2.1.1
 -----
 
