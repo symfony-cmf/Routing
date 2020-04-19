@@ -231,19 +231,8 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
                 continue;
             }
 
-            // if $router does not announce it is capable of handling
-            // non-string routes and the ROUTE_OBJECT is set in the parameters array, continue
-            if (array_key_exists(RouteObjectInterface::ROUTE_OBJECT, $parameters) && is_object($parameters[RouteObjectInterface::ROUTE_OBJECT]) && !$router instanceof VersatileGeneratorInterface) {
-                continue;
-            }
-
-            $routeName = $name;
-            if (RouteObjectInterface::OBJECT_BASED_ROUTE_NAME === $name && array_key_exists(RouteObjectInterface::ROUTE_OBJECT, $parameters) && is_object($parameters[RouteObjectInterface::ROUTE_OBJECT])) {
-                $routeName = $parameters[RouteObjectInterface::ROUTE_OBJECT];
-            }
-
             // If $router is versatile and doesn't support this route name, continue
-            if ($router instanceof VersatileGeneratorInterface && !$router->supports($routeName)) {
+            if ($router instanceof VersatileGeneratorInterface && !$router->supports($name)) {
                 continue;
             }
 
