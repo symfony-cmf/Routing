@@ -617,12 +617,12 @@ class ChainRouterTest extends TestCase
      * Route is an object but no versatile generator around to do the debug message.
      *
      * @group legacy
-     * @expectedDeprecation Passing an object as the route name is deprecated in symfony-cmf/Routing v2.3 and will not work in Symfony 5.0. Pass the `RouteObjectInterface::OBJECT_BASED_ROUTE_NAME` constant as the route name and the object as "_route_object" parameter in the parameters array.
+     * @expectedDeprecation Passing an object as route name is deprecated since version 2.3 and will not work in Symfony 5.0. Pass the `RouteObjectInterface::OBJECT_BASED_ROUTE_NAME` as route name and the object in the parameters with key `RouteObjectInterface::ROUTE_OBJECT`.
      */
     public function testGenerateObjectNotFound()
     {
         if (!class_exists(ObjectRouteLoader::class)) {
-            $this->markTestSkipped('Skip this test on >= sf5. This will throw a \TypeError.');
+            $this->markTestSkipped('Symfony 5 would throw a TypeError.');
         }
 
         $name = new \stdClass();
@@ -645,12 +645,12 @@ class ChainRouterTest extends TestCase
      * A versatile router will generate the debug message.
      *
      * @group legacy
-     * @expectedDeprecation Passing an object as the route name is deprecated in symfony-cmf/Routing v2.3 and will not work in Symfony 5.0. Pass the `RouteObjectInterface::OBJECT_BASED_ROUTE_NAME` constant as the route name and the object as "_route_object" parameter in the parameters array.
+     * @expectedDeprecation Passing an object as route name is deprecated since version 2.3 and will not work in Symfony 5.0. Pass the `RouteObjectInterface::OBJECT_BASED_ROUTE_NAME` as route name and the object in the parameters with key `RouteObjectInterface::ROUTE_OBJECT`.
      */
     public function testGenerateObjectNotFoundVersatile()
     {
         if (!class_exists(ObjectRouteLoader::class)) {
-            $this->markTestSkipped('Skip this test on >= sf5. This will throw a \TypeError.');
+            $this->markTestSkipped('Symfony 5 would throw a TypeError.');
         }
 
         $name = new \stdClass();
@@ -681,12 +681,12 @@ class ChainRouterTest extends TestCase
 
     /**
      * @group legacy
-     * @expectedDeprecation Passing an object as the route name is deprecated in symfony-cmf/Routing v2.3 and will not work in Symfony 5.0. Pass the `RouteObjectInterface::OBJECT_BASED_ROUTE_NAME` constant as the route name and the object as "_route_object" parameter in the parameters array.
+     * @expectedDeprecation Passing an object as route name is deprecated since version 2.3 and will not work in Symfony 5.0. Pass the `RouteObjectInterface::OBJECT_BASED_ROUTE_NAME` as route name and the object in the parameters with key `RouteObjectInterface::ROUTE_OBJECT`.
      */
     public function testGenerateObjectName()
     {
         if (!class_exists(ObjectRouteLoader::class)) {
-            $this->markTestSkipped('Skip this test on >= sf5. This will throw a \TypeError.');
+            $this->markTestSkipped('Symfony 5 would throw a TypeError.');
         }
 
         $name = new \stdClass();
@@ -718,6 +718,9 @@ class ChainRouterTest extends TestCase
         $this->assertEquals($name, $result);
     }
 
+    /**
+     * This test currently triggers a deprecation notice because of ChainRouter BC.
+     */
     public function testGenerateWithObjectNameInParametersNotFoundVersatile()
     {
         $name = RouteObjectInterface::OBJECT_BASED_ROUTE_NAME;
@@ -757,13 +760,13 @@ class ChainRouterTest extends TestCase
             ->expects($this->once())
             ->method('generate')
             ->with($name, $parameters, UrlGeneratorInterface::ABSOLUTE_PATH)
-            ->willReturn($name)
+            ->willReturn('/foo/bar')
         ;
 
         $this->router->add($defaultRouter, 200);
 
         $result = $this->router->generate($name, $parameters);
-        $this->assertEquals($name, $result);
+        $this->assertEquals('/foo/bar', $result);
     }
 
     public function testWarmup()
@@ -817,6 +820,9 @@ class ChainRouterTest extends TestCase
         $this->assertEquals(['high', 'low'], $names);
     }
 
+    /**
+     * @group legacy
+     */
     public function testSupport()
     {
         $router = $this->createMock(VersatileRouter::class);

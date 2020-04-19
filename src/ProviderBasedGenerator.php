@@ -77,10 +77,30 @@ class ProviderBasedGenerator extends UrlGenerator implements VersatileGeneratorI
      */
     public function getRouteDebugMessage($name, array $parameters = [])
     {
+        if (RouteObjectInterface::OBJECT_BASED_ROUTE_NAME === $name
+            && array_key_exists(RouteObjectInterface::ROUTE_OBJECT, $parameters)
+        ) {
+            $routeObject = $parameters[RouteObjectInterface::ROUTE_OBJECT];
+            if ($routeObject instanceof RouteObjectInterface) {
+                return 'Route with key '.$routeObject->getRouteKey();
+            }
+
+            if ($routeObject instanceof SymfonyRoute) {
+                return 'Route with path '.$routeObject->getPath();
+            }
+
+            if (is_object($routeObject)) {
+                return get_class($routeObject);
+            }
+
+            return 'Null route';
+        }
+
         if (is_scalar($name)) {
             return $name;
         }
 
+        // legacy
         if (is_array($name)) {
             return serialize($name);
         }

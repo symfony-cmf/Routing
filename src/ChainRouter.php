@@ -219,7 +219,7 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
     public function generate($name, $parameters = [], $absolute = UrlGeneratorInterface::ABSOLUTE_PATH)
     {
         if (is_object($name)) {
-            @trigger_error(sprintf('Passing an object as the route name is deprecated in symfony-cmf/Routing v2.3 and will not work in Symfony 5.0. Pass the `RouteObjectInterface::OBJECT_BASED_ROUTE_NAME` constant as the route name and the object as "%s" parameter in the parameters array.', RouteObjectInterface::ROUTE_OBJECT), E_USER_DEPRECATED);
+            @trigger_error('Passing an object as route name is deprecated since version 2.3 and will not work in Symfony 5.0. Pass the `RouteObjectInterface::OBJECT_BASED_ROUTE_NAME` as route name and the object in the parameters with key `RouteObjectInterface::ROUTE_OBJECT`.', E_USER_DEPRECATED);
         }
 
         $debug = [];

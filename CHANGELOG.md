@@ -14,8 +14,8 @@ Changelog
   name `RouteObjectInterface::OBJECT_BASED_ROUTE_NAME` (`cmf_routing_object`)
   and pass the route object in the parameters with key
   `RouteObjectInterface::ROUTE_OBJECT` (`_route_object`).
-* The VersatileGeneratorInterface is deprecated as it was used to avoid errors
-  with routers not supporting objects in `$name`.
+* The VersatileGeneratorInterface::supports method is deprecated as it was used
+  to avoid errors with routers not supporting objects in `$name`.
 
 2.2.0
 -----

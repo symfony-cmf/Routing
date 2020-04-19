@@ -21,6 +21,7 @@ use Symfony\Cmf\Component\Routing\RouteReferrersReadInterface;
 use Symfony\Cmf\Component\Routing\Tests\Unit\Routing\RouteMock;
 use Symfony\Component\Routing\CompiledRoute;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
+use Symfony\Component\Routing\Loader\ObjectRouteLoader;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\Route;
 
@@ -71,8 +72,16 @@ class ContentAwareGeneratorTest extends TestCase
         $this->generator = new TestableContentAwareGenerator($this->provider);
     }
 
+    /**
+     * @group legacy
+     * @expectedDeprecation Passing an object as route name is deprecated since version 2.3 and will not work in Symfony 5.0. Pass the `RouteObjectInterface::OBJECT_BASED_ROUTE_NAME` as route name and the object in the parameters with key `RouteObjectInterface::ROUTE_OBJECT`.
+     */
     public function testGenerateFromContent()
     {
+        if (!class_exists(ObjectRouteLoader::class)) {
+            $this->markTestSkipped('Symfony 5 would throw a TypeError.');
+        }
+
         $this->provider->expects($this->never())
             ->method('getRouteByName')
         ;
@@ -101,7 +110,7 @@ class ContentAwareGeneratorTest extends TestCase
         $this->assertEquals('result_url', $this->generator->generate(RouteObjectInterface::OBJECT_BASED_ROUTE_NAME, [RouteObjectInterface::ROUTE_OBJECT => $this->routeDocument]));
     }
 
-    public function testGenerateFromContentId()
+    public function testGenerateFromContentIdEmptyRouteName()
     {
         $this->provider->expects($this->never())
             ->method('getRouteByName')
@@ -128,6 +137,34 @@ class ContentAwareGeneratorTest extends TestCase
         $this->assertEquals('result_url', $this->generator->generate('', ['content_id' => '/content/id']));
     }
 
+    public function testGenerateFromContentId()
+    {
+        $this->provider->expects($this->never())
+            ->method('getRouteByName')
+        ;
+
+        $contentRepository = $this->createMock(ContentRepositoryInterface::class);
+        $contentRepository->expects($this->once())
+            ->method('findById')
+            ->with('/content/id')
+            ->will($this->returnValue($this->contentDocument))
+        ;
+        $this->generator->setContentRepository($contentRepository);
+
+        $this->contentDocument->expects($this->once())
+            ->method('getRoutes')
+            ->will($this->returnValue([$this->routeDocument]))
+        ;
+
+        $this->routeDocument->expects($this->once())
+            ->method('compile')
+            ->will($this->returnValue($this->routeCompiled))
+        ;
+
+        $generated = $this->generator->generate(RouteObjectInterface::OBJECT_BASED_ROUTE_NAME, ['content_id' => '/content/id']);
+        $this->assertEquals('result_url', $generated);
+    }
+
     public function testGenerateEmptyRouteString()
     {
         $this->provider->expects($this->never())
@@ -144,7 +181,8 @@ class ContentAwareGeneratorTest extends TestCase
             ->will($this->returnValue($this->routeCompiled))
         ;
 
-        $this->assertEquals('result_url', $this->generator->generate($this->contentDocument));
+        $generated = $this->generator->generate(RouteObjectInterface::OBJECT_BASED_ROUTE_NAME, [RouteObjectInterface::ROUTE_OBJECT => $this->contentDocument]);
+        $this->assertEquals('result_url', $generated);
     }
 
     public function testGenerateRouteMultilang()
@@ -174,7 +212,8 @@ class ContentAwareGeneratorTest extends TestCase
             ->will($this->returnValue($this->routeCompiled))
         ;
 
-        $this->assertEquals('result_url', $this->generator->generate($route_en, ['_locale' => 'de']));
+        $generated = $this->generator->generate(RouteObjectInterface::OBJECT_BASED_ROUTE_NAME, ['_locale' => 'de', RouteObjectInterface::ROUTE_OBJECT => $route_en]);
+        $this->assertEquals('result_url', $generated);
     }
 
     public function testGenerateRouteMultilangDefaultLocale()
@@ -199,7 +238,8 @@ class ContentAwareGeneratorTest extends TestCase
             ->will($this->returnValue([]))
         ;
 
-        $this->assertEquals('result_url', $this->generator->generate($route, ['_locale' => 'en']));
+        $generated = $this->generator->generate(RouteObjectInterface::OBJECT_BASED_ROUTE_NAME, ['_locale' => 'en', RouteObjectInterface::ROUTE_OBJECT => $route]);
+        $this->assertEquals('result_url', $generated);
     }
 
     public function testGenerateRouteMultilangLocaleNomatch()
@@ -228,7 +268,8 @@ class ContentAwareGeneratorTest extends TestCase
             ->method('compile')
         ;
 
-        $this->assertEquals('result_url', $this->generator->generate($route_en, ['_locale' => 'fr']));
+        $generated = $this->generator->generate(RouteObjectInterface::OBJECT_BASED_ROUTE_NAME, ['_locale' => 'fr', RouteObjectInterface::ROUTE_OBJECT => $route_en]);
+        $this->assertEquals('result_url', $generated);
     }
 
     public function testGenerateNoncmfRouteMultilang()
@@ -240,7 +281,8 @@ class ContentAwareGeneratorTest extends TestCase
             ->will($this->returnValue($this->routeCompiled))
         ;
 
-        $this->assertEquals('result_url', $this->generator->generate($route_en, ['_locale' => 'de']));
+        $generated = $this->generator->generate(RouteObjectInterface::OBJECT_BASED_ROUTE_NAME, ['_locale' => 'de', RouteObjectInterface::ROUTE_OBJECT => $route_en]);
+        $this->assertEquals('result_url', $generated);
     }
 
     public function testGenerateRoutenameMultilang()
@@ -314,7 +356,8 @@ class ContentAwareGeneratorTest extends TestCase
             ->will($this->returnValue($this->routeCompiled))
         ;
 
-        $this->assertEquals('result_url', $this->generator->generate($this->contentDocument, ['_locale' => 'de']));
+        $generated = $this->generator->generate(RouteObjectInterface::OBJECT_BASED_ROUTE_NAME, ['_locale' => 'de', RouteObjectInterface::ROUTE_OBJECT => $this->contentDocument]);
+        $this->assertEquals('result_url', $generated);
     }
 
     public function testGenerateDocumentMultilangLocaleNomatch()
@@ -336,7 +379,8 @@ class ContentAwareGeneratorTest extends TestCase
             ->method('compile')
         ;
 
-        $this->assertEquals('result_url', $this->generator->generate($this->contentDocument, ['_locale' => 'fr']));
+        $generated = $this->generator->generate(RouteObjectInterface::OBJECT_BASED_ROUTE_NAME, ['_locale' => 'fr', RouteObjectInterface::ROUTE_OBJECT => $this->contentDocument]);
+        $this->assertEquals('result_url', $generated);
     }
 
     /**
@@ -353,6 +397,21 @@ class ContentAwareGeneratorTest extends TestCase
      */
     public function testGenerateInvalidContent()
     {
+        $this->expectException(RouteNotFoundException::class);
+        $this->generator->generate(RouteObjectInterface::OBJECT_BASED_ROUTE_NAME, [RouteObjectInterface::ROUTE_OBJECT => $this]);
+    }
+
+    /**
+     * Generate with an object that is neither a route nor route aware.
+     *
+     * @group legacy
+     */
+    public function testGenerateInvalidContentLegacy()
+    {
+        if (!class_exists(ObjectRouteLoader::class)) {
+            $this->markTestSkipped('Symfony 5 would throw a TypeError.');
+        }
+
         $this->expectException(RouteNotFoundException::class);
         $this->generator->generate($this);
     }
@@ -422,7 +481,7 @@ class ContentAwareGeneratorTest extends TestCase
             ->will($this->returnValue([]));
 
         $this->expectException(RouteNotFoundException::class);
-        $this->generator->generate($this->contentDocument);
+        $this->generator->generate(RouteObjectInterface::OBJECT_BASED_ROUTE_NAME, [RouteObjectInterface::ROUTE_OBJECT => $this->contentDocument]);
     }
 
     /**
@@ -435,7 +494,7 @@ class ContentAwareGeneratorTest extends TestCase
             ->will($this->returnValue([$this]));
 
         $this->expectException(RouteNotFoundException::class);
-        $this->generator->generate($this->contentDocument);
+        $this->generator->generate(RouteObjectInterface::OBJECT_BASED_ROUTE_NAME, [RouteObjectInterface::ROUTE_OBJECT => $this->contentDocument]);
     }
 
     public function testGetLocaleAttribute()
@@ -464,6 +523,9 @@ class ContentAwareGeneratorTest extends TestCase
         $this->assertEquals('de', $this->generator->getLocale($attributes));
     }
 
+    /**
+     * @group legacy
+     */
     public function testSupports()
     {
         $this->assertTrue($this->generator->supports(''));
@@ -473,6 +535,16 @@ class ContentAwareGeneratorTest extends TestCase
     }
 
     public function testGetRouteDebugMessage()
+    {
+        $this->assertContains('/some/content', $this->generator->getRouteDebugMessage(RouteObjectInterface::OBJECT_BASED_ROUTE_NAME, ['content_id' => '/some/content']));
+        $this->assertContains('Route aware content Symfony\Cmf\Component\Routing\Tests\Routing\RouteAware', $this->generator->getRouteDebugMessage(RouteObjectInterface::OBJECT_BASED_ROUTE_NAME, [RouteObjectInterface::ROUTE_OBJECT => new RouteAware()]));
+        $this->assertContains('/some/content', $this->generator->getRouteDebugMessage('/some/content'));
+    }
+
+    /**
+     * @legacy
+     */
+    public function testGetRouteDebugMessageLegacy()
     {
         $this->assertContains('/some/content', $this->generator->getRouteDebugMessage(null, ['content_id' => '/some/content']));
         $this->assertContains('Route aware content Symfony\Cmf\Component\Routing\Tests\Routing\RouteAware', $this->generator->getRouteDebugMessage(new RouteAware()));

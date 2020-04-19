@@ -138,6 +138,9 @@ class DynamicRouterTest extends TestCase
         $this->assertEquals('http://test', $url);
     }
 
+    /**
+     * @group legacy
+     */
     public function testSupports()
     {
         $name = 'foo/bar';
