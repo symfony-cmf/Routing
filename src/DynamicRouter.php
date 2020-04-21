@@ -174,9 +174,13 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
      */
     public function generate($name, $parameters = [], $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH)
     {
+        if (is_object($name)) {
+            @trigger_error('Passing an object as route name is deprecated since version 2.3 and will not work in Symfony 5.0. Pass the `RouteObjectInterface::OBJECT_BASED_ROUTE_NAME` as route name and the object in the parameters with key `RouteObjectInterface::ROUTE_OBJECT', E_USER_DEPRECATED);
+        }
+
         if ($this->eventDispatcher) {
             $event = new RouterGenerateEvent($name, $parameters, $referenceType);
-            $this->eventDispatcher->dispatch(Events::PRE_DYNAMIC_GENERATE, $event);
+            $this->eventDispatcher->dispatch($event, Events::PRE_DYNAMIC_GENERATE);
             $name = $event->getRoute();
             $parameters = $event->getParameters();
             $referenceType = $event->getReferenceType();
@@ -225,7 +229,7 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
         $request = Request::create($pathinfo);
         if ($this->eventDispatcher) {
             $event = new RouterMatchEvent();
-            $this->eventDispatcher->dispatch(Events::PRE_DYNAMIC_MATCH, $event);
+            $this->eventDispatcher->dispatch($event, Events::PRE_DYNAMIC_MATCH);
         }
 
         if (!empty($this->uriFilterRegexp) && !preg_match($this->uriFilterRegexp, $pathinfo)) {
@@ -261,7 +265,7 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
     {
         if ($this->eventDispatcher) {
             $event = new RouterMatchEvent($request);
-            $this->eventDispatcher->dispatch(Events::PRE_DYNAMIC_MATCH_REQUEST, $event);
+            $this->eventDispatcher->dispatch($event, Events::PRE_DYNAMIC_MATCH_REQUEST);
         }
 
         if ($this->uriFilterRegexp

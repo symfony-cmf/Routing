@@ -138,6 +138,9 @@ class DynamicRouterTest extends TestCase
         $this->assertEquals('http://test', $url);
     }
 
+    /**
+     * @group legacy
+     */
     public function testSupports()
     {
         $name = 'foo/bar';
@@ -338,7 +341,7 @@ class DynamicRouterTest extends TestCase
 
         $eventDispatcher->expects($this->once())
             ->method('dispatch')
-            ->with(Events::PRE_DYNAMIC_MATCH, $this->equalTo(new RouterMatchEvent()))
+            ->with($this->equalTo(new RouterMatchEvent()), Events::PRE_DYNAMIC_MATCH)
         ;
 
         $routeDefaults = ['foo' => 'bar'];
@@ -359,12 +362,12 @@ class DynamicRouterTest extends TestCase
         $that = $this;
         $eventDispatcher->expects($this->once())
             ->method('dispatch')
-            ->with(Events::PRE_DYNAMIC_MATCH_REQUEST, $this->callback(function ($event) use ($that) {
+            ->with($this->callback(function ($event) use ($that) {
                 $that->assertInstanceOf(RouterMatchEvent::class, $event);
                 $that->assertEquals($that->request, $event->getRequest());
 
                 return true;
-            }))
+            }), Events::PRE_DYNAMIC_MATCH_REQUEST)
         ;
 
         $routeDefaults = ['foo' => 'bar'];
@@ -392,7 +395,7 @@ class DynamicRouterTest extends TestCase
         $that = $this;
         $eventDispatcher->expects($this->once())
             ->method('dispatch')
-            ->with(Events::PRE_DYNAMIC_GENERATE, $this->callback(function ($event) use ($that, $oldname, $newname, $oldparameters, $newparameters, $oldReferenceType, $newReferenceType) {
+            ->with($this->callback(function ($event) use ($that, $oldname, $newname, $oldparameters, $newparameters, $oldReferenceType, $newReferenceType) {
                 $that->assertInstanceOf(RouterGenerateEvent::class, $event);
                 if (empty($that->seen)) {
                     // phpunit is calling the callback twice, and because we update the event the second time fails
@@ -408,7 +411,7 @@ class DynamicRouterTest extends TestCase
                 $event->setReferenceType($newReferenceType);
 
                 return true;
-            }))
+            }), Events::PRE_DYNAMIC_GENERATE)
         ;
 
         $this->generator->expects($this->once())

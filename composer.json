@@ -15,20 +15,20 @@
         }
     ],
     "require": {
-        "php": "^7.1",
-        "symfony/routing": "^3.4 || ^4.3",
-        "symfony/http-kernel": "^3.4 || ^4.3",
+        "php": "^7.2",
+        "symfony/routing": "^4.4 || ^5.0",
+        "symfony/http-kernel": "^4.4 || ^5.0",
         "psr/log": "^1.0"
     },
     "require-dev": {
-        "symfony/phpunit-bridge": "^4.2.2",
-        "symfony/dependency-injection": "^3.4 || ^4.3",
-        "symfony/config": "^3.4 || ^4.3",
-        "symfony/event-dispatcher": "^3.4 || ^4.3",
+        "symfony/phpunit-bridge": "^5.0",
+        "symfony/dependency-injection": "^4.4 || ^5.0",
+        "symfony/config": "^4.4 || ^5.0",
+        "symfony/event-dispatcher": "^4.4 || ^5.0",
         "symfony-cmf/testing": "^3@dev"
     },
     "suggest": {
-        "symfony/event-dispatcher": "DynamicRouter can optionally trigger an event at the start of matching. Minimal version (^3.4 || ^4.3)"
+        "symfony/event-dispatcher": "DynamicRouter can optionally trigger an event at the start of matching. Minimal version (^4.4 || ^5.0)"
     },
     "autoload": {
         "psr-4": {
@@ -42,7 +42,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.2-dev"
+            "dev-master": "2.x-dev"
         }
     }
 }
