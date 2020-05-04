@@ -44,11 +44,27 @@ class ProviderBasedGenerator extends UrlGenerator implements VersatileGeneratorI
 
     /**
      * {@inheritdoc}
+     *
+     * The CMF routing system used to allow to pass route objects as $name to generate the route.
+     * Since Symfony 5.0, the UrlGeneratorInterface declares $name as string. We widen the contract
+     * for BC but deprecate passing non-strings.
+     * Instead, Pass the RouteObjectInterface::OBJECT_BASED_ROUTE_NAME as route name and the object
+     * in the parameters with key RouteObjectInterface::ROUTE_OBJECT.
+     *
+     * @param mixed $name
      */
     public function generate($name, $parameters = [], $referenceType = self::ABSOLUTE_PATH)
     {
+        if (is_object($name)) {
+            @trigger_error('Passing an object as route name is deprecated since version 2.3. Pass the `RouteObjectInterface::OBJECT_BASED_ROUTE_NAME` as route name and the object in the parameters with key `RouteObjectInterface::ROUTE_OBJECT`', E_USER_DEPRECATED);
+        }
         if ($name instanceof SymfonyRoute) {
             $route = $name;
+        } elseif (RouteObjectInterface::OBJECT_BASED_ROUTE_NAME === $name
+            && array_key_exists(RouteObjectInterface::ROUTE_OBJECT, $parameters)
+            && $parameters[RouteObjectInterface::ROUTE_OBJECT] instanceof SymfonyRoute
+        ) {
+            $route = $parameters[RouteObjectInterface::ROUTE_OBJECT];
         } elseif (null === $route = $this->provider->getRouteByName($name)) {
             throw new RouteNotFoundException(sprintf('Route "%s" does not exist.', $name));
         }

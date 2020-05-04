@@ -80,7 +80,9 @@ class ContentAwareGenerator extends ProviderBasedGenerator
 
             $route = $this->getBestLocaleRoute($name, $parameters);
         } elseif (RouteObjectInterface::OBJECT_BASED_ROUTE_NAME === $name) {
-            if (array_key_exists(RouteObjectInterface::ROUTE_OBJECT, $parameters) && $parameters[RouteObjectInterface::ROUTE_OBJECT] instanceof SymfonyRoute) {
+            if (array_key_exists(RouteObjectInterface::ROUTE_OBJECT, $parameters)
+                && $parameters[RouteObjectInterface::ROUTE_OBJECT] instanceof SymfonyRoute
+            ) {
                 $route = $this->getBestLocaleRoute($parameters[RouteObjectInterface::ROUTE_OBJECT], $parameters);
             } else {
                 $route = $this->getRouteByContent($name, $parameters);
@@ -98,8 +100,9 @@ class ContentAwareGenerator extends ProviderBasedGenerator
         }
 
         $this->unsetLocaleIfNotNeeded($route, $parameters);
+        $parameters[RouteObjectInterface::ROUTE_OBJECT] = $route;
 
-        return parent::generate($route, $parameters, $absolute);
+        return parent::generate(RouteObjectInterface::OBJECT_BASED_ROUTE_NAME, $parameters, $absolute);
     }
 
     /**

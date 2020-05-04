@@ -49,7 +49,7 @@ class ProviderBasedGeneratorTest extends TestCase
      */
     private $context;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->routeDocument = $this->createMock(Route::class);
         $this->routeCompiled = $this->createMock(CompiledRoute::class);
@@ -59,58 +59,79 @@ class ProviderBasedGeneratorTest extends TestCase
         $this->generator = new TestableProviderBasedGenerator($this->provider);
     }
 
-    public function testGenerateFromName()
+    public function testGenerateFromName(): void
     {
         $name = 'foo/bar';
 
         $this->provider->expects($this->once())
             ->method('getRouteByName')
             ->with($name)
-            ->will($this->returnValue($this->routeDocument))
+            ->willReturn($this->routeDocument)
         ;
         $this->routeDocument->expects($this->once())
             ->method('compile')
-            ->will($this->returnValue($this->routeCompiled))
+            ->willReturn($this->routeCompiled)
         ;
 
         $this->assertEquals('result_url', $this->generator->generate($name));
     }
 
-    public function testGenerateNotFound()
+    public function testGenerateNotFound(): void
     {
         $name = 'foo/bar';
 
         $this->provider->expects($this->once())
             ->method('getRouteByName')
             ->with($name)
-            ->will($this->returnValue(null))
+            ->willReturn(null)
         ;
 
         $this->expectException(RouteNotFoundException::class);
         $this->generator->generate($name);
     }
 
-    public function testGenerateFromRoute()
+    public function testGenerateFromRoute(): void
     {
         $this->provider->expects($this->never())
             ->method('getRouteByName')
         ;
         $this->routeDocument->expects($this->once())
             ->method('compile')
-            ->will($this->returnValue($this->routeCompiled))
+            ->willReturn($this->routeCompiled)
+        ;
+
+        $url = $this->generator->generate(RouteObjectInterface::OBJECT_BASED_ROUTE_NAME, [
+            RouteObjectInterface::ROUTE_OBJECT => $this->routeDocument,
+        ]);
+        $this->assertEquals('result_url', $url);
+    }
+
+    /**
+     * @group legacy
+     *
+     * @expectedDeprecation Passing an object as route name is deprecated since version 2.3. Pass the `RouteObjectInterface::OBJECT_BASED_ROUTE_NAME` as route name and the object in the parameters with key `RouteObjectInterface::ROUTE_OBJECT`
+     */
+    public function testGenerateFromRouteLegacy(): void
+    {
+        $this->provider->expects($this->never())
+            ->method('getRouteByName')
+        ;
+        $this->routeDocument->expects($this->once())
+            ->method('compile')
+            ->willReturn($this->routeCompiled)
         ;
 
         $this->assertEquals('result_url', $this->generator->generate($this->routeDocument));
     }
 
-    public function testSupports()
+    public function testSupports(): void
     {
         $this->assertTrue($this->generator->supports('foo/bar'));
         $this->assertTrue($this->generator->supports($this->routeDocument));
         $this->assertFalse($this->generator->supports($this));
     }
 
-    public function testGetRouteDebugMessage()
+    public function testGetRouteDebugMessage(): void
     {
         $this->assertContains('/some/key', $this->generator->getRouteDebugMessage(new RouteObject()));
         $this->assertContains('/de/test', $this->generator->getRouteDebugMessage(new Route('/de/test')));
@@ -121,7 +142,7 @@ class ProviderBasedGeneratorTest extends TestCase
     /**
      * Tests the generate method with passing in a route object into generate().
      */
-    public function testGenerateByRoute()
+    public function testGenerateByRoute(): void
     {
         $this->generator = new ProviderBasedGenerator($this->provider);
 
@@ -137,7 +158,10 @@ class ProviderBasedGeneratorTest extends TestCase
         $this->generator->setContext($context);
 
         $this->expectException(InvalidParameterException::class);
-        $this->generator->generate($route, ['number' => 'string']);
+        $this->generator->generate(RouteObjectInterface::OBJECT_BASED_ROUTE_NAME, [
+            RouteObjectInterface::ROUTE_OBJECT => $route,
+            'number' => 'string',
+        ]);
     }
 }
 
@@ -154,13 +178,13 @@ class TestableProviderBasedGenerator extends ProviderBasedGenerator
 
 class RouteObject implements RouteObjectInterface
 {
-    public function getRouteKey()
+    public function getRouteKey(): string
     {
         return '/some/key';
     }
 
-    public function getContent()
+    public function getContent(): ?object
     {
-        return;
+        return null;
     }
 }
