@@ -162,20 +162,20 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
      * If the generator is not able to generate the url, it must throw the
      * RouteNotFoundException as documented below.
      *
-     * @param string|Route $name          The name of the route or the Route instance
-     * @param mixed        $parameters    An array of parameters
-     * @param bool|string  $referenceType The type of reference to be generated (one of the constants in UrlGeneratorInterface)
+     * The CMF routing system used to allow to pass route objects as $name to generate the route.
+     * Since Symfony 5.0, the UrlGeneratorInterface declares $name as string. We widen the contract
+     * for BC but deprecate passing non-strings.
+     * Instead, Pass the RouteObjectInterface::OBJECT_BASED_ROUTE_NAME as route name and the object
+     * in the parameters with key RouteObjectInterface::ROUTE_OBJECT.
      *
-     * @return string The generated URL
+     * @param string|Route $name The name of the route or the Route instance
      *
      * @throws RouteNotFoundException if route doesn't exist
-     *
-     * @api
      */
     public function generate($name, $parameters = [], $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH)
     {
         if (is_object($name)) {
-            @trigger_error('Passing an object as route name is deprecated since version 2.3 and will not work in Symfony 5.0. Pass the `RouteObjectInterface::OBJECT_BASED_ROUTE_NAME` as route name and the object in the parameters with key `RouteObjectInterface::ROUTE_OBJECT', E_USER_DEPRECATED);
+            @trigger_error('Passing an object as route name is deprecated since version 2.3. Pass the `RouteObjectInterface::OBJECT_BASED_ROUTE_NAME` as route name and the object in the parameters with key `RouteObjectInterface::ROUTE_OBJECT', E_USER_DEPRECATED);
         }
 
         if ($this->eventDispatcher) {

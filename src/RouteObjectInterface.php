@@ -69,7 +69,7 @@ interface RouteObjectInterface
      * If there is no specific content for this url (i.e. its an "application"
      * page), may return null.
      *
-     * @return object the document or entity this route entry points to
+     * @return null|object the document or entity this route entry points to
      */
     public function getContent();
 
