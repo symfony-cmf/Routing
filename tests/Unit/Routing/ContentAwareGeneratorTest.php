@@ -57,7 +57,7 @@ class ContentAwareGeneratorTest extends TestCase
      */
     private $context;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->contentDocument = $this->createMock(RouteReferrersReadInterface::class);
         $this->routeDocument = $this->getMockBuilder(RouteMock::class)

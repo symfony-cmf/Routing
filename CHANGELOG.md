@@ -1,6 +1,12 @@
 Changelog
 =========
 
+2.3.1
+-----
+
+* ProviderBasedGenerator now also supports the `RouteObjectInterface::OBJECT_BASED_ROUTE_NAME`
+  and `RouteObjectInterface::ROUTE_OBJECT`.
+
 2.3.0
 -----
 
