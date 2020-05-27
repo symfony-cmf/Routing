@@ -65,13 +65,9 @@ class ProviderBasedGenerator extends UrlGenerator implements VersatileGeneratorI
             && $parameters[RouteObjectInterface::ROUTE_OBJECT] instanceof SymfonyRoute
         ) {
             $route = $parameters[RouteObjectInterface::ROUTE_OBJECT];
+            unset($parameters[RouteObjectInterface::ROUTE_OBJECT]);
         } elseif (null === $route = $this->provider->getRouteByName($name)) {
             throw new RouteNotFoundException(sprintf('Route "%s" does not exist.', $name));
-        }
-
-        // the parameter must be unset to avoid unexpected generation behaviour
-        if (array_key_exists(RouteObjectInterface::ROUTE_OBJECT, $parameters)) {
-            unset($parameters[RouteObjectInterface::ROUTE_OBJECT]);
         }
 
         // the Route has a cache of its own and is not recompiled as long as it does not get modified
