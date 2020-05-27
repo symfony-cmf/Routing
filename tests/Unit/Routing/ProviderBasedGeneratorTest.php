@@ -115,7 +115,7 @@ class ProviderBasedGeneratorTest extends TestCase
 
         $this->assertEquals('result_url', $url);
     }
-    
+
     /**
      * @group legacy
      *
