@@ -65,6 +65,7 @@ class ProviderBasedGenerator extends UrlGenerator implements VersatileGeneratorI
             && $parameters[RouteObjectInterface::ROUTE_OBJECT] instanceof SymfonyRoute
         ) {
             $route = $parameters[RouteObjectInterface::ROUTE_OBJECT];
+            unset($parameters[RouteObjectInterface::ROUTE_OBJECT]);
         } elseif (null === $route = $this->provider->getRouteByName($name)) {
             throw new RouteNotFoundException(sprintf('Route "%s" does not exist.', $name));
         }
