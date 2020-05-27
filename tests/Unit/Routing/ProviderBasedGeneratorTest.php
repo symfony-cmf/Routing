@@ -184,4 +184,3 @@ class Proxy extends SymfonyRoute
 {
     public $__isInitialized__ = true;
 }
-
