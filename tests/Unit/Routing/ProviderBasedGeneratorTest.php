@@ -21,6 +21,7 @@ use Symfony\Component\Routing\Exception\InvalidParameterException;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\Route;
+use Symfony\Component\Routing\Route as SymfonyRoute;
 
 class ProviderBasedGeneratorTest extends TestCase
 {
@@ -103,6 +104,15 @@ class ProviderBasedGeneratorTest extends TestCase
         $this->assertEquals('result_url', $this->generator->generate($this->routeDocument));
     }
 
+    public function testRemoveRouteObject(): void
+    {
+        $url = $this->generator->generate(RouteObjectInterface::OBJECT_BASED_ROUTE_NAME, [
+            RouteObjectInterface::ROUTE_OBJECT => new Proxy('/path'),
+        ]);
+
+        $this->assertEquals('result_url', $url);
+    }
+
     public function testSupports()
     {
         $this->assertTrue($this->generator->supports('foo/bar'));
@@ -148,7 +158,12 @@ class TestableProviderBasedGenerator extends ProviderBasedGenerator
 {
     protected function doGenerate($variables, $defaults, $requirements, $tokens, $parameters, $name, $referenceType, $hostTokens, array $requiredSchemes = [])
     {
-        return 'result_url';
+        $url = 'result_url';
+        if ($parameters && $query = http_build_query($parameters, '', '&', PHP_QUERY_RFC3986)) {
+            $url .= '?'.$query;
+        }
+
+        return $url;
     }
 }
 
@@ -164,3 +179,9 @@ class RouteObject implements RouteObjectInterface
         return;
     }
 }
+
+class Proxy extends SymfonyRoute
+{
+    public $__isInitialized__ = true;
+}
+
