@@ -1,6 +1,13 @@
 Changelog
 =========
 
+2.3.2
+-----
+
+* ProviderBasedGenerator no longer passes the route object in the parameters
+  to the Symfony generator, to avoid bogus query strings e.g. from doctrine
+  proxy objects.
+
 2.3.1
 -----
 
