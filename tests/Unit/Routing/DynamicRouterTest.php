@@ -157,7 +157,7 @@ class DynamicRouterTest extends TestCase
     {
         $generator = $this->createMock(UrlGeneratorInterface::class);
         $router = new DynamicRouter($this->context, $this->matcher, $generator);
-        $this->assertInternalType('string', $router->getRouteDebugMessage('test'));
+        $this->assertIsString($router->getRouteDebugMessage('test'));
 
         $this->assertTrue($router->supports('some string'));
         $this->assertFalse($router->supports($this));
@@ -328,7 +328,7 @@ class DynamicRouterTest extends TestCase
     {
         $generator = $this->createMock(UrlGeneratorInterface::class);
         $router = new DynamicRouter($this->context, $this->matcher, $generator);
-        $this->assertInternalType('string', $router->getRouteDebugMessage('test'));
+        $this->assertIsString($router->getRouteDebugMessage('test'));
     }
 
     /**
