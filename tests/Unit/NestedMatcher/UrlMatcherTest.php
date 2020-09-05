@@ -54,7 +54,7 @@ class UrlMatcherTest extends TestCase
      */
     private $url = '/foo/bar';
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->routeDocument = $this->createMock(RouteMock::class);
         $this->routeCompiled = $this->createMock(CompiledRoute::class);

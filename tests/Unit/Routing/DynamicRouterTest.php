@@ -70,7 +70,7 @@ class DynamicRouterTest extends TestCase
 
     const URL = '/foo/bar';
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->routeDocument = $this->createMock(RouteMock::class);
 

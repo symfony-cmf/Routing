@@ -26,7 +26,7 @@ class FieldByClassEnhancerTest extends TestCase
 
     private $document;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->document = $this->createMock(RouteObject::class);
 
