@@ -99,10 +99,9 @@ class NestedMatcher implements RequestMatcherInterface
      *
      * Partial matchers will be run in the order in which they are added.
      *
-     * @param RouteFilterInterface $filter
-     * @param int                  $priority (optional) The priority of the
-     *                                       filter. Higher number filters will
-     *                                       be used first. Defaults to 0
+     * @param int $priority (optional) The priority of the
+     *                      filter. Higher number filters will
+     *                      be used first. Defaults to 0
      *
      * @return NestedMatcher this object to have a fluent interface
      */

@@ -44,7 +44,7 @@ class FieldPresenceEnhancer implements RouteEnhancerInterface
     private $value;
 
     /**
-     * @param null|string $source the field name of the class, null to disable the check
+     * @param string|null $source the field name of the class, null to disable the check
      * @param string      $target the field name to set from the map
      * @param string      $value  value to set target field to if source field exists
      */
