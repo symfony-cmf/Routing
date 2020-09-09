@@ -192,7 +192,7 @@ class DynamicRouterTest extends TestCase
         $test = $this;
         $this->enhancer->expects($this->once())
             ->method('enhance')
-            ->with($this->equalTo($routeDefaults), $this->callback(function (Request $request) use ($test) {
+            ->with($this->equalTo($routeDefaults), $this->callback(function (Request $request) {
                 return self::URL === $request->server->get('REQUEST_URI');
             }))
             ->will($this->returnValue($expected))
@@ -217,7 +217,7 @@ class DynamicRouterTest extends TestCase
         $test = $this;
         $this->enhancer->expects($this->once())
             ->method('enhance')
-            ->with($this->equalTo($routeDefaults), $this->callback(function (Request $request) use ($test) {
+            ->with($this->equalTo($routeDefaults), $this->callback(function (Request $request) {
                 return self::URL === $request->server->get('REQUEST_URI');
             }))
             ->will($this->returnValue($expected))
@@ -245,7 +245,7 @@ class DynamicRouterTest extends TestCase
         $test = $this;
         $this->enhancer->expects($this->once())
             ->method('enhance')
-            ->with($this->equalTo($routeDefaults), $this->callback(function (Request $request) use ($test) {
+            ->with($this->equalTo($routeDefaults), $this->callback(function (Request $request) {
                 return self::URL === $request->server->get('REQUEST_URI');
             }))
             ->will($this->returnValue($expected))

@@ -32,8 +32,7 @@ class ProviderBasedGenerator extends UrlGenerator implements VersatileGeneratorI
     protected $provider;
 
     /**
-     * @param RouteProviderInterface $provider
-     * @param LoggerInterface        $logger
+     * @param LoggerInterface $logger
      */
     public function __construct(RouteProviderInterface $provider, LoggerInterface $logger = null)
     {

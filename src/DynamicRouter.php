@@ -80,11 +80,8 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
     private $routeCollection;
 
     /**
-     * @param RequestContext                              $context
      * @param RequestMatcherInterface|UrlMatcherInterface $matcher
-     * @param UrlGeneratorInterface                       $generator
      * @param string                                      $uriFilterRegexp
-     * @param EventDispatcherInterface|null               $eventDispatcher
      * @param RouteProviderInterface                      $provider
      *
      * @throws \InvalidArgumentException If the matcher is not a request or url matcher

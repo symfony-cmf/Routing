@@ -91,8 +91,6 @@ class RouterGenerateEvent extends Event
 
     /**
      * Set the route parameters.
-     *
-     * @param array $parameters
      */
     public function setParameters(array $parameters)
     {

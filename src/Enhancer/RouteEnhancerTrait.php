@@ -37,8 +37,7 @@ trait RouteEnhancerTrait
     /**
      * Apply the route enhancers to the defaults, according to priorities.
      *
-     * @param array   $defaults
-     * @param Request $request
+     * @param array $defaults
      *
      * @return array
      */
@@ -58,8 +57,7 @@ trait RouteEnhancerTrait
      * The order of the enhancers is determined by the priority, the higher the
      * value, the earlier the enhancer is run.
      *
-     * @param RouteEnhancerInterface $enhancer
-     * @param int                    $priority
+     * @param int $priority
      *
      * @return self
      */
