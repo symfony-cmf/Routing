@@ -47,12 +47,16 @@ class PagedRouteCollectionTest extends TestCase
         }
         $names = array_keys($routes);
 
+        $with = [];
+        $will = [];
         foreach ($expectedCalls as $i => $range) {
-            $this->routeProvider->expects($this->at($i))
-              ->method('getRoutesPaged')
-              ->with($range[0], $range[1])
-              ->will($this->returnValue(array_slice($routes, $range[0], $range[1])));
+            $with[] = [$range[0], $range[1]];
+            $will[] = array_slice($routes, $range[0], $range[1]);
         }
+        $mocker = $this->routeProvider->expects($this->exactly(\count($expectedCalls)))
+            ->method('getRoutesPaged');
+        \call_user_func_array([$mocker, 'withConsecutive'], $with);
+        \call_user_func_array([$mocker, 'willReturnOnConsecutiveCalls'], $will);
 
         $route_collection = new PagedRouteCollection($this->routeProvider, $routesLoadedInParallel);
 
