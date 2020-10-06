@@ -130,22 +130,12 @@ class ChainRouterTest extends TestCase
             ->setMethods(['sortRouters'])
             ->getMock();
         $router
-            ->expects($this->at(0))
+            ->expects($this->exactly(2))
             ->method('sortRouters')
-            ->will(
-                $this->returnValue(
-                    [$high, $medium, $low]
-                )
-            )
-        ;
-        // The second time sortRouters() is called, we're supposed to get the newly added router ($highest)
-        $router
-            ->expects($this->at(1))
-            ->method('sortRouters')
-            ->will(
-                $this->returnValue(
-                    [$highest, $high, $medium, $low]
-                )
+            ->willReturnOnConsecutiveCalls(
+                [$high, $medium, $low],
+                // The second time sortRouters() is called, we're supposed to get the newly added router ($highest)
+                [$highest, $high, $medium, $low]
             )
         ;
 
