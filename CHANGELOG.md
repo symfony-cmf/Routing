@@ -1,6 +1,12 @@
 Changelog
 =========
 
+2.3.3
+-----
+
+* Allow installation with PHP 8.
+  (Note that many dependencies do not yet support PHP 8, this release is mainly useful to test PHP 8 support.)
+
 2.3.2
 -----
 
