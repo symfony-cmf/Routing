@@ -143,10 +143,10 @@ class ProviderBasedGeneratorTest extends TestCase
 
     public function testGetRouteDebugMessage(): void
     {
-        $this->assertContains('/some/key', $this->generator->getRouteDebugMessage(new RouteObject()));
-        $this->assertContains('/de/test', $this->generator->getRouteDebugMessage(new Route('/de/test')));
-        $this->assertContains('/some/route', $this->generator->getRouteDebugMessage('/some/route'));
-        $this->assertContains('a:1:{s:10:"route_name";s:7:"example";}', $this->generator->getRouteDebugMessage(['route_name' => 'example']));
+        $this->assertStringContainsString('/some/key', $this->generator->getRouteDebugMessage(new RouteObject()));
+        $this->assertStringContainsString('/de/test', $this->generator->getRouteDebugMessage(new Route('/de/test')));
+        $this->assertStringContainsString('/some/route', $this->generator->getRouteDebugMessage('/some/route'));
+        $this->assertStringContainsString('a:1:{s:10:"route_name";s:7:"example";}', $this->generator->getRouteDebugMessage(['route_name' => 'example']));
     }
 
     /**

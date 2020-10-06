@@ -29,7 +29,7 @@ class PagedRouteCollectionTest extends TestCase
      */
     private $routeProvider;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->routeProvider = $this->createMock(PagedRouteProviderInterface::class);
     }

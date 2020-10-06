@@ -24,7 +24,7 @@ class FieldPresenceEnhancerTest extends TestCase
 
     private $request;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->mapper = new FieldPresenceEnhancer('_template', '_controller', 'cmf_content.controller:indexAction');
 

@@ -42,7 +42,7 @@ class ChainRouterTest extends TestCase
      */
     private $context;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->router = new ChainRouter($this->createMock(LoggerInterface::class));
         $this->context = $this->createMock(RequestContext::class);

@@ -538,9 +538,9 @@ class ContentAwareGeneratorTest extends TestCase
 
     public function testGetRouteDebugMessage(): void
     {
-        $this->assertContains('/some/content', $this->generator->getRouteDebugMessage(RouteObjectInterface::OBJECT_BASED_ROUTE_NAME, ['content_id' => '/some/content']));
-        $this->assertContains('Route aware content Symfony\Cmf\Component\Routing\Tests\Routing\RouteAware', $this->generator->getRouteDebugMessage(RouteObjectInterface::OBJECT_BASED_ROUTE_NAME, [RouteObjectInterface::ROUTE_OBJECT => new RouteAware()]));
-        $this->assertContains('/some/content', $this->generator->getRouteDebugMessage('/some/content'));
+        $this->assertStringContainsString('/some/content', $this->generator->getRouteDebugMessage(RouteObjectInterface::OBJECT_BASED_ROUTE_NAME, ['content_id' => '/some/content']));
+        $this->assertStringContainsString('Route aware content Symfony\Cmf\Component\Routing\Tests\Routing\RouteAware', $this->generator->getRouteDebugMessage(RouteObjectInterface::OBJECT_BASED_ROUTE_NAME, [RouteObjectInterface::ROUTE_OBJECT => new RouteAware()]));
+        $this->assertStringContainsString('/some/content', $this->generator->getRouteDebugMessage('/some/content'));
     }
 
     /**
@@ -548,9 +548,9 @@ class ContentAwareGeneratorTest extends TestCase
      */
     public function testGetRouteDebugMessageLegacy(): void
     {
-        $this->assertContains('/some/content', $this->generator->getRouteDebugMessage(null, ['content_id' => '/some/content']));
-        $this->assertContains('Route aware content Symfony\Cmf\Component\Routing\Tests\Routing\RouteAware', $this->generator->getRouteDebugMessage(new RouteAware()));
-        $this->assertContains('/some/content', $this->generator->getRouteDebugMessage('/some/content'));
+        $this->assertStringContainsString('/some/content', $this->generator->getRouteDebugMessage(null, ['content_id' => '/some/content']));
+        $this->assertStringContainsString('Route aware content Symfony\Cmf\Component\Routing\Tests\Routing\RouteAware', $this->generator->getRouteDebugMessage(new RouteAware()));
+        $this->assertStringContainsString('/some/content', $this->generator->getRouteDebugMessage('/some/content'));
     }
 }
 
