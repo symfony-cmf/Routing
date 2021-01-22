@@ -11,7 +11,7 @@ on:
 
 jobs:
     test:
-        name: "PHP ${{ matrix.php-version }}, Symfony ${{ matrix.symfony-version }}"
+        name: "PHP ${{ matrix.php-version }}, Symfony ${{ matrix.symfony-require }} ${{ matrix.dependencies }}"
         runs-on: "ubuntu-20.04"
         env:
             SYMFONY_DEPRECATIONS_HELPER: weak
@@ -31,6 +31,7 @@ jobs:
                       symfony-require: "5.0.*"
 
                     - php-version: "8.0"
+                      symfony-require: "*"
 
         steps:
             - name: "Checkout project"
@@ -51,7 +52,7 @@ jobs:
               uses: "ramsey/composer-install@v1"
               with:
                   dependency-versions: "${{ matrix.dependencies }}"
-                  composer-options: "--prefer-dist --no-suggest"
+                  composer-options: "--prefer-dist"
 
             - name: "Execute test cases"
               run: |
