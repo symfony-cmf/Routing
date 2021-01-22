@@ -19,8 +19,6 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                symfony-version:
-                    - '*'
                 include:
                     - php-version: "7.2"
                       dependencies: "lowest"
@@ -34,6 +32,7 @@ jobs:
 
                     - php-version: "8.0"
                       phpunit-version: "9.0"
+                      symfony-require: "*"
 
         steps:
             - name: "Checkout project"
