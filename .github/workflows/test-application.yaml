@@ -11,7 +11,7 @@ on:
 
 jobs:
     test:
-        name: "PHP ${{ matrix.php-version }}, Symfony ${{ matrix.symfony-version }} ${{ matrix.dependencies }}"
+        name: "PHP ${{ matrix.php-version }}, Symfony ${{ matrix.symfony-require }} ${{ matrix.dependencies }}"
         runs-on: "ubuntu-20.04"
         env:
             SYMFONY_DEPRECATIONS_HELPER: weak
