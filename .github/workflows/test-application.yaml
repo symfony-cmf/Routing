@@ -11,7 +11,7 @@ on:
 
 jobs:
     test:
-        name: "PHP ${{ matrix.php-version }}, Symfony ${{ matrix.symfony-version }}"
+        name: "PHP ${{ matrix.php-version }}, Symfony ${{ matrix.symfony-version }} ${{ matrix.dependencies }}"
         runs-on: "ubuntu-20.04"
         env:
             SYMFONY_DEPRECATIONS_HELPER: weak
@@ -19,6 +19,8 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
+                symfony-version:
+                    - '*'
                 include:
                     - php-version: "7.2"
                       dependencies: "lowest"
@@ -52,7 +54,7 @@ jobs:
               uses: "ramsey/composer-install@v1"
               with:
                   dependency-versions: "${{ matrix.dependencies }}"
-                  composer-options: "--prefer-dist --no-suggest"
+                  composer-options: "--prefer-dist"
 
             - name: "Execute test cases"
               run: |
