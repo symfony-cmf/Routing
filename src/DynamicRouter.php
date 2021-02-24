@@ -106,10 +106,6 @@ class DynamicRouter implements RouterInterface, RequestMatcherInterface, Chained
         $this->uriFilterRegexp = $uriFilterRegexp;
         $this->provider = $provider;
 
-        if (class_exists(LegacyEventDispatcherProxy::class)) {
-            $this->eventDispatcher = LegacyEventDispatcherProxy::decorate($eventDispatcher);
-        }
-
         $this->generator->setContext($context);
     }
 
