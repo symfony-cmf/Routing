@@ -18,6 +18,7 @@ use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\Matcher\RedirectableUrlMatcherInterface;
 use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\RequestContextAwareInterface;
@@ -30,7 +31,7 @@ use Symfony\Component\Routing\RouterInterface;
  * @author Henrik Bjornskov <henrik@bjrnskov.dk>
  * @author Magnus Nordlander <magnus@e-butik.se>
  */
-class ChainRouter implements ChainRouterInterface, WarmableInterface
+class ChainRouter implements ChainRouterInterface, WarmableInterface, RedirectableUrlMatcherInterface
 {
     /**
      * @var RequestContext|null
@@ -171,7 +172,7 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
      *
      * @throws ResourceNotFoundException If no router matched
      */
-    private function doMatch($pathinfo, Request $request = null)
+    private function doMatch($pathinfo, Request $request = null, bool $handleTrailingSlash = true)
     {
         $methodNotAllowed = null;
 
@@ -201,6 +202,17 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
                 }
                 $methodNotAllowed = $e;
             }
+        }
+
+        // try to match with adding or removing a trailing slash
+        if ($methodNotAllowed === null && $handleTrailingSlash && $trimmedPathinfo = rtrim($pathinfo, '/')) {
+            $pathinfo = $trimmedPathinfo === $pathinfo ? $pathinfo.'/' : $trimmedPathinfo;
+            $requestForMatching = $this->rebuildRequest($pathinfo, $request);
+
+            // do not handle ResourceNotFoundException, we want it throwed if no route were found
+            $parameters = $this->doMatch($pathinfo, $requestForMatching, false);
+
+            return $this->redirect($pathinfo, $parameters['_route'] ?? null) + $ret;
         }
 
         $info = $request
@@ -266,16 +278,24 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
     }
 
     /**
-     * Rebuild the request object from a URL with the help of the RequestContext.
+     * Rebuild the request object from a URL with the help of the RequestContext or the original Request if any.
      *
      * If the request context is not set, this returns the request object built from $pathinfo.
      *
      * @param string $pathinfo
+     * @param Request $request
      *
      * @return Request
      */
-    private function rebuildRequest($pathinfo)
+    private function rebuildRequest($pathinfo, Request $request = null)
     {
+        if ($request) {
+            $server = $request->server->all();
+            $server['REQUEST_URI'] = $pathinfo;
+
+            return $request->duplicate(null, null, null, null, null, $server);
+        }
+
         $context = $this->getContext();
 
         $uri = $pathinfo;
@@ -369,5 +389,18 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
     public function hasRouters()
     {
         return 0 < count($this->routers);
+    }
+
+    public function redirect(string $path, string $route, string $scheme = null): array
+    {
+        return [
+            '_controller' => 'Symfony\\Bundle\\FrameworkBundle\\Controller\\RedirectController::urlRedirectAction',
+            'path' => $path,
+            'permanent' => true,
+            'scheme' => $scheme,
+            'httpPort' => $this->context->getHttpPort(),
+            'httpsPort' => $this->context->getHttpsPort(),
+            '_route' => $route,
+        ];
     }
 }
