@@ -205,7 +205,7 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface, Redirectab
         }
 
         // try to match with adding or removing a trailing slash
-        if ($methodNotAllowed === null && $handleTrailingSlash && $trimmedPathinfo = rtrim($pathinfo, '/')) {
+        if (null === $methodNotAllowed && $handleTrailingSlash && $trimmedPathinfo = rtrim($pathinfo, '/')) {
             $pathinfo = $trimmedPathinfo === $pathinfo ? $pathinfo.'/' : $trimmedPathinfo;
             $requestForMatching = $this->rebuildRequest($pathinfo, $request);
 
@@ -282,7 +282,7 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface, Redirectab
      *
      * If the request context is not set, this returns the request object built from $pathinfo.
      *
-     * @param string $pathinfo
+     * @param string  $pathinfo
      * @param Request $request
      *
      * @return Request
