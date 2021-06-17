@@ -27,7 +27,6 @@ use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\RequestContextAwareInterface;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
-use Symfony\Component\Routing\RouterInterface;
 
 /**
  * A flexible router accepting matcher and generator through injection and
@@ -36,7 +35,7 @@ use Symfony\Component\Routing\RouterInterface;
  * @author Larry Garfield
  * @author David Buchmann
  */
-class DynamicRouter implements RouterInterface, RequestMatcherInterface, ChainedRouterInterface
+class DynamicRouter implements RequestMatcherInterface, ChainedRouterInterface
 {
     use RouteEnhancerTrait;
 
