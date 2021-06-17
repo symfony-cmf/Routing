@@ -30,7 +30,7 @@ class RouterMatchEvent extends Event
     }
 
     /**
-     * @return Request | null
+     * @return Request|null
      */
     public function getRequest()
     {
