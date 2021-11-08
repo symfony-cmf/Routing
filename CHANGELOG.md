@@ -1,6 +1,11 @@
 Changelog
 =========
 
+2.3.4
+-----
+
+* Allow installation with psr/log 2 and 3
+
 2.3.3
 -----
 
