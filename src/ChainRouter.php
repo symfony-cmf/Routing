@@ -67,9 +67,6 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
         $this->logger = $logger;
     }
 
-    /**
-     * @return RequestContext
-     */
     public function getContext(): RequestContext
     {
         if (!$this->context) {
@@ -215,21 +212,11 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
      *
      * @param string $name
      *
-     * The CMF routing system used to allow to pass route objects as $name to generate the route.
-     * Since Symfony 5.0, the UrlGeneratorInterface declares $name as string. We widen the contract
-     * for BC but deprecate passing non-strings.
-     * Instead, Pass the RouteObjectInterface::OBJECT_BASED_ROUTE_NAME as route name and the object
-     * in the parameters with key RouteObjectInterface::ROUTE_OBJECT.
-     *
      * Loops through all registered routers and returns a router if one is found.
      * It will always return the first route generated.
      */
     public function generate($name, $parameters = [], $absolute = UrlGeneratorInterface::ABSOLUTE_PATH): string
     {
-        if (is_object($name)) {
-            @trigger_error('Passing an object as route name is deprecated since version 2.3. Pass the `RouteObjectInterface::OBJECT_BASED_ROUTE_NAME` as route name and the object in the parameters with key `RouteObjectInterface::ROUTE_OBJECT`.', E_USER_DEPRECATED);
-        }
-
         $debug = [];
 
         foreach ($this->all() as $router) {

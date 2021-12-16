@@ -165,10 +165,6 @@ class DynamicRouter implements RequestMatcherInterface, ChainedRouterInterface
      */
     public function generate($name, $parameters = [], $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH): string
     {
-        if (is_object($name)) {
-            @trigger_error('Passing an object as route name is deprecated since version 2.3. Pass the `RouteObjectInterface::OBJECT_BASED_ROUTE_NAME` as route name and the object in the parameters with key `RouteObjectInterface::ROUTE_OBJECT', E_USER_DEPRECATED);
-        }
-
         if ($this->eventDispatcher) {
             $event = new RouterGenerateEvent($name, $parameters, $referenceType);
             $this->eventDispatcher->dispatch($event, Events::PRE_DYNAMIC_GENERATE);

@@ -29,6 +29,8 @@ class CandidatesTest extends TestCase
 
     /**
      * Nothing should be called on the query builder.
+     *
+     * @doesNotPerformAssertions
      */
     public function testRestrictQuery()
     {

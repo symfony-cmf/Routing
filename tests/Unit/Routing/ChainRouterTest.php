@@ -23,7 +23,6 @@ use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Routing\Loader\ObjectRouteLoader;
 use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\Route;
@@ -606,111 +605,6 @@ class ChainRouterTest extends TestCase
 
         $this->expectException(RouteNotFoundException::class);
         $this->router->generate($name, $parameters);
-    }
-
-    /**
-     * Route is an object but no versatile generator around to do the debug message.
-     *
-     * @group legacy
-     * @expectedDeprecation Passing an object as route name is deprecated since version 2.3. Pass the `RouteObjectInterface::OBJECT_BASED_ROUTE_NAME` as route name and the object in the parameters with key `RouteObjectInterface::ROUTE_OBJECT`.
-     */
-    public function testGenerateObjectNotFound()
-    {
-        if (!class_exists(ObjectRouteLoader::class)) {
-            $this->markTestSkipped('Symfony 5 would throw a TypeError.');
-        }
-
-        $name = new \stdClass();
-        $parameters = ['test' => 'value'];
-
-        $defaultRouter = $this->createMock(RouterInterface::class);
-
-        $defaultRouter
-            ->expects($this->never())
-            ->method('generate')
-        ;
-
-        $this->router->add($defaultRouter, 200);
-
-        $this->expectException(RouteNotFoundException::class);
-        $this->router->generate($name, $parameters);
-    }
-
-    /**
-     * A versatile router will generate the debug message.
-     *
-     * @group legacy
-     * @expectedDeprecation Passing an object as route name is deprecated since version 2.3. Pass the `RouteObjectInterface::OBJECT_BASED_ROUTE_NAME` as route name and the object in the parameters with key `RouteObjectInterface::ROUTE_OBJECT`.
-     */
-    public function testGenerateObjectNotFoundVersatile()
-    {
-        if (!class_exists(ObjectRouteLoader::class)) {
-            $this->markTestSkipped('Symfony 5 would throw a TypeError.');
-        }
-
-        $name = new \stdClass();
-        $parameters = ['test' => 'value'];
-
-        $chainedRouter = $this->createMock(VersatileRouter::class);
-        $chainedRouter
-            ->expects($this->once())
-            ->method('supports')
-            ->will($this->returnValue(true))
-        ;
-        $chainedRouter->expects($this->once())
-            ->method('generate')
-            ->with($name, $parameters, UrlGeneratorInterface::ABSOLUTE_PATH)
-            ->will($this->throwException(new RouteNotFoundException()))
-        ;
-        $chainedRouter->expects($this->once())
-            ->method('getRouteDebugMessage')
-            ->with($name, $parameters)
-            ->will($this->returnValue('message'))
-        ;
-
-        $this->router->add($chainedRouter, 10);
-
-        $this->expectException(RouteNotFoundException::class);
-        $this->router->generate($name, $parameters);
-    }
-
-    /**
-     * @group legacy
-     * @expectedDeprecation Passing an object as route name is deprecated since version 2.3. Pass the `RouteObjectInterface::OBJECT_BASED_ROUTE_NAME` as route name and the object in the parameters with key `RouteObjectInterface::ROUTE_OBJECT`.
-     */
-    public function testGenerateObjectName()
-    {
-        if (!class_exists(ObjectRouteLoader::class)) {
-            $this->markTestSkipped('Symfony 5 would throw a TypeError.');
-        }
-
-        $name = new \stdClass();
-        $parameters = ['test' => 'value'];
-
-        $defaultRouter = $this->createMock(RouterInterface::class);
-        $chainedRouter = $this->createMock(VersatileRouter::class);
-
-        $defaultRouter
-            ->expects($this->never())
-            ->method('generate')
-        ;
-        $chainedRouter
-            ->expects($this->once())
-            ->method('supports')
-            ->will($this->returnValue(true))
-        ;
-        $chainedRouter
-            ->expects($this->once())
-            ->method('generate')
-            ->with($name, $parameters, UrlGeneratorInterface::ABSOLUTE_PATH)
-            ->will($this->returnValue($name))
-        ;
-
-        $this->router->add($defaultRouter, 200);
-        $this->router->add($chainedRouter, 100);
-
-        $result = $this->router->generate($name, $parameters);
-        $this->assertEquals($name, $result);
     }
 
     /**
