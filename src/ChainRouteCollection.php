@@ -43,17 +43,15 @@ class ChainRouteCollection extends RouteCollection
      *
      * @return \ArrayIterator An \ArrayIterator object for iterating over routes
      */
-    public function getIterator()
+    public function getIterator(): \ArrayIterator
     {
         return new \ArrayIterator($this->all());
     }
 
     /**
      * Gets the number of Routes in this collection.
-     *
-     * @return int The number of routes
      */
-    public function count()
+    public function count(): int
     {
         $count = 0;
         foreach ($this->routeCollections as $routeCollection) {
@@ -81,7 +79,7 @@ class ChainRouteCollection extends RouteCollection
      *
      * @return Route[] An array of routes
      */
-    public function all()
+    public function all(): array
     {
         $routeCollectionAll = new RouteCollection();
         foreach ($this->routeCollections as $routeCollection) {
@@ -95,10 +93,8 @@ class ChainRouteCollection extends RouteCollection
      * Gets a route by name.
      *
      * @param string $name The route name
-     *
-     * @return Route|null A Route instance or null when not found
      */
-    public function get($name)
+    public function get($name): ?Route
     {
         foreach ($this->routeCollections as $routeCollection) {
             $route = $routeCollection->get($name);
@@ -106,6 +102,8 @@ class ChainRouteCollection extends RouteCollection
                 return $route;
             }
         }
+
+        return null;
     }
 
     /**
@@ -240,7 +238,7 @@ class ChainRouteCollection extends RouteCollection
      *
      * @return ResourceInterface[] An array of resources
      */
-    public function getResources()
+    public function getResources(): array
     {
         if (0 === count($this->routeCollections)) {
             return [];

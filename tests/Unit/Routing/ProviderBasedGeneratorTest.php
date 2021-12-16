@@ -180,7 +180,7 @@ class ProviderBasedGeneratorTest extends TestCase
  */
 class TestableProviderBasedGenerator extends ProviderBasedGenerator
 {
-    protected function doGenerate($variables, $defaults, $requirements, $tokens, $parameters, $name, $referenceType, $hostTokens, array $requiredSchemes = [])
+    protected function doGenerate(array $variables, array $defaults, array $requirements, array $tokens, array $parameters, string $name, int $referenceType, array $hostTokens, array $requiredSchemes = []): string
     {
         $url = 'result_url';
         if ($parameters && $query = http_build_query($parameters, '', '&', PHP_QUERY_RFC3986)) {

@@ -52,7 +52,7 @@ class ProviderBasedGenerator extends UrlGenerator implements VersatileGeneratorI
      *
      * @param mixed $name
      */
-    public function generate($name, $parameters = [], $referenceType = self::ABSOLUTE_PATH)
+    public function generate($name, $parameters = [], $referenceType = self::ABSOLUTE_PATH): string
     {
         if (is_object($name)) {
             @trigger_error('Passing an object as route name is deprecated since version 2.3. Pass the `RouteObjectInterface::OBJECT_BASED_ROUTE_NAME` as route name and the object in the parameters with key `RouteObjectInterface::ROUTE_OBJECT`', E_USER_DEPRECATED);

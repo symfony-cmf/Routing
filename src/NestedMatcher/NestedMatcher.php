@@ -135,7 +135,7 @@ class NestedMatcher implements RequestMatcherInterface
     /**
      * {@inheritdoc}
      */
-    public function matchRequest(Request $request)
+    public function matchRequest(Request $request): array
     {
         $collection = $this->routeProvider->getRouteCollectionForRequest($request);
         if (!count($collection)) {
