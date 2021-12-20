@@ -709,6 +709,23 @@ class ChainRouterTest extends TestCase
         $this->assertEquals(['high', 'low'], $names);
     }
 
+    public function testGenerateWithNameParameterObject()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        $parameters = ['test' => 'value'];
+        $defaultRouter = $this->createMock(RouterInterface::class);
+
+        $defaultRouter
+            ->expects($this->never())
+            ->method('generate')
+        ;
+
+        $this->router->add($defaultRouter, 200);
+
+        $this->router->generate(new \stdClass(), $parameters);
+    }
+
     /**
      * @group legacy
      */

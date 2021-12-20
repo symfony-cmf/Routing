@@ -165,6 +165,10 @@ class DynamicRouter implements RequestMatcherInterface, ChainedRouterInterface
      */
     public function generate($name, $parameters = [], $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH): string
     {
+        if (!is_string($name)) {
+            throw new \InvalidArgumentException('The "$name" parameter should of type string.');
+        }
+
         if ($this->eventDispatcher) {
             $event = new RouterGenerateEvent($name, $parameters, $referenceType);
             $this->eventDispatcher->dispatch($event, Events::PRE_DYNAMIC_GENERATE);

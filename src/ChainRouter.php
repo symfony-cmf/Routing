@@ -217,6 +217,10 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
      */
     public function generate($name, $parameters = [], $absolute = UrlGeneratorInterface::ABSOLUTE_PATH): string
     {
+        if (!is_string($name)) {
+            throw new \InvalidArgumentException('The "$name" parameter should of type string.');
+        }
+
         $debug = [];
 
         foreach ($this->all() as $router) {

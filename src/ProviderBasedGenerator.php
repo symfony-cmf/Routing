@@ -46,6 +46,10 @@ class ProviderBasedGenerator extends UrlGenerator implements VersatileGeneratorI
      */
     public function generate($name, $parameters = [], $referenceType = self::ABSOLUTE_PATH): string
     {
+        if (!is_string($name)) {
+            throw new \InvalidArgumentException('The "$name" parameter should of type string.');
+        }
+
         if (RouteObjectInterface::OBJECT_BASED_ROUTE_NAME === $name
             && array_key_exists(RouteObjectInterface::ROUTE_OBJECT, $parameters)
             && $parameters[RouteObjectInterface::ROUTE_OBJECT] instanceof SymfonyRoute

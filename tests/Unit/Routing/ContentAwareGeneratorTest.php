@@ -507,6 +507,13 @@ class ContentAwareGeneratorTest extends TestCase
         $this->assertStringContainsString('Route aware content Symfony\Cmf\Component\Routing\Tests\Routing\RouteAware', $this->generator->getRouteDebugMessage(new RouteAware()));
         $this->assertStringContainsString('/some/content', $this->generator->getRouteDebugMessage('/some/content'));
     }
+
+    public function testGenerateWithNameParameterObject(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        $this->generator->generate(new \stdClass());
+    }
 }
 
 /**

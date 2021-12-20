@@ -155,6 +155,13 @@ class ProviderBasedGeneratorTest extends TestCase
             'number' => 'string',
         ]);
     }
+
+    public function testGenerateWithNameParameterObject(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        $this->generator->generate(new \stdClass());
+    }
 }
 
 /**
