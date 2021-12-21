@@ -36,6 +36,9 @@ jobs:
                     - php-version: "8.0"
                       symfony-require: "6.0.*"
 
+                    - php-version: "8.1"
+                      symfony-require: "6.0.*"
+
         steps:
             - name: "Checkout project"
               uses: "actions/checkout@v2"

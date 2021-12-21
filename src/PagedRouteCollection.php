@@ -118,10 +118,8 @@ class PagedRouteCollection implements \Iterator, \Countable
 
     /**
      * Gets the number of Routes in this collection.
-     *
-     * @return int The number of routes
      */
-    public function count()
+    public function count(): int
     {
         return $this->provider->getRoutesCount();
     }
