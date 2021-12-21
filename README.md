@@ -31,9 +31,7 @@ when building Symfony full stack applications.
 
 ## Requirements
 
-* PHP 7.2 / 7.3 / 7.4
-* Symfony
-* See also the `require` section of [composer.json](composer.json)
+See the `require` section of [composer.json](composer.json)
 
 ## Documentation
 
