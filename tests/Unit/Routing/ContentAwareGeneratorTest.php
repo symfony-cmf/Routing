@@ -21,7 +21,6 @@ use Symfony\Cmf\Component\Routing\RouteReferrersReadInterface;
 use Symfony\Cmf\Component\Routing\Tests\Unit\Routing\RouteMock;
 use Symfony\Component\Routing\CompiledRoute;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
-use Symfony\Component\Routing\Loader\ObjectRouteLoader;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\Route;
 
@@ -38,7 +37,7 @@ class ContentAwareGeneratorTest extends TestCase
     private $routeDocument;
 
     /**
-     * @var CompiledRoute|MockObject
+     * @var CompiledRoute
      */
     private $routeCompiled;
 
@@ -65,36 +64,11 @@ class ContentAwareGeneratorTest extends TestCase
             ->setMethods(['compile', 'getContent'])
             ->getMock();
 
-        $this->routeCompiled = $this->createMock(CompiledRoute::class);
+        $this->routeCompiled = new CompiledRoute('', '', [], []);
         $this->provider = $this->createMock(RouteProviderInterface::class);
         $this->context = $this->createMock(RequestContext::class);
 
         $this->generator = new TestableContentAwareGenerator($this->provider);
-    }
-
-    /**
-     * @group legacy
-     * @expectedDeprecation Passing an object as route name is deprecated since version 2.3. Pass the `RouteObjectInterface::OBJECT_BASED_ROUTE_NAME` as route name and the object in the parameters with key `RouteObjectInterface::ROUTE_OBJECT`.
-     */
-    public function testGenerateFromContent(): void
-    {
-        if (!class_exists(ObjectRouteLoader::class)) {
-            $this->markTestSkipped('Symfony 5 would throw a TypeError.');
-        }
-
-        $this->provider->expects($this->never())
-            ->method('getRouteByName')
-        ;
-        $this->contentDocument->expects($this->once())
-            ->method('getRoutes')
-            ->willReturn([$this->routeDocument])
-        ;
-        $this->routeDocument->expects($this->once())
-            ->method('compile')
-            ->willReturn($this->routeCompiled)
-        ;
-
-        $this->assertEquals('result_url', $this->generator->generate($this->contentDocument));
     }
 
     public function testGenerateFromContentInParameters(): void
@@ -232,10 +206,6 @@ class ContentAwareGeneratorTest extends TestCase
             ->method('getDefault')
             ->with('_locale')
             ->willReturn('en')
-        ;
-        $this->routeCompiled->expects($this->any())
-            ->method('getVariables')
-            ->willReturn([])
         ;
 
         $generated = $this->generator->generate(RouteObjectInterface::OBJECT_BASED_ROUTE_NAME, ['_locale' => 'en', RouteObjectInterface::ROUTE_OBJECT => $route]);
@@ -404,21 +374,6 @@ class ContentAwareGeneratorTest extends TestCase
     }
 
     /**
-     * Generate with an object that is neither a route nor route aware.
-     *
-     * @group legacy
-     */
-    public function testGenerateInvalidContentLegacy(): void
-    {
-        if (!class_exists(ObjectRouteLoader::class)) {
-            $this->markTestSkipped('Symfony 5 would throw a TypeError.');
-        }
-
-        $this->expectException(RouteNotFoundException::class);
-        $this->generator->generate($this);
-    }
-
-    /**
      * Generate with a content_id but there is no content repository.
      */
     public function testGenerateNoContentRepository(): void
@@ -552,6 +507,13 @@ class ContentAwareGeneratorTest extends TestCase
         $this->assertStringContainsString('Route aware content Symfony\Cmf\Component\Routing\Tests\Routing\RouteAware', $this->generator->getRouteDebugMessage(new RouteAware()));
         $this->assertStringContainsString('/some/content', $this->generator->getRouteDebugMessage('/some/content'));
     }
+
+    public function testGenerateWithNameParameterObject(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        $this->generator->generate(new \stdClass());
+    }
 }
 
 /**
@@ -559,7 +521,7 @@ class ContentAwareGeneratorTest extends TestCase
  */
 class TestableContentAwareGenerator extends ContentAwareGenerator
 {
-    protected function doGenerate($variables, $defaults, $requirements, $tokens, $parameters, $name, $referenceType, $hostTokens, array $requiredSchemes = [])
+    protected function doGenerate($variables, $defaults, $requirements, $tokens, $parameters, $name, $referenceType, $hostTokens, array $requiredSchemes = []): string
     {
         return 'result_url';
     }

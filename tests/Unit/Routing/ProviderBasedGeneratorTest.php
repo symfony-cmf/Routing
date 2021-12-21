@@ -31,7 +31,7 @@ class ProviderBasedGeneratorTest extends TestCase
     private $routeDocument;
 
     /**
-     * @var CompiledRoute|MockObject
+     * @var CompiledRoute
      */
     private $routeCompiled;
 
@@ -53,7 +53,7 @@ class ProviderBasedGeneratorTest extends TestCase
     public function setUp(): void
     {
         $this->routeDocument = $this->createMock(Route::class);
-        $this->routeCompiled = $this->createMock(CompiledRoute::class);
+        $this->routeCompiled = new CompiledRoute('', '', [], []);
         $this->provider = $this->createMock(RouteProviderInterface::class);
         $this->context = $this->createMock(RequestContext::class);
 
@@ -116,24 +116,6 @@ class ProviderBasedGeneratorTest extends TestCase
         $this->assertEquals('result_url', $url);
     }
 
-    /**
-     * @group legacy
-     *
-     * @expectedDeprecation Passing an object as route name is deprecated since version 2.3. Pass the `RouteObjectInterface::OBJECT_BASED_ROUTE_NAME` as route name and the object in the parameters with key `RouteObjectInterface::ROUTE_OBJECT`
-     */
-    public function testGenerateFromRouteLegacy(): void
-    {
-        $this->provider->expects($this->never())
-            ->method('getRouteByName')
-        ;
-        $this->routeDocument->expects($this->once())
-            ->method('compile')
-            ->willReturn($this->routeCompiled)
-        ;
-
-        $this->assertEquals('result_url', $this->generator->generate($this->routeDocument));
-    }
-
     public function testSupports(): void
     {
         $this->assertTrue($this->generator->supports('foo/bar'));
@@ -173,6 +155,13 @@ class ProviderBasedGeneratorTest extends TestCase
             'number' => 'string',
         ]);
     }
+
+    public function testGenerateWithNameParameterObject(): void
+    {
+        $this->expectException(\InvalidArgumentException::class);
+
+        $this->generator->generate(new \stdClass());
+    }
 }
 
 /**
@@ -180,7 +169,7 @@ class ProviderBasedGeneratorTest extends TestCase
  */
 class TestableProviderBasedGenerator extends ProviderBasedGenerator
 {
-    protected function doGenerate($variables, $defaults, $requirements, $tokens, $parameters, $name, $referenceType, $hostTokens, array $requiredSchemes = [])
+    protected function doGenerate($variables, $defaults, $requirements, $tokens, $parameters, $name, $referenceType, $hostTokens, $requiredSchemes = []): string
     {
         $url = 'result_url';
         if ($parameters && $query = http_build_query($parameters, '', '&', PHP_QUERY_RFC3986)) {

@@ -32,17 +32,15 @@ class LazyRouteCollection extends RouteCollection
     /**
      * {@inheritdoc}
      */
-    public function getIterator()
+    public function getIterator(): \ArrayIterator
     {
         return new \ArrayIterator($this->all());
     }
 
     /**
      * Gets the number of Routes in this collection.
-     *
-     * @return int The number of routes
      */
-    public function count()
+    public function count(): int
     {
         return count($this->all());
     }
@@ -52,7 +50,7 @@ class LazyRouteCollection extends RouteCollection
      *
      * @return Route[] An array of routes
      */
-    public function all()
+    public function all(): array
     {
         return $this->provider->getRoutesByNames(null);
     }
@@ -61,15 +59,13 @@ class LazyRouteCollection extends RouteCollection
      * Gets a route by name.
      *
      * @param string $name The route name
-     *
-     * @return Route|null A Route instance or null when not found
      */
-    public function get($name)
+    public function get($name): ?Route
     {
         try {
             return $this->provider->getRouteByName($name);
         } catch (RouteNotFoundException $e) {
-            return;
+            return null;
         }
     }
 }

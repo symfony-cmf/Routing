@@ -69,8 +69,9 @@ class PagedRouteCollection implements \Iterator, \Countable
     }
 
     /**
-     * {@inheritdoc}
+     * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         return current($this->currentRoutes);
@@ -79,7 +80,7 @@ class PagedRouteCollection implements \Iterator, \Countable
     /**
      * {@inheritdoc}
      */
-    public function next()
+    public function next(): void
     {
         $result = next($this->currentRoutes);
         if (false === $result) {
@@ -89,8 +90,9 @@ class PagedRouteCollection implements \Iterator, \Countable
     }
 
     /**
-     * {@inheritdoc}
+     * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return key($this->currentRoutes);
@@ -99,15 +101,15 @@ class PagedRouteCollection implements \Iterator, \Countable
     /**
      * {@inheritdoc}
      */
-    public function valid()
+    public function valid(): bool
     {
-        return key($this->currentRoutes);
+        return null !== key($this->currentRoutes);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rewind()
+    public function rewind(): void
     {
         $this->current = 0;
         $this->currentRoutes = null;
