@@ -15,21 +15,21 @@
         }
     ],
     "require": {
-        "php": "^7.2 || ^8.0",
-        "symfony/routing": "^4.4 || ^5.0 || ^6.0",
-        "symfony/http-kernel": "^4.4 || ^5.0 || ^6.0",
+        "php": "^8.0",
+        "symfony/routing": "^6.0",
+        "symfony/http-kernel": "^6.0",
         "psr/log": "^1.0 || ^2.0 || ^3.0"
     },
     "require-dev": {
         "doctrine/annotations": "^1.5",
-        "symfony/phpunit-bridge": "^5.4 || ^6.0",
-        "symfony/dependency-injection": "^4.4 || ^5.0 || ^6.0",
-        "symfony/config": "^4.4 || ^5.0 || ^6.0",
-        "symfony/event-dispatcher": "^4.4 || ^5.0 || ^6.0",
-        "symfony-cmf/testing": "^3@dev"
+        "symfony/phpunit-bridge": "^6.0",
+        "symfony/dependency-injection": "^6.0",
+        "symfony/config": "^6.0",
+        "symfony/event-dispatcher": "^6.0",
+        "symfony-cmf/testing": "dev-master as 4.2"
     },
     "suggest": {
-        "symfony/event-dispatcher": "DynamicRouter can optionally trigger an event at the start of matching. Minimal version (^4.4 || ^5.0)"
+        "symfony/event-dispatcher": "DynamicRouter can optionally trigger an event at the start of matching. Minimal version ^6.0"
     },
     "autoload": {
         "psr-4": {

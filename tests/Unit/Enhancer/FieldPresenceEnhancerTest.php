@@ -17,12 +17,9 @@ use Symfony\Component\HttpFoundation\Request;
 
 class FieldPresenceEnhancerTest extends TestCase
 {
-    /**
-     * @var FieldPresenceEnhancer
-     */
-    private $mapper;
+    private FieldPresenceEnhancer $mapper;
 
-    private $request;
+    private Request $request;
 
     public function setUp(): void
     {
@@ -31,7 +28,7 @@ class FieldPresenceEnhancerTest extends TestCase
         $this->request = Request::create('/test');
     }
 
-    public function testHasTemplate()
+    public function testHasTemplate(): void
     {
         $defaults = ['_template' => 'Bundle:Topic:template.html.twig'];
         $expected = [
@@ -41,7 +38,7 @@ class FieldPresenceEnhancerTest extends TestCase
         $this->assertEquals($expected, $this->mapper->enhance($defaults, $this->request));
     }
 
-    public function testFieldAlreadyThere()
+    public function testFieldAlreadyThere(): void
     {
         $defaults = [
             '_template' => 'Bundle:Topic:template.html.twig',
@@ -50,13 +47,13 @@ class FieldPresenceEnhancerTest extends TestCase
         $this->assertEquals($defaults, $this->mapper->enhance($defaults, $this->request));
     }
 
-    public function testHasNoSourceValue()
+    public function testHasNoSourceValue(): void
     {
         $defaults = ['foo' => 'bar'];
         $this->assertEquals($defaults, $this->mapper->enhance($defaults, $this->request));
     }
 
-    public function testHasNoSource()
+    public function testHasNoSource(): void
     {
         $this->mapper = new FieldPresenceEnhancer(null, '_controller', 'cmf_content.controller:indexAction');
 

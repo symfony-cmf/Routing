@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Symfony\Cmf\Component\Routing\Tests\Unit\Mapper;
+namespace Symfony\Cmf\Component\Routing\Tests\Unit\Enhancer;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Cmf\Component\Routing\Enhancer\FieldMapEnhancer;
@@ -17,15 +17,9 @@ use Symfony\Component\HttpFoundation\Request;
 
 class FieldMapEnhancerTest extends TestCase
 {
-    /**
-     * @var Request
-     */
-    private $request;
+    private Request $request;
 
-    /**
-     * @var FieldMapEnhancer
-     */
-    private $enhancer;
+    private FieldMapEnhancer $enhancer;
 
     public function setUp(): void
     {
@@ -35,7 +29,7 @@ class FieldMapEnhancerTest extends TestCase
         $this->enhancer = new FieldMapEnhancer('type', '_controller', $mapping);
     }
 
-    public function testFieldFoundInMapping()
+    public function testFieldFoundInMapping(): void
     {
         $defaults = ['type' => 'static_pages'];
         $expected = [
@@ -45,7 +39,7 @@ class FieldMapEnhancerTest extends TestCase
         $this->assertEquals($expected, $this->enhancer->enhance($defaults, $this->request));
     }
 
-    public function testFieldAlreadyThere()
+    public function testFieldAlreadyThere(): void
     {
         $defaults = [
             'type' => 'static_pages',
@@ -54,13 +48,13 @@ class FieldMapEnhancerTest extends TestCase
         $this->assertEquals($defaults, $this->enhancer->enhance($defaults, $this->request));
     }
 
-    public function testNoType()
+    public function testNoType(): void
     {
         $defaults = [];
         $this->assertEquals([], $this->enhancer->enhance($defaults, $this->request));
     }
 
-    public function testNotFoundInMapping()
+    public function testNotFoundInMapping(): void
     {
         $defaults = ['type' => 'unknown_route'];
         $this->assertEquals($defaults, $this->enhancer->enhance($defaults, $this->request));

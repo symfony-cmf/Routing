@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Symfony\Cmf\Component\Routing\Tests\Routing;
+namespace Symfony\Cmf\Component\Routing\Tests\Unit\Routing;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -18,7 +18,6 @@ use Symfony\Cmf\Component\Routing\RouteObjectInterface;
 use Symfony\Cmf\Component\Routing\RouteProviderInterface;
 use Symfony\Component\Routing\CompiledRoute;
 use Symfony\Component\Routing\Exception\InvalidParameterException;
-use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\Route as SymfonyRoute;
@@ -26,7 +25,7 @@ use Symfony\Component\Routing\Route as SymfonyRoute;
 class ProviderBasedGeneratorTest extends TestCase
 {
     /**
-     * @var Route|MockObject
+     * @var Route&MockObject
      */
     private $routeDocument;
 
@@ -36,7 +35,7 @@ class ProviderBasedGeneratorTest extends TestCase
     private $routeCompiled;
 
     /**
-     * @var RouteProviderInterface|MockObject
+     * @var RouteProviderInterface&MockObject
      */
     private $provider;
 
@@ -45,17 +44,11 @@ class ProviderBasedGeneratorTest extends TestCase
      */
     private $generator;
 
-    /**
-     * @var RequestContext|MockObject
-     */
-    private $context;
-
     public function setUp(): void
     {
         $this->routeDocument = $this->createMock(Route::class);
         $this->routeCompiled = new CompiledRoute('', '', [], []);
         $this->provider = $this->createMock(RouteProviderInterface::class);
-        $this->context = $this->createMock(RequestContext::class);
 
         $this->generator = new TestableProviderBasedGenerator($this->provider);
     }
@@ -75,20 +68,6 @@ class ProviderBasedGeneratorTest extends TestCase
         ;
 
         $this->assertEquals('result_url', $this->generator->generate($name));
-    }
-
-    public function testGenerateNotFound(): void
-    {
-        $name = 'foo/bar';
-
-        $this->provider->expects($this->once())
-            ->method('getRouteByName')
-            ->with($name)
-            ->willReturn(null)
-        ;
-
-        $this->expectException(RouteNotFoundException::class);
-        $this->generator->generate($name);
     }
 
     public function testGenerateFromRoute(): void
@@ -118,10 +97,7 @@ class ProviderBasedGeneratorTest extends TestCase
 
     public function testGetRouteDebugMessage(): void
     {
-        $this->assertStringContainsString('/some/key', $this->generator->getRouteDebugMessage(new RouteObject()));
-        $this->assertStringContainsString('/de/test', $this->generator->getRouteDebugMessage(new Route('/de/test')));
         $this->assertStringContainsString('/some/route', $this->generator->getRouteDebugMessage('/some/route'));
-        $this->assertStringContainsString('a:1:{s:10:"route_name";s:7:"example";}', $this->generator->getRouteDebugMessage(['route_name' => 'example']));
     }
 
     /**
@@ -147,13 +123,6 @@ class ProviderBasedGeneratorTest extends TestCase
             RouteObjectInterface::ROUTE_OBJECT => $route,
             'number' => 'string',
         ]);
-    }
-
-    public function testGenerateWithNameParameterObject(): void
-    {
-        $this->expectException(\InvalidArgumentException::class);
-
-        $this->generator->generate(new \stdClass());
     }
 }
 

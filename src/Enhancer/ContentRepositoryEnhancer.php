@@ -24,22 +24,11 @@ use Symfony\Component\HttpFoundation\Request;
  *
  * @author Samusev Andrey
  */
-class ContentRepositoryEnhancer implements RouteEnhancerInterface
+final class ContentRepositoryEnhancer implements RouteEnhancerInterface
 {
-    /**
-     * @var ContentRepositoryInterface
-     */
-    private $contentRepository;
-
-    /**
-     * @var string
-     */
-    private $target;
-
-    /**
-     * @var string
-     */
-    private $source;
+    private ContentRepositoryInterface $contentRepository;
+    private string $target;
+    private string $source;
 
     /**
      * @param ContentRepositoryInterface $contentRepository repository to search for the content
@@ -48,18 +37,15 @@ class ContentRepositoryEnhancer implements RouteEnhancerInterface
      */
     public function __construct(
         ContentRepositoryInterface $contentRepository,
-        $target = RouteObjectInterface::CONTENT_OBJECT,
-        $source = RouteObjectInterface::CONTENT_ID
+        string $target = RouteObjectInterface::CONTENT_OBJECT,
+        string $source = RouteObjectInterface::CONTENT_ID
     ) {
         $this->contentRepository = $contentRepository;
         $this->target = $target;
         $this->source = $source;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function enhance(array $defaults, Request $request)
+    public function enhance(array $defaults, Request $request): array
     {
         if (array_key_exists($this->target, $defaults)
             || !array_key_exists($this->source, $defaults)

@@ -30,17 +30,14 @@ interface ContentRepositoryInterface
      *
      * @param string $id id of the content object
      *
-     * @return object A content that matches this id
+     * @return mixed A content that matches this id
      */
-    public function findById($id);
+    public function findById(mixed $id): mixed;
 
     /**
-     * Return the content identifier for the provided content object for
-     * debugging purposes.
+     * Return the content identifier of the provided content.
      *
-     * @param object $content A content instance
-     *
-     * @return string|null $id id of the content object or null if unable to determine an id
+     * @return mixed $id id of the content object or null if unable to determine an id
      */
-    public function getContentId($content);
+    public function getContentId(mixed $content): mixed;
 }

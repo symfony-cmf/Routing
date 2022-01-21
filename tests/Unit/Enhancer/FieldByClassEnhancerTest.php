@@ -11,19 +11,20 @@
 
 namespace Symfony\Cmf\Component\Routing\Tests\Unit\Enhancer;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Cmf\Component\Routing\Enhancer\FieldByClassEnhancer;
 use Symfony\Component\HttpFoundation\Request;
 
 class FieldByClassEnhancerTest extends TestCase
 {
-    private $request;
+    private Request $request;
+
+    private FieldByClassEnhancer $mapper;
 
     /**
-     * @var FieldByClassEnhancer
+     * @var MockObject&RouteObject
      */
-    private $mapper;
-
     private $document;
 
     public function setUp(): void
@@ -37,7 +38,7 @@ class FieldByClassEnhancerTest extends TestCase
         $this->request = Request::create('/test');
     }
 
-    public function testClassFoundInMapping()
+    public function testClassFoundInMapping(): void
     {
         // this is the mock, thus a child class to make sure we properly check with instanceof
         $defaults = ['_content' => $this->document];
@@ -48,7 +49,7 @@ class FieldByClassEnhancerTest extends TestCase
         $this->assertEquals($expected, $this->mapper->enhance($defaults, $this->request));
     }
 
-    public function testFieldAlreadyThere()
+    public function testFieldAlreadyThere(): void
     {
         $defaults = [
             '_content' => $this->document,
@@ -57,13 +58,13 @@ class FieldByClassEnhancerTest extends TestCase
         $this->assertEquals($defaults, $this->mapper->enhance($defaults, $this->request));
     }
 
-    public function testClassNotFoundInMapping()
+    public function testClassNotFoundInMapping(): void
     {
         $defaults = ['_content' => $this];
         $this->assertEquals($defaults, $this->mapper->enhance($defaults, $this->request));
     }
 
-    public function testNoClass()
+    public function testNoClass(): void
     {
         $defaults = ['foo' => 'bar'];
         $this->assertEquals($defaults, $this->mapper->enhance($defaults, $this->request));

@@ -25,13 +25,12 @@ use Symfony\Component\HttpFoundation\Request;
 interface RouteEnhancerInterface
 {
     /**
-     * Update the defaults based on its own data and the request.
+     * Update the defaults from the matched route, based on configured data or the request.
      *
-     * @param array   $defaults the getRouteDefaults array
-     * @param Request $request  the Request instance
+     * @param array<string, mixed> $defaults the defaults from the route match
+     * @param Request              $request  the Request instance
      *
-     * @return array the modified defaults. Each enhancer MUST return the
-     *               $defaults but may add or remove values
+     * @return array<string, mixed> Each enhancer MUST return the $defaults, but may add or remove values
      */
-    public function enhance(array $defaults, Request $request);
+    public function enhance(array $defaults, Request $request): array;
 }

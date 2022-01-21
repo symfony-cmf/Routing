@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Symfony\Cmf\Component\Routing\Tests\Routing;
+namespace Symfony\Cmf\Component\Routing\Tests\Unit\Routing;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -20,7 +20,6 @@ use Symfony\Cmf\Component\Routing\Event\RouterGenerateEvent;
 use Symfony\Cmf\Component\Routing\Event\RouterMatchEvent;
 use Symfony\Cmf\Component\Routing\LazyRouteCollection;
 use Symfony\Cmf\Component\Routing\RouteProviderInterface;
-use Symfony\Cmf\Component\Routing\Tests\Unit\Routing\RouteMock;
 use Symfony\Cmf\Component\Routing\VersatileGeneratorInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -33,23 +32,19 @@ use Symfony\Component\Routing\RouteCollection;
 
 class DynamicRouterTest extends TestCase
 {
-    /**
-     * @var RouteMock|MockObject
-     */
-    private $routeDocument;
 
     /**
-     * @var UrlMatcherInterface|MockObject
+     * @var UrlMatcherInterface&MockObject
      */
     private $matcher;
 
     /**
-     * @var VersatileGeneratorInterface|MockObject
+     * @var VersatileGeneratorInterface&MockObject
      */
     private $generator;
 
     /**
-     * @var RouteEnhancerInterface|MockObject
+     * @var RouteEnhancerInterface&MockObject
      */
     private $enhancer;
 
@@ -59,7 +54,7 @@ class DynamicRouterTest extends TestCase
     private $router;
 
     /**
-     * @var RequestContext|MockObject
+     * @var RequestContext&MockObject
      */
     private $context;
 
@@ -68,12 +63,12 @@ class DynamicRouterTest extends TestCase
      */
     private $request;
 
+    private bool $seen = false;
+
     const URL = '/foo/bar';
 
     public function setUp(): void
     {
-        $this->routeDocument = $this->createMock(RouteMock::class);
-
         $this->matcher = $this->createMock(UrlMatcherInterface::class);
         $this->generator = $this->createMock(VersatileGeneratorInterface::class);
         $this->enhancer = $this->createMock(RouteEnhancerInterface::class);
@@ -85,22 +80,19 @@ class DynamicRouterTest extends TestCase
         $this->router->addRouteEnhancer($this->enhancer);
     }
 
-    /**
-     * rather trivial, but we want 100% coverage.
-     */
-    public function testContext()
+    public function testContext(): void
     {
         $this->router->setContext($this->context);
         $this->assertSame($this->context, $this->router->getContext());
     }
 
-    public function testRouteCollectionEmpty()
+    public function testRouteCollectionEmpty(): void
     {
         $collection = $this->router->getRouteCollection();
         $this->assertInstanceOf(RouteCollection::class, $collection);
     }
 
-    public function testRouteCollectionLazy()
+    public function testRouteCollectionLazy(): void
     {
         $provider = $this->createMock(RouteProviderInterface::class);
         $router = new DynamicRouter($this->context, $this->matcher, $this->generator, '', null, $provider);
@@ -111,18 +103,17 @@ class DynamicRouterTest extends TestCase
 
     /// generator tests ///
 
-    public function testGetGenerator()
+    public function testGetGenerator(): void
     {
         $this->generator->expects($this->once())
             ->method('setContext')
             ->with($this->equalTo($this->context));
 
         $generator = $this->router->getGenerator();
-        $this->assertInstanceOf(UrlGeneratorInterface::class, $generator);
         $this->assertSame($this->generator, $generator);
     }
 
-    public function testGenerate()
+    public function testGenerate(): void
     {
         $name = 'my_route_name';
         $parameters = ['foo' => 'bar'];
@@ -131,7 +122,7 @@ class DynamicRouterTest extends TestCase
         $this->generator->expects($this->once())
             ->method('generate')
             ->with($name, $parameters, $absolute)
-            ->will($this->returnValue('http://test'))
+            ->willReturn('http://test')
         ;
 
         $url = $this->router->generate($name, $parameters, $absolute);
@@ -140,7 +131,7 @@ class DynamicRouterTest extends TestCase
 
     /// match tests ///
 
-    public function testGetMatcher()
+    public function testGetMatcher(): void
     {
         $this->matcher->expects($this->once())
             ->method('setContext')
@@ -154,13 +145,13 @@ class DynamicRouterTest extends TestCase
     /**
      * @group legacy
      */
-    public function testMatchUrl()
+    public function testMatchUrl(): void
     {
         $routeDefaults = ['foo' => 'bar'];
         $this->matcher->expects($this->once())
             ->method('match')
             ->with(self::URL)
-            ->will($this->returnValue($routeDefaults))
+            ->willReturn($routeDefaults)
         ;
 
         $expected = ['this' => 'that'];
@@ -170,7 +161,7 @@ class DynamicRouterTest extends TestCase
             ->with($this->equalTo($routeDefaults), $this->callback(function (Request $request) {
                 return self::URL === $request->server->get('REQUEST_URI');
             }))
-            ->will($this->returnValue($expected))
+            ->willReturn($expected)
         ;
 
         $results = $this->router->match(self::URL);
@@ -178,24 +169,23 @@ class DynamicRouterTest extends TestCase
         $this->assertEquals($expected, $results);
     }
 
-    public function testMatchRequestWithUrlMatcher()
+    public function testMatchRequestWithUrlMatcher(): void
     {
         $routeDefaults = ['foo' => 'bar'];
 
         $this->matcher->expects($this->once())
             ->method('match')
             ->with(self::URL)
-            ->will($this->returnValue($routeDefaults))
+            ->willReturn($routeDefaults)
         ;
 
         $expected = ['this' => 'that'];
-        $test = $this;
         $this->enhancer->expects($this->once())
             ->method('enhance')
             ->with($this->equalTo($routeDefaults), $this->callback(function (Request $request) {
                 return self::URL === $request->server->get('REQUEST_URI');
             }))
-            ->will($this->returnValue($expected))
+            ->willReturn($expected)
         ;
 
         $results = $this->router->matchRequest($this->request);
@@ -203,7 +193,7 @@ class DynamicRouterTest extends TestCase
         $this->assertEquals($expected, $results);
     }
 
-    public function testMatchRequest()
+    public function testMatchRequest(): void
     {
         $routeDefaults = ['foo' => 'bar'];
 
@@ -213,7 +203,7 @@ class DynamicRouterTest extends TestCase
         $matcher->expects($this->once())
             ->method('matchRequest')
             ->with($this->request)
-            ->will($this->returnValue($routeDefaults))
+            ->willReturn($routeDefaults)
         ;
 
         $expected = ['this' => 'that'];
@@ -223,7 +213,7 @@ class DynamicRouterTest extends TestCase
             ->with($this->equalTo($routeDefaults), $this->callback(function (Request $request) {
                 return self::URL === $request->server->get('REQUEST_URI');
             }))
-            ->will($this->returnValue($expected))
+            ->willReturn($expected)
         ;
 
         $router->addRouteEnhancer($this->enhancer);
@@ -234,7 +224,7 @@ class DynamicRouterTest extends TestCase
     /**
      * @group legacy
      */
-    public function testMatchFilter()
+    public function testMatchFilter(): void
     {
         $router = new DynamicRouter($this->context, $this->matcher, $this->generator, '#/different/prefix.*#');
         $router->addRouteEnhancer($this->enhancer);
@@ -251,7 +241,7 @@ class DynamicRouterTest extends TestCase
         $router->match(self::URL);
     }
 
-    public function testMatchRequestFilter()
+    public function testMatchRequestFilter(): void
     {
         $matcher = $this->createMock(RequestMatcherInterface::class);
 
@@ -273,7 +263,7 @@ class DynamicRouterTest extends TestCase
     /**
      * @group legacy
      */
-    public function testMatchUrlWithRequestMatcher()
+    public function testMatchUrlWithRequestMatcher(): void
     {
         $matcher = $this->createMock(RequestMatcherInterface::class);
         $router = new DynamicRouter($this->context, $matcher, $this->generator);
@@ -282,24 +272,18 @@ class DynamicRouterTest extends TestCase
         $router->match(self::URL);
     }
 
-    public function testInvalidMatcher()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        new DynamicRouter($this->context, $this, $this->generator);
-    }
-
     public function testRouteDebugMessage()
     {
         $this->generator->expects($this->once())
             ->method('getRouteDebugMessage')
             ->with($this->equalTo('test'), $this->equalTo([]))
-            ->will($this->returnValue('debug message'))
+            ->willReturn('debug message')
         ;
 
         $this->assertEquals('debug message', $this->router->getRouteDebugMessage('test'));
     }
 
-    public function testRouteDebugMessageNonversatile()
+    public function testRouteDebugMessageNonversatile(): void
     {
         $generator = $this->createMock(UrlGeneratorInterface::class);
         $router = new DynamicRouter($this->context, $this->matcher, $generator);
@@ -309,7 +293,7 @@ class DynamicRouterTest extends TestCase
     /**
      * @group legacy
      */
-    public function testEventHandler()
+    public function testEventHandler(): void
     {
         $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $router = new DynamicRouter($this->context, $this->matcher, $this->generator, '', $eventDispatcher);
@@ -323,13 +307,13 @@ class DynamicRouterTest extends TestCase
         $this->matcher->expects($this->once())
             ->method('match')
             ->with(self::URL)
-            ->will($this->returnValue($routeDefaults))
+            ->willReturn($routeDefaults)
         ;
 
         $this->assertEquals($routeDefaults, $router->match(self::URL));
     }
 
-    public function testEventHandlerRequest()
+    public function testEventHandlerRequest(): void
     {
         $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $router = new DynamicRouter($this->context, $this->matcher, $this->generator, '', $eventDispatcher);
@@ -349,7 +333,7 @@ class DynamicRouterTest extends TestCase
         $this->matcher->expects($this->once())
             ->method('match')
             ->with(self::URL)
-            ->will($this->returnValue($routeDefaults))
+            ->willReturn($routeDefaults)
         ;
 
         $this->assertEquals($routeDefaults, $router->matchRequest($this->request));
@@ -372,7 +356,7 @@ class DynamicRouterTest extends TestCase
             ->method('dispatch')
             ->with($this->callback(function ($event) use ($that, $oldname, $newname, $oldparameters, $newparameters, $oldReferenceType, $newReferenceType) {
                 $that->assertInstanceOf(RouterGenerateEvent::class, $event);
-                if (empty($that->seen)) {
+                if (!$that->seen) {
                     // phpunit is calling the callback twice, and because we update the event the second time fails
                     $that->seen = true;
                 } else {
@@ -392,7 +376,7 @@ class DynamicRouterTest extends TestCase
         $this->generator->expects($this->once())
             ->method('generate')
             ->with($newname, $newparameters, $newReferenceType)
-            ->will($this->returnValue('http://test'))
+            ->willReturn('http://test')
         ;
 
         $this->assertEquals('http://test', $router->generate($oldname, $oldparameters, $oldReferenceType));

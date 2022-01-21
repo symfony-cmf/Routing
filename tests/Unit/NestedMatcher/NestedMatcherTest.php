@@ -11,6 +11,7 @@
 
 namespace Symfony\Cmf\Component\Routing\Tests\Unit\NestedMatcher;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Cmf\Component\Routing\NestedMatcher\FinalMatcherInterface;
 use Symfony\Cmf\Component\Routing\NestedMatcher\NestedMatcher;
@@ -23,12 +24,24 @@ use Symfony\Component\Routing\RouteCollection;
 
 class NestedMatcherTest extends TestCase
 {
+    /**
+     * @var MockObject&RouteProviderInterface
+     */
     private $provider;
 
+    /**
+     * @var MockObject&RouteFilterInterface
+     */
     private $routeFilter1;
 
+    /**
+     * @var MockObject&RouteFilterInterface
+     */
     private $routeFilter2;
 
+    /**
+     * @var MockObject&RouteFilterInterface
+     */
     private $finalMatcher;
 
     public function setUp(): void
@@ -39,7 +52,7 @@ class NestedMatcherTest extends TestCase
         $this->finalMatcher = $this->createMock(FinalMatcherInterface::class);
     }
 
-    public function testNestedMatcher()
+    public function testNestedMatcher(): void
     {
         $request = Request::create('/path/one');
         $routeCollection = new RouteCollection();
@@ -49,22 +62,22 @@ class NestedMatcherTest extends TestCase
         $this->provider->expects($this->once())
             ->method('getRouteCollectionForRequest')
             ->with($request)
-            ->will($this->returnValue($routeCollection))
+            ->willReturn($routeCollection)
         ;
         $this->routeFilter1->expects($this->once())
             ->method('filter')
             ->with($routeCollection, $request)
-            ->will($this->returnValue($routeCollection))
+            ->willReturn($routeCollection)
         ;
         $this->routeFilter2->expects($this->once())
             ->method('filter')
             ->with($routeCollection, $request)
-            ->will($this->returnValue($routeCollection))
+            ->willReturn($routeCollection)
         ;
         $this->finalMatcher->expects($this->once())
             ->method('finalMatch')
             ->with($routeCollection, $request)
-            ->will($this->returnValue(['foo' => 'bar']))
+            ->willReturn(['foo' => 'bar'])
         ;
 
         $matcher = new NestedMatcher($this->provider, $this->finalMatcher);
@@ -79,7 +92,7 @@ class NestedMatcherTest extends TestCase
     /**
      * Test priorities and exception handling.
      */
-    public function testNestedMatcherPriority()
+    public function testNestedMatcherPriority(): void
     {
         $request = Request::create('/path/one');
         $routeCollection = new RouteCollection();
@@ -93,7 +106,7 @@ class NestedMatcherTest extends TestCase
         $this->provider->expects($this->once())
             ->method('getRouteCollectionForRequest')
             ->with($request)
-            ->will($this->returnValue($routeCollection))
+            ->willReturn($routeCollection)
         ;
         $this->routeFilter1->expects($this->once())
             ->method('filter')
@@ -114,20 +127,20 @@ class NestedMatcherTest extends TestCase
 
         try {
             $matcher->matchRequest($request);
-            fail('nested matcher is eating exception');
+            $this->fail('nested matcher is eating exception');
         } catch (ResourceNotFoundException $e) {
             // expected
         }
     }
 
-    public function testProviderNoMatch()
+    public function testProviderNoMatch(): void
     {
         $request = Request::create('/path/one');
         $routeCollection = new RouteCollection();
         $this->provider->expects($this->once())
             ->method('getRouteCollectionForRequest')
             ->with($request)
-            ->will($this->returnValue($routeCollection))
+            ->willReturn($routeCollection)
         ;
         $this->finalMatcher->expects($this->never())
             ->method('finalMatch')

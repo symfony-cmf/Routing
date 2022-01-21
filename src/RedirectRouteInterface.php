@@ -11,6 +11,8 @@
 
 namespace Symfony\Cmf\Component\Routing;
 
+use Symfony\Component\Routing\Route as SymfonyRoute;
+
 /**
  * Document for redirection entries with the RedirectController.
  *
@@ -45,7 +47,7 @@ interface RedirectRouteInterface extends RouteObjectInterface
      *
      * @return string target absolute uri
      */
-    public function getUri();
+    public function getUri(): string;
 
     /**
      * Get the target route document this route redirects to.
@@ -53,33 +55,25 @@ interface RedirectRouteInterface extends RouteObjectInterface
      * If non-null, it is added as route into the parameters, which will lead
      * to have the generate call issued by the RedirectController to have
      * the target route in the parameters.
-     *
-     * @return RouteObjectInterface the route this redirection points to
      */
-    public function getRouteTarget();
+    public function getRouteTarget(): ?SymfonyRoute;
 
     /**
      * Get the name of the target route for working with the symfony standard
      * router.
-     *
-     * @return string target route name
      */
-    public function getRouteName();
+    public function getRouteName(): string;
 
     /**
      * Whether this should be a permanent or temporary redirect.
-     *
-     * @return bool
      */
-    public function isPermanent();
+    public function isPermanent(): bool;
 
     /**
      * Get the parameters for the target route router::generate().
      *
      * Note that for the DynamicRouter, you return the target route
      * document as field 'route' of the hashmap.
-     *
-     * @return array Information to build the route
      */
-    public function getParameters();
+    public function getParameters(): array;
 }

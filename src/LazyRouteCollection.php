@@ -17,24 +17,11 @@ use Symfony\Component\Routing\RouteCollection;
 
 class LazyRouteCollection extends RouteCollection
 {
-    /**
-     * The route provider for this generator.
-     *
-     * @var RouteProviderInterface
-     */
-    protected $provider;
+    private RouteProviderInterface $provider;
 
     public function __construct(RouteProviderInterface $provider)
     {
         $this->provider = $provider;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getIterator(): \ArrayIterator
-    {
-        return new \ArrayIterator($this->all());
     }
 
     /**
@@ -55,12 +42,7 @@ class LazyRouteCollection extends RouteCollection
         return $this->provider->getRoutesByNames(null);
     }
 
-    /**
-     * Gets a route by name.
-     *
-     * @param string $name The route name
-     */
-    public function get($name): ?Route
+    public function get(string $name): ?Route
     {
         try {
             return $this->provider->getRouteByName($name);

@@ -22,9 +22,7 @@ interface VersatileGeneratorInterface extends UrlGeneratorInterface
      * Convert a route identifier (name, content object etc) into a string
      * usable for logging and other debug/error messages.
      *
-     * @param array $parameters Which might hold a route object or content id or similar to include in the debug message
-     *
-     * @return string
+     * @param array<string, mixed> $parameters Which might hold a route object or content id or similar to include in the debug message
      */
-    public function getRouteDebugMessage(string $name, array $parameters = []);
+    public function getRouteDebugMessage(string $name, array $parameters = []): string;
 }

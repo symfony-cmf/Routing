@@ -31,13 +31,10 @@ use Symfony\Component\Routing\RouterInterface;
 
 class ChainRouterTest extends TestCase
 {
-    /**
-     * @var ChainRouter
-     */
-    private $router;
+    private ChainRouter $router;
 
     /**
-     * @var RequestContext|MockObject
+     * @var RequestContext&MockObject
      */
     private $context;
 
@@ -47,11 +44,11 @@ class ChainRouterTest extends TestCase
         $this->context = $this->createMock(RequestContext::class);
     }
 
-    public function testPriority()
+    public function testPriority(): void
     {
         $this->assertEquals([], $this->router->all());
 
-        list($low, $high) = $this->createRouterMocks();
+        [$low, $high] = $this->createRouterMocks();
 
         $this->router->add($low, 10);
         $this->router->add($high, 100);
@@ -62,12 +59,12 @@ class ChainRouterTest extends TestCase
         ], $this->router->all());
     }
 
-    public function testHasRouters()
+    public function testHasRouters(): void
     {
         $this->assertEquals([], $this->router->all());
         $this->assertFalse($this->router->hasRouters());
 
-        list($low, $high) = $this->createRouterMocks();
+        [$low, $high] = $this->createRouterMocks();
 
         $this->router->add($low, 10);
         $this->router->add($high, 100);
@@ -82,11 +79,11 @@ class ChainRouterTest extends TestCase
      * @covers \Symfony\Cmf\Component\Routing\ChainRouter::sortRouters
      * @covers \Symfony\Cmf\Component\Routing\ChainRouter::all
      */
-    public function testSortRouters()
+    public function testSortRouters(): void
     {
-        list($low, $medium, $high) = $this->createRouterMocks();
+        [$low, $medium, $high] = $this->createRouterMocks();
         // We're using a mock here and not $this->router because we need to ensure that the sorting operation is done only once.
-        /** @var $router ChainRouter|MockObject */
+        /** @var $router ChainRouter&MockObject */
         $router = $this->getMockBuilder(ChainRouter::class)
             ->disableOriginalConstructor()
             ->setMethods(['sortRouters'])
@@ -94,10 +91,8 @@ class ChainRouterTest extends TestCase
         $router
             ->expects($this->once())
             ->method('sortRouters')
-            ->will(
-                $this->returnValue(
-                    [$high, $medium, $low]
-                )
+            ->willReturn(
+                [$high, $medium, $low]
             )
         ;
 
@@ -118,12 +113,12 @@ class ChainRouterTest extends TestCase
      * @covers \Symfony\Cmf\Component\Routing\ChainRouter::all
      * @covers \Symfony\Cmf\Component\Routing\ChainRouter::add
      */
-    public function testReSortRouters()
+    public function testReSortRouters(): void
     {
-        list($low, $medium, $high) = $this->createRouterMocks();
+        [$low, $medium, $high] = $this->createRouterMocks();
         $highest = clone $high;
         // We're using a mock here and not $this->router because we need to ensure that the sorting operation is done only once.
-        /** @var $router ChainRouter|MockObject */
+        /** @var $router ChainRouter&MockObject */
         $router = $this->getMockBuilder(ChainRouter::class)
             ->disableOriginalConstructor()
             ->setMethods(['sortRouters'])
@@ -151,9 +146,9 @@ class ChainRouterTest extends TestCase
     /**
      * context must be propagated to chained routers and be stored locally.
      */
-    public function testContext()
+    public function testContext(): void
     {
-        list($low, $high) = $this->createRouterMocks();
+        [$low, $high] = $this->createRouterMocks();
 
         $low
             ->expects($this->once())
@@ -177,9 +172,9 @@ class ChainRouterTest extends TestCase
     /**
      * context must be propagated also when routers are added after context is set.
      */
-    public function testContextOrder()
+    public function testContextOrder(): void
     {
-        list($low, $high) = $this->createRouterMocks();
+        [$low, $high] = $this->createRouterMocks();
 
         $low
             ->expects($this->once())
@@ -206,10 +201,10 @@ class ChainRouterTest extends TestCase
     /**
      * The first usable match is used, no further routers are queried once a match is found.
      */
-    public function testMatch()
+    public function testMatch(): void
     {
         $url = '/test';
-        list($lower, $low, $high) = $this->createRouterMocks();
+        [$lower, $low, $high] = $this->createRouterMocks();
 
         $high
             ->expects($this->once())
@@ -221,7 +216,7 @@ class ChainRouterTest extends TestCase
             ->expects($this->once())
             ->method('match')
             ->with($url)
-            ->will($this->returnValue(['test']))
+            ->willReturn(['test'])
         ;
         $lower
             ->expects($this->never())
@@ -237,10 +232,10 @@ class ChainRouterTest extends TestCase
     /**
      * The first usable match is used, no further routers are queried once a match is found.
      */
-    public function testMatchRequest()
+    public function testMatchRequest(): void
     {
         $url = '/test';
-        list($lower, $low, $high) = $this->createRouterMocks();
+        [$lower, $low, $high] = $this->createRouterMocks();
 
         $highest = $this->createMock(RequestMatcher::class);
 
@@ -261,7 +256,7 @@ class ChainRouterTest extends TestCase
             ->expects($this->once())
             ->method('match')
             ->with($url)
-            ->will($this->returnValue(['test']))
+            ->willReturn(['test'])
         ;
         $lower
             ->expects($this->never())
@@ -280,11 +275,11 @@ class ChainRouterTest extends TestCase
     /**
      * Call match on ChainRouter that has RequestMatcher in the chain.
      */
-    public function testMatchWithRequestMatchers()
+    public function testMatchWithRequestMatchers(): void
     {
         $url = '/test';
 
-        list($low) = $this->createRouterMocks();
+        [$low] = $this->createRouterMocks();
 
         $high = $this->createMock(RequestMatcher::class);
 
@@ -300,7 +295,7 @@ class ChainRouterTest extends TestCase
             ->expects($this->once())
             ->method('match')
             ->with($url)
-            ->will($this->returnValue(['test']))
+            ->willReturn(['test'])
         ;
 
         $this->router->add($low, 10);
@@ -310,7 +305,7 @@ class ChainRouterTest extends TestCase
         $this->assertEquals(['test'], $result);
     }
 
-    public function provideBaseUrl()
+    public function provideBaseUrl(): array
     {
         return [
             [''],
@@ -323,11 +318,11 @@ class ChainRouterTest extends TestCase
      *
      * @dataProvider provideBaseUrl
      */
-    public function testMatchWithRequestMatchersAndContext($baseUrl)
+    public function testMatchWithRequestMatchersAndContext(string $baseUrl): void
     {
         $url = '//test';
 
-        list($low) = $this->createRouterMocks();
+        [$low] = $this->createRouterMocks();
 
         $high = $this->createMock(RequestMatcher::class);
 
@@ -348,7 +343,7 @@ class ChainRouterTest extends TestCase
             ->expects($this->once())
             ->method('match')
             ->with($url)
-            ->will($this->returnValue(['test']))
+            ->willReturn(['test'])
         ;
 
         $this->router->add($low, 10);
@@ -368,10 +363,10 @@ class ChainRouterTest extends TestCase
     /**
      * If there is a method not allowed but another router matches, that one is used.
      */
-    public function testMatchAndNotAllowed()
+    public function testMatchAndNotAllowed(): void
     {
         $url = '/test';
-        list($low, $high) = $this->createRouterMocks();
+        [$low, $high] = $this->createRouterMocks();
 
         $high
             ->expects($this->once())
@@ -383,9 +378,7 @@ class ChainRouterTest extends TestCase
             ->expects($this->once())
             ->method('match')
             ->with($url)
-            ->will($this->returnValue(
-                ['test']
-            ))
+            ->willReturn(['test'])
         ;
         $this->router->add($low, 10);
         $this->router->add($high, 100);
@@ -397,10 +390,10 @@ class ChainRouterTest extends TestCase
     /**
      * If there is a method not allowed but another router matches, that one is used.
      */
-    public function testMatchRequestAndNotAllowed()
+    public function testMatchRequestAndNotAllowed(): void
     {
         $url = '/test';
-        list($low, $high) = $this->createRouterMocks();
+        [$low, $high] = $this->createRouterMocks();
 
         $high
             ->expects($this->once())
@@ -412,7 +405,7 @@ class ChainRouterTest extends TestCase
             ->expects($this->once())
             ->method('match')
             ->with($url)
-            ->will($this->returnValue(['test']))
+            ->willReturn(['test'])
         ;
         $this->router->add($low, 10);
         $this->router->add($high, 100);
@@ -421,10 +414,10 @@ class ChainRouterTest extends TestCase
         $this->assertEquals(['test'], $result);
     }
 
-    public function testMatchNotFound()
+    public function testMatchNotFound(): void
     {
         $url = '/test';
-        list($low, $high) = $this->createRouterMocks();
+        [$low, $high] = $this->createRouterMocks();
 
         $high
             ->expects($this->once())
@@ -445,10 +438,10 @@ class ChainRouterTest extends TestCase
         $this->router->match('/test');
     }
 
-    public function testMatchRequestNotFound()
+    public function testMatchRequestNotFound(): void
     {
         $url = '/test';
-        list($low, $high) = $this->createRouterMocks();
+        [$low, $high] = $this->createRouterMocks();
 
         $high
             ->expects($this->once())
@@ -472,7 +465,7 @@ class ChainRouterTest extends TestCase
     /**
      * Call match on ChainRouter that has RequestMatcher in the chain.
      */
-    public function testMatchWithRequestMatchersNotFound()
+    public function testMatchWithRequestMatchersNotFound(): void
     {
         $url = '/test';
         $expected = Request::create('/test');
@@ -501,10 +494,10 @@ class ChainRouterTest extends TestCase
     /**
      * If any of the routers throws a not allowed exception and no other matches, we need to see this.
      */
-    public function testMatchMethodNotAllowed()
+    public function testMatchMethodNotAllowed(): void
     {
         $url = '/test';
-        list($low, $high) = $this->createRouterMocks();
+        [$low, $high] = $this->createRouterMocks();
 
         $high
             ->expects($this->once())
@@ -528,10 +521,10 @@ class ChainRouterTest extends TestCase
     /**
      * If any of the routers throws a not allowed exception and no other matches, we need to see this.
      */
-    public function testMatchRequestMethodNotAllowed()
+    public function testMatchRequestMethodNotAllowed(): void
     {
         $url = '/test';
-        list($low, $high) = $this->createRouterMocks();
+        [$low, $high] = $this->createRouterMocks();
 
         $high
             ->expects($this->once())
@@ -552,12 +545,12 @@ class ChainRouterTest extends TestCase
         $this->router->matchRequest(Request::create('/test'));
     }
 
-    public function testGenerate()
+    public function testGenerate(): void
     {
         $url = '/test';
         $name = 'test';
         $parameters = ['test' => 'value'];
-        list($lower, $low, $high) = $this->createRouterMocks();
+        [$lower, $low, $high] = $this->createRouterMocks();
 
         $high
             ->expects($this->once())
@@ -569,7 +562,7 @@ class ChainRouterTest extends TestCase
             ->expects($this->once())
             ->method('generate')
             ->with($name, $parameters, UrlGeneratorInterface::ABSOLUTE_PATH)
-            ->will($this->returnValue($url))
+            ->willReturn($url)
         ;
         $lower
             ->expects($this->never())
@@ -583,11 +576,11 @@ class ChainRouterTest extends TestCase
         $this->assertEquals($url, $result);
     }
 
-    public function testGenerateNotFound()
+    public function testGenerateNotFound(): void
     {
         $name = 'test';
         $parameters = ['test' => 'value'];
-        list($low, $high) = $this->createRouterMocks();
+        [$low, $high] = $this->createRouterMocks();
 
         $high
             ->expects($this->once())
@@ -610,7 +603,7 @@ class ChainRouterTest extends TestCase
     /**
      * This test currently triggers a deprecation notice because of ChainRouter BC.
      */
-    public function testGenerateWithObjectNameInParametersNotFoundVersatile()
+    public function testGenerateWithObjectNameInParametersNotFoundVersatile(): void
     {
         $name = RouteObjectInterface::OBJECT_BASED_ROUTE_NAME;
         $parameters = ['test' => 'value', '_route_object' => new \stdClass()];
@@ -633,7 +626,7 @@ class ChainRouterTest extends TestCase
         $this->router->generate($name, $parameters);
     }
 
-    public function testGenerateWithObjectNameInParameters()
+    public function testGenerateWithObjectNameInParameters(): void
     {
         $name = RouteObjectInterface::OBJECT_BASED_ROUTE_NAME;
         $parameters = ['test' => 'value', '_route_object' => new \stdClass()];
@@ -653,10 +646,10 @@ class ChainRouterTest extends TestCase
         $this->assertEquals('/foo/bar', $result);
     }
 
-    public function testWarmup()
+    public function testWarmup(): void
     {
         $dir = 'test_dir';
-        list($low) = $this->createRouterMocks();
+        [$low] = $this->createRouterMocks();
 
         $high = $this->createMock(WarmableRouterMock::class);
         $high
@@ -671,7 +664,7 @@ class ChainRouterTest extends TestCase
         $this->router->warmUp($dir);
     }
 
-    public function testRouteCollection()
+    public function testRouteCollection(): void
     {
         list($low, $high) = $this->createRouterMocks();
         $lowcol = new RouteCollection();
@@ -682,19 +675,18 @@ class ChainRouterTest extends TestCase
         $low
             ->expects($this->once())
             ->method('getRouteCollection')
-            ->will($this->returnValue($lowcol))
+            ->willReturn($lowcol)
         ;
         $high
             ->expects($this->once())
             ->method('getRouteCollection')
-            ->will($this->returnValue($highcol))
+            ->willReturn($highcol)
         ;
 
         $this->router->add($low, 10);
         $this->router->add($high, 100);
 
         $collection = $this->router->getRouteCollection();
-        $this->assertInstanceOf(RouteCollection::class, $collection);
 
         $names = [];
         foreach ($collection->all() as $name => $route) {
@@ -704,27 +696,10 @@ class ChainRouterTest extends TestCase
         $this->assertEquals(['high', 'low'], $names);
     }
 
-    public function testGenerateWithNameParameterObject()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-
-        $parameters = ['test' => 'value'];
-        $defaultRouter = $this->createMock(RouterInterface::class);
-
-        $defaultRouter
-            ->expects($this->never())
-            ->method('generate')
-        ;
-
-        $this->router->add($defaultRouter, 200);
-
-        $this->router->generate(new \stdClass(), $parameters);
-    }
-
     /**
-     * @return RouterInterface[]|MockObject[]
+     * @return array<RouterInterface&MockObject>
      */
-    protected function createRouterMocks()
+    protected function createRouterMocks(): array
     {
         return [
             $this->createMock(RouterInterface::class),

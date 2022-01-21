@@ -22,31 +22,29 @@ use Symfony\Component\DependencyInjection\Reference;
  * @author Henrik Bjornskov <henrik@bjrnskov.dk>
  * @author Magnus Nordlander <magnus@e-butik.se>
  */
-class RegisterRoutersPass implements CompilerPassInterface
+final class RegisterRoutersPass implements CompilerPassInterface
 {
-    /**
-     * @var string
-     */
-    protected $chainRouterService;
+    private string $chainRouterServiceName;
+    private string $routerTagName;
 
-    protected $routerTag;
-
-    public function __construct($chainRouterService = 'cmf_routing.router', $routerTag = 'router')
-    {
-        $this->chainRouterService = $chainRouterService;
-        $this->routerTag = $routerTag;
+    public function __construct(
+        string $chainRouterServiceName = 'cmf_routing.router',
+        string $routerTagName = 'router'
+    ) {
+        $this->chainRouterServiceName = $chainRouterServiceName;
+        $this->routerTagName = $routerTagName;
     }
 
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
-        if (!$container->hasDefinition($this->chainRouterService)) {
+        if (!$container->hasDefinition($this->chainRouterServiceName)) {
             return;
         }
 
-        $definition = $container->getDefinition($this->chainRouterService);
+        $definition = $container->getDefinition($this->chainRouterServiceName);
 
-        foreach ($container->findTaggedServiceIds($this->routerTag) as $id => $attributes) {
-            $priority = isset($attributes[0]['priority']) ? $attributes[0]['priority'] : 0;
+        foreach ($container->findTaggedServiceIds($this->routerTagName) as $id => $attributes) {
+            $priority = $attributes[0]['priority'] ?? 0;
 
             $definition->addMethodCall('add', [new Reference($id), $priority]);
         }

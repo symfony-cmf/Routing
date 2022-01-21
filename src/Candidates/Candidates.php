@@ -24,9 +24,9 @@ use Symfony\Component\HttpFoundation\Request;
 class Candidates implements CandidatesInterface
 {
     /**
-     * @var array
+     * @var string[]
      */
-    protected $locales;
+    protected array $locales;
 
     /**
      * A limit to apply to the number of candidates generated.
@@ -34,16 +34,14 @@ class Candidates implements CandidatesInterface
      * This is to prevent abusive requests with a lot of "/". The limit is per
      * batch, that is if a locale matches you could get as many as 2 * $limit
      * candidates if the URL has that many slashes.
-     *
-     * @var int
      */
-    protected $limit;
+    protected int $limit;
 
     /**
-     * @param array $locales The locales to support
-     * @param int   $limit   A limit to apply to the candidates generated
+     * @param string[] $locales The locales to support
+     * @param int      $limit   A limit to apply to the candidates generated
      */
-    public function __construct(array $locales = [], $limit = 20)
+    public function __construct(array $locales = [], int $limit = 20)
     {
         $this->setLocales($locales);
         $this->limit = $limit;
@@ -52,9 +50,9 @@ class Candidates implements CandidatesInterface
     /**
      * Set the locales to support by this strategy.
      *
-     * @param array $locales The locales to support
+     * @param string[] $locales The locales to support
      */
-    public function setLocales(array $locales)
+    public function setLocales(array $locales): void
     {
         $this->locales = $locales;
     }
@@ -64,7 +62,7 @@ class Candidates implements CandidatesInterface
      *
      * Always returns true.
      */
-    public function isCandidate($name)
+    public function isCandidate(string $name): bool
     {
         return true;
     }
@@ -74,14 +72,11 @@ class Candidates implements CandidatesInterface
      *
      * Does nothing.
      */
-    public function restrictQuery($queryBuilder)
+    public function restrictQuery(object $queryBuilder): void
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getCandidates(Request $request)
+    public function getCandidates(Request $request): array
     {
         $url = $request->getPathInfo();
         $candidates = $this->getCandidatesFor($url);
@@ -97,11 +92,9 @@ class Candidates implements CandidatesInterface
     /**
      * Determine the locale of this URL.
      *
-     * @param string $url The url to determine the locale from
-     *
      * @return string|bool The locale if $url starts with one of the allowed locales
      */
-    protected function determineLocale($url)
+    protected function determineLocale(string $url): string|bool
     {
         if (!count($this->locales)) {
             return false;
@@ -120,13 +113,10 @@ class Candidates implements CandidatesInterface
      *
      * $prefix is prepended to every candidate generated.
      *
-     * @param string $url    The URL to split
-     * @param string $prefix A prefix to prepend to every pattern
-     *
-     * @return array Paths that could represent routes that match $url and are
-     *               child of $prefix
+     * @return string[] Paths that could represent routes that match $url and are
+     *                  child of $prefix
      */
-    protected function getCandidatesFor($url, $prefix = '')
+    protected function getCandidatesFor(string $url, string $prefix = ''): array
     {
         $candidates = [];
         if ('/' !== $url) {

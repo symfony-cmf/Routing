@@ -20,32 +20,15 @@ class ChainRouteCollection extends RouteCollection
     /**
      * @var RouteCollection[]
      */
-    private $routeCollections = [];
+    private array $routeCollections = [];
 
-    /**
-     * @var RouteCollection
-     */
-    private $routeCollection;
+    private RouteCollection $additionalRoutes;
 
     public function __clone()
     {
         foreach ($this->routeCollections as $routeCollection) {
             $this->routeCollections[] = clone $routeCollection;
         }
-    }
-
-    /**
-     * Gets the current RouteCollection as an Iterator that includes all routes.
-     *
-     * It implements \IteratorAggregate.
-     *
-     * @see all()
-     *
-     * @return \ArrayIterator An \ArrayIterator object for iterating over routes
-     */
-    public function getIterator(): \ArrayIterator
-    {
-        return new \ArrayIterator($this->all());
     }
 
     /**
@@ -61,17 +44,10 @@ class ChainRouteCollection extends RouteCollection
         return $count;
     }
 
-    /**
-     * Adds a route.
-     *
-     * @param string $name     The route name
-     * @param Route  $route    A Route instance
-     * @param int    $priority The route priority
-     */
-    public function add($name, Route $route, int $priority = 0)
+    public function add(string $name, Route $route, int $priority = 0): void
     {
         $this->createInternalCollection();
-        $this->routeCollection->add($name, $route, $priority);
+        $this->additionalRoutes->add($name, $route, $priority);
     }
 
     /**
@@ -91,10 +67,8 @@ class ChainRouteCollection extends RouteCollection
 
     /**
      * Gets a route by name.
-     *
-     * @param string $name The route name
      */
-    public function get($name): ?Route
+    public function get(string $name): ?Route
     {
         foreach ($this->routeCollections as $routeCollection) {
             $route = $routeCollection->get($name);
@@ -106,12 +80,7 @@ class ChainRouteCollection extends RouteCollection
         return null;
     }
 
-    /**
-     * Removes a route or an array of routes by name from the collection.
-     *
-     * @param string|array $name The route name or an array of route names
-     */
-    public function remove($name)
+    public function remove(array|string $name): void
     {
         foreach ($this->routeCollections as $routeCollection) {
             $route = $routeCollection->get($name);
@@ -124,22 +93,13 @@ class ChainRouteCollection extends RouteCollection
     /**
      * Adds a route collection at the end of the current set by appending all
      * routes of the added collection.
-     *
-     * @param RouteCollection $collection A RouteCollection instance
      */
-    public function addCollection(RouteCollection $collection)
+    public function addCollection(RouteCollection $collection): void
     {
         $this->routeCollections[] = $collection;
     }
 
-    /**
-     * Adds a prefix to the path of all child routes.
-     *
-     * @param string $prefix       An optional prefix to add before each pattern of the route collection
-     * @param array  $defaults     An array of default values
-     * @param array  $requirements An array of requirements
-     */
-    public function addPrefix($prefix, array $defaults = [], array $requirements = [])
+    public function addPrefix(string $prefix, array $defaults = [], array $requirements = []): void
     {
         $this->createInternalCollection();
         foreach ($this->routeCollections as $routeCollection) {
@@ -147,14 +107,7 @@ class ChainRouteCollection extends RouteCollection
         }
     }
 
-    /**
-     * Sets the host pattern on all routes.
-     *
-     * @param string $pattern      The pattern
-     * @param array  $defaults     An array of default values
-     * @param array  $requirements An array of requirements
-     */
-    public function setHost($pattern, array $defaults = [], array $requirements = [])
+    public function setHost(?string $pattern, array $defaults = [], array $requirements = []): void
     {
         $this->createInternalCollection();
         foreach ($this->routeCollections as $routeCollection) {
@@ -162,14 +115,7 @@ class ChainRouteCollection extends RouteCollection
         }
     }
 
-    /**
-     * Adds defaults to all routes.
-     *
-     * An existing default value under the same name in a route will be overridden.
-     *
-     * @param array $defaults An array of default values
-     */
-    public function addDefaults(array $defaults)
+    public function addDefaults(array $defaults): void
     {
         $this->createInternalCollection();
         foreach ($this->routeCollections as $routeCollection) {
@@ -177,14 +123,7 @@ class ChainRouteCollection extends RouteCollection
         }
     }
 
-    /**
-     * Adds requirements to all routes.
-     *
-     * An existing requirement under the same name in a route will be overridden.
-     *
-     * @param array $requirements An array of requirements
-     */
-    public function addRequirements(array $requirements)
+    public function addRequirements(array $requirements): void
     {
         $this->createInternalCollection();
         foreach ($this->routeCollections as $routeCollection) {
@@ -192,14 +131,7 @@ class ChainRouteCollection extends RouteCollection
         }
     }
 
-    /**
-     * Adds options to all routes.
-     *
-     * An existing option value under the same name in a route will be overridden.
-     *
-     * @param array $options An array of options
-     */
-    public function addOptions(array $options)
+    public function addOptions(array $options): void
     {
         $this->createInternalCollection();
         foreach ($this->routeCollections as $routeCollection) {
@@ -207,12 +139,7 @@ class ChainRouteCollection extends RouteCollection
         }
     }
 
-    /**
-     * Sets the schemes (e.g. 'https') all child routes are restricted to.
-     *
-     * @param string|array $schemes The scheme or an array of schemes
-     */
-    public function setSchemes($schemes)
+    public function setSchemes(array|string $schemes): void
     {
         $this->createInternalCollection();
         foreach ($this->routeCollections as $routeCollection) {
@@ -220,12 +147,7 @@ class ChainRouteCollection extends RouteCollection
         }
     }
 
-    /**
-     * Sets the HTTP methods (e.g. 'POST') all child routes are restricted to.
-     *
-     * @param string|array $methods The method or an array of methods
-     */
-    public function setMethods($methods)
+    public function setMethods(array|string $methods): void
     {
         $this->createInternalCollection();
         foreach ($this->routeCollections as $routeCollection) {
@@ -244,29 +166,24 @@ class ChainRouteCollection extends RouteCollection
             return [];
         }
 
-        $resources = array_map(function (RouteCollection $routeCollection) {
+        $resources = array_map(static function (RouteCollection $routeCollection) {
             return $routeCollection->getResources();
         }, $this->routeCollections);
 
         return array_unique(call_user_func_array('array_merge', $resources));
     }
 
-    /**
-     * Adds a resource for this collection.
-     *
-     * @param ResourceInterface $resource A resource instance
-     */
-    public function addResource(ResourceInterface $resource)
+    public function addResource(ResourceInterface $resource): void
     {
         $this->createInternalCollection();
-        $this->routeCollection->addResource($resource);
+        $this->additionalRoutes->addResource($resource);
     }
 
-    private function createInternalCollection()
+    private function createInternalCollection(): void
     {
-        if (!$this->routeCollection instanceof RouteCollection) {
-            $this->routeCollection = new RouteCollection();
-            $this->routeCollections[] = $this->routeCollection;
+        if (!isset($this->additionalRoutes)) {
+            $this->additionalRoutes = new RouteCollection();
+            $this->routeCollections[] = $this->additionalRoutes;
         }
     }
 }

@@ -9,10 +9,12 @@
  * file that was distributed with this source code.
  */
 
-namespace Symfony\Cmf\Component\Routing;
+namespace Symfony\Cmf\Component\Routing\Tests\Unit\Routing;
 
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Cmf\Component\Routing\PagedRouteCollection;
+use Symfony\Cmf\Component\Routing\PagedRouteProviderInterface;
 use Symfony\Component\Routing\Route;
 
 /**
@@ -25,7 +27,7 @@ class PagedRouteCollectionTest extends TestCase
     /**
      * Contains a mocked route provider.
      *
-     * @var PagedRouteProviderInterface|MockObject
+     * @var PagedRouteProviderInterface&MockObject
      */
     private $routeProvider;
 
@@ -39,7 +41,7 @@ class PagedRouteCollectionTest extends TestCase
      *
      * @dataProvider providerIterator
      */
-    public function testIterator($amountRoutes, $routesLoadedInParallel, $expectedCalls = [])
+    public function testIterator(int $amountRoutes, int $routesLoadedInParallel, array $expectedCalls = []): void
     {
         $routes = [];
         for ($i = 0; $i < $amountRoutes; ++$i) {
@@ -73,7 +75,7 @@ class PagedRouteCollectionTest extends TestCase
     /**
      * Provides test data for testIterator().
      */
-    public function providerIterator()
+    public function providerIterator(): array
     {
         $data = [];
         // Non total routes.
@@ -93,14 +95,11 @@ class PagedRouteCollectionTest extends TestCase
         return $data;
     }
 
-    /**
-     * Tests the count() method.
-     */
-    public function testCount()
+    public function testCount(): void
     {
         $this->routeProvider->expects($this->once())
             ->method('getRoutesCount')
-            ->will($this->returnValue(12));
+            ->willReturn(12);
         $routeCollection = new PagedRouteCollection($this->routeProvider);
         $this->assertEquals(12, $routeCollection->count());
     }
@@ -108,19 +107,19 @@ class PagedRouteCollectionTest extends TestCase
     /**
      * Tests the rewind method once the iterator is at the end.
      */
-    public function testIteratingAndRewind()
+    public function testIteratingAndRewind(): void
     {
         $routes = [];
         for ($i = 0; $i < 30; ++$i) {
             $routes['test_'.$i] = new Route("/example-$i");
         }
-        $this->routeProvider->expects($this->any())
+        $this->routeProvider
             ->method('getRoutesPaged')
-            ->will($this->returnValueMap([
+            ->willReturnMap([
                 [0, 10, array_slice($routes, 0, 10)],
                 [10, 10, array_slice($routes, 9, 10)],
                 [20, 10, []],
-            ]));
+            ]);
 
         $routeCollection = new PagedRouteCollection($this->routeProvider, 10);
 

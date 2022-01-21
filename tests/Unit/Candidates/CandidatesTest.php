@@ -20,7 +20,7 @@ class CandidatesTest extends TestCase
     /**
      * Everything is a candidate.
      */
-    public function testIsCandidate()
+    public function testIsCandidate(): void
     {
         $candidates = new Candidates();
         $this->assertTrue($candidates->isCandidate('/routes'));
@@ -32,13 +32,13 @@ class CandidatesTest extends TestCase
      *
      * @doesNotPerformAssertions
      */
-    public function testRestrictQuery()
+    public function testRestrictQuery(): void
     {
         $candidates = new Candidates();
-        $candidates->restrictQuery(null);
+        $candidates->restrictQuery($this);
     }
 
-    public function testGetCandidates()
+    public function testGetCandidates(): void
     {
         $request = Request::create('/my/path.html');
 
@@ -56,7 +56,7 @@ class CandidatesTest extends TestCase
         );
     }
 
-    public function testGetCandidatesLocales()
+    public function testGetCandidatesLocales(): void
     {
         $candidates = new Candidates(['de', 'fr']);
 
@@ -89,7 +89,7 @@ class CandidatesTest extends TestCase
         );
     }
 
-    public function testGetCandidatesLimit()
+    public function testGetCandidatesLimit(): void
     {
         $candidates = new Candidates([], 1);
 

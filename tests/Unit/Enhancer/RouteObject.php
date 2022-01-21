@@ -20,7 +20,8 @@ use Symfony\Component\Routing\Route;
  */
 abstract class RouteObject extends Route implements RouteObjectInterface
 {
-    public function getRouteKey()
+    public function getRouteKey(): ?string
     {
+        return null;
     }
 }

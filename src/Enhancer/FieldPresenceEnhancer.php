@@ -19,56 +19,38 @@ use Symfony\Component\HttpFoundation\Request;
  *
  * @author David Buchmann
  */
-class FieldPresenceEnhancer implements RouteEnhancerInterface
+final class FieldPresenceEnhancer implements RouteEnhancerInterface
 {
     /**
      * Field name for the source field that must exist. If null, the target
      * field is always set if not already present.
-     *
-     * @var string|null
      */
-    protected $source;
+    private ?string $fieldName;
 
-    /**
-     * Field name to write the value into.
-     *
-     * @var string
-     */
-    protected $target;
+    private string $targetFieldName;
+    private mixed $value;
 
-    /**
-     * Value to set the target field to.
-     *
-     * @var string
-     */
-    private $value;
-
-    /**
-     * @param string|null $source the field name of the class, null to disable the check
-     * @param string      $target the field name to set from the map
-     * @param string      $value  value to set target field to if source field exists
-     */
-    public function __construct($source, $target, $value)
+    public function __construct(?string $fieldName, string $targetFieldName, mixed $value)
     {
-        $this->source = $source;
-        $this->target = $target;
+        $this->fieldName = $fieldName;
+        $this->targetFieldName = $targetFieldName;
         $this->value = $value;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function enhance(array $defaults, Request $request)
+    public function enhance(array $defaults, Request $request): array
     {
-        if (array_key_exists($this->target, $defaults)) {
+        if (array_key_exists($this->targetFieldName, $defaults)) {
             return $defaults;
         }
 
-        if (null !== $this->source && !array_key_exists($this->source, $defaults)) {
+        if (null !== $this->fieldName && !array_key_exists($this->fieldName, $defaults)) {
             return $defaults;
         }
 
-        $defaults[$this->target] = $this->value;
+        $defaults[$this->targetFieldName] = $this->value;
 
         return $defaults;
     }

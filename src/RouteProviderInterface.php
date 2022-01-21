@@ -13,7 +13,7 @@ namespace Symfony\Cmf\Component\Routing;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
-use Symfony\Component\Routing\Route;
+use Symfony\Component\Routing\Route as SymfonyRoute;
 use Symfony\Component\Routing\RouteCollection;
 
 /**
@@ -46,19 +46,15 @@ interface RouteProviderInterface
      * @return RouteCollection with all Routes that could potentially match
      *                         $request. Empty collection if nothing can match
      */
-    public function getRouteCollectionForRequest(Request $request);
+    public function getRouteCollectionForRequest(Request $request): RouteCollection;
 
     /**
      * Find the route using the provided route name.
      *
-     * @param string $name The route name to fetch
-     *
-     * @return Route
-     *
      * @throws RouteNotFoundException If there is no route with that name in
      *                                this repository
      */
-    public function getRouteByName($name);
+    public function getRouteByName(string $name): SymfonyRoute;
 
     /**
      * Find many routes by their names using the provided list of names.
@@ -78,11 +74,10 @@ interface RouteProviderInterface
      * that the DynamicRouter will only call this method once per
      * DynamicRouter::getRouteCollection() call.
      *
-     * @param array|null $names The list of names to retrieve, In case of null,
-     *                          the provider will determine what routes to return
+     * @param string[]|null $names The list of names to retrieve, In case of null,
+     *                             the provider will determine what routes to return
      *
-     * @return Route[] Iterable list with the keys being the names from the
-     *                 $names array
+     * @return SymfonyRoute[] Iterable list with the keys being the names from the $names array
      */
-    public function getRoutesByNames($names);
+    public function getRoutesByNames(?array $names): array;
 }
