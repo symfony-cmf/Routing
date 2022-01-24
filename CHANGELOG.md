@@ -4,6 +4,10 @@ Changelog
 3.0.0
 -----
 
+* [BC Break] Removed deprecated VersatileRouterInterface::supports, as only string route names are
+  allowed since Symfony 6.
+* Revoked the deprecation on Router::match because Symfony keeps offering the match without request
+  object.
 * Support Symfony 6
 
 2.3.4

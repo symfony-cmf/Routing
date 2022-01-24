@@ -154,10 +154,8 @@ class DynamicRouter implements RequestMatcherInterface, ChainedRouterInterface
      * RouteNotFoundException as documented below.
      *
      * The CMF routing system used to allow to pass route objects as $name to generate the route.
-     * Since Symfony 5.0, the UrlGeneratorInterface declares $name as string. We widen the contract
-     * for BC but deprecate passing non-strings.
-     * Instead, Pass the RouteObjectInterface::OBJECT_BASED_ROUTE_NAME as route name and the object
-     * in the parameters with key RouteObjectInterface::ROUTE_OBJECT.
+     * To generate the route from a string, pass the RouteObjectInterface::OBJECT_BASED_ROUTE_NAME
+     * as route name and the object in the parameters with key RouteObjectInterface::ROUTE_OBJECT.
      *
      * @param string $name The name of the route
      *
@@ -181,20 +179,6 @@ class DynamicRouter implements RequestMatcherInterface, ChainedRouterInterface
     }
 
     /**
-     * Delegate to our generator.
-     *
-     * {@inheritdoc}
-     */
-    public function supports($name)
-    {
-        if ($this->generator instanceof VersatileGeneratorInterface) {
-            return $this->generator->supports($name);
-        }
-
-        return is_string($name);
-    }
-
-    /**
      * Tries to match a URL path with a set of routes.
      *
      * If the matcher can not find information, it must throw one of the
@@ -209,14 +193,10 @@ class DynamicRouter implements RequestMatcherInterface, ChainedRouterInterface
      * @throws MethodNotAllowedException If the resource was found but the
      *                                   request method is not allowed
      *
-     * @deprecated Use matchRequest exclusively to avoid problems. This method will be removed in version 2.0
-     *
      * @api
      */
     public function match($pathinfo): array
     {
-        @trigger_error(__METHOD__.'() is deprecated since version 1.3 and will be removed in 2.0. Use matchRequest() instead.', E_USER_DEPRECATED);
-
         $request = Request::create($pathinfo);
         if ($this->eventDispatcher) {
             $event = new RouterMatchEvent();

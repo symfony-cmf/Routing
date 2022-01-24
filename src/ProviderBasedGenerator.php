@@ -70,16 +70,6 @@ class ProviderBasedGenerator extends UrlGenerator implements VersatileGeneratorI
     }
 
     /**
-     * Support a route object and any string as route name.
-     *
-     * {@inheritdoc}
-     */
-    public function supports($name)
-    {
-        return is_string($name) || $name instanceof SymfonyRoute;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function getRouteDebugMessage($name, array $parameters = [])

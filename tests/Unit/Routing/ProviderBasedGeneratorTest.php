@@ -116,13 +116,6 @@ class ProviderBasedGeneratorTest extends TestCase
         $this->assertEquals('result_url', $url);
     }
 
-    public function testSupports(): void
-    {
-        $this->assertTrue($this->generator->supports('foo/bar'));
-        $this->assertTrue($this->generator->supports($this->routeDocument));
-        $this->assertFalse($this->generator->supports($this));
-    }
-
     public function testGetRouteDebugMessage(): void
     {
         $this->assertStringContainsString('/some/key', $this->generator->getRouteDebugMessage(new RouteObject()));
