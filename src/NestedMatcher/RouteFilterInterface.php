@@ -42,5 +42,5 @@ interface RouteFilterInterface
      *                                   process when a match will no longer be
      *                                   possible
      */
-    public function filter(RouteCollection $collection, Request $request);
+    public function filter(RouteCollection $collection, Request $request): RouteCollection;
 }

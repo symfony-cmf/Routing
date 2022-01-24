@@ -24,5 +24,5 @@ interface RouteReferrersReadInterface
      *
      * @return Route[] Route instances that point to this content
      */
-    public function getRoutes();
+    public function getRoutes(): iterable;
 }

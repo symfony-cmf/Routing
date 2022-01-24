@@ -21,16 +21,11 @@ use Symfony\Component\Routing\RouteCollection;
 /**
  * Extended UrlMatcher to provide an additional interface and enhanced features.
  *
- * This class requires Symfony 2.2 for a refactoring done to the symfony UrlMatcher
- *
  * @author Larry Garfield
  */
 class UrlMatcher extends SymfonyUrlMatcher implements FinalMatcherInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function finalMatch(RouteCollection $collection, Request $request)
+    public function finalMatch(RouteCollection $collection, Request $request): array
     {
         $this->routes = $collection;
         $context = new RequestContext();
@@ -40,10 +35,7 @@ class UrlMatcher extends SymfonyUrlMatcher implements FinalMatcherInterface
         return $this->match($request->getPathInfo());
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getAttributes(Route $route, $name, array $attributes): array
+    protected function getAttributes(Route $route, string $name, array $attributes): array
     {
         if ($route instanceof RouteObjectInterface && is_string($route->getRouteKey())) {
             $name = $route->getRouteKey();

@@ -18,7 +18,7 @@ use Symfony\Component\DependencyInjection\Definition;
 
 class RegisterRouteEnhancersPassTest extends TestCase
 {
-    public function testRouteEnhancerPass()
+    public function testRouteEnhancerPass(): void
     {
         $serviceIds = [
             'test_enhancer' => [
@@ -33,23 +33,23 @@ class RegisterRouteEnhancersPassTest extends TestCase
         $builder->expects($this->atLeastOnce())
             ->method('hasDefinition')
             ->with('cmf_routing.dynamic_router')
-            ->will($this->returnValue(true))
+            ->willReturn(true)
         ;
-        $builder->expects($this->any())
+        $builder
             ->method('findTaggedServiceIds')
-            ->will($this->returnValue($serviceIds))
+            ->willReturn($serviceIds)
         ;
-        $builder->expects($this->any())
+        $builder
             ->method('getDefinition')
             ->with('cmf_routing.dynamic_router')
-            ->will($this->returnValue($definition))
+            ->willReturn($definition)
         ;
 
         $pass = new RegisterRouteEnhancersPass();
         $pass->process($builder);
 
         $calls = $definition->getMethodCalls();
-        $this->assertEquals(1, count($calls));
+        $this->assertCount(1, $calls);
         $this->assertEquals('addRouteEnhancer', $calls[0][0]);
     }
 
@@ -57,13 +57,13 @@ class RegisterRouteEnhancersPassTest extends TestCase
      * If there is no dynamic router defined in the container builder, nothing
      * should be processed.
      */
-    public function testNoDynamicRouter()
+    public function testNoDynamicRouter(): void
     {
         $builder = $this->createMock(ContainerBuilder::class);
         $builder->expects($this->once())
             ->method('hasDefinition')
             ->with('cmf_routing.dynamic_router')
-            ->will($this->returnValue(false))
+            ->willReturn(false)
         ;
 
         $pass = new RegisterRouteEnhancersPass();

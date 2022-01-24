@@ -28,38 +28,38 @@ interface RouteObjectInterface
     /**
      * Field name that will hold the route name that was matched.
      */
-    const ROUTE_NAME = '_route';
+    public const ROUTE_NAME = '_route';
 
     /**
      * Field name of the route object that was matched.
      */
-    const ROUTE_OBJECT = '_route_object';
+    public const ROUTE_OBJECT = '_route_object';
 
     /**
      * Field name for an explicit controller name to be used with this route.
      */
-    const CONTROLLER_NAME = '_controller';
+    public const CONTROLLER_NAME = '_controller';
 
     /**
      * Field name for an explicit template to be used with this route.
      * i.e. CmfContentBundle:StaticContent:index.html.twig.
      */
-    const TEMPLATE_NAME = '_template';
+    public const TEMPLATE_NAME = '_template';
 
     /**
      * Field name for the content of the current route, if any.
      */
-    const CONTENT_OBJECT = '_content';
+    public const CONTENT_OBJECT = '_content';
 
     /**
      * Field name for the content id of the current route, if any.
      */
-    const CONTENT_ID = '_content_id';
+    public const CONTENT_ID = '_content_id';
 
     /**
      * Route name used when passing a route object to the generator in $parameters[RouteObjectInterface::ROUTE_OBJECT].
      */
-    const OBJECT_BASED_ROUTE_NAME = 'cmf_routing_object';
+    public const OBJECT_BASED_ROUTE_NAME = 'cmf_routing_object';
 
     /**
      * Get the content document this route entry stands for. If non-null,
@@ -71,7 +71,7 @@ interface RouteObjectInterface
      *
      * @return object|null the document or entity this route entry points to
      */
-    public function getContent();
+    public function getContent(): ?object;
 
     /**
      * Get the route name.
@@ -86,5 +86,5 @@ interface RouteObjectInterface
      * @return string|null the route name or null to use the default name
      *                     (e.g. from route collection if known)
      */
-    public function getRouteKey();
+    public function getRouteKey(): ?string;
 }

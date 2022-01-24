@@ -21,15 +21,11 @@ interface RouteReferrersInterface extends RouteReferrersReadInterface
 {
     /**
      * Add a route to the collection.
-     *
-     * @param Route $route
      */
-    public function addRoute($route);
+    public function addRoute(Route $route): void;
 
     /**
      * Remove a route from the collection.
-     *
-     * @param Route $route
      */
-    public function removeRoute($route);
+    public function removeRoute(Route $route): void;
 }

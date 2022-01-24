@@ -11,7 +11,7 @@ on:
 
 jobs:
     test:
-        name: "PHP ${{ matrix.php-version }}, Symfony ${{ matrix.symfony-require }} ${{ matrix.dependencies }}"
+        name: "PHP ${{ matrix.php-version }}, Symfony ${{ matrix.symfony-version }} ${{ matrix.dependencies }}"
         runs-on: "ubuntu-20.04"
         env:
             SYMFONY_DEPRECATIONS_HELPER: weak
@@ -20,24 +20,14 @@ jobs:
             fail-fast: false
             matrix:
                 include:
-                    - php-version: "7.2"
+                    - php-version: "8.0"
                       dependencies: "lowest"
-                      symfony-require: "4.4.*"
-
-                    - php-version: "7.4"
-                      symfony-require: "4.4.*"
-
-                    - php-version: "7.4"
-                      symfony-require: "5.0.*"
 
                     - php-version: "8.0"
-                      symfony-require: "5.0.*"
-
-                    - php-version: "8.0"
-                      symfony-require: "6.0.*"
+                      symfony-version: "6"
 
                     - php-version: "8.1"
-                      symfony-require: "6.0.*"
+                      symfony-version: "6"
 
         steps:
             - name: "Checkout project"
@@ -52,13 +42,16 @@ jobs:
 
             - name: "Require Specific Symfony Version"
               if: "${{ matrix.symfony-version }}"
-              run: "composer require --no-update symfony/symfony:${{ matrix.symfony-version }}"
+              run: composer require --no-update symfony/flex && composer config extra.symfony.require ${{ matrix.symfony-version}}
 
             - name: "Install dependencies with Composer"
               uses: "ramsey/composer-install@v1"
               with:
                   dependency-versions: "${{ matrix.dependencies }}"
                   composer-options: "--prefer-dist"
+
+            - name: "Install phpunit"
+              run: vendor/bin/simple-phpunit install
 
             - name: "Execute test cases"
               run: |

@@ -11,6 +11,7 @@
 
 namespace Symfony\Cmf\Component\Routing;
 
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -21,19 +22,12 @@ use Symfony\Component\Routing\RouterInterface;
  */
 interface ChainRouterInterface extends RouterInterface, RequestMatcherInterface
 {
-    /**
-     * Add a Router to the index.
-     *
-     * @param RouterInterface $router   The router instance. Instead of RouterInterface, may also
-     *                                  be RequestMatcherInterface and UrlGeneratorInterface
-     * @param int             $priority The priority
-     */
-    public function add($router, $priority = 0);
+    public function add(RouterInterface|RequestMatcherInterface|UrlGeneratorInterface $router, int $priority = 0): void;
 
     /**
      * Sorts the routers and flattens them.
      *
-     * @return RouterInterface[] or RequestMatcherInterface and UrlGeneratorInterface
+     * @return array<RouterInterface|RequestMatcherInterface|UrlGeneratorInterface>
      */
-    public function all();
+    public function all(): array;
 }

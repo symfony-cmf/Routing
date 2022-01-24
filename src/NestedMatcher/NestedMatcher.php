@@ -30,64 +30,34 @@ use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
  * @author Larry Garfield
  * @author David Buchmann
  */
-class NestedMatcher implements RequestMatcherInterface
+final class NestedMatcher implements RequestMatcherInterface
 {
     /**
      * The route provider responsible for the first-pass match.
-     *
-     * @var RouteProviderInterface
      */
-    protected $routeProvider;
+    private RouteProviderInterface $routeProvider;
+
+    private FinalMatcherInterface $finalMatcher;
 
     /**
-     * The final matcher.
-     *
-     * @var FinalMatcherInterface
+     * @var RouteFilterInterface[]
      */
-    protected $finalMatcher;
+    private array $filters = [];
 
     /**
-     * An array of RouteFilterInterface objects.
+     * For caching the sorted $filters.
      *
      * @var RouteFilterInterface[]
      */
-    protected $filters = [];
+    private array $sortedFilters = [];
 
-    /**
-     * Array of RouteFilterInterface objects, sorted.
-     *
-     * @var RouteFilterInterface[]
-     */
-    protected $sortedFilters = [];
-
-    /**
-     * Constructs a new NestedMatcher.
-     *
-     * @param RouteProviderInterface $provider The route provider this matcher
-     *                                         should use
-     * @param FinalMatcherInterface  $final    The Final Matcher to match the
-     *                                         routes
-     */
-    public function __construct(
-        RouteProviderInterface $provider = null,
-        FinalMatcherInterface $final = null
-    ) {
-        if (null !== $provider) {
-            $this->setRouteProvider($provider);
-        }
-        if (null !== $final) {
-            $this->setFinalMatcher($final);
-        }
+    public function __construct(RouteProviderInterface $provider, FinalMatcherInterface $final)
+    {
+        $this->setRouteProvider($provider);
+        $this->setFinalMatcher($final);
     }
 
-    /**
-     * Sets the route provider for the matching plan.
-     *
-     * @param RouteProviderInterface $provider A source of routes
-     *
-     * @return NestedMatcher this object to have a fluent interface
-     */
-    public function setRouteProvider(RouteProviderInterface $provider)
+    public function setRouteProvider(RouteProviderInterface $provider): static
     {
         $this->routeProvider = $provider;
 
@@ -102,12 +72,10 @@ class NestedMatcher implements RequestMatcherInterface
      * @param int $priority (optional) The priority of the
      *                      filter. Higher number filters will
      *                      be used first. Defaults to 0
-     *
-     * @return NestedMatcher this object to have a fluent interface
      */
-    public function addRouteFilter(RouteFilterInterface $filter, $priority = 0)
+    public function addRouteFilter(RouteFilterInterface $filter, int $priority = 0): static
     {
-        if (empty($this->filters[$priority])) {
+        if (!\array_key_exists($priority, $this->filters)) {
             $this->filters[$priority] = [];
         }
 
@@ -117,24 +85,13 @@ class NestedMatcher implements RequestMatcherInterface
         return $this;
     }
 
-    /**
-     * Sets the final matcher for the matching plan.
-     *
-     * @param FinalMatcherInterface $final The final matcher that will have to
-     *                                     pick the route that will be used
-     *
-     * @return NestedMatcher this object to have a fluent interface
-     */
-    public function setFinalMatcher(FinalMatcherInterface $final)
+    public function setFinalMatcher(FinalMatcherInterface $final): static
     {
         $this->finalMatcher = $final;
 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function matchRequest(Request $request): array
     {
         $collection = $this->routeProvider->getRouteCollectionForRequest($request);
@@ -156,7 +113,7 @@ class NestedMatcher implements RequestMatcherInterface
      *
      * @return RouteFilterInterface[] the filters ordered by priority
      */
-    public function getRouteFilters()
+    public function getRouteFilters(): array
     {
         if (0 === count($this->sortedFilters)) {
             $this->sortedFilters = $this->sortFilters();
@@ -172,7 +129,7 @@ class NestedMatcher implements RequestMatcherInterface
      *
      * @return RouteFilterInterface[] the sorted filters
      */
-    protected function sortFilters()
+    private function sortFilters(): array
     {
         if (0 === count($this->filters)) {
             return [];

@@ -22,18 +22,14 @@ use Symfony\Component\HttpFoundation\Request;
 interface CandidatesInterface
 {
     /**
-     * @return array a list of paths
+     * @return string[] a list of paths
      */
-    public function getCandidates(Request $request);
+    public function getCandidates(Request $request): array;
 
     /**
      * Determine if $name is a valid candidate, e.g. in getRouteByName.
-     *
-     * @param string $name
-     *
-     * @return bool
      */
-    public function isCandidate($name);
+    public function isCandidate(string $name): bool;
 
     /**
      * Provide a best effort query restriction to limit a query to only find
@@ -41,5 +37,5 @@ interface CandidatesInterface
      *
      * @param object $queryBuilder A query builder suited for the storage backend
      */
-    public function restrictQuery($queryBuilder);
+    public function restrictQuery(object $queryBuilder): void;
 }

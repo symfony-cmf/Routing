@@ -19,6 +19,9 @@ use Symfony\Component\HttpFoundation\Request;
 
 class ContentRepositoryEnhancerTest extends TestCase
 {
+    private ContentRepositoryEnhancer $mapper;
+    private Request $request;
+
     /**
      * {@inheritdoc}
      */
@@ -27,7 +30,7 @@ class ContentRepositoryEnhancerTest extends TestCase
         $cRepository = $this->createMock(ContentRepositoryInterface::class);
         $cRepository
             ->method('findById')
-            ->will($this->returnValue('document'))
+            ->willReturn('document')
         ;
         $this->mapper = new ContentRepositoryEnhancer($cRepository);
 
@@ -37,15 +40,12 @@ class ContentRepositoryEnhancerTest extends TestCase
     /**
      * @dataProvider dataEnhancer
      */
-    public function testEnhancer($defaults, $expected)
+    public function testEnhancer(array $defaults, array $expected): void
     {
         $this->assertEquals($expected, $this->mapper->enhance($defaults, $this->request));
     }
 
-    /**
-     * @return array
-     */
-    public function dataEnhancer()
+    public function dataEnhancer(): array
     {
         return [
             'empty' => [[], []],

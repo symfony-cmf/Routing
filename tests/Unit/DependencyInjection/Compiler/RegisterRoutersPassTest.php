@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Symfony\Cmf\Routing\Tests\Unit\DependencyInjection\Compiler;
+namespace Symfony\Cmf\Component\Routing\Tests\Unit\DependencyInjection\Compiler;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Cmf\Component\Routing\DependencyInjection\Compiler\RegisterRoutersPass;
@@ -22,7 +22,7 @@ class RegisterRoutersPassTest extends TestCase
     /**
      * @dataProvider getValidRoutersData
      */
-    public function testValidRouters($name, $priority = null)
+    public function testValidRouters(string $name, ?int $priority = null): void
     {
         $services = [];
         $services[$name] = [0 => ['priority' => $priority]];
@@ -45,24 +45,24 @@ class RegisterRoutersPassTest extends TestCase
             }));
 
         $builder = $this->createMock(ContainerBuilder::class);
-        $builder->expects($this->any())
+        $builder
             ->method('hasDefinition')
             ->with('cmf_routing.router')
-            ->will($this->returnValue(true));
+            ->willReturn(true);
 
         $builder->expects($this->atLeastOnce())
             ->method('findTaggedServiceIds')
-            ->will($this->returnValue($services));
+            ->willReturn($services);
 
         $builder->expects($this->atLeastOnce())
             ->method('getDefinition')
-            ->will($this->returnValue($definition));
+            ->willReturn($definition);
 
         $registerRoutersPass = new RegisterRoutersPass();
         $registerRoutersPass->process($builder);
     }
 
-    public function getValidRoutersData()
+    public function getValidRoutersData(): array
     {
         return [
             ['my_router'],
@@ -75,13 +75,13 @@ class RegisterRoutersPassTest extends TestCase
      * If there is no chain router defined in the container builder, nothing
      * should be processed.
      */
-    public function testNoChainRouter()
+    public function testNoChainRouter(): void
     {
         $builder = $this->createMock(ContainerBuilder::class);
         $builder->expects($this->once())
             ->method('hasDefinition')
             ->with('cmf_routing.router')
-            ->will($this->returnValue(false))
+            ->willReturn(false)
         ;
 
         $builder->expects($this->never())

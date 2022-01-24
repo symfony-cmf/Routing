@@ -27,14 +27,11 @@ interface FinalMatcherInterface
     /**
      * Matches a request against a route collection and returns exactly one result.
      *
-     * @param RouteCollection $collection The collection against which to match
-     * @param Request         $request    The request to match
-     *
-     * @return array An array of parameters
+     * @return array<string, mixed> An array of parameters from the route match
      *
      * @throws ResourceNotFoundException if none of the routes in $collection
      *                                   matches $request
      * @throws MethodNotAllowedException If the resource was found but the request method is not allowed
      */
-    public function finalMatch(RouteCollection $collection, Request $request);
+    public function finalMatch(RouteCollection $collection, Request $request): array;
 }

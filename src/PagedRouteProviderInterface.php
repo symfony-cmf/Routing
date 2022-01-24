@@ -28,6 +28,8 @@
 
 namespace Symfony\Cmf\Component\Routing;
 
+use Symfony\Component\Routing\Route as SymfonyRoute;
+
 /**
  * Interface for a provider which allows to retrieve a limited amount of routes.
  */
@@ -39,21 +41,16 @@ interface PagedRouteProviderInterface extends RouteProviderInterface
      * In case you want to iterate over all routes, you want to avoid to load
      * all routes at once.
      *
-     * @param int $offset
-     *                    The sequence will start with that offset in the list of all routes
-     * @param int $length [optional]
-     *                    The sequence will have that many routes in it. If no length is
-     *                    specified all routes are returned
+     * @param int  $offset The sequence will start with that offset in the list of all routes
+     * @param ?int $length The sequence will have that many routes in it. If no length is
+     *                     specified all routes are returned
      *
-     * @return \Symfony\Component\Routing\Route[]
-     *                                            Routes keyed by the route name
+     * @return SymfonyRoute[] Routes keyed by the route name
      */
-    public function getRoutesPaged($offset, $length = null);
+    public function getRoutesPaged(int $offset, ?int $length = null): array;
 
     /**
      * Determines the total amount of routes.
-     *
-     * @return int
      */
-    public function getRoutesCount();
+    public function getRoutesCount(): int;
 }

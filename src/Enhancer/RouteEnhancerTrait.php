@@ -25,23 +25,16 @@ trait RouteEnhancerTrait
     /**
      * @var RouteEnhancerInterface[][]
      */
-    private $enhancers = [];
+    private array $enhancers = [];
 
     /**
      * Cached sorted list of enhancers.
      *
      * @var RouteEnhancerInterface[]
      */
-    private $sortedEnhancers = [];
+    private array $sortedEnhancers = [];
 
-    /**
-     * Apply the route enhancers to the defaults, according to priorities.
-     *
-     * @param array $defaults
-     *
-     * @return array
-     */
-    protected function applyRouteEnhancers($defaults, Request $request)
+    protected function applyRouteEnhancers(array $defaults, Request $request): array
     {
         foreach ($this->getRouteEnhancers() as $enhancer) {
             $defaults = $enhancer->enhance($defaults, $request);
@@ -56,12 +49,8 @@ trait RouteEnhancerTrait
      *
      * The order of the enhancers is determined by the priority, the higher the
      * value, the earlier the enhancer is run.
-     *
-     * @param int $priority
-     *
-     * @return self
      */
-    public function addRouteEnhancer(RouteEnhancerInterface $enhancer, $priority = 0)
+    public function addRouteEnhancer(RouteEnhancerInterface $enhancer, int $priority = 0): static
     {
         if (empty($this->enhancers[$priority])) {
             $this->enhancers[$priority] = [];
@@ -78,7 +67,7 @@ trait RouteEnhancerTrait
      *
      * @return RouteEnhancerInterface[] the enhancers ordered by priority
      */
-    public function getRouteEnhancers()
+    public function getRouteEnhancers(): array
     {
         if (0 === count($this->sortedEnhancers)) {
             $this->sortedEnhancers = $this->sortRouteEnhancers();
@@ -94,7 +83,7 @@ trait RouteEnhancerTrait
      *
      * @return RouteEnhancerInterface[] the sorted enhancers
      */
-    private function sortRouteEnhancers()
+    private function sortRouteEnhancers(): array
     {
         if (0 === count($this->enhancers)) {
             return [];

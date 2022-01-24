@@ -11,6 +11,8 @@
 
 namespace Symfony\Cmf\Component\Routing;
 
+use Symfony\Component\Routing\Route as SymfonyRoute;
+
 /**
  * Provides a route collection which avoids having all routes in memory.
  *
@@ -19,45 +21,33 @@ namespace Symfony\Cmf\Component\Routing;
  */
 class PagedRouteCollection implements \Iterator, \Countable
 {
-    /**
-     * @var PagedRouteProviderInterface
-     */
-    protected $provider;
+    private PagedRouteProviderInterface $provider;
 
     /**
      * Stores the amount of routes which are loaded in parallel and kept in
      * memory.
-     *
-     * @var int
      */
-    protected $routesBatchSize;
+    private int $routesBatchSize;
 
     /**
      * Contains the current item the iterator points to.
-     *
-     * @var int
      */
-    protected $current = -1;
+    private int $current = -1;
 
     /**
      * Stores the current loaded routes.
      *
-     * @var \Symfony\Component\Routing\Route[]
+     * @var SymfonyRoute[]
      */
-    protected $currentRoutes;
+    private ?array $currentRoutes = null;
 
-    public function __construct(PagedRouteProviderInterface $pagedRouteProvider, $routesBatchSize = 50)
+    public function __construct(PagedRouteProviderInterface $pagedRouteProvider, int $routesBatchSize = 50)
     {
         $this->provider = $pagedRouteProvider;
         $this->routesBatchSize = $routesBatchSize;
     }
 
-    /**
-     * Loads the next routes into the elements array.
-     *
-     * @param int $offset The offset used in the db query
-     */
-    protected function loadNextElements($offset)
+    private function loadNextElements(int $offset): void
     {
         // If the last batch was smaller than the batch size, this means there
         // are no more routes available.
@@ -68,11 +58,7 @@ class PagedRouteCollection implements \Iterator, \Countable
         }
     }
 
-    /**
-     * @return mixed
-     */
-    #[\ReturnTypeWillChange]
-    public function current()
+    public function current(): bool|SymfonyRoute
     {
         return current($this->currentRoutes);
     }
@@ -89,11 +75,7 @@ class PagedRouteCollection implements \Iterator, \Countable
         ++$this->current;
     }
 
-    /**
-     * @return mixed
-     */
-    #[\ReturnTypeWillChange]
-    public function key()
+    public function key(): string|int|null
     {
         return key($this->currentRoutes);
     }

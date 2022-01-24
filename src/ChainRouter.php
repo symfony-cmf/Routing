@@ -12,6 +12,7 @@
 namespace Symfony\Cmf\Component\Routing;
 
 use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\CacheWarmer\WarmableInterface;
 use Symfony\Component\Routing\Exception\MethodNotAllowedException;
@@ -19,6 +20,7 @@ use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\Matcher\RequestMatcherInterface;
+use Symfony\Component\Routing\Matcher\UrlMatcherInterface;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\RequestContextAwareInterface;
 use Symfony\Component\Routing\RouteCollection;
@@ -32,39 +34,27 @@ use Symfony\Component\Routing\RouterInterface;
  */
 class ChainRouter implements ChainRouterInterface, WarmableInterface
 {
-    /**
-     * @var RequestContext|null
-     */
-    private $context;
+    private ?RequestContext $context = null;
 
     /**
      * Array of arrays of routers grouped by priority.
      *
-     * @var RouterInterface[][] Priority => RouterInterface[]
+     * @var array<int, array<RouterInterface|RequestMatcherInterface|UrlGeneratorInterface>> Priority => RouterInterface[]
      */
-    private $routers = [];
+    private array $routers = [];
 
     /**
      * @var RouterInterface[] List of routers, sorted by priority
      */
-    private $sortedRouters = [];
+    private array $sortedRouters = [];
 
-    /**
-     * @var RouteCollection
-     */
-    private $routeCollection;
+    private RouteCollection $routeCollection;
 
-    /**
-     * @var LoggerInterface|null
-     */
-    protected $logger;
+    private LoggerInterface $logger;
 
-    /**
-     * @param LoggerInterface $logger
-     */
-    public function __construct(LoggerInterface $logger = null)
+    public function __construct(?LoggerInterface $logger = null)
     {
-        $this->logger = $logger;
+        $this->logger = $logger ?: new NullLogger();
     }
 
     public function getContext(): RequestContext
@@ -76,16 +66,8 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
         return $this->context;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function add($router, $priority = 0)
+    public function add(RouterInterface|RequestMatcherInterface|UrlGeneratorInterface $router, $priority = 0): void
     {
-        if (!$router instanceof RouterInterface
-            && !($router instanceof RequestMatcherInterface && $router instanceof UrlGeneratorInterface)
-        ) {
-            throw new \InvalidArgumentException(sprintf('%s is not a valid router.', get_class($router)));
-        }
         if (empty($this->routers[$priority])) {
             $this->routers[$priority] = [];
         }
@@ -94,10 +76,7 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
         $this->sortedRouters = [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function all()
+    public function all(): array
     {
         if (0 === count($this->sortedRouters)) {
             $this->sortedRouters = $this->sortRouters();
@@ -122,7 +101,7 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
      *
      * @return RouterInterface[]
      */
-    protected function sortRouters()
+    protected function sortRouters(): array
     {
         if (0 === count($this->routers)) {
             return [];
@@ -140,7 +119,7 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
      *
      * Note: You should use matchRequest if you can.
      */
-    public function match($pathinfo): array
+    public function match(string $pathinfo): array
     {
         return $this->doMatch($pathinfo);
     }
@@ -161,14 +140,11 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
      * At least the  url must be provided, if a request is additionally provided
      * the request takes precedence.
      *
-     * @param string  $pathinfo
-     * @param Request $request
-     *
-     * @return array An array of parameters
+     * @return array<string, mixed> An array of parameters
      *
      * @throws ResourceNotFoundException If no router matched
      */
-    private function doMatch($pathinfo, Request $request = null)
+    private function doMatch(string $pathinfo, ?Request $request = null): array
     {
         $methodNotAllowed = null;
 
@@ -184,18 +160,15 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
 
                     return $router->matchRequest($requestForMatching);
                 }
-
-                // every router implements the match method
-                return $router->match($pathinfo);
-            } catch (ResourceNotFoundException $e) {
-                if ($this->logger) {
-                    $this->logger->debug('Router '.get_class($router).' was not able to match, message "'.$e->getMessage().'"');
+                if ($router instanceof UrlMatcherInterface) {
+                    return $router->match($pathinfo);
                 }
+                // otherwise this was only an url generator, move on.
+            } catch (ResourceNotFoundException $e) {
+                $this->logger->debug('Router '.get_class($router).' was not able to match, message "'.$e->getMessage().'"');
                 // Needs special care
             } catch (MethodNotAllowedException $e) {
-                if ($this->logger) {
-                    $this->logger->debug('Router '.get_class($router).' throws MethodNotAllowedException with message "'.$e->getMessage().'"');
-                }
+                $this->logger->debug('Router '.get_class($router).' throws MethodNotAllowedException with message "'.$e->getMessage().'"');
                 $methodNotAllowed = $e;
             }
         }
@@ -210,17 +183,11 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
     /**
      * {@inheritdoc}
      *
-     * @param string $name
-     *
      * Loops through all registered routers and returns a router if one is found.
      * It will always return the first route generated.
      */
-    public function generate($name, $parameters = [], $absolute = UrlGeneratorInterface::ABSOLUTE_PATH): string
+    public function generate(string $name, array $parameters = [], int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH): string
     {
-        if (!is_string($name)) {
-            throw new \InvalidArgumentException('The "$name" parameter should of type string.');
-        }
-
         $debug = [];
 
         foreach ($this->all() as $router) {
@@ -231,13 +198,11 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
             }
 
             try {
-                return $router->generate($name, $parameters, $absolute);
+                return $router->generate($name, $parameters, $referenceType);
             } catch (RouteNotFoundException $e) {
                 $hint = $this->getErrorMessage($name, $router, $parameters);
                 $debug[] = $hint;
-                if ($this->logger) {
-                    $this->logger->debug('Router '.get_class($router)." was unable to generate route. Reason: '$hint': ".$e->getMessage());
-                }
+                $this->logger->debug('Router '.get_class($router)." was unable to generate route. Reason: '$hint': ".$e->getMessage());
             }
         }
 
@@ -255,12 +220,8 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
      * Rebuild the request object from a URL with the help of the RequestContext.
      *
      * If the request context is not set, this returns the request object built from $pathinfo.
-     *
-     * @param string $pathinfo
-     *
-     * @return Request
      */
-    private function rebuildRequest($pathinfo)
+    private function rebuildRequest(string $pathinfo): Request
     {
         $context = $this->getContext();
 
@@ -284,8 +245,11 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
         return Request::create($uri, $context->getMethod(), $context->getParameters(), [], [], $server);
     }
 
-    private function getErrorMessage($name, $router = null, $parameters = null)
-    {
+    private function getErrorMessage(
+        string $name,
+        RouterInterface|UrlGeneratorInterface|RequestMatcherInterface $router = null,
+        array $parameters = null
+    ): string {
         if ($router instanceof VersatileGeneratorInterface) {
             // the $parameters are not forced to be array, but versatile generator does typehint it
             if (!is_array($parameters)) {
@@ -304,10 +268,7 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
         return "Route '$displayName' not found";
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setContext(RequestContext $context)
+    public function setContext(RequestContext $context): void
     {
         foreach ($this->all() as $router) {
             if ($router instanceof RequestContextAwareInterface) {
@@ -318,41 +279,32 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
         $this->context = $context;
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * check for each contained router if it can warmup
-     */
-    public function warmUp($cacheDir)
+    public function warmUp(string $cacheDir): array
     {
         foreach ($this->all() as $router) {
             if ($router instanceof WarmableInterface) {
                 $router->warmUp($cacheDir);
             }
         }
+
+        return [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getRouteCollection()
+    public function getRouteCollection(): RouteCollection
     {
-        if (!$this->routeCollection instanceof RouteCollection) {
+        if (!isset($this->routeCollection)) {
             $this->routeCollection = new ChainRouteCollection();
             foreach ($this->all() as $router) {
-                $this->routeCollection->addCollection($router->getRouteCollection());
+                if ($router instanceof RouterInterface) {
+                    $this->routeCollection->addCollection($router->getRouteCollection());
+                }
             }
         }
 
         return $this->routeCollection;
     }
 
-    /**
-     * Identify if any routers have been added into the chain yet.
-     *
-     * @return bool
-     */
-    public function hasRouters()
+    public function hasRouters(): bool
     {
         return 0 < count($this->routers);
     }

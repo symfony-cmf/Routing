@@ -24,32 +24,27 @@ use Symfony\Component\HttpFoundation\Request;
  *
  * @author David Buchmann
  */
-class FieldByClassEnhancer implements RouteEnhancerInterface
+final class FieldByClassEnhancer implements RouteEnhancerInterface
 {
-    /**
-     * @var string field for the source class
-     */
-    protected $source;
+    private string $classFieldName;
 
     /**
      * @var string field to write hashmap lookup result into
      */
-    protected $target;
+    private string $targetFieldName;
 
     /**
-     * @var array containing the mapping between a class name and the target value
+     * @var array<string, string> Hashmap from class name to target value
      */
-    protected $map;
+    private array $map;
 
     /**
-     * @param string $source the field name of the class
-     * @param string $target the field name to set from the map
-     * @param array  $map    the map of class names to field values
+     * @param array<string, mixed> $map the map of class names to field values
      */
-    public function __construct($source, $target, $map)
+    public function __construct(string $classFieldName, string $targetFieldName, array $map)
     {
-        $this->source = $source;
-        $this->target = $target;
+        $this->classFieldName = $classFieldName;
+        $this->targetFieldName = $targetFieldName;
         $this->map = $map;
     }
 
@@ -59,10 +54,10 @@ class FieldByClassEnhancer implements RouteEnhancerInterface
      *
      * {@inheritdoc}
      */
-    public function enhance(array $defaults, Request $request)
+    public function enhance(array $defaults, Request $request): array
     {
-        if (array_key_exists($this->target, $defaults)
-            || !array_key_exists($this->source, $defaults)
+        if (array_key_exists($this->targetFieldName, $defaults)
+            || !array_key_exists($this->classFieldName, $defaults)
         ) {
             return $defaults;
         }
@@ -71,9 +66,9 @@ class FieldByClassEnhancer implements RouteEnhancerInterface
         // class extends the specified class
         // i.e. phpcr-odm generates proxy class for the content.
         foreach ($this->map as $class => $value) {
-            if ($defaults[$this->source] instanceof $class) {
+            if ($defaults[$this->classFieldName] instanceof $class) {
                 // found a matching entry in the map
-                $defaults[$this->target] = $value;
+                $defaults[$this->targetFieldName] = $value;
 
                 return $defaults;
             }

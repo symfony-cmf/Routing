@@ -6,9 +6,15 @@ Changelog
 
 * [BC Break] Removed deprecated VersatileRouterInterface::supports, as only string route names are
   allowed since Symfony 6.
+* [BC Break] As with Symfony itself, the route name now must be a `string`. As noted in
+  the changes for CMF Routing 2.3, to generate a route from an object is to use
+  `RouteObjectInterface::OBJECT_BASED_ROUTE_NAME` (`cmf_routing_object`) as
+  route name and pass the route object in the parameters with key
+  `RouteObjectInterface::ROUTE_OBJECT` (`_route_object`).
+* [BC Break] Added static type declarations to interfaces and classes.
 * Revoked the deprecation on Router::match because Symfony keeps offering the match without request
   object.
-* Support Symfony 6
+* Support Symfony 6, dropped support for older Symfony versions.
 
 2.3.4
 -----

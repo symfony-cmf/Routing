@@ -22,37 +22,29 @@ use Symfony\Component\DependencyInjection\Reference;
  * @author Daniel Leech <dan.t.leech@gmail.com>
  * @author Nathaniel Catchpole (catch)
  */
-class RegisterRouteEnhancersPass implements CompilerPassInterface
+final class RegisterRouteEnhancersPass implements CompilerPassInterface
 {
-    /**
-     * @var string Service name of the dynamic router
-     */
-    private $dynamicRouterService;
+    private string $dynamicRouterServiceName;
+    private string $enhancerTagName;
 
-    /**
-     * @var string Name of the tag
-     */
-    private $enhancerTag;
-
-    public function __construct($dynamicRouterService = 'cmf_routing.dynamic_router', $enhancerTag = 'dynamic_router_route_enhancer')
-    {
-        $this->dynamicRouterService = $dynamicRouterService;
-        $this->enhancerTag = $enhancerTag;
+    public function __construct(
+        string $dynamicRouterServiceName = 'cmf_routing.dynamic_router',
+        string $enhancerTagName = 'dynamic_router_route_enhancer'
+    ) {
+        $this->dynamicRouterServiceName = $dynamicRouterServiceName;
+        $this->enhancerTagName = $enhancerTagName;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
-        if (!$container->hasDefinition($this->dynamicRouterService)) {
+        if (!$container->hasDefinition($this->dynamicRouterServiceName)) {
             return;
         }
 
-        $router = $container->getDefinition($this->dynamicRouterService);
+        $router = $container->getDefinition($this->dynamicRouterServiceName);
 
-        foreach ($container->findTaggedServiceIds($this->enhancerTag) as $id => $attributes) {
-            $priority = isset($attributes[0]['priority']) ? $attributes[0]['priority'] : 0;
+        foreach ($container->findTaggedServiceIds($this->enhancerTagName) as $id => $attributes) {
+            $priority = $attributes[0]['priority'] ?? 0;
             $router->addMethodCall('addRouteEnhancer', [new Reference($id), $priority]);
         }
     }

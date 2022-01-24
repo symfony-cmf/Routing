@@ -9,9 +9,11 @@
  * file that was distributed with this source code.
  */
 
-namespace Symfony\Cmf\Component\Routing;
+namespace Symfony\Cmf\Component\Routing\Tests\Unit\Routing;
 
 use PHPUnit\Framework\TestCase;
+use Symfony\Cmf\Component\Routing\LazyRouteCollection;
+use Symfony\Cmf\Component\Routing\RouteProviderInterface;
 use Symfony\Component\Routing\Route;
 
 /**
@@ -24,7 +26,7 @@ class LazyRouteCollectionTest extends TestCase
     /**
      * Tests the iterator without a paged route provider.
      */
-    public function testGetIterator()
+    public function testGetIterator(): void
     {
         $routeProvider = $this->createMock(RouteProviderInterface::class);
         $testRoutes = [
@@ -34,7 +36,7 @@ class LazyRouteCollectionTest extends TestCase
         $routeProvider->expects($this->exactly(2))
             ->method('getRoutesByNames')
             ->with(null)
-            ->will($this->returnValue($testRoutes));
+            ->willReturn($testRoutes);
         $lazyRouteCollection = new LazyRouteCollection($routeProvider);
         $this->assertEquals($testRoutes, iterator_to_array($lazyRouteCollection->getIterator()));
         $this->assertEquals($testRoutes, $lazyRouteCollection->all());

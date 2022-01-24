@@ -22,27 +22,18 @@ use Symfony\Component\HttpFoundation\Request;
  *
  * @author David Buchmann
  */
-class RouteContentEnhancer implements RouteEnhancerInterface
+final class RouteContentEnhancer implements RouteEnhancerInterface
 {
     /**
      * @var string field for the route class
      */
-    protected $routefield;
+    private string $routeClassFieldName;
+    private string $targetFieldName;
 
-    /**
-     * @var string field to write hashmap lookup result into
-     */
-    protected $target;
-
-    /**
-     * @param string $routefield the field name of the route class
-     * @param string $target     the field name to set from the map
-     * @param array  $hashmap    the map of class names to field values
-     */
-    public function __construct($routefield, $target)
+    public function __construct(string $routeClassFieldName, string $targetFieldName)
     {
-        $this->routefield = $routefield;
-        $this->target = $target;
+        $this->routeClassFieldName = $routeClassFieldName;
+        $this->targetFieldName = $targetFieldName;
     }
 
     /**
@@ -51,28 +42,27 @@ class RouteContentEnhancer implements RouteEnhancerInterface
      *
      * {@inheritdoc}
      */
-    public function enhance(array $defaults, Request $request)
+    public function enhance(array $defaults, Request $request): array
     {
-        if (array_key_exists($this->target, $defaults)) {
+        if (array_key_exists($this->targetFieldName, $defaults)) {
             // no need to do anything
             return $defaults;
         }
 
-        if (!array_key_exists($this->routefield, $defaults)
-            || !$defaults[$this->routefield] instanceof RouteObjectInterface
+        if (!array_key_exists($this->routeClassFieldName, $defaults)
+            || !$defaults[$this->routeClassFieldName] instanceof RouteObjectInterface
         ) {
             // we can't determine the content
             return $defaults;
         }
-        /** @var $route RouteObjectInterface */
-        $route = $defaults[$this->routefield];
+        $route = $defaults[$this->routeClassFieldName];
 
         $content = $route->getContent();
         if (!$content) {
             // we have no content
             return $defaults;
         }
-        $defaults[$this->target] = $content;
+        $defaults[$this->targetFieldName] = $content;
 
         return $defaults;
     }

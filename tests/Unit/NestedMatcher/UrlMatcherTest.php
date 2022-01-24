@@ -25,12 +25,12 @@ use Symfony\Component\Routing\RouteCollection;
 class UrlMatcherTest extends TestCase
 {
     /**
-     * @var RouteMock|MockObject
+     * @var RouteMock&MockObject
      */
     private $routeDocument;
 
     /**
-     * @var CompiledRoute|MockObject
+     * @var CompiledRoute&MockObject
      */
     private $routeCompiled;
 
@@ -40,7 +40,7 @@ class UrlMatcherTest extends TestCase
     private $matcher;
 
     /**
-     * @var RequestContext|MockObject
+     * @var RequestContext&MockObject
      */
     private $context;
 
@@ -65,48 +65,48 @@ class UrlMatcherTest extends TestCase
         $this->matcher = new UrlMatcher(new RouteCollection(), $this->context);
     }
 
-    public function testMatchRouteKey()
+    public function testMatchRouteKey(): void
     {
         $this->doTestMatchRouteKey($this->url);
     }
 
-    public function testMatchNoKey()
+    public function testMatchNoKey(): void
     {
         $this->doTestMatchRouteKey(null);
     }
 
-    public function doTestMatchRouteKey($routeKey)
+    public function doTestMatchRouteKey(?string $routeKey): void
     {
         $this->routeCompiled->expects($this->atLeastOnce())
             ->method('getStaticPrefix')
-            ->will($this->returnValue($this->url))
+            ->willReturn($this->url)
         ;
         $this->routeCompiled->expects($this->atLeastOnce())
             ->method('getRegex')
-            ->will($this->returnValue('#'.str_replace('/', '\/', $this->url).'$#sD'))
+            ->willReturn('#'.str_replace('/', '\/', $this->url).'$#sD')
         ;
         $this->routeDocument->expects($this->atLeastOnce())
             ->method('compile')
-            ->will($this->returnValue($this->routeCompiled))
+            ->willReturn($this->routeCompiled)
         ;
         $this->routeDocument->expects($this->atLeastOnce())
             ->method('getRouteKey')
-            ->will($this->returnValue($routeKey))
+            ->willReturn($routeKey)
         ;
         $this->routeDocument->expects($this->atLeastOnce())
             ->method('getDefaults')
-            ->will($this->returnValue(['foo' => 'bar']))
+            ->willReturn(['foo' => 'bar'])
         ;
 
         $mockCompiled = $this->createMock(CompiledRoute::class);
-        $mockCompiled->expects($this->any())
+        $mockCompiled
             ->method('getStaticPrefix')
-            ->will($this->returnValue('/no/match'))
+            ->willReturn('/no/match')
         ;
         $mockRoute = $this->createMock(Route::class);
-        $mockRoute->expects($this->any())
+        $mockRoute
             ->method('compile')
-            ->will($this->returnValue($mockCompiled))
+            ->willReturn($mockCompiled)
         ;
         $routeCollection = new RouteCollection();
         $routeCollection->add('some', $mockRoute);
@@ -116,7 +116,7 @@ class UrlMatcherTest extends TestCase
         $results = $this->matcher->finalMatch($routeCollection, $this->request);
 
         $expected = [
-            RouteObjectInterface::ROUTE_NAME => $routeKey ? $routeKey : '_company_more',
+            RouteObjectInterface::ROUTE_NAME => $routeKey ?: '_company_more',
             RouteObjectInterface::ROUTE_OBJECT => $this->routeDocument,
             'foo' => 'bar',
         ];
@@ -124,35 +124,35 @@ class UrlMatcherTest extends TestCase
         $this->assertEquals($expected, $results);
     }
 
-    public function testMatchNoRouteObject()
+    public function testMatchNoRouteObject(): void
     {
         $this->routeCompiled->expects($this->atLeastOnce())
             ->method('getStaticPrefix')
-            ->will($this->returnValue($this->url))
+            ->willReturn($this->url)
         ;
         $this->routeCompiled->expects($this->atLeastOnce())
             ->method('getRegex')
-            ->will($this->returnValue('#'.str_replace('/', '\/', $this->url).'$#sD'))
+            ->willReturn('#'.str_replace('/', '\/', $this->url).'$#sD')
         ;
         $this->routeDocument = $this->createMock(Route::class);
         $this->routeDocument->expects($this->atLeastOnce())
             ->method('compile')
-            ->will($this->returnValue($this->routeCompiled))
+            ->willReturn($this->routeCompiled)
         ;
         $this->routeDocument->expects($this->atLeastOnce())
             ->method('getDefaults')
-            ->will($this->returnValue(['foo' => 'bar']))
+            ->willReturn(['foo' => 'bar'])
         ;
 
         $mockCompiled = $this->createMock(CompiledRoute::class);
-        $mockCompiled->expects($this->any())
+        $mockCompiled
             ->method('getStaticPrefix')
-            ->will($this->returnValue('/no/match'))
+            ->willReturn('/no/match')
         ;
         $mockRoute = $this->createMock(Route::class);
-        $mockRoute->expects($this->any())
+        $mockRoute
             ->method('compile')
-            ->will($this->returnValue($mockCompiled))
+            ->willReturn($mockCompiled)
         ;
         $routeCollection = new RouteCollection();
         $routeCollection->add('some', $mockRoute);

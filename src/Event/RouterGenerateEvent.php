@@ -11,7 +11,6 @@
 
 namespace Symfony\Cmf\Component\Routing\Event;
 
-use Symfony\Component\Routing\Route;
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**
@@ -24,35 +23,29 @@ use Symfony\Contracts\EventDispatcher\Event;
  *
  * @see \Symfony\Component\Routing\Generator\UrlGeneratorInterface::generate()
  */
-class RouterGenerateEvent extends Event
+final class RouterGenerateEvent extends Event
 {
     /**
-     * The name of the route or the Route instance to generate.
-     *
-     * @var string|Route
+     * The name of the route to generate.
      */
-    private $route;
+    private string $route;
 
     /**
      * The parameters to use when generating the url.
      *
-     * @var array
+     * @var array<string, mixed>
      */
-    private $parameters;
+    private array $parameters;
 
     /**
      * The type of reference to be generated (one of the constants in UrlGeneratorInterface).
-     *
-     * @var bool|string
      */
-    private $referenceType;
+    private int $referenceType;
 
     /**
-     * @param string|Route $route         The route name or object
-     * @param array        $parameters    The parameters to use
-     * @param bool|string  $referenceType The type of reference to be generated
+     * @param array<string, mixed> $parameters
      */
-    public function __construct($route, $parameters, $referenceType)
+    public function __construct(string $route, array $parameters, int $referenceType)
     {
         $this->route = $route;
         $this->parameters = $parameters;
@@ -61,79 +54,58 @@ class RouterGenerateEvent extends Event
 
     /**
      * Get route name or object.
-     *
-     * @return string|Route
      */
-    public function getRoute()
+    public function getRoute(): string
     {
         return $this->route;
     }
 
-    /**
-     * Set route name or object.
-     *
-     * @param string|Route $route
-     */
-    public function setRoute($route)
+    public function setRoute(string $route): void
     {
         $this->route = $route;
     }
 
     /**
-     * Get route parameters.
-     *
-     * @return array
+     * @return array<string, mixed>
      */
-    public function getParameters()
+    public function getParameters(): array
     {
         return $this->parameters;
     }
 
     /**
-     * Set the route parameters.
+     * @param array<string, mixed> $parameters
      */
-    public function setParameters(array $parameters)
+    public function setParameters(array $parameters): void
     {
         $this->parameters = $parameters;
     }
 
-    /**
-     * Set a route parameter.
-     *
-     * @param string $key
-     * @param mixed  $value
-     */
-    public function setParameter($key, $value)
+    public function setParameter(string $key, mixed $value): void
     {
         $this->parameters[$key] = $value;
     }
 
     /**
      * Remove a route parameter by key.
-     *
-     * @param string $key
      */
-    public function removeParameter($key)
+    public function removeParameter(string $key): void
     {
         unset($this->parameters[$key]);
     }
 
     /**
      * The type of reference to be generated (one of the constants in UrlGeneratorInterface).
-     *
-     * @return bool|string
      */
-    public function getReferenceType()
+    public function getReferenceType(): int
     {
         return $this->referenceType;
     }
 
     /**
      * The type of reference to be generated (one of the constants in UrlGeneratorInterface).
-     *
-     * @param bool|string $referenceType
      */
-    public function setReferenceType($referenceType)
+    public function setReferenceType(int $referenceType): void
     {
         $this->referenceType = $referenceType;
     }

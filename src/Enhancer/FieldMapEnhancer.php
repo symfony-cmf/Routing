@@ -19,32 +19,23 @@ use Symfony\Component\HttpFoundation\Request;
  *
  * @author David Buchmann
  */
-class FieldMapEnhancer implements RouteEnhancerInterface
+final class FieldMapEnhancer implements RouteEnhancerInterface
 {
-    /**
-     * @var string field for key in hashmap lookup
-     */
-    protected $source;
+    private string $keyFieldName;
+    private string $targetFieldName;
 
     /**
-     * @var string field to write hashmap lookup result into
+     * @var array<string, mixed> containing the mapping between the source field value and target field value
      */
-    protected $target;
+    private array $hashmap;
 
     /**
-     * @var array containing the mapping between the source field value and target field value
+     * @param array<string, mixed> $hashmap for looking up value from keyFieldName and get value to put into targetFieldName
      */
-    protected $hashmap;
-
-    /**
-     * @param string $source  the field to read
-     * @param string $target  the field to write the result of the lookup into
-     * @param array  $hashmap for looking up value from source and get value for target
-     */
-    public function __construct($source, $target, array $hashmap)
+    public function __construct(string $keyFieldName, string $targetFieldName, array $hashmap)
     {
-        $this->source = $source;
-        $this->target = $target;
+        $this->keyFieldName = $keyFieldName;
+        $this->targetFieldName = $targetFieldName;
         $this->hashmap = $hashmap;
     }
 
@@ -53,16 +44,16 @@ class FieldMapEnhancer implements RouteEnhancerInterface
      *
      * {@inheritdoc}
      */
-    public function enhance(array $defaults, Request $request)
+    public function enhance(array $defaults, Request $request): array
     {
-        if (array_key_exists($this->target, $defaults)
-            || !array_key_exists($this->source, $defaults)
-            || !array_key_exists($defaults[$this->source], $this->hashmap)
+        if (array_key_exists($this->targetFieldName, $defaults)
+            || !array_key_exists($this->keyFieldName, $defaults)
+            || !array_key_exists($defaults[$this->keyFieldName], $this->hashmap)
         ) {
             return $defaults;
         }
 
-        $defaults[$this->target] = $this->hashmap[$defaults[$this->source]];
+        $defaults[$this->targetFieldName] = $this->hashmap[$defaults[$this->keyFieldName]];
 
         return $defaults;
     }
