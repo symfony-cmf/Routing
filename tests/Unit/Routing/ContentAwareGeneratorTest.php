@@ -480,31 +480,10 @@ class ContentAwareGeneratorTest extends TestCase
         $this->assertEquals('de', $this->generator->getLocale($attributes));
     }
 
-    /**
-     * @group legacy
-     */
-    public function testSupports(): void
-    {
-        $this->assertTrue($this->generator->supports(''));
-        $this->assertTrue($this->generator->supports(null));
-        $this->assertTrue($this->generator->supports($this->contentDocument));
-        $this->assertFalse($this->generator->supports($this));
-    }
-
     public function testGetRouteDebugMessage(): void
     {
         $this->assertStringContainsString('/some/content', $this->generator->getRouteDebugMessage(RouteObjectInterface::OBJECT_BASED_ROUTE_NAME, ['content_id' => '/some/content']));
         $this->assertStringContainsString('Route aware content Symfony\Cmf\Component\Routing\Tests\Routing\RouteAware', $this->generator->getRouteDebugMessage(RouteObjectInterface::OBJECT_BASED_ROUTE_NAME, [RouteObjectInterface::ROUTE_OBJECT => new RouteAware()]));
-        $this->assertStringContainsString('/some/content', $this->generator->getRouteDebugMessage('/some/content'));
-    }
-
-    /**
-     * @legacy
-     */
-    public function testGetRouteDebugMessageLegacy(): void
-    {
-        $this->assertStringContainsString('/some/content', $this->generator->getRouteDebugMessage(null, ['content_id' => '/some/content']));
-        $this->assertStringContainsString('Route aware content Symfony\Cmf\Component\Routing\Tests\Routing\RouteAware', $this->generator->getRouteDebugMessage(new RouteAware()));
         $this->assertStringContainsString('/some/content', $this->generator->getRouteDebugMessage('/some/content'));
     }
 

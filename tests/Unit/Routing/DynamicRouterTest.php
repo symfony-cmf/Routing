@@ -138,31 +138,6 @@ class DynamicRouterTest extends TestCase
         $this->assertEquals('http://test', $url);
     }
 
-    /**
-     * @group legacy
-     */
-    public function testSupports()
-    {
-        $name = 'foo/bar';
-        $this->generator->expects($this->once())
-            ->method('supports')
-            ->with($this->equalTo($name))
-            ->will($this->returnValue(true))
-        ;
-
-        $this->assertTrue($this->router->supports($name));
-    }
-
-    public function testSupportsNonversatile()
-    {
-        $generator = $this->createMock(UrlGeneratorInterface::class);
-        $router = new DynamicRouter($this->context, $this->matcher, $generator);
-        $this->assertIsString($router->getRouteDebugMessage('test'));
-
-        $this->assertTrue($router->supports('some string'));
-        $this->assertFalse($router->supports($this));
-    }
-
     /// match tests ///
 
     public function testGetMatcher()

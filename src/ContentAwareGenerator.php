@@ -281,16 +281,6 @@ class ContentAwareGenerator extends ProviderBasedGenerator
     }
 
     /**
-     * We additionally support empty name and data in parameters and RouteAware content.
-     *
-     * {@inheritdoc}
-     */
-    public function supports($name)
-    {
-        return !$name || parent::supports($name) || $name instanceof RouteReferrersReadInterface;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function getRouteDebugMessage($name, array $parameters = [])

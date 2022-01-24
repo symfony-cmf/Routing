@@ -230,11 +230,6 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
                 continue;
             }
 
-            // If $router is versatile and doesn't support this route name, continue
-            if ($router instanceof VersatileGeneratorInterface && !$router->supports($name)) {
-                continue;
-            }
-
             try {
                 return $router->generate($name, $parameters, $absolute);
             } catch (RouteNotFoundException $e) {

@@ -616,11 +616,6 @@ class ChainRouterTest extends TestCase
         $parameters = ['test' => 'value', '_route_object' => new \stdClass()];
 
         $chainedRouter = $this->createMock(VersatileRouter::class);
-        $chainedRouter
-            ->expects($this->once())
-            ->method('supports')
-            ->willReturn(true)
-        ;
         $chainedRouter->expects($this->once())
             ->method('generate')
             ->with($name, $parameters, UrlGeneratorInterface::ABSOLUTE_PATH)
@@ -724,30 +719,6 @@ class ChainRouterTest extends TestCase
         $this->router->add($defaultRouter, 200);
 
         $this->router->generate(new \stdClass(), $parameters);
-    }
-
-    /**
-     * @group legacy
-     */
-    public function testSupport()
-    {
-        $router = $this->createMock(VersatileRouter::class);
-        $router
-            ->expects($this->once())
-            ->method('supports')
-            ->will($this->returnValue(false))
-        ;
-
-        $router
-            ->expects($this->never())
-            ->method('generate')
-            ->will($this->returnValue(false))
-        ;
-
-        $this->router->add($router);
-
-        $this->expectException(RouteNotFoundException::class);
-        $this->router->generate('foobar');
     }
 
     /**
