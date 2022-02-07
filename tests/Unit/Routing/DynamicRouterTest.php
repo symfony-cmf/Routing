@@ -32,7 +32,6 @@ use Symfony\Component\Routing\RouteCollection;
 
 class DynamicRouterTest extends TestCase
 {
-
     /**
      * @var UrlMatcherInterface&MockObject
      */
