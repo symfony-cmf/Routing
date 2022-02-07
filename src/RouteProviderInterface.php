@@ -79,5 +79,5 @@ interface RouteProviderInterface
      *
      * @return SymfonyRoute[] Iterable list with the keys being the names from the $names array
      */
-    public function getRoutesByNames(?array $names): array;
+    public function getRoutesByNames(?array $names = null): iterable;
 }

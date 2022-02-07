@@ -45,9 +45,9 @@ interface RedirectRouteInterface extends RouteObjectInterface
      *
      * If this is non-empty, the other methods won't be used.
      *
-     * @return string target absolute uri
+     * @return string|null target absolute uri
      */
-    public function getUri(): string;
+    public function getUri(): ?string;
 
     /**
      * Get the target route document this route redirects to.
@@ -62,7 +62,7 @@ interface RedirectRouteInterface extends RouteObjectInterface
      * Get the name of the target route for working with the symfony standard
      * router.
      */
-    public function getRouteName(): string;
+    public function getRouteName(): ?string;
 
     /**
      * Whether this should be a permanent or temporary redirect.
