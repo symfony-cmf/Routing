@@ -100,7 +100,7 @@ class DynamicRouterTest extends TestCase
         $this->assertInstanceOf(LazyRouteCollection::class, $collection);
     }
 
-    /// generator tests ///
+    /* ==generator tests== */
 
     public function testGetGenerator(): void
     {
@@ -128,7 +128,7 @@ class DynamicRouterTest extends TestCase
         $this->assertEquals('http://test', $url);
     }
 
-    /// match tests ///
+    /* ==match tests== */
 
     public function testGetMatcher(): void
     {
