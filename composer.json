@@ -25,8 +25,7 @@
         "symfony/phpunit-bridge": "^6.0",
         "symfony/dependency-injection": "^6.0",
         "symfony/config": "^6.0",
-        "symfony/event-dispatcher": "^6.0",
-        "symfony-cmf/testing": "dev-master as 4.2"
+        "symfony/event-dispatcher": "^6.0"
     },
     "suggest": {
         "symfony/event-dispatcher": "DynamicRouter can optionally trigger an event at the start of matching. Minimal version ^6.0"

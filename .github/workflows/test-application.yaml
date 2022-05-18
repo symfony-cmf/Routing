@@ -54,8 +54,4 @@ jobs:
               run: vendor/bin/simple-phpunit install
 
             - name: "Execute test cases"
-              run: |
-                if [[ $SYMFONY_PHPUNIT_VERSION == '' ]]; then unset SYMFONY_PHPUNIT_VERSION; fi;
-                make test
-              env:
-                  SYMFONY_PHPUNIT_VERSION: "${{ matrix.phpunit-version }}"
+              run: vendor/bin/simple-phpunit
