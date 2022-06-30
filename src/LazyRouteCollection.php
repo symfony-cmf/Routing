@@ -35,7 +35,7 @@ class LazyRouteCollection extends RouteCollection
     /**
      * Returns all routes in this collection.
      *
-     * @return Route[] An array of routes
+     * @return array<string, Route> An array of routes
      */
     public function all(): array
     {
