@@ -39,7 +39,12 @@ class LazyRouteCollection extends RouteCollection
      */
     public function all(): array
     {
-        return $this->provider->getRoutesByNames(null);
+        $routes = $this->provider->getRoutesByNames(null);
+        if (\is_array($routes)) {
+            return $routes;
+        }
+
+        return \iterator_to_array($routes);
     }
 
     public function get(string $name): ?Route
