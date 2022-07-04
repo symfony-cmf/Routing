@@ -1,6 +1,11 @@
 Changelog
 =========
 
+3.0.1
+-----
+
+* Bugfix: Fix handling non-array return from route provider (#279)
+
 3.0.0
 -----
 
