@@ -36,7 +36,7 @@ class LazyRouteCollectionTest extends TestCase
         $routeProvider->expects($this->exactly(2))
             ->method('getRoutesByNames')
             ->with(null)
-            ->willReturn($testRoutes);
+            ->willReturn(new \ArrayIterator($testRoutes));
         $lazyRouteCollection = new LazyRouteCollection($routeProvider);
         $this->assertEquals($testRoutes, iterator_to_array($lazyRouteCollection->getIterator()));
         $this->assertEquals($testRoutes, $lazyRouteCollection->all());

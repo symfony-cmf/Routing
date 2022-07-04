@@ -77,7 +77,7 @@ interface RouteProviderInterface
      * @param string[]|null $names The list of names to retrieve, In case of null,
      *                             the provider will determine what routes to return
      *
-     * @return SymfonyRoute[] Iterable list with the keys being the names from the $names array
+     * @return iterable<string, SymfonyRoute> Iterable list with the keys being the names from the $names array
      */
     public function getRoutesByNames(?array $names = null): iterable;
 }

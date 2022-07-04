@@ -35,11 +35,16 @@ class LazyRouteCollection extends RouteCollection
     /**
      * Returns all routes in this collection.
      *
-     * @return Route[] An array of routes
+     * @return array<string, Route> An array of routes
      */
     public function all(): array
     {
-        return $this->provider->getRoutesByNames(null);
+        $routes = $this->provider->getRoutesByNames(null);
+        if (\is_array($routes)) {
+            return $routes;
+        }
+
+        return \iterator_to_array($routes);
     }
 
     public function get(string $name): ?Route
