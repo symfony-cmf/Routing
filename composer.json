@@ -16,16 +16,16 @@
     ],
     "require": {
         "php": "^8.0",
-        "symfony/routing": "^6.0",
-        "symfony/http-kernel": "^6.0",
+        "symfony/routing": "^6.0 || ^7.0",
+        "symfony/http-kernel": "^6.0 || ^7.0",
         "psr/log": "^1.0 || ^2.0 || ^3.0"
     },
     "require-dev": {
         "doctrine/annotations": "^1.5",
-        "symfony/phpunit-bridge": "^6.0",
-        "symfony/dependency-injection": "^6.0",
-        "symfony/config": "^6.0",
-        "symfony/event-dispatcher": "^6.0"
+        "symfony/phpunit-bridge": "^6.0 || ^7.0",
+        "symfony/dependency-injection": "^6.0 || ^7.0",
+        "symfony/config": "^6.0 || ^7.0",
+        "symfony/event-dispatcher": "^6.0 || ^7.0"
     },
     "suggest": {
         "symfony/event-dispatcher": "DynamicRouter can optionally trigger an event at the start of matching. Minimal version ^6.0"

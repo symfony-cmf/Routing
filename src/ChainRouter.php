@@ -279,11 +279,11 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
         $this->context = $context;
     }
 
-    public function warmUp(string $cacheDir): array
+    public function warmUp(string $cacheDir, string $buildDir = null): array
     {
         foreach ($this->all() as $router) {
             if ($router instanceof WarmableInterface) {
-                $router->warmUp($cacheDir);
+                $router->warmUp($cacheDir, $buildDir);
             }
         }
 
