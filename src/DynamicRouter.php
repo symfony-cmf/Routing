@@ -73,7 +73,7 @@ class DynamicRouter implements RequestMatcherInterface, ChainedRouterInterface
     /**
      * {@inheritdoc}
      */
-    public function getRouteCollection(): ?RouteCollection
+    public function getRouteCollection(): RouteCollection
     {
         if (!$this->routeCollection instanceof RouteCollection) {
             $this->routeCollection = $this->provider

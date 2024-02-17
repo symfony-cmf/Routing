@@ -4,7 +4,6 @@ on:
     pull_request:
     push:
         branches:
-            - "master"
             - "[0-9]+.x"
             - "[0-9]+.[0-9]+"
             - "[0-9]+.[0-9]+.x"
@@ -15,6 +14,7 @@ jobs:
         runs-on: "ubuntu-20.04"
         env:
             SYMFONY_DEPRECATIONS_HELPER: weak
+            SYMFONY_REQUIRE: ${{ matrix.symfony-version }}
 
         strategy:
             fail-fast: false
@@ -27,11 +27,13 @@ jobs:
                       symfony-version: "6"
 
                     - php-version: "8.1"
-                      symfony-version: "6"
+                    - php-version: "8.2"
+                    - php-version: "8.3"
+                      symfony-version: "7"
 
         steps:
             - name: "Checkout project"
-              uses: "actions/checkout@v2"
+              uses: "actions/checkout@v3"
 
             - name: "Install and configure PHP"
               uses: "shivammathur/setup-php@v2"
@@ -40,12 +42,14 @@ jobs:
                   extensions: "pdo, pdo_sqlite"
                   tools: "composer:v2"
 
-            - name: "Require Specific Symfony Version"
+            - name: "Flex"
               if: "${{ matrix.symfony-version }}"
-              run: composer require --no-update symfony/flex && composer config extra.symfony.require ${{ matrix.symfony-version}}
+              run: |
+                composer global require --no-progress --no-scripts --no-plugins symfony/flex
+                composer global config --no-plugins allow-plugins.symfony/flex true
 
             - name: "Install dependencies with Composer"
-              uses: "ramsey/composer-install@v1"
+              uses: "ramsey/composer-install@v2"
               with:
                   dependency-versions: "${{ matrix.dependencies }}"
                   composer-options: "--prefer-dist"
