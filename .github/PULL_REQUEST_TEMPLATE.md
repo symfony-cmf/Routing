@@ -1,6 +1,6 @@
 | Q             | A
 | ------------- | ---
-| Branch?       | "master" for new features / the branch of the current release for fixes
+| Branch?       | default branch for new features / the branch of the current release for fixes
 | Bug fix?      | yes/no
 | New feature?  | yes/no
 | BC breaks?    | yes/no

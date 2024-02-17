@@ -1,6 +1,11 @@
 Changelog
 =========
 
+3.0.2
+-----
+
+* Allow installation with Symfony 7.
+
 3.0.1
 -----
 
