@@ -15,7 +15,6 @@ use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\Route as SymfonyRoute;
-use Symfony\Component\Routing\RouteCollection;
 
 /**
  * A generator that tries to generate routes from object, route names or
@@ -182,11 +181,11 @@ class ContentAwareGenerator extends ProviderBasedGenerator
     }
 
     /**
-     * @param RouteCollection|SymfonyRoute[] $routes
+     * @param iterable<SymfonyRoute> $routes
      *
      * @return bool|SymfonyRoute false if no route requirement matches the provided locale
      */
-    private function getRouteByLocale(RouteCollection|array $routes, ?string $locale): bool|SymfonyRoute
+    private function getRouteByLocale(iterable $routes, ?string $locale): bool|SymfonyRoute
     {
         foreach ($routes as $route) {
             if (!$route instanceof SymfonyRoute) {
