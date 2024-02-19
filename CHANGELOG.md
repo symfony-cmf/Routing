@@ -1,8 +1,8 @@
 Changelog
 =========
 
-3.0.3 (unreleased)
-------------------
+3.0.3
+-----
 
 * Fix regression: Any kind of iterable can be used with the ContentAwareGenerator
 
