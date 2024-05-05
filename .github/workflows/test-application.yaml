@@ -33,23 +33,17 @@ jobs:
 
         steps:
             - name: "Checkout project"
-              uses: "actions/checkout@v3"
+              uses: "actions/checkout@v4"
 
             - name: "Install and configure PHP"
               uses: "shivammathur/setup-php@v2"
               with:
                   php-version: "${{ matrix.php-version }}"
                   extensions: "pdo, pdo_sqlite"
-                  tools: "composer:v2"
-
-            - name: "Flex"
-              if: "${{ matrix.symfony-version }}"
-              run: |
-                composer global require --no-progress --no-scripts --no-plugins symfony/flex
-                composer global config --no-plugins allow-plugins.symfony/flex true
+                  tools: "composer:v2, flex"
 
             - name: "Install dependencies with Composer"
-              uses: "ramsey/composer-install@v2"
+              uses: "ramsey/composer-install@v3"
               with:
                   dependency-versions: "${{ matrix.dependencies }}"
                   composer-options: "--prefer-dist"
