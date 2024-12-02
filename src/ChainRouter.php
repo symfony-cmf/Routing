@@ -247,8 +247,8 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
 
     private function getErrorMessage(
         string $name,
-        RouterInterface|UrlGeneratorInterface|RequestMatcherInterface $router = null,
-        array $parameters = null
+        RouterInterface|UrlGeneratorInterface|RequestMatcherInterface|null $router = null,
+        ?array $parameters = null
     ): string {
         if ($router instanceof VersatileGeneratorInterface) {
             // the $parameters are not forced to be array, but versatile generator does typehint it
