@@ -18,7 +18,7 @@ final class RouterMatchEvent extends Event
 {
     private ?Request $request;
 
-    public function __construct(Request $request = null)
+    public function __construct(?Request $request = null)
     {
         $this->request = $request;
     }
