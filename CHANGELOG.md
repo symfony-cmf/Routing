@@ -1,6 +1,11 @@
 Changelog
 =========
 
+3.0.4
+-----
+
+* Fix deprecations on PHP 8.4.
+
 3.0.3
 -----
 
