@@ -203,11 +203,9 @@ class ChainRouter implements ChainRouterInterface, WarmableInterface
             }
         }
 
-        $info = $request
-            ? "this request\n$request"
-            : "url '$pathinfo'";
+        $info = $request ? $request->getPathInfo() : $pathinfo;
 
-        throw $methodNotAllowed ?: new ResourceNotFoundException("None of the routers in the chain matched $info");
+        throw $methodNotAllowed ?: new ResourceNotFoundException("None of the routers in the chain matched url $info");
     }
 
     /**
