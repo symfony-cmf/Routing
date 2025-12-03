@@ -1,6 +1,11 @@
 Changelog
 =========
 
+3.0.5
+-----
+
+* Allow installation with Symfony 8.
+
 3.0.4
 -----
 

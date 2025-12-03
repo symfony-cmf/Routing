@@ -11,7 +11,7 @@ on:
 jobs:
     test:
         name: "PHP ${{ matrix.php-version }}, Symfony ${{ matrix.symfony-version }} ${{ matrix.dependencies }}"
-        runs-on: "ubuntu-20.04"
+        runs-on: "ubuntu-latest"
         env:
             SYMFONY_DEPRECATIONS_HELPER: weak
             SYMFONY_REQUIRE: ${{ matrix.symfony-version }}
@@ -30,8 +30,8 @@ jobs:
                     - php-version: "8.2"
                     - php-version: "8.3"
                       symfony-version: "7"
-                    - php-version: "8.4"
-                      symfony-version: "7"
+                    - php-version: "8.5"
+                      symfony-version: "8"
 
         steps:
             - name: "Checkout project"
@@ -48,7 +48,7 @@ jobs:
               uses: "ramsey/composer-install@v3"
               with:
                   dependency-versions: "${{ matrix.dependencies }}"
-                  composer-options: "--prefer-dist"
+                  composer-options: "--prefer-dist --no-security-blocking"
 
             - name: "Install phpunit"
               run: vendor/bin/simple-phpunit install
